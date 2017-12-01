@@ -24,6 +24,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String COIN_NAME_KEY = "COIN_NAME";
+    public static final String COIN_SYMBOL_KEY = "COIN_SYMBOL";
+
     private static final String[] names = {"Apple", "Banana", "Melon"};
     private static final String[] symbols = {"APL", "BNN", "MLN"};
     private static final double[] prices = {1111.11, 2222.22, 3333.33};
@@ -76,7 +79,8 @@ public class MainActivity extends AppCompatActivity
 
                 if (pos == 0) {
                     Intent intent = new Intent(view.getContext(), CoinActivity.class);
-                    intent.putExtra("MESSAGE", coin.getName());
+                    intent.putExtra(COIN_NAME_KEY, coin.getName());
+                    intent.putExtra(COIN_SYMBOL_KEY, coin.getSymbol());
                     startActivity(intent);
                 } else {
                     Toast.makeText(MainActivity.this, coin.getName(), Toast.LENGTH_LONG).show();
