@@ -1,5 +1,8 @@
 package com.example.toolbartest;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,9 +15,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final String[] names = {"Apple", "Banana", "Melon"};
+    private static final String[] symbols = {"APL", "BNN", "MLN"};
+    private static final double[] prices = {1111.11, 2222.22, 3333.33};
+    private static final double[] trends = {4.44, 5.55, 6.66};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +53,38 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        initializeCoinList();
+    }
+
+    private void initializeCoinList() {
+        ArrayList<Coin> coins = new ArrayList<>();
+
+        for (int i = 0; i < names.length; i++) {
+            Bitmap bmp = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.coin_bitcoin);
+            Coin coin = new Coin(bmp, names[i], symbols[i], prices[i], trends[i]);
+            coins.add(coin);
+        }
+
+        ListView listView = findViewById(R.id.coin_list);
+        listView.setAdapter(new CoinArrayAdapter(this, coins));
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> adapter, View view, int pos, long id) {
+                ListView lv = (ListView) adapter;
+                Coin coin = (Coin) lv.getItemAtPosition(pos);
+
+                if (pos == 0) {
+                    Intent intent = new Intent(view.getContext(), CoinActivity.class);
+                    intent.putExtra("MESSAGE", coin.getName());
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, coin.getName(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+
     }
 
     @Override
