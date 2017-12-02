@@ -24,5 +24,8 @@ public class CoinActivity extends AppCompatActivity {
 
         TextView textView = findViewById(R.id.coin_name);
         textView.setText(coinName);
+
+        MyAsyncTask task = new MyAsyncTask(new String[]{"https://google.com"}, this);
+        task.execute();
     }
 }
