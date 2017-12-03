@@ -25,9 +25,4 @@ public class CoinActivity extends AppCompatActivity {
         TextView textView = findViewById(R.id.coin_name);
         textView.setText(coinName);
     }
-
-    private void showSnackbar(String message) {
-        Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT)
-                .setAction("Action", null).show();
-    }
 }

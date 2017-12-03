@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.example.toolbartest.MainActivity;
 import com.example.toolbartest.utils.SnackbarHelper;
 import com.example.toolbartest.utils.VolleyHelper;
 
@@ -117,9 +119,12 @@ public class CoinListImpl implements CoinList {
                         public void onResponse(JSONObject response) {
                             CoinListResponse coinListResponse = new CoinListResponseImpl(response);
 
-                            if (coinListResponse.isSuccess() && listener != null) {
+                            if (coinListResponse.isSuccess()) {
                                 CoinList coinList = new CoinListImpl(coinListResponse);
-                                listener.finished(coinList);
+                                if (listener != null) {
+                                    listener.finished(coinList);
+                                }
+                                coinList.saveToFile(activity);
                             } else {
                                 SnackbarHelper.showSnackbar(activity, response.toString());
                             }
@@ -136,6 +141,7 @@ public class CoinListImpl implements CoinList {
                     });
 
             request.setShouldCache(false);
+            request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VolleyHelper.getInstance(activity.getApplicationContext()).addToRequestQueue(request);
         }
 

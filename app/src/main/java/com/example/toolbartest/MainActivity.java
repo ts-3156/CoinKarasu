@@ -1,7 +1,6 @@
 package com.example.toolbartest;
 
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,12 +16,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.coins.CoinList;
 import com.example.toolbartest.coins.CoinListImpl;
 import com.example.toolbartest.coins.CoinListResponseImpl;
+import com.example.toolbartest.utils.ResourceHelper;
 
 import java.util.ArrayList;
 
@@ -34,6 +33,7 @@ public class MainActivity extends AppCompatActivity
     public static final String COIN_ACTIVITY_COIN_SYMBOL_KEY = "COIN_SYMBOL_KEY";
 
     private CoinList coinList;
+    CoinArrayAdapter coinArrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,67 +61,73 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         coinList = null;
-        String coinSymbolsResourceName = "default_watch_list_symbols";
-        if (getIntent().getStringExtra(MainActivity.MAIN_ACTIVITY_COIN_IDS_RESOURCE_NAME) != null) {
-            coinSymbolsResourceName = getIntent().getStringExtra(MainActivity.MAIN_ACTIVITY_COIN_IDS_RESOURCE_NAME);
-        }
+        coinArrayAdapter = null;
 
         if (CoinListResponseImpl.cacheExists(this)) {
-            Log.d("CACHE", "Found");
+            Log.d("CoinList cache hit", CoinListResponseImpl.lastModified(this).toString());
             coinList = CoinListImpl.builder().setActivity(this).build();
-            initializeCoinListView(coinSymbolsResourceName);
+            initializeCoinListView();
+            CoinListImpl.fetcher().setActivity(this).fetch();
         } else {
-            Log.d("CACHE", "Not found");
-            final String finalCoinIdsResourceName = coinSymbolsResourceName;
+            Log.d("CoinList cache", "Not found");
             CoinListImpl.fetcher().setActivity(this).setListener(new CoinListImpl.Listener() {
                 @Override
-                public void finished(CoinList cl) {
-                    cl.saveToFile(MainActivity.this);
-                    MainActivity.this.coinList = cl;
-                    initializeCoinListView(finalCoinIdsResourceName);
+                public void finished(CoinList coinList) {
+                    MainActivity.this.coinList = coinList;
+                    initializeCoinListView();
                 }
             }).fetch();
         }
     }
 
-    private String[] getStringResourceByName(String name) {
-        Resources resources = getResources();
-        int resId = resources.getIdentifier(name, "array", getPackageName());
-        return resources.getStringArray(resId);
+    private String getCurrentCoinSymbolsResourceName() {
+        String name = getIntent().getStringExtra(MainActivity.MAIN_ACTIVITY_COIN_IDS_RESOURCE_NAME);
+        if (name == null) {
+            name = "default_watch_list_symbols";
+        }
+        return name;
     }
 
-    private void initializeCoinListView(String coinSymbolsResourceName) {
-        ArrayList<Coin> coins = new ArrayList<>();
-        String[] coinSymbols = getStringResourceByName(coinSymbolsResourceName);
-        Log.d("Coin symbols", coinSymbols.toString());
+    private void setCurrentCoinSymbolsResourceName(String name) {
+        getIntent().putExtra(MainActivity.MAIN_ACTIVITY_COIN_IDS_RESOURCE_NAME, name);
+    }
 
-        for (int i = 0; i < coinSymbols.length; i++) {
-            Coin coin = coinList.getCoinBySymbol(coinSymbols[i]);
+    private ArrayList<Coin> collectCoins() {
+        ArrayList<Coin> coins = new ArrayList<>();
+        String[] coinSymbols = ResourceHelper.getStringArrayResourceByName(this, getCurrentCoinSymbolsResourceName());
+
+        for (String coinSymbol : coinSymbols) {
+            Coin coin = coinList.getCoinBySymbol(coinSymbol);
             if (coin == null) {
-                Log.d("Coin not found", coinSymbols[i]);
+                Log.d("Coin not found", coinSymbol);
             } else {
                 coins.add(coin);
             }
         }
 
+        return coins;
+    }
+
+    private void initializeCoinListView() {
         ListView listView = findViewById(R.id.coin_list);
-        listView.setAdapter(new CoinArrayAdapter(this, coins));
+        coinArrayAdapter = new CoinArrayAdapter(this, collectCoins());
+        listView.setAdapter(coinArrayAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                ListView lv = (ListView) parent;
-                Coin coin = (Coin) lv.getItemAtPosition(pos);
+                Coin coin = (Coin) ((ListView) parent).getItemAtPosition(pos);
 
-                if (pos == 0) {
-                    Intent intent = new Intent(view.getContext(), CoinActivity.class);
-                    intent.putExtra(COIN_ACTIVITY_COIN_NAME_KEY, coin.getCoinName());
-                    intent.putExtra(COIN_ACTIVITY_COIN_SYMBOL_KEY, coin.getSymbol());
-                    startActivity(intent);
-                } else {
-                    Toast.makeText(MainActivity.this, coin.getCoinName(), Toast.LENGTH_LONG).show();
-                }
+                Intent intent = new Intent(view.getContext(), CoinActivity.class);
+                intent.putExtra(COIN_ACTIVITY_COIN_NAME_KEY, coin.getCoinName());
+                intent.putExtra(COIN_ACTIVITY_COIN_SYMBOL_KEY, coin.getSymbol());
+                startActivity(intent);
             }
         });
+    }
+
+    private void updateCoinListView() {
+        coinArrayAdapter.setCoins(collectCoins());
+        coinArrayAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -160,17 +166,22 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        Intent intent = new Intent(this, MainActivity.class);
 
         if (id == R.id.nav_camera) {
-            intent.putExtra(MAIN_ACTIVITY_COIN_IDS_RESOURCE_NAME, "default_watch_list_symbols");
-            startActivity(intent);
+            if (!getCurrentCoinSymbolsResourceName().equals("default_watch_list_symbols")) {
+                setCurrentCoinSymbolsResourceName("default_watch_list_symbols");
+                updateCoinListView();
+            }
         } else if (id == R.id.nav_gallery) {
-            intent.putExtra(MAIN_ACTIVITY_COIN_IDS_RESOURCE_NAME, "jpy_toplist_symbols");
-            startActivity(intent);
+            if (!getCurrentCoinSymbolsResourceName().equals("jpy_toplist_symbols")) {
+                setCurrentCoinSymbolsResourceName("jpy_toplist_symbols");
+                updateCoinListView();
+            }
         } else if (id == R.id.nav_slideshow) {
-            intent.putExtra(MAIN_ACTIVITY_COIN_IDS_RESOURCE_NAME, "usd_toplist_symbols");
-            startActivity(intent);
+            if (!getCurrentCoinSymbolsResourceName().equals("usd_toplist_symbols")) {
+                setCurrentCoinSymbolsResourceName("usd_toplist_symbols");
+                updateCoinListView();
+            }
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

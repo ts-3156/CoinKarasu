@@ -1,5 +1,6 @@
 package com.example.toolbartest;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,21 +10,27 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.utils.ResourceHelper;
 import com.example.toolbartest.utils.VolleyHelper;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Currency;
+import java.util.List;
 import java.util.Locale;
 
 public class CoinArrayAdapter extends BaseAdapter {
-    Context context;
+    private static final List<String> ICON_READY_SYMBOLS =
+            Arrays.asList("BCH", "BTC", "ETC", "ETH", "LTC", "MONA", "REP", "XEM", "XMR", "XRP", "ZEC");
+
+    Activity activity;
     LayoutInflater layoutInflater;
     ArrayList<Coin> coins;
 
-    public CoinArrayAdapter(Context context, ArrayList<Coin> coins) {
-        this.context = context;
-        this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public CoinArrayAdapter(Activity activity, ArrayList<Coin> coins) {
+        this.activity = activity;
+        this.layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.coins = coins;
     }
 
@@ -52,45 +59,14 @@ public class CoinArrayAdapter extends BaseAdapter {
         Coin coin = (Coin) getItem(position);
         NetworkImageView image = view.findViewById(R.id.coin_icon);
 
-        switch (coin.getSymbol()) {
-            case "BCH":
-                image.setDefaultImageResId(R.drawable.ic_coin_bch);
-                break;
-            case "BTC":
-                image.setDefaultImageResId(R.drawable.ic_coin_btc);
-                break;
-            case "ETC":
-                image.setDefaultImageResId(R.drawable.ic_coin_etc);
-                break;
-            case "ETH":
-                image.setDefaultImageResId(R.drawable.ic_coin_eth);
-                break;
-            case "LTC":
-                image.setDefaultImageResId(R.drawable.ic_coin_ltc);
-                break;
-            case "MONA":
-                image.setDefaultImageResId(R.drawable.ic_coin_mona);
-                break;
-            case "REP":
-                image.setDefaultImageResId(R.drawable.ic_coin_rep);
-                break;
-            case "XEM":
-                image.setDefaultImageResId(R.drawable.ic_coin_xem);
-                break;
-            case "XMR":
-                image.setDefaultImageResId(R.drawable.ic_coin_xmr);
-                break;
-            case "XRP":
-                image.setDefaultImageResId(R.drawable.ic_coin_xrp);
-                break;
-            case "ZEC":
-                image.setDefaultImageResId(R.drawable.ic_coin_zec);
-                break;
-            default:
-                String iconUrl = coin.getImageUrl();
-                image.setDefaultImageResId(R.drawable.ic_coin_android);
-                image.setErrorImageResId(R.drawable.ic_coin_android);
-                image.setImageUrl(iconUrl, VolleyHelper.getInstance(context.getApplicationContext()).getImageLoader());
+        if (ICON_READY_SYMBOLS.contains(coin.getSymbol())) {
+            String name = "ic_coin_" + coin.getSymbol().toLowerCase();
+            image.setDefaultImageResId(ResourceHelper.getDrawableResourceIdByName(activity, name));
+        } else {
+            String iconUrl = coin.getImageUrl();
+            image.setDefaultImageResId(R.drawable.ic_coin_android);
+            image.setErrorImageResId(R.drawable.ic_coin_android);
+            image.setImageUrl(iconUrl, VolleyHelper.getInstance(activity.getApplicationContext()).getImageLoader());
         }
 
         ((TextView) view.findViewById(R.id.coin_name)).setText(coin.getCoinName());
@@ -99,6 +75,11 @@ public class CoinArrayAdapter extends BaseAdapter {
         ((TextView) view.findViewById(R.id.coin_trend)).setText(formatTrend(coin.getTrend()));
 
         return view;
+    }
+
+    public void setCoins(ArrayList<Coin> coins) {
+        this.coins.clear();
+        this.coins.addAll(coins);
     }
 
     private String formatPrice(double price, Locale locale) {

@@ -8,6 +8,8 @@ import com.example.toolbartest.utils.CacheHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+
 public class CoinListResponseImpl implements CoinListResponse {
 
     private static final String CACHE_NAME = "coin_list_response.json";
@@ -87,5 +89,10 @@ public class CoinListResponseImpl implements CoinListResponse {
     public static boolean cacheExists(Context context) {
         // TODO Check timestamp
         return CacheHelper.exists(context, CACHE_NAME);
+    }
+
+    // @Override
+    public static Date lastModified(Context context) {
+        return CacheHelper.lastModified(context, CACHE_NAME);
     }
 }

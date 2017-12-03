@@ -23,4 +23,5 @@ public interface CoinListResponse {
     boolean saveToFile(Context context);
 //    static boolean restoreFromFile(Context context);
 //    static boolean cacheExists(Context context);
+//    static Date lastModified(Context context);
 }

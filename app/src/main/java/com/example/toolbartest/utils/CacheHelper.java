@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Date;
 
 public class CacheHelper {
 
@@ -66,5 +67,10 @@ public class CacheHelper {
     public static boolean exists(Context context, String name) {
         File file = new File(context.getCacheDir(), name);
         return file.exists();
+    }
+
+    public static Date lastModified(Context context, String name) {
+        File file = new File(context.getCacheDir(), name);
+        return new Date(file.lastModified());
     }
 }
