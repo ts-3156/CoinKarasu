@@ -5,13 +5,13 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
-    <ImageView
+    <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/coin_icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="8dp"
+        android:padding="10dp"
         android:src="@drawable/coin_bitcoin" />
 
     <TextView

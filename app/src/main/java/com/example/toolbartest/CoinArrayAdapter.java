@@ -5,8 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.android.volley.toolbox.NetworkImageView;
+import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.utils.VolleyHelper;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -15,16 +18,12 @@ import java.util.Locale;
 
 public class CoinArrayAdapter extends BaseAdapter {
     Context context;
-    LayoutInflater layoutInflater = null;
+    LayoutInflater layoutInflater;
     ArrayList<Coin> coins;
 
     public CoinArrayAdapter(Context context, ArrayList<Coin> coins) {
         this.context = context;
         this.layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.coins = coins;
-    }
-
-    public void setCoins(ArrayList<Coin> coins) {
         this.coins = coins;
     }
 
@@ -45,16 +44,25 @@ public class CoinArrayAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        convertView = layoutInflater.inflate(R.layout.list_coin, parent, false);
-        Coin coin = coins.get(position);
+        View view = convertView;
+        if (view == null) {
+            view = layoutInflater.inflate(R.layout.list_coin, parent, false);
+        }
 
-        ((ImageView) convertView.findViewById(R.id.coin_icon)).setImageBitmap(coin.getIcon());
-        ((TextView) convertView.findViewById(R.id.coin_name)).setText(coin.getName());
-        ((TextView) convertView.findViewById(R.id.coin_symbol)).setText(String.valueOf(coin.getSymbol()));
-        ((TextView) convertView.findViewById(R.id.coin_price)).setText(formatPrice(coin.getPrice(), Locale.JAPAN));
-        ((TextView) convertView.findViewById(R.id.coin_trend)).setText(formatTrend(coin.getTrend()));
+        Coin coin = (Coin) getItem(position);
 
-        return convertView;
+        String iconUrl = coin.getImageUrl();
+        NetworkImageView image = view.findViewById(R.id.coin_icon);
+        image.setDefaultImageResId(R.drawable.coin_bitcoin);
+        image.setErrorImageResId(R.drawable.coin_bitcoin);
+        image.setImageUrl(iconUrl, VolleyHelper.getInstance(context.getApplicationContext()).getImageLoader());
+
+        ((TextView) view.findViewById(R.id.coin_name)).setText(coin.getCoinName());
+        ((TextView) view.findViewById(R.id.coin_symbol)).setText(coin.getSymbol());
+        ((TextView) view.findViewById(R.id.coin_price)).setText(formatPrice(coin.getPrice(), Locale.JAPAN));
+        ((TextView) view.findViewById(R.id.coin_trend)).setText(formatTrend(coin.getTrend()));
+
+        return view;
     }
 
     private String formatPrice(double price, Locale locale) {

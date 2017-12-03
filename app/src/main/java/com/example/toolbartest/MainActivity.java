@@ -1,11 +1,10 @@
 package com.example.toolbartest;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -19,6 +18,13 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.coins.CoinList;
+import com.example.toolbartest.coins.CoinListImpl;
+import com.example.toolbartest.coins.CoinListResponse;
+import com.example.toolbartest.coins.CoinListResponseImpl;
+import com.example.toolbartest.utils.CacheHelper;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
@@ -27,10 +33,7 @@ public class MainActivity extends AppCompatActivity
     public static final String COIN_NAME_KEY = "COIN_NAME";
     public static final String COIN_SYMBOL_KEY = "COIN_SYMBOL";
 
-    private static final String[] names = {"Apple", "Banana", "Melon"};
-    private static final String[] symbols = {"APL", "BNN", "MLN"};
-    private static final double[] prices = {1111.11, 2222.22, 3333.33};
-    private static final double[] trends = {4.44, 5.55, 6.66};
+    private CoinList coinList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,38 +60,57 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        initializeCoinList();
+        coinList = null;
+
+        if (CoinListResponseImpl.cacheExists(this)) {
+            Log.d("CACHE", "Found");
+            coinList = CoinListImpl.builder().setActivity(this).build();
+            initializeCoinListView();
+        } else {
+            Log.d("CACHE", "Not found");
+            CoinListImpl.fetcher().setActivity(this).setListener(new CoinListImpl.Listener() {
+                @Override
+                public void finished(CoinList cl) {
+                    cl.saveToFile(MainActivity.this);
+                    MainActivity.this.coinList = cl;
+                    initializeCoinListView();
+                }
+            }).fetch();
+        }
     }
 
-    private void initializeCoinList() {
+    private void initializeCoinListView() {
         ArrayList<Coin> coins = new ArrayList<>();
+        String[] coinIds = coinList.getDefaultCCWatchlistIds();
+        Log.d("Coin ids", coinIds.toString());
 
-        for (int i = 0; i < names.length; i++) {
-            Bitmap bmp = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.coin_bitcoin);
-            Coin coin = new Coin(bmp, names[i], symbols[i], prices[i], trends[i]);
-            coins.add(coin);
+        for (int i = 0; i < coinIds.length; i++) {
+            Coin coin = coinList.GetCoinByCCId(coinIds[i]);
+            if (coin == null) {
+                Log.d("Coin not found", coinIds[i]);
+            } else {
+                coins.add(coin);
+            }
         }
 
         ListView listView = findViewById(R.id.coin_list);
         listView.setAdapter(new CoinArrayAdapter(this, coins));
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> adapter, View view, int pos, long id) {
-                ListView lv = (ListView) adapter;
+            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                ListView lv = (ListView) parent;
                 Coin coin = (Coin) lv.getItemAtPosition(pos);
 
                 if (pos == 0) {
                     Intent intent = new Intent(view.getContext(), CoinActivity.class);
-                    intent.putExtra(COIN_NAME_KEY, coin.getName());
+                    intent.putExtra(COIN_NAME_KEY, coin.getCoinName());
                     intent.putExtra(COIN_SYMBOL_KEY, coin.getSymbol());
                     startActivity(intent);
                 } else {
-                    Toast.makeText(MainActivity.this, coin.getName(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, coin.getCoinName(), Toast.LENGTH_LONG).show();
                 }
             }
         });
-
-
     }
 
     @Override
