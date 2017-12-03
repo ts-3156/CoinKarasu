@@ -5,4 +5,8 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="default_list">Main</string>
+    <string name="jpy_toplist">JPY Toplist</string>
+    <string name="usd_toplist">USD Toplist</string>
 </resources>

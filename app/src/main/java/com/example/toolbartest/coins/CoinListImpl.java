@@ -42,7 +42,7 @@ public class CoinListImpl implements CoinList {
     }
 
     @Override
-    public Coin GetCoinByCCId(String id) {
+    public Coin getCoinByCCId(String id) {
         if (response == null || response.getData() == null) {
             return null;
         }
@@ -62,7 +62,7 @@ public class CoinListImpl implements CoinList {
                 }
             }
         } catch (JSONException e) {
-            Log.d("GetCoinByCCId", e.getMessage());
+            Log.d("getCoinByCCId", e.getMessage());
         }
 
         return coin;

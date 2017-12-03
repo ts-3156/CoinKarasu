@@ -50,12 +50,48 @@ public class CoinArrayAdapter extends BaseAdapter {
         }
 
         Coin coin = (Coin) getItem(position);
-
-        String iconUrl = coin.getImageUrl();
         NetworkImageView image = view.findViewById(R.id.coin_icon);
-        image.setDefaultImageResId(R.drawable.coin_bitcoin);
-        image.setErrorImageResId(R.drawable.coin_bitcoin);
-        image.setImageUrl(iconUrl, VolleyHelper.getInstance(context.getApplicationContext()).getImageLoader());
+
+        switch (coin.getSymbol()) {
+            case "BCH":
+                image.setDefaultImageResId(R.drawable.ic_coin_bch);
+                break;
+            case "BTC":
+                image.setDefaultImageResId(R.drawable.ic_coin_btc);
+                break;
+            case "ETC":
+                image.setDefaultImageResId(R.drawable.ic_coin_etc);
+                break;
+            case "ETH":
+                image.setDefaultImageResId(R.drawable.ic_coin_eth);
+                break;
+            case "LTC":
+                image.setDefaultImageResId(R.drawable.ic_coin_ltc);
+                break;
+            case "MONA":
+                image.setDefaultImageResId(R.drawable.ic_coin_mona);
+                break;
+            case "REP":
+                image.setDefaultImageResId(R.drawable.ic_coin_rep);
+                break;
+            case "XEM":
+                image.setDefaultImageResId(R.drawable.ic_coin_xem);
+                break;
+            case "XMR":
+                image.setDefaultImageResId(R.drawable.ic_coin_xmr);
+                break;
+            case "XRP":
+                image.setDefaultImageResId(R.drawable.ic_coin_xrp);
+                break;
+            case "ZEC":
+                image.setDefaultImageResId(R.drawable.ic_coin_zec);
+                break;
+            default:
+                String iconUrl = coin.getImageUrl();
+                image.setDefaultImageResId(R.drawable.ic_coin_android);
+                image.setErrorImageResId(R.drawable.ic_coin_android);
+                image.setImageUrl(iconUrl, VolleyHelper.getInstance(context.getApplicationContext()).getImageLoader());
+        }
 
         ((TextView) view.findViewById(R.id.coin_name)).setText(coin.getCoinName());
         ((TextView) view.findViewById(R.id.coin_symbol)).setText(coin.getSymbol());

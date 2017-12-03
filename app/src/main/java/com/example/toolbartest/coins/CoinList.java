@@ -5,7 +5,7 @@ import android.content.Context;
 public interface CoinList {
     Coin getCoinBySymbol(String symbol);
 
-    Coin GetCoinByCCId(String id);
+    Coin getCoinByCCId(String id);
 
     String[] getDefaultCCWatchlistIds();
 

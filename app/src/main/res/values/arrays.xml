@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="default_watch_list_ids">
+        <item>1182</item>
+        <item>7605</item>
+        <item>5038</item>
+        <item>24854</item>
+        <item>3807</item>
+        <item>3808</item>
+        <item>202330</item>
+        <item>5324</item>
+        <item>5031</item>
+        <item>20131</item>
+    </string-array>
+
+    <string-array name="default_watch_list_symbols">
+        <item>BTC</item>
+        <item>ETC</item>
+        <item>XMR</item>
+        <item>ZEC</item>
+        <item>DASH</item>
+        <item>LTC</item>
+        <item>BCH</item>
+        <item>ETC</item>
+        <item>XRP</item>
+        <item>WAVES</item>
+    </string-array>
+
+    <string-array name="jpy_toplist_symbols">
+        <item>BTC</item>
+        <item>ETH</item>
+        <item>MONA</item>
+        <item>XEM</item>
+        <item>BHC</item>
+        <item>QASH</item>
+        <item>PEPECASH</item>
+        <item>XCP</item>
+        <item>SJCX</item>
+        <item>SLR</item>
+        <item>QTUM</item>
+    </string-array>
+
+    <string-array name="usd_toplist_symbols">
+        <item>BTC</item>
+        <item>ETH</item>
+        <item>BCH</item>
+        <item>LTC</item>
+        <item>EOS</item>
+        <item>IOT</item>
+        <item>XMR</item>
+        <item>BTG</item>
+        <item>DASH</item>
+        <item>ETC</item>
+        <item>XRP</item>
+        <item>NXT</item>
+        <item>ZEC</item>
+        <item>SAN</item>
+        <item>OMG</item>
+        <item>NEO</item>
+        <item>XLM</item>
+        <item>REP</item>
+        <item>ETP</item>
+        <item>DATA</item>
+        <item>USDT</item>
+        <item>DOGE</item>
+        <item>CTR</item>
+        <item>START</item>
+        <item>STX</item>
+        <item>XDN</item>
+        <item>BNT</item>
+        <item>EDO</item>
+        <item>BCN</item>
+        <item>VIB</item>
+    </string-array>
+</resources>

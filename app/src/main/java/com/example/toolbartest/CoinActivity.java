@@ -5,10 +5,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TextView;
-
-import com.example.toolbartest.coins.*;
 
 public class CoinActivity extends AppCompatActivity {
 
@@ -18,8 +15,8 @@ public class CoinActivity extends AppCompatActivity {
         setContentView(R.layout.activity_coin);
 
         Intent intent = getIntent();
-        String coinName = intent.getStringExtra(MainActivity.COIN_NAME_KEY);
-        String coinSymbol = intent.getStringExtra(MainActivity.COIN_SYMBOL_KEY);
+        String coinName = intent.getStringExtra(MainActivity.COIN_ACTIVITY_COIN_NAME_KEY);
+        String coinSymbol = intent.getStringExtra(MainActivity.COIN_ACTIVITY_COIN_SYMBOL_KEY);
 
         ActionBar bar = getSupportActionBar();
         bar.setTitle(coinName);

@@ -12,7 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:padding="10dp"
-        android:src="@drawable/coin_bitcoin" />
+        android:src="@drawable/ic_coin_android" />
 
     <TextView
         android:id="@+id/coin_name"
