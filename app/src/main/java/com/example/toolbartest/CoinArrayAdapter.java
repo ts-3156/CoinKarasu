@@ -75,12 +75,12 @@ public class CoinArrayAdapter extends BaseAdapter {
         if (ICON_READY_SYMBOLS.contains(coin.getSymbol())) {
             String name = "ic_coin_" + coin.getSymbol().toLowerCase();
             holder.icon.setDefaultImageResId(ResourceHelper.getDrawableResourceIdByName(activity, name));
-            holder.icon.setImageUrl(null, getImageLoader());
+            holder.icon.setImageUrl(null, VolleyHelper.getInstance(activity).getImageLoader());
         } else {
             String iconUrl = coin.getImageUrl();
             holder.icon.setDefaultImageResId(R.drawable.ic_coin_android);
             holder.icon.setErrorImageResId(R.drawable.ic_coin_android);
-            holder.icon.setImageUrl(iconUrl, getImageLoader());
+            holder.icon.setImageUrl(iconUrl, VolleyHelper.getInstance(activity).getImageLoader());
         }
 
         holder.name.setText(coin.getCoinName());
@@ -88,13 +88,7 @@ public class CoinArrayAdapter extends BaseAdapter {
         holder.price.setText(StringHelper.formatPrice(coin.getPrice(), coin.getToSymbol()));
 
         holder.trend.setText(StringHelper.formatTrend(coin.getTrend()));
-        if (coin.getTrend() > 0) {
-            holder.trend.setTextColor(activity.getResources().getColor(R.color.green));
-        } else if (coin.getTrend() < 0) {
-            holder.trend.setTextColor(Color.RED);
-        } else {
-            holder.trend.setTextColor(activity.getResources().getColor(R.color.neutral_trend));
-        }
+        holder.trend.setTextColor(getColor(coin.getTrend()));
 
         return convertView;
     }
@@ -104,8 +98,16 @@ public class CoinArrayAdapter extends BaseAdapter {
         this.coins.addAll(coins);
     }
 
-    private ImageLoader getImageLoader() {
-        return VolleyHelper.getInstance(activity.getApplicationContext()).getImageLoader();
+    private int getColor(double trend) {
+        int color = activity.getResources().getColor(R.color.neutral_trend);
+
+        if (trend > 0) {
+            color = activity.getResources().getColor(R.color.green);
+        } else if (trend < 0) {
+            color = Color.RED;
+        }
+
+        return color;
     }
 
     private class ViewHolder {

@@ -1,5 +1,6 @@
 package com.example.toolbartest.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
@@ -35,9 +36,9 @@ public class VolleyHelper {
         });
     }
 
-    public static synchronized VolleyHelper getInstance(Context context) {
+    public static synchronized VolleyHelper getInstance(Activity activity) {
         if (mInstance == null) {
-            mInstance = new VolleyHelper(context);
+            mInstance = new VolleyHelper(activity.getApplicationContext());
         }
         return mInstance;
     }

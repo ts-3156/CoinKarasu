@@ -15,7 +15,7 @@
 
     <string-array name="default_watch_list_symbols">
         <item>BTC</item>
-        <item>ETC</item>
+        <item>ETH</item>
         <item>XMR</item>
         <item>ZEC</item>
         <item>DASH</item>
