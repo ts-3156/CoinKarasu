@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -34,6 +33,8 @@ public class MainActivity extends AppCompatActivity
     public static final String COIN_ACTIVITY_COIN_SYMBOL_KEY = "COIN_SYMBOL_KEY";
 
     private static final String DEFAULT_COIN_SYMBOLS_RESOURCE_NAME = "default_watch_list_symbols";
+
+    private static final String DEFAULT_TO_SYMBOL = "JPY";
 
     private CoinList coinList;
     CoinArrayAdapter coinArrayAdapter;
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity
         coinArrayAdapter = null;
 
         client = new ClientImpl(this);
-        client.getCoinList(new ClientImpl.CoinListListener() {
+        client.getCoinList(new Client.CoinListListener() {
             @Override
             public void finished(CoinList coinList) {
                 MainActivity.this.coinList = coinList;
@@ -92,19 +93,27 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Coin> collectCoins(final CollectCoinsListener listener) {
         final ArrayList<Coin> coins = new ArrayList<>();
         final String[] coinSymbols = ResourceHelper.getStringArrayResourceByName(this, getCurrentCoinSymbolsResourceName());
+        final String toSymbol = DEFAULT_TO_SYMBOL;
 
-        client.getCoinPrices(coinSymbols, "JPY", new ClientImpl.CoinPricesListener() {
+        client.getCoinPrices(coinSymbols, toSymbol, new Client.CoinPricesListener() {
             @Override
-            public void finished(HashMap<String, Double> prices) {
+            public void finished(HashMap<String, Double> prices, HashMap<String, Double> trends) {
                 for (String coinSymbol : coinSymbols) {
                     Coin coin = coinList.getCoinBySymbol(coinSymbol);
                     if (coin == null) {
                         continue;
                     }
 
+                    coin.setToSymbol(toSymbol);
+
                     Double price = prices.get(coinSymbol);
                     if (price != null) {
                         coin.setPrice(price);
+                    }
+
+                    Double trend = trends.get(coinSymbol);
+                    if (trend != null) {
+                        coin.setTrend(trend);
                     }
 
                     coins.add(coin);

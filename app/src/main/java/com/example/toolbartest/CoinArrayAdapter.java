@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.utils.LocaleHelper;
 import com.example.toolbartest.utils.ResourceHelper;
 import com.example.toolbartest.utils.VolleyHelper;
 
@@ -82,7 +83,7 @@ public class CoinArrayAdapter extends BaseAdapter {
 
         holder.name.setText(coin.getCoinName());
         holder.symbol.setText(coin.getSymbol());
-        holder.price.setText(formatPrice(coin.getPrice(), Locale.JAPAN));
+        holder.price.setText(formatPrice(coin.getPrice(), coin.getToSymbol()));
         holder.trend.setText(formatTrend(coin.getTrend()));
 
         return convertView;
@@ -93,7 +94,8 @@ public class CoinArrayAdapter extends BaseAdapter {
         this.coins.addAll(coins);
     }
 
-    private String formatPrice(double price, Locale locale) {
+    private String formatPrice(double price, String toSymbol) {
+        Locale locale = LocaleHelper.symbolToLocale(toSymbol);
         Currency currency = Currency.getInstance(Currency.getInstance(locale).getCurrencyCode());
         NumberFormat formatter = NumberFormat.getCurrencyInstance(locale);
         return formatter.format(price / Math.pow(10, currency.getDefaultFractionDigits()));
@@ -105,7 +107,7 @@ public class CoinArrayAdapter extends BaseAdapter {
         return formatter.format(trend);
     }
 
-    private ImageLoader getImageLoader () {
+    private ImageLoader getImageLoader() {
         return VolleyHelper.getInstance(activity.getApplicationContext()).getImageLoader();
     }
 

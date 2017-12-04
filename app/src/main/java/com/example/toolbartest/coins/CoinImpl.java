@@ -20,7 +20,9 @@ public class CoinImpl implements Coin {
     private String proofType;
     private String sortOrder;
 
+    private String toSymbol;
     private double price;
+    private double trend;
 
     private CoinImpl(JSONObject attrs) {
         this.attrs = attrs;
@@ -40,6 +42,7 @@ public class CoinImpl implements Coin {
         }
 
         this.price = 0.0;
+        this.trend = 0.0;
     }
 
     public static Coin buildByJSONObject(JSONObject attrs) {
@@ -87,8 +90,13 @@ public class CoinImpl implements Coin {
     }
 
     @Override
+    public void setTrend(double trend) {
+        this.trend = trend;
+    }
+
+    @Override
     public double getTrend() {
-        return 0.0;
+        return trend;
     }
 
     @Override
@@ -117,8 +125,13 @@ public class CoinImpl implements Coin {
     }
 
     @Override
-    public JSONObject getAttrs() {
-        return attrs;
+    public String getToSymbol() {
+        return toSymbol;
+    }
+
+    @Override
+    public void setToSymbol(String toSymbol) {
+        this.toSymbol = toSymbol;
     }
 
     @Override

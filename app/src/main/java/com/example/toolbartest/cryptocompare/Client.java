@@ -2,8 +2,18 @@ package com.example.toolbartest.cryptocompare;
 
 import com.example.toolbartest.coins.CoinList;
 
-public interface Client {
-    void getCoinList(ClientImpl.CoinListListener listener);
+import java.util.HashMap;
 
-    void getCoinPrices(String[] fromSymbols, String toSymbol, ClientImpl.CoinPricesListener listener);
+public interface Client {
+    void getCoinList(Client.CoinListListener listener);
+
+    void getCoinPrices(String[] fromSymbols, String toSymbol, Client.CoinPricesListener listener);
+
+    interface CoinListListener {
+        void finished(CoinList coinList);
+    }
+
+    interface CoinPricesListener {
+        void finished(HashMap<String, Double> prices, HashMap<String, Double> trends);
+    }
 }

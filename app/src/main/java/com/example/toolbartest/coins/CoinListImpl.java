@@ -167,7 +167,4 @@ public class CoinListImpl implements CoinList {
         }
     }
 
-    public interface Listener {
-        void finished(CoinList coinList);
-    }
 }
