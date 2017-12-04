@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.utils.ResourceHelper;
@@ -51,30 +52,40 @@ public class CoinArrayAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
-        if (view == null) {
-            view = layoutInflater.inflate(R.layout.list_coin, parent, false);
+        ViewHolder holder;
+
+        if (convertView == null) {
+            convertView = layoutInflater.inflate(R.layout.list_coin, parent, false);
+            holder = new ViewHolder();
+            holder.icon = convertView.findViewById(R.id.coin_icon);
+            holder.name = convertView.findViewById(R.id.coin_name);
+            holder.symbol = convertView.findViewById(R.id.coin_symbol);
+            holder.price = convertView.findViewById(R.id.coin_price);
+            holder.trend = convertView.findViewById(R.id.coin_trend);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
         Coin coin = (Coin) getItem(position);
-        NetworkImageView image = view.findViewById(R.id.coin_icon);
 
         if (ICON_READY_SYMBOLS.contains(coin.getSymbol())) {
             String name = "ic_coin_" + coin.getSymbol().toLowerCase();
-            image.setDefaultImageResId(ResourceHelper.getDrawableResourceIdByName(activity, name));
+            holder.icon.setDefaultImageResId(ResourceHelper.getDrawableResourceIdByName(activity, name));
+            holder.icon.setImageUrl(null, getImageLoader());
         } else {
             String iconUrl = coin.getImageUrl();
-            image.setDefaultImageResId(R.drawable.ic_coin_android);
-            image.setErrorImageResId(R.drawable.ic_coin_android);
-            image.setImageUrl(iconUrl, VolleyHelper.getInstance(activity.getApplicationContext()).getImageLoader());
+            holder.icon.setDefaultImageResId(R.drawable.ic_coin_android);
+            holder.icon.setErrorImageResId(R.drawable.ic_coin_android);
+            holder.icon.setImageUrl(iconUrl, getImageLoader());
         }
 
-        ((TextView) view.findViewById(R.id.coin_name)).setText(coin.getCoinName());
-        ((TextView) view.findViewById(R.id.coin_symbol)).setText(coin.getSymbol());
-        ((TextView) view.findViewById(R.id.coin_price)).setText(formatPrice(coin.getPrice(), Locale.JAPAN));
-        ((TextView) view.findViewById(R.id.coin_trend)).setText(formatTrend(coin.getTrend()));
+        holder.name.setText(coin.getCoinName());
+        holder.symbol.setText(coin.getSymbol());
+        holder.price.setText(formatPrice(coin.getPrice(), Locale.JAPAN));
+        holder.trend.setText(formatTrend(coin.getTrend()));
 
-        return view;
+        return convertView;
     }
 
     public void setCoins(ArrayList<Coin> coins) {
@@ -92,5 +103,17 @@ public class CoinArrayAdapter extends BaseAdapter {
         NumberFormat formatter = NumberFormat.getPercentInstance();
         formatter.setMinimumFractionDigits(2);
         return formatter.format(trend);
+    }
+
+    private ImageLoader getImageLoader () {
+        return VolleyHelper.getInstance(activity.getApplicationContext()).getImageLoader();
+    }
+
+    class ViewHolder {
+        NetworkImageView icon;
+        TextView name;
+        TextView symbol;
+        TextView price;
+        TextView trend;
     }
 }

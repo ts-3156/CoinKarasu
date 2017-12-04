@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity
         ListView listView = findViewById(R.id.coin_list);
         coinArrayAdapter = new CoinArrayAdapter(this, collectCoins());
         listView.setAdapter(coinArrayAdapter);
+        updateTitle();
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
@@ -128,6 +130,25 @@ public class MainActivity extends AppCompatActivity
     private void updateCoinListView() {
         coinArrayAdapter.setCoins(collectCoins());
         coinArrayAdapter.notifyDataSetChanged();
+        updateTitle();
+    }
+
+    private void updateTitle() {
+        String title = "";
+
+        switch (getCurrentCoinSymbolsResourceName()) {
+            case "default_watch_list_symbols":
+                title = getResources().getString(R.string.default_list);
+                break;
+            case "jpy_toplist_symbols":
+                title = getResources().getString(R.string.jpy_toplist);
+                break;
+            case "usd_toplist_symbols":
+                title = getResources().getString(R.string.usd_toplist);
+                break;
+        }
+
+        getSupportActionBar().setTitle(title);
     }
 
     @Override
