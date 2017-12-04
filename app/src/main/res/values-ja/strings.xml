@@ -7,6 +7,6 @@
     <string name="action_settings">設定</string>
 
     <string name="default_list">メイン</string>
-    <string name="jpy_toplist">円 取引額ランキング</string>
-    <string name="usd_toplist">ドル 取引額ランキング</string>
+    <string name="jpy_toplist">円建てランキング</string>
+    <string name="usd_toplist">ドル建てランキング</string>
 </resources>

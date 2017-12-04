@@ -31,7 +31,7 @@
         <item>ETH</item>
         <item>MONA</item>
         <item>XEM</item>
-        <item>BHC</item>
+        <item>BCH</item>
         <item>QASH</item>
         <item>PEPECASH</item>
         <item>XCP</item>
@@ -64,12 +64,45 @@
         <item>USDT</item>
         <item>DOGE</item>
         <item>CTR</item>
-        <item>START</item>
+        <item>STRAT</item>
         <item>STX</item>
         <item>XDN</item>
         <item>BNT</item>
         <item>EDO</item>
         <item>BCN</item>
         <item>VIB</item>
+    </string-array>
+
+    <string-array name="bitcoin_toplist_symbols">
+        <item>BCH</item>
+        <item>ETH</item>
+        <item>NXT</item>
+        <item>IOT</item>
+        <item>DASH</item>
+        <item>LTC</item>
+        <item>ETC</item>
+        <item>SC</item>
+        <item>BTG</item>
+        <item>EOS</item>
+        <item>NEO</item>
+        <item>XRP</item>
+        <item>ZEC</item>
+        <item>XLM</item>
+        <item>XMR</item>
+        <item>ADA</item>
+        <item>WAVES</item>
+        <item>EMC2</item>
+        <item>VTC</item>
+        <item>GRS</item>
+        <item>THC</item>
+        <item>HSR</item>
+        <item>REP</item>
+        <item>GUP</item>
+        <item>XEM</item>
+        <item>OMG</item>
+        <item>IOP</item>
+        <item>EDG</item>
+        <item>SNT</item>
+        <item>STRAT</item>
     </string-array>
 </resources>

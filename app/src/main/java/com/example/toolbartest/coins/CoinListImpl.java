@@ -4,14 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.toolbartest.MainActivity;
+import com.example.toolbartest.cryptocompare.CoinListResponse;
+import com.example.toolbartest.cryptocompare.CoinListResponseImpl;
+import com.example.toolbartest.cryptocompare.Request;
 import com.example.toolbartest.utils.SnackbarHelper;
-import com.example.toolbartest.utils.VolleyHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -113,36 +109,22 @@ public class CoinListImpl implements CoinList {
         }
 
         public void fetch() {
-            JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            CoinListResponse coinListResponse = new CoinListResponseImpl(response);
+            new Request(activity, URL).perform(new Request.Listener() {
+                @Override
+                public void finished(JSONObject response) {
+                    CoinListResponse coinListResponse = new CoinListResponseImpl(response);
 
-                            if (coinListResponse.isSuccess()) {
-                                CoinList coinList = new CoinListImpl(coinListResponse);
-                                if (listener != null) {
-                                    listener.finished(coinList);
-                                }
-                                coinList.saveToFile(activity);
-                            } else {
-                                SnackbarHelper.showSnackbar(activity, response.toString());
-                            }
+                    if (coinListResponse.isSuccess()) {
+                        CoinList coinList = new CoinListImpl(coinListResponse);
+                        if (listener != null) {
+                            listener.finished(coinList);
                         }
-
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            VolleyError e = new VolleyError(new String(error.networkResponse.data));
-                            SnackbarHelper.showSnackbar(activity, e.getMessage());
-                        }
-
-                    });
-
-            request.setShouldCache(false);
-            request.setRetryPolicy(new DefaultRetryPolicy(10000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            VolleyHelper.getInstance(activity.getApplicationContext()).addToRequestQueue(request);
+                        coinList.saveToFile(activity);
+                    } else {
+                        SnackbarHelper.showSnackbar(activity, response.toString());
+                    }
+                }
+            });
         }
 
         public Fetcher setActivity(Activity activity) {

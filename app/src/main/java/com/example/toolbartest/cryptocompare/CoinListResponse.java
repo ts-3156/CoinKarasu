@@ -1,4 +1,4 @@
-package com.example.toolbartest.coins;
+package com.example.toolbartest.cryptocompare;
 
 import android.app.Activity;
 import android.content.Context;

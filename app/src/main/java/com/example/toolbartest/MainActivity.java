@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -20,11 +19,12 @@ import android.widget.ListView;
 
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.coins.CoinList;
-import com.example.toolbartest.coins.CoinListImpl;
-import com.example.toolbartest.coins.CoinListResponseImpl;
+import com.example.toolbartest.cryptocompare.Client;
+import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.utils.ResourceHelper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -33,8 +33,11 @@ public class MainActivity extends AppCompatActivity
     public static final String COIN_ACTIVITY_COIN_NAME_KEY = "COIN_NAME_KEY";
     public static final String COIN_ACTIVITY_COIN_SYMBOL_KEY = "COIN_SYMBOL_KEY";
 
+    private static final String DEFAULT_COIN_SYMBOLS_RESOURCE_NAME = "default_watch_list_symbols";
+
     private CoinList coinList;
     CoinArrayAdapter coinArrayAdapter;
+    Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,27 +67,20 @@ public class MainActivity extends AppCompatActivity
         coinList = null;
         coinArrayAdapter = null;
 
-        if (CoinListResponseImpl.cacheExists(this)) {
-            Log.d("CoinList cache hit", CoinListResponseImpl.lastModified(this).toString());
-            coinList = CoinListImpl.builder().setActivity(this).build();
-            initializeCoinListView();
-            CoinListImpl.fetcher().setActivity(this).fetch();
-        } else {
-            Log.d("CoinList cache", "Not found");
-            CoinListImpl.fetcher().setActivity(this).setListener(new CoinListImpl.Listener() {
-                @Override
-                public void finished(CoinList coinList) {
-                    MainActivity.this.coinList = coinList;
-                    initializeCoinListView();
-                }
-            }).fetch();
-        }
+        client = new ClientImpl(this);
+        client.getCoinList(new ClientImpl.CoinListListener() {
+            @Override
+            public void finished(CoinList coinList) {
+                MainActivity.this.coinList = coinList;
+                initializeCoinListView();
+            }
+        });
     }
 
     private String getCurrentCoinSymbolsResourceName() {
         String name = getIntent().getStringExtra(MainActivity.MAIN_ACTIVITY_COIN_IDS_RESOURCE_NAME);
         if (name == null) {
-            name = "default_watch_list_symbols";
+            name = DEFAULT_COIN_SYMBOLS_RESOURCE_NAME;
         }
         return name;
     }
@@ -93,51 +89,78 @@ public class MainActivity extends AppCompatActivity
         getIntent().putExtra(MainActivity.MAIN_ACTIVITY_COIN_IDS_RESOURCE_NAME, name);
     }
 
-    private ArrayList<Coin> collectCoins() {
-        ArrayList<Coin> coins = new ArrayList<>();
-        String[] coinSymbols = ResourceHelper.getStringArrayResourceByName(this, getCurrentCoinSymbolsResourceName());
+    private ArrayList<Coin> collectCoins(final CollectCoinsListener listener) {
+        final ArrayList<Coin> coins = new ArrayList<>();
+        final String[] coinSymbols = ResourceHelper.getStringArrayResourceByName(this, getCurrentCoinSymbolsResourceName());
 
-        for (String coinSymbol : coinSymbols) {
-            Coin coin = coinList.getCoinBySymbol(coinSymbol);
-            if (coin == null) {
-                Log.d("Coin not found", coinSymbol);
-            } else {
-                coins.add(coin);
+        client.getCoinPrices(coinSymbols, "JPY", new ClientImpl.CoinPricesListener() {
+            @Override
+            public void finished(HashMap<String, Double> prices) {
+                for (String coinSymbol : coinSymbols) {
+                    Coin coin = coinList.getCoinBySymbol(coinSymbol);
+                    if (coin == null) {
+                        continue;
+                    }
+
+                    Double price = prices.get(coinSymbol);
+                    if (price != null) {
+                        coin.setPrice(price);
+                    }
+
+                    coins.add(coin);
+                }
+
+                listener.finished(coins);
             }
-        }
+        });
 
         return coins;
     }
 
+    private interface CollectCoinsListener {
+        void finished(ArrayList<Coin> coins);
+    }
+
     private void initializeCoinListView() {
-        ListView listView = findViewById(R.id.coin_list);
-        coinArrayAdapter = new CoinArrayAdapter(this, collectCoins());
-        listView.setAdapter(coinArrayAdapter);
-        updateTitle();
+        collectCoins(new CollectCoinsListener() {
+            @Override
+            public void finished(ArrayList<Coin> coins) {
+                ListView listView = findViewById(R.id.coin_list);
+                coinArrayAdapter = new CoinArrayAdapter(MainActivity.this, coins);
+                listView.setAdapter(coinArrayAdapter);
+                updateTitle();
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-                Coin coin = (Coin) ((ListView) parent).getItemAtPosition(pos);
+                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
+                        Coin coin = (Coin) ((ListView) parent).getItemAtPosition(pos);
 
-                Intent intent = new Intent(view.getContext(), CoinActivity.class);
-                intent.putExtra(COIN_ACTIVITY_COIN_NAME_KEY, coin.getCoinName());
-                intent.putExtra(COIN_ACTIVITY_COIN_SYMBOL_KEY, coin.getSymbol());
-                startActivity(intent);
+                        Intent intent = new Intent(view.getContext(), CoinActivity.class);
+                        intent.putExtra(COIN_ACTIVITY_COIN_NAME_KEY, coin.getCoinName());
+                        intent.putExtra(COIN_ACTIVITY_COIN_SYMBOL_KEY, coin.getSymbol());
+                        startActivity(intent);
+                    }
+                });
+
             }
         });
     }
 
     private void updateCoinListView() {
-        coinArrayAdapter.setCoins(collectCoins());
-        coinArrayAdapter.notifyDataSetChanged();
-        updateTitle();
+        collectCoins(new CollectCoinsListener() {
+            @Override
+            public void finished(ArrayList<Coin> coins) {
+                coinArrayAdapter.setCoins(coins);
+                coinArrayAdapter.notifyDataSetChanged();
+                updateTitle();
+            }
+        });
     }
 
     private void updateTitle() {
         String title = "";
 
         switch (getCurrentCoinSymbolsResourceName()) {
-            case "default_watch_list_symbols":
+            case DEFAULT_COIN_SYMBOLS_RESOURCE_NAME:
                 title = getResources().getString(R.string.default_list);
                 break;
             case "jpy_toplist_symbols":
@@ -189,8 +212,8 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            if (!getCurrentCoinSymbolsResourceName().equals("default_watch_list_symbols")) {
-                setCurrentCoinSymbolsResourceName("default_watch_list_symbols");
+            if (!getCurrentCoinSymbolsResourceName().equals(DEFAULT_COIN_SYMBOLS_RESOURCE_NAME)) {
+                setCurrentCoinSymbolsResourceName(DEFAULT_COIN_SYMBOLS_RESOURCE_NAME);
                 updateCoinListView();
             }
         } else if (id == R.id.nav_gallery) {

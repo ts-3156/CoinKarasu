@@ -20,6 +20,8 @@ public class CoinImpl implements Coin {
     private String proofType;
     private String sortOrder;
 
+    private double price;
+
     private CoinImpl(JSONObject attrs) {
         this.attrs = attrs;
         this.icon = null;
@@ -35,8 +37,9 @@ public class CoinImpl implements Coin {
             this.proofType = (String) attrs.get("ProofType");
             this.sortOrder = (String) attrs.get("SortOrder");
         } catch (JSONException e) {
-            e.printStackTrace();
         }
+
+        this.price = 0.0;
     }
 
     public static Coin buildByJSONObject(JSONObject attrs) {
@@ -74,8 +77,13 @@ public class CoinImpl implements Coin {
     }
 
     @Override
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
+    @Override
     public double getPrice() {
-        return 0.0;
+        return price;
     }
 
     @Override

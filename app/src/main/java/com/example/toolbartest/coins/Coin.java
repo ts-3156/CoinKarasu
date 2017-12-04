@@ -6,31 +6,33 @@ import org.json.JSONObject;
 
 public interface Coin {
 
-    public int getId();
+    int getId();
 
-    public Bitmap getIcon();
+    Bitmap getIcon();
 
-    public String getUrl();
+    String getUrl();
 
-    public String getImageUrl();
+    String getImageUrl();
 
-    public String getName();
+    String getName();
 
-    public String getSymbol();
+    String getSymbol();
 
-    public double getPrice();
+    void setPrice(double price);
 
-    public double getTrend();
+    double getPrice();
 
-    public String getCoinName();
+    double getTrend();
 
-    public String getFullName();
+    String getCoinName();
 
-    public String getAlgorithm();
+    String getFullName();
 
-    public String getProofType();
+    String getAlgorithm();
 
-    public String getSortOrder();
+    String getProofType();
 
-    public JSONObject getAttrs();
+    String getSortOrder();
+
+    JSONObject getAttrs();
 }
