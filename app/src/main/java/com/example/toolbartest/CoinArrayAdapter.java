@@ -2,6 +2,7 @@ package com.example.toolbartest;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.utils.LocaleHelper;
 import com.example.toolbartest.utils.ResourceHelper;
+import com.example.toolbartest.utils.StringHelper;
 import com.example.toolbartest.utils.VolleyHelper;
 
 import java.text.NumberFormat;
@@ -83,8 +85,16 @@ public class CoinArrayAdapter extends BaseAdapter {
 
         holder.name.setText(coin.getCoinName());
         holder.symbol.setText(coin.getSymbol());
-        holder.price.setText(formatPrice(coin.getPrice(), coin.getToSymbol()));
-        holder.trend.setText(formatTrend(coin.getTrend()));
+        holder.price.setText(StringHelper.formatPrice(coin.getPrice(), coin.getToSymbol()));
+
+        holder.trend.setText(StringHelper.formatTrend(coin.getTrend()));
+        if (coin.getTrend() > 0) {
+            holder.trend.setTextColor(activity.getResources().getColor(R.color.green));
+        } else if (coin.getTrend() < 0) {
+            holder.trend.setTextColor(Color.RED);
+        } else {
+            holder.trend.setTextColor(activity.getResources().getColor(R.color.neutral_trend));
+        }
 
         return convertView;
     }
@@ -94,24 +104,11 @@ public class CoinArrayAdapter extends BaseAdapter {
         this.coins.addAll(coins);
     }
 
-    private String formatPrice(double price, String toSymbol) {
-        Locale locale = LocaleHelper.symbolToLocale(toSymbol);
-        Currency currency = Currency.getInstance(Currency.getInstance(locale).getCurrencyCode());
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(locale);
-        return formatter.format(price / Math.pow(10, currency.getDefaultFractionDigits()));
-    }
-
-    private String formatTrend(double trend) {
-        NumberFormat formatter = NumberFormat.getPercentInstance();
-        formatter.setMinimumFractionDigits(2);
-        return formatter.format(trend);
-    }
-
     private ImageLoader getImageLoader() {
         return VolleyHelper.getInstance(activity.getApplicationContext()).getImageLoader();
     }
 
-    class ViewHolder {
+    private class ViewHolder {
         NetworkImageView icon;
         TextView name;
         TextView symbol;
