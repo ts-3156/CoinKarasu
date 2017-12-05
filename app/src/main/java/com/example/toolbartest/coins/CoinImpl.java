@@ -24,6 +24,9 @@ public class CoinImpl implements Coin {
     private double price;
     private double trend;
 
+    private double prevPrice;
+    private double prevTrend;
+
     private CoinImpl(JSONObject attrs) {
         this.attrs = attrs;
         this.icon = null;
@@ -43,6 +46,8 @@ public class CoinImpl implements Coin {
 
         this.price = 0.0;
         this.trend = 0.0;
+        this.prevPrice = 0.0;
+        this.prevTrend = 0.0;
     }
 
     public static Coin buildByJSONObject(JSONObject attrs) {
@@ -81,6 +86,7 @@ public class CoinImpl implements Coin {
 
     @Override
     public void setPrice(double price) {
+        prevPrice = this.price;
         this.price = price;
     }
 
@@ -91,6 +97,7 @@ public class CoinImpl implements Coin {
 
     @Override
     public void setTrend(double trend) {
+        prevTrend = this.trend;
         this.trend = trend;
     }
 
@@ -137,5 +144,15 @@ public class CoinImpl implements Coin {
     @Override
     public String toString() {
         return attrs.toString();
+    }
+
+    @Override
+    public double getPrevPrice() {
+        return prevPrice;
+    }
+
+    @Override
+    public double getPrevTrend() {
+        return prevTrend;
     }
 }

@@ -1,29 +1,24 @@
 package com.example.toolbartest;
 
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.toolbartest.coins.Coin;
-import com.example.toolbartest.utils.LocaleHelper;
 import com.example.toolbartest.utils.ResourceHelper;
 import com.example.toolbartest.utils.StringHelper;
 import com.example.toolbartest.utils.VolleyHelper;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.List;
-import java.util.Locale;
 
 public class CoinArrayAdapter extends BaseAdapter {
     private static final List<String> ICON_READY_SYMBOLS =
@@ -88,10 +83,9 @@ public class CoinArrayAdapter extends BaseAdapter {
 
         holder.name.setText(coin.getCoinName());
         holder.symbol.setText(coin.getSymbol());
-        holder.price.setText(StringHelper.formatPrice(coin.getPrice(), coin.getToSymbol()));
 
-        holder.trend.setText(StringHelper.formatTrend(coin.getTrend()));
-        holder.trend.setTextColor(getColor(coin.getTrend()));
+        setPriceAnim(holder.price, coin);
+        setTrendAnim(holder.trend, coin);
 
         return convertView;
     }
@@ -101,7 +95,43 @@ public class CoinArrayAdapter extends BaseAdapter {
         this.coins.addAll(coins);
     }
 
-    private int getColor(double trend) {
+    private void setPriceAnim(final TextView view, final Coin coin) {
+        double prev = coin.getPrevPrice();
+        if (prev == 0.0){
+            prev = 0.95 * coin.getPrice();
+        }
+
+        ValueAnimator animator = ValueAnimator.ofFloat((float) prev, (float) coin.getPrice());
+        animator.setDuration(1000);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                String text = StringHelper.formatPrice(Double.valueOf(animation.getAnimatedValue().toString()), coin.getToSymbol());
+                view.setText(text);
+            }
+        });
+        animator.start();
+    }
+
+    private void setTrendAnim(final TextView view, final Coin coin) {
+        view.setTextColor(getTrendColor(coin.getTrend()));
+
+        double prev = coin.getPrevTrend();
+        if (prev == 0.0){
+            prev = 0.95 * coin.getTrend();
+        }
+
+        ValueAnimator animator = ValueAnimator.ofFloat((float) prev, (float) coin.getTrend());
+        animator.setDuration(1000);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            public void onAnimationUpdate(ValueAnimator animation) {
+                String text = StringHelper.formatTrend(Double.valueOf(animation.getAnimatedValue().toString()));
+                view.setText(text);
+            }
+        });
+        animator.start();
+    }
+
+    private int getTrendColor(double trend) {
         int color = activity.getResources().getColor(R.color.neutral_trend);
 
         if (trend > 0) {

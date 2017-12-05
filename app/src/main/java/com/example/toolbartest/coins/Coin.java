@@ -11,4 +11,8 @@ public interface Coin extends CoinListCoin, PriceMultiFullCoin {
     String getSymbol();
 
     String toString();
+
+    double getPrevPrice();
+
+    double getPrevTrend();
 }
