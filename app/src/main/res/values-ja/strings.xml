@@ -6,7 +6,26 @@
 
     <string name="action_settings">設定</string>
 
-    <string name="default_list">メイン</string>
-    <string name="jpy_toplist">円建てランキング</string>
-    <string name="usd_toplist">ドル建てランキング</string>
+    <string name="nav_main">メイン</string>
+    <string name="nav_custom">カスタム</string>
+    <string name="nav_skyrocket">急上昇</string>
+
+    <string name="nav_fiat">法定通貨</string>
+    <string name="nav_jpy_toplist">円で人気</string>
+    <string name="nav_usd_toplist">ドルで人気</string>
+    <string name="nav_cny_toplist">人民元で人気</string>
+    <string name="nav_eur_toplist">ユーロで人気</string>
+    <string name="nav_gbp_toplist">ポンドで人気</string>
+    <string name="nav_krw_toplist">ウォンで人気</string>
+    <string name="nav_inr_toplist">ルピーで人気</string>
+
+    <string name="nav_crypto">暗号通貨</string>
+    <string name="nav_btc_toplist">BTCで人気</string>
+
+    <string name="nav_japan">日本</string>
+    <string name="nav_japan_all">すべて</string>
+    <string name="nav_bitflyer">BitFlyer</string>
+    <string name="nav_coincheck">Coincheck</string>
+    <string name="nav_zaif">Zaif</string>
+
 </resources>

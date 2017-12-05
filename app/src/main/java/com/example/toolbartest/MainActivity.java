@@ -34,9 +34,15 @@ public class MainActivity extends AppCompatActivity
     public static final String COIN_ACTIVITY_COIN_SYMBOL_KEY = "COIN_SYMBOL_KEY";
 
     private static final String COIN_SYMBOLS_RESOURCE_NAME_KEY = "COIN_SYMBOLS_RESOURCE_NAME_KEY";
-    private static final String DEFAULT_COIN_SYMBOLS_RESOURCE_NAME = "default_watch_list_symbols";
+
+    private static final String DEFAULT_COIN_SYMBOLS_RESOURCE_NAME = "default_symbols";
     private static final String JPY_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME = "jpy_toplist_symbols";
     private static final String USD_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME = "usd_toplist_symbols";
+    private static final String JAPAN_COIN_SYMBOLS_RESOURCE_NAME = "japan_all_symbols";
+    private static final String BITFLYER_COIN_SYMBOLS_RESOURCE_NAME = "bitflyer_symbols";
+    private static final String COINCHECK_COIN_SYMBOLS_RESOURCE_NAME = "coincheck_symbols";
+    private static final String ZAIF_COIN_SYMBOLS_RESOURCE_NAME = "zaif_symbols";
+
     private static final String DEFAULT_TO_SYMBOL = "JPY";
     private static final int AUTO_UPDATE_INTERVAL = 5000;
 
@@ -188,13 +194,13 @@ public class MainActivity extends AppCompatActivity
 
         switch (getCoinSymbolsResourceName()) {
             case DEFAULT_COIN_SYMBOLS_RESOURCE_NAME:
-                title = getResources().getString(R.string.default_list);
+                title = getResources().getString(R.string.nav_main);
                 break;
             case JPY_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME:
-                title = getResources().getString(R.string.jpy_toplist);
+                title = getResources().getString(R.string.nav_jpy_toplist);
                 break;
             case USD_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME:
-                title = getResources().getString(R.string.usd_toplist);
+                title = getResources().getString(R.string.nav_usd_toplist);
                 break;
         }
 
@@ -238,27 +244,41 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_main) {
             if (!getCoinSymbolsResourceName().equals(DEFAULT_COIN_SYMBOLS_RESOURCE_NAME)) {
                 setCoinSymbolsResourceName(DEFAULT_COIN_SYMBOLS_RESOURCE_NAME);
                 refreshCoinListView();
             }
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_jpy_toplist) {
             if (!getCoinSymbolsResourceName().equals(JPY_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME)) {
                 setCoinSymbolsResourceName(JPY_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME);
                 refreshCoinListView();
             }
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_usd_toplist) {
             if (!getCoinSymbolsResourceName().equals(USD_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME)) {
                 setCoinSymbolsResourceName(USD_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME);
                 refreshCoinListView();
             }
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_japan_all) {
+            if (!getCoinSymbolsResourceName().equals(JAPAN_COIN_SYMBOLS_RESOURCE_NAME)) {
+                setCoinSymbolsResourceName(JAPAN_COIN_SYMBOLS_RESOURCE_NAME);
+                refreshCoinListView();
+            }
+        } else if (id == R.id.nav_bitflyer) {
+            if (!getCoinSymbolsResourceName().equals(BITFLYER_COIN_SYMBOLS_RESOURCE_NAME)) {
+                setCoinSymbolsResourceName(BITFLYER_COIN_SYMBOLS_RESOURCE_NAME);
+                refreshCoinListView();
+            }
+        } else if (id == R.id.nav_coincheck) {
+            if (!getCoinSymbolsResourceName().equals(COINCHECK_COIN_SYMBOLS_RESOURCE_NAME)) {
+                setCoinSymbolsResourceName(COINCHECK_COIN_SYMBOLS_RESOURCE_NAME);
+                refreshCoinListView();
+            }
+        } else if (id == R.id.nav_zaif) {
+            if (!getCoinSymbolsResourceName().equals(ZAIF_COIN_SYMBOLS_RESOURCE_NAME)) {
+                setCoinSymbolsResourceName(ZAIF_COIN_SYMBOLS_RESOURCE_NAME);
+                refreshCoinListView();
+            }
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -5,22 +5,81 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_main"
             android:icon="@drawable/ic_menu_camera"
-            android:title="@string/default_list" />
+            android:title="@string/nav_main" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_custom"
+            android:icon="@drawable/ic_menu_camera"
+            android:title="@string/nav_custom" />
+        <item
+            android:id="@+id/nav_skyrocket"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/jpy_toplist" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/usd_toplist" />
-        <item
-            android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="@string/nav_skyrocket" />
     </group>
+
+    <item android:title="@string/nav_japan">
+        <menu>
+            <item
+                android:id="@+id/nav_japan_all"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/nav_japan_all" />
+            <item
+                android:id="@+id/nav_bitflyer"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/nav_bitflyer" />
+            <item
+                android:id="@+id/nav_coincheck"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/nav_coincheck" />
+            <item
+                android:id="@+id/nav_zaif"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/nav_zaif" />
+        </menu>
+    </item>
+
+    <item android:title="@string/nav_fiat">
+        <menu>
+            <item
+                android:id="@+id/nav_jpy_toplist"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/nav_jpy_toplist" />
+            <item
+                android:id="@+id/nav_usd_toplist"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/nav_usd_toplist" />
+            <item
+                android:id="@+id/nav_cny_toplist"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/nav_cny_toplist" />
+            <item
+                android:id="@+id/nav_eur_toplist"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/nav_eur_toplist" />
+            <item
+                android:id="@+id/nav_gbp_toplist"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/nav_gbp_toplist" />
+            <item
+                android:id="@+id/nav_krw_toplist"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/nav_krw_toplist" />
+            <item
+                android:id="@+id/nav_inr_toplist"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/nav_inr_toplist" />
+        </menu>
+    </item>
+
+    <item android:title="@string/nav_crypto">
+        <menu>
+            <item
+                android:id="@+id/nav_btc_toplist"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/nav_btc_toplist" />
+        </menu>
+    </item>
 
     <item android:title="Communicate">
         <menu>

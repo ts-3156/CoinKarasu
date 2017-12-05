@@ -6,7 +6,26 @@
 
     <string name="action_settings">Settings</string>
 
-    <string name="default_list">Main</string>
-    <string name="jpy_toplist">JPY Toplist</string>
-    <string name="usd_toplist">USD Toplist</string>
+    <string name="nav_main">Main</string>
+    <string name="nav_custom">Custom</string>
+    <string name="nav_skyrocket">Skyrocket</string>
+
+    <string name="nav_fiat">Fiat</string>
+    <string name="nav_jpy_toplist">JPY Toplist</string>
+    <string name="nav_usd_toplist">USD Toplist</string>
+    <string name="nav_cny_toplist">CNY Toplist</string>
+    <string name="nav_eur_toplist">EUR Toplist</string>
+    <string name="nav_gbp_toplist">GBP Toplist</string>
+    <string name="nav_krw_toplist">KRW Toplist</string>
+    <string name="nav_inr_toplist">INR Toplist</string>
+
+    <string name="nav_crypto">Crypto</string>
+    <string name="nav_btc_toplist">BTC Toplist</string>
+
+    <string name="nav_japan">Japan</string>
+    <string name="nav_japan_all">All</string>
+    <string name="nav_bitflyer">BitFlyer</string>
+    <string name="nav_coincheck">Coincheck</string>
+    <string name="nav_zaif">Zaif</string>
+
 </resources>

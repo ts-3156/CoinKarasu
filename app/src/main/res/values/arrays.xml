@@ -1,19 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="default_watch_list_ids">
-        <item>1182</item>
-        <item>7605</item>
-        <item>5038</item>
-        <item>24854</item>
-        <item>3807</item>
-        <item>3808</item>
-        <item>202330</item>
-        <item>5324</item>
-        <item>5031</item>
-        <item>20131</item>
-    </string-array>
-
-    <string-array name="default_watch_list_symbols">
+    <string-array name="default_symbols">
         <item>BTC</item>
         <item>ETH</item>
         <item>XMR</item>
@@ -104,5 +91,25 @@
         <item>EDG</item>
         <item>SNT</item>
         <item>STRAT</item>
+    </string-array>
+
+    <string-array name="japan_all_symbols">
+        <item>BTC</item>
+    </string-array>
+
+    <string-array name="bitflyer_symbols">
+        <item>BTC</item>
+    </string-array>
+
+    <string-array name="coincheck_symbols">
+        <item>BTC</item>
+    </string-array>
+
+    <string-array name="zaif_symbols">
+        <item>BTC</item>
+        <item>XEM</item>
+        <item>MONA</item>
+        <item>BCH</item>
+        <item>ETH</item>
     </string-array>
 </resources>
