@@ -9,4 +9,6 @@ public interface Coin extends CoinListCoin, PriceMultiFullCoin {
     Bitmap getIcon();
 
     String getSymbol();
+
+    String toString();
 }
