@@ -1,6 +1,6 @@
 package com.example.toolbartest.cryptocompare;
 
-import com.example.toolbartest.coins.CoinList;
+import com.example.toolbartest.cryptocompare.data.CoinList;
 
 public interface Client {
     void getCoinList(String[] fromSymbols, String toSymbol, CoinListListener listener);

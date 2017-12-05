@@ -4,16 +4,14 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.toolbartest.coins.CoinList;
-import com.example.toolbartest.coins.CoinListImpl;
+import com.example.toolbartest.cryptocompare.data.CoinList;
+import com.example.toolbartest.cryptocompare.data.CoinListImpl;
+import com.example.toolbartest.cryptocompare.data.Prices;
+import com.example.toolbartest.cryptocompare.data.PricesImpl;
+import com.example.toolbartest.cryptocompare.response.CoinListResponseImpl;
 import com.example.toolbartest.tasks.FetchCoinListTask;
-import com.example.toolbartest.utils.StringHelper;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class ClientImpl implements Client {
     private Activity activity;
@@ -24,15 +22,27 @@ public class ClientImpl implements Client {
 
     @Override
     public void getCoinList(final String[] fromSymbols, final String toSymbol, final CoinListListener listener) {
-//        if (CoinListResponseImpl.cacheExists(activity)) {
-//            Log.d("CoinList cache hit", CoinListResponseImpl.lastModified(activity).toString());
-//            CoinList coinList = CoinListImpl.builder().setActivity(activity).build();
-//            if (listener != null) {
-//                listener.finished(coinList);
-//            }
-//            new FetchCoinListTask(activity).setFromSymbols(fromSymbols).setToSymbol(toSymbol).execute();
-//            return;
-//        }
+        if (CoinListResponseImpl.cacheExists(activity)) {
+            Log.d("CoinList cache hit", CoinListResponseImpl.lastModified(activity).toString());
+
+            try {
+                CoinList coinList = CoinListImpl.restoreFromCache(activity);
+                coinList.setFromSymbols(fromSymbols);
+                coinList.setToSymbol(toSymbol);
+
+                Prices prices = PricesImpl.restoreFromCache(activity);
+                coinList.setPrices(prices.getPrices());
+                coinList.setTrends(prices.getTrends());
+
+                if (listener != null) {
+                    listener.finished(coinList);
+                }
+
+                return;
+            } catch (Exception e) {
+                Log.d("getCoinList", e.getMessage());
+            }
+        }
 
         Log.d("CoinList cache", "Not found");
 
@@ -42,8 +52,8 @@ public class ClientImpl implements Client {
                 .setListener(new FetchCoinListTask.Listener() {
                     @Override
                     public void finished(JSONObject coinListResponse, JSONObject coinPricesResponse) {
-                        CoinList coinList = new CoinListImpl(new CoinListResponseImpl(coinListResponse));
-                        Prices prices = Prices.buildByResponse(coinPricesResponse);
+                        CoinList coinList = CoinListImpl.buildByResponse(coinListResponse);
+                        PricesImpl prices = PricesImpl.buildByResponse(coinPricesResponse);
 
                         coinList.setPrices(prices.getPrices());
                         coinList.setTrends(prices.getTrends());
@@ -54,7 +64,8 @@ public class ClientImpl implements Client {
                             listener.finished(coinList);
                         }
 
-                        coinList.saveToFile(activity);
+                        coinList.saveToCache(activity);
+                        prices.saveToCache(activity);
                     }
                 }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

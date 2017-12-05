@@ -1,4 +1,4 @@
-package com.example.toolbartest.cryptocompare;
+package com.example.toolbartest.cryptocompare.response;
 
 import android.content.Context;
 import android.util.Log;
@@ -31,11 +31,6 @@ public class CoinListResponseImpl implements CoinListResponse {
     }
 
     @Override
-    public JSONObject getResponse() {
-        return response;
-    }
-
-    @Override
     public JSONObject getData() {
         if (response == null) {
             return null;
@@ -58,7 +53,7 @@ public class CoinListResponseImpl implements CoinListResponse {
     }
 
     @Override
-    public boolean saveToFile(Context context) {
+    public boolean saveToCache(Context context) {
         if (response == null) {
             return false;
         }
@@ -68,14 +63,14 @@ public class CoinListResponseImpl implements CoinListResponse {
     }
 
     // @Override
-    public static CoinListResponse restoreFromFile(Context context) {
+    public static CoinListResponse restoreFromCache(Context context) {
         String text = CacheHelper.read(context, CACHE_NAME);
         JSONObject response = null;
 
         try {
             response = new JSONObject(text);
         } catch (JSONException e) {
-            Log.d("restoreFromFile", e.getMessage());
+            Log.d("restoreFromCache", e.getMessage());
         }
 
         if (response == null) {

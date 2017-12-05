@@ -1,13 +1,16 @@
-package com.example.toolbartest.coins;
+package com.example.toolbartest.cryptocompare.data;
 
 import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.toolbartest.cryptocompare.CoinListResponse;
-import com.example.toolbartest.cryptocompare.CoinListResponseImpl;
-import com.example.toolbartest.cryptocompare.Prices;
+import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.coins.CoinImpl;
+import com.example.toolbartest.cryptocompare.response.Cacheable;
+import com.example.toolbartest.cryptocompare.response.CoinListResponse;
+import com.example.toolbartest.cryptocompare.response.CoinListResponseImpl;
+import com.example.toolbartest.cryptocompare.response.PricesResponseImpl;
 import com.example.toolbartest.tasks.FetchPricesTask;
 
 import org.json.JSONException;
@@ -30,6 +33,11 @@ public class CoinListImpl implements CoinList {
         this.trends = null;
         this.fromSymbols = null;
         this.toSymbol = null;
+    }
+
+    // @Override
+    public static CoinList buildByResponse(JSONObject response) {
+        return new CoinListImpl(new CoinListResponseImpl(response));
     }
 
     @Override
@@ -118,8 +126,19 @@ public class CoinListImpl implements CoinList {
         return coins;
     }
 
-    public boolean saveToFile(Context context) {
-        return response != null && response.saveToFile(context);
+    @Override
+    public boolean saveToCache(Context context) {
+        return response != null && response.saveToCache(context);
+    }
+
+    // @Override
+    public static CoinList restoreFromCache(Activity activity) {
+        CoinListResponse coinListResponse = CoinListResponseImpl.restoreFromCache(activity);
+        if (coinListResponse == null || !coinListResponse.isSuccess()) {
+            return null;
+        }
+
+        return new CoinListImpl(coinListResponse);
     }
 
     @Override
@@ -148,44 +167,16 @@ public class CoinListImpl implements CoinList {
                 .setFromSymbols(fromSymbols)
                 .setToSymbol(toSymbol)
                 .setListener(new FetchPricesTask.Listener() {
-            @Override
-            public void finished(JSONObject coinPricesResponse) {
-                Prices prices = Prices.buildByResponse(coinPricesResponse);
-                setPrices(prices.getPrices());
-                setTrends(prices.getTrends());
+                    @Override
+                    public void finished(JSONObject coinPricesResponse) {
+                        Prices prices = new PricesImpl(new PricesResponseImpl(coinPricesResponse));
+                        setPrices(prices.getPrices());
+                        setTrends(prices.getTrends());
 
-                if (listener != null) {
-                    listener.finished();
-                }
-            }
-        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        if (listener != null) {
+                            listener.finished();
+                        }
+                    }
+                }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
-
-    // @Override
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    public static class Builder {
-        private Activity activity;
-
-        Builder() {
-            this.activity = null;
-        }
-
-        public CoinList build() {
-            CoinListResponse coinListResponse = CoinListResponseImpl.restoreFromFile(activity);
-            if (coinListResponse == null || !coinListResponse.isSuccess()) {
-                return null;
-            }
-
-            return new CoinListImpl(coinListResponse);
-        }
-
-        public Builder setActivity(Activity activity) {
-            this.activity = activity;
-            return this;
-        }
-    }
-
 }

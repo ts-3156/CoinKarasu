@@ -2,7 +2,6 @@ package com.example.toolbartest;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -19,7 +18,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.toolbartest.coins.Coin;
-import com.example.toolbartest.coins.CoinList;
+import com.example.toolbartest.cryptocompare.data.CoinList;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.utils.ResourceHelper;
