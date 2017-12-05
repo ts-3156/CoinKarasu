@@ -4,22 +4,19 @@ import android.app.Activity;
 
 import com.example.toolbartest.cryptocompare.request.NonBlockingRequest;
 import com.example.toolbartest.cryptocompare.request.Request;
-import com.example.toolbartest.utils.StringHelper;
 
 import org.json.JSONObject;
 
 import java.util.concurrent.CountDownLatch;
 
-public class FetchPricesThread extends Thread {
+public class FetchCoinListThread extends Thread {
     private Activity activity;
     private CountDownLatch latch;
+    private Listener listener;
 
     private JSONObject response;
 
-    private String[] fromSymbols;
-    private String toSymbol;
-
-    public FetchPricesThread(Activity activity) {
+    public FetchCoinListThread(Activity activity) {
         this.activity = activity;
         this.latch = null;
         this.response = null;
@@ -27,11 +24,14 @@ public class FetchPricesThread extends Thread {
 
     @Override
     public void run() {
-        String url = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + StringHelper.join(",", fromSymbols) + "&tsyms=" + toSymbol;
+        String url = "https://www.cryptocompare.com/api/data/coinlist/";
         new NonBlockingRequest(activity, url).perform(new Request.Listener() {
             @Override
             public void finished(JSONObject response) {
-                FetchPricesThread.this.response = response;
+                FetchCoinListThread.this.response = response;
+                if (listener != null) {
+                    listener.finished(response);
+                }
                 if (latch != null) {
                     latch.countDown();
                 }
@@ -39,22 +39,21 @@ public class FetchPricesThread extends Thread {
         });
     }
 
-    public FetchPricesThread setFromSymbols(String[] fromSymbols) {
-        this.fromSymbols = fromSymbols;
-        return this;
-    }
-
-    public FetchPricesThread setToSymbol(String toSymbol) {
-        this.toSymbol = toSymbol;
-        return this;
-    }
-
-    public FetchPricesThread setLatch(CountDownLatch latch) {
+    public FetchCoinListThread setLatch(CountDownLatch latch) {
         this.latch = latch;
+        return this;
+    }
+
+    public FetchCoinListThread setListener(Listener listener) {
+        this.listener = listener;
         return this;
     }
 
     public JSONObject getResponse() {
         return response;
+    }
+
+    public interface Listener {
+        void finished(JSONObject response);
     }
 }

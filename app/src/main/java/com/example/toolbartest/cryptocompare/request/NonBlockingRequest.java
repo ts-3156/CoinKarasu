@@ -1,4 +1,4 @@
-package com.example.toolbartest.cryptocompare;
+package com.example.toolbartest.cryptocompare.request;
 
 import android.app.Activity;
 import android.util.Log;
@@ -11,21 +11,29 @@ import com.example.toolbartest.utils.VolleyHelper;
 
 import org.json.JSONObject;
 
-public class Request {
+public class NonBlockingRequest implements Request {
     private Activity activity;
     private String url;
 
-    public Request(Activity activity, String url) {
+    public NonBlockingRequest(Activity activity, String url) {
         this.activity = activity;
         this.url = url;
     }
 
+    @Override
+    public JSONObject perform() {
+        return null;
+    }
+
+    @Override
     public void perform(final Listener listener) {
         JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        listener.finished(response);
+                        if (listener != null) {
+                            listener.finished(response);
+                        }
                     }
 
                 },
@@ -41,9 +49,5 @@ public class Request {
         request.setShouldCache(true);
         request.setRetryPolicy(new DefaultRetryPolicy(3000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         VolleyHelper.getInstance(activity).addToRequestQueue(request);
-    }
-
-    public interface Listener {
-        void finished(JSONObject response);
     }
 }

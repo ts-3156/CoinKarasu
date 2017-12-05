@@ -36,7 +36,9 @@ public class CoinArrayAdapter extends BaseAdapter {
     public CoinArrayAdapter(Activity activity, ArrayList<Coin> coins) {
         this.activity = activity;
         this.layoutInflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.coins = coins;
+
+        this.coins = new ArrayList<>();
+        coins.addAll(coins);
     }
 
     @Override

@@ -2,16 +2,12 @@ package com.example.toolbartest.cryptocompare.data;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.coins.CoinImpl;
-import com.example.toolbartest.cryptocompare.response.Cacheable;
 import com.example.toolbartest.cryptocompare.response.CoinListResponse;
 import com.example.toolbartest.cryptocompare.response.CoinListResponseImpl;
-import com.example.toolbartest.cryptocompare.response.PricesResponseImpl;
-import com.example.toolbartest.tasks.FetchPricesTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,15 +20,13 @@ public class CoinListImpl implements CoinList {
     private CoinListResponse response;
     private HashMap<String, Double> prices;
     private HashMap<String, Double> trends;
-    private String[] fromSymbols;
-    private String toSymbol;
+    private Prices pricesObj;
 
     public CoinListImpl(CoinListResponse response) {
         this.response = response;
         this.prices = null;
         this.trends = null;
-        this.fromSymbols = null;
-        this.toSymbol = null;
+        this.pricesObj = null;
     }
 
     // @Override
@@ -110,7 +104,7 @@ public class CoinListImpl implements CoinList {
     }
 
     @Override
-    public ArrayList<Coin> collectCoins() {
+    public ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol) {
         final ArrayList<Coin> coins = new ArrayList<>(fromSymbols.length);
 
         for (String coinSymbol : fromSymbols) {
@@ -152,31 +146,9 @@ public class CoinListImpl implements CoinList {
     }
 
     @Override
-    public void setFromSymbols(String[] fromSymbols) {
-        this.fromSymbols = fromSymbols;
-    }
-
-    @Override
-    public void setToSymbol(String toSymbol) {
-        this.toSymbol = toSymbol;
-    }
-
-    @Override
-    public void updatePrices(Activity activity, final UpdatePricesListener listener) {
-        new FetchPricesTask(activity)
-                .setFromSymbols(fromSymbols)
-                .setToSymbol(toSymbol)
-                .setListener(new FetchPricesTask.Listener() {
-                    @Override
-                    public void finished(JSONObject coinPricesResponse) {
-                        Prices prices = new PricesImpl(new PricesResponseImpl(coinPricesResponse));
-                        setPrices(prices.getPrices());
-                        setTrends(prices.getTrends());
-
-                        if (listener != null) {
-                            listener.finished();
-                        }
-                    }
-                }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    public void setPrices(Prices prices) {
+        this.pricesObj = prices;
+        setPrices(prices.getPrices());
+        setTrends(prices.getTrends());
     }
 }

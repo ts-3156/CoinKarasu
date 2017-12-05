@@ -3,6 +3,7 @@ package com.example.toolbartest.cryptocompare.data;
 import android.app.Activity;
 import android.content.Context;
 
+import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.cryptocompare.response.CoinListResponse;
 import com.example.toolbartest.cryptocompare.response.CoinListResponseImpl;
 import com.example.toolbartest.cryptocompare.response.PricesResponse;
@@ -11,6 +12,7 @@ import com.example.toolbartest.cryptocompare.response.PricesResponseImpl;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -70,6 +72,26 @@ public class PricesImpl implements Prices {
 
     private void restorePricesFromCache() {
 
+    }
+
+    @Override
+    public void setPriceAndTrendToCoin(Coin coin) {
+        Double price = prices.get(coin.getSymbol());
+        if (price != null) {
+            coin.setPrice(price);
+        }
+
+        Double trend = trends.get(coin.getSymbol());
+        if (trend != null) {
+            coin.setTrend(trend);
+        }
+    }
+
+    @Override
+    public void setPriceAndTrendToCoins(ArrayList<Coin> coins) {
+        for(Coin coin: coins) {
+            setPriceAndTrendToCoin(coin);
+        }
     }
 
     public HashMap<String, Double> getPrices() {

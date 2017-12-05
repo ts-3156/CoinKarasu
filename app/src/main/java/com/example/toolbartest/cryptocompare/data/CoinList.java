@@ -21,19 +21,15 @@ public interface CoinList extends Cacheable {
 
     com.example.toolbartest.coins.Coin getCoinByCCId(String id);
 
-    ArrayList<Coin> collectCoins();
-
     //    static CoinListImpl.Builder builder();
+
+    ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol);
 
     void setPrices(HashMap<String, Double> prices);
 
     void setTrends(HashMap<String, Double> trends);
 
-    void setFromSymbols(String[] fromSymbols);
-
-    void setToSymbol(String toSymbol);
-
-    void updatePrices(Activity activity, UpdatePricesListener listener);
+    void setPrices(Prices prices);
 
     interface UpdatePricesListener {
         void finished();

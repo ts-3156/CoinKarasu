@@ -3,26 +3,27 @@ package com.example.toolbartest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.toolbartest.coins.Coin;
-import com.example.toolbartest.cryptocompare.data.CoinList;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
+import com.example.toolbartest.cryptocompare.data.Prices;
+import com.example.toolbartest.tasks.GetCoinsTask;
+import com.example.toolbartest.tasks.GetPricesTask;
 import com.example.toolbartest.utils.ResourceHelper;
-import com.example.toolbartest.utils.ToastHelper;
 
 import java.util.ArrayList;
 import java.util.Timer;
@@ -39,9 +40,9 @@ public class MainActivity extends AppCompatActivity
     private static final String JPY_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME = "jpy_toplist_symbols";
     private static final String USD_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME = "usd_toplist_symbols";
     private static final String DEFAULT_TO_SYMBOL = "JPY";
-    private static final int AUTO_UPDATE_INTERVAL = 10000;
+    private static final int AUTO_UPDATE_INTERVAL = 5000;
 
-    private CoinList coinList;
+    private ArrayList<Coin> displayCoins;
     CoinArrayAdapter coinArrayAdapter;
     Client client;
 
@@ -72,20 +73,21 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        coinList = null;
+        displayCoins = new ArrayList<>();
         coinArrayAdapter = null;
 
         client = new ClientImpl(this);
-        String[] coinSymbols = ResourceHelper.getStringArrayResourceByName(this, getCoinSymbolsResourceName());
-        String toSymbol = DEFAULT_TO_SYMBOL;
 
-        client.getCoinList(coinSymbols, toSymbol, new Client.CoinListListener() {
-            @Override
-            public void finished(CoinList coinList) {
-                MainActivity.this.coinList = coinList;
-                initializeCoinListView();
-            }
-        });
+        new GetCoinsTask(client)
+                .setFromSymbols(getCoinSymbols())
+                .setToSymbol(getToSymbol())
+                .setListener(new GetCoinsTask.Listener() {
+                    @Override
+                    public void finished(ArrayList<Coin> coins) {
+                        MainActivity.this.displayCoins = coins;
+                        initializeCoinListView();
+                    }
+                }).execute();
     }
 
     @Override
@@ -124,14 +126,20 @@ public class MainActivity extends AppCompatActivity
         getIntent().putExtra(MainActivity.COIN_SYMBOLS_RESOURCE_NAME_KEY, name);
     }
 
-    private void initializeCoinListView() {
-        ArrayList<Coin> coins = coinList.collectCoins();
-        ListView listView = findViewById(R.id.coin_list);
-        coinArrayAdapter = new CoinArrayAdapter(this, coins);
-        listView.setAdapter(coinArrayAdapter);
-        updateTitle();
-        autoUpdateCoinListPrices(AUTO_UPDATE_INTERVAL);
+    private String[] getCoinSymbols() {
+        return ResourceHelper.getStringArrayResourceByName(this, getCoinSymbolsResourceName());
+    }
 
+    private String getToSymbol() {
+        return DEFAULT_TO_SYMBOL;
+    }
+
+    private void initializeCoinListView() {
+        displayCoins = client.collectCoins(getCoinSymbols(), getToSymbol());
+        coinArrayAdapter = new CoinArrayAdapter(this, displayCoins);
+
+        ListView listView = findViewById(R.id.coin_list);
+        listView.setAdapter(coinArrayAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
                 Coin coin = (Coin) ((ListView) parent).getItemAtPosition(pos);
@@ -142,18 +150,15 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+
+        autoUpdateCoinListPrices(0);
     }
 
-    private void updateCoinListView() {
+    private void refreshCoinListView() {
         cancelAutoUpdateCoinListPrices();
-        coinList.setFromSymbols(ResourceHelper.getStringArrayResourceByName(this, getCoinSymbolsResourceName()));
-        coinList.updatePrices(this, new CoinList.UpdatePricesListener() {
-            @Override
-            public void finished() {
-                updateTitle();
-                autoUpdateCoinListPrices(0);
-            }
-        });
+
+        displayCoins = client.collectCoins(getCoinSymbols(), getToSymbol());
+        autoUpdateCoinListPrices(0);
     }
 
     private void autoUpdateCoinListPrices(int delay) {
@@ -165,18 +170,18 @@ public class MainActivity extends AppCompatActivity
         autoUpdateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (coinList == null) {
-                    return;
-                }
-
-                coinList.updatePrices(MainActivity.this, new CoinList.UpdatePricesListener() {
-                    @Override
-                    public void finished() {
-                        coinArrayAdapter.setCoins(coinList.collectCoins());
-                        coinArrayAdapter.notifyDataSetChanged();
-                        ToastHelper.showToast(MainActivity.this, "Updated", Toast.LENGTH_SHORT);
-                    }
-                });
+                new GetPricesTask(client)
+                        .setFromSymbols(getCoinSymbols())
+                        .setToSymbol(getToSymbol())
+                        .setListener(new GetPricesTask.Listener() {
+                            @Override
+                            public void finished(Prices prices) {
+                                prices.setPriceAndTrendToCoins(displayCoins);
+                                updateTitle();
+                                coinArrayAdapter.setCoins(displayCoins);
+                                coinArrayAdapter.notifyDataSetChanged();
+                            }
+                        }).execute();
             }
         }, delay, AUTO_UPDATE_INTERVAL);
     }
@@ -246,17 +251,17 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_camera) {
             if (!getCoinSymbolsResourceName().equals(DEFAULT_COIN_SYMBOLS_RESOURCE_NAME)) {
                 setCoinSymbolsResourceName(DEFAULT_COIN_SYMBOLS_RESOURCE_NAME);
-                updateCoinListView();
+                refreshCoinListView();
             }
         } else if (id == R.id.nav_gallery) {
             if (!getCoinSymbolsResourceName().equals(JPY_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME)) {
                 setCoinSymbolsResourceName(JPY_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME);
-                updateCoinListView();
+                refreshCoinListView();
             }
         } else if (id == R.id.nav_slideshow) {
             if (!getCoinSymbolsResourceName().equals(USD_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME)) {
                 setCoinSymbolsResourceName(USD_TOPLIST_COIN_SYMBOLS_RESOURCE_NAME);
-                updateCoinListView();
+                refreshCoinListView();
             }
         } else if (id == R.id.nav_manage) {
 

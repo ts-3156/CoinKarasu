@@ -2,7 +2,6 @@ package com.example.toolbartest.tasks;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONObject;
 
@@ -15,7 +14,6 @@ public class FetchPricesTask extends AsyncTask<Integer, Integer, Integer> {
 
     public FetchPricesTask(Activity activity) {
         this.listener = null;
-
         internalThread = new FetchPricesThread(activity);
     }
 
@@ -35,7 +33,7 @@ public class FetchPricesTask extends AsyncTask<Integer, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer integer) {
         if (listener != null) {
-            listener.finished(internalThread.getCoinPricesResponse());
+            listener.finished(internalThread.getResponse());
         }
     }
 
