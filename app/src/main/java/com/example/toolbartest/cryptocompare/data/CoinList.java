@@ -24,14 +24,4 @@ public interface CoinList extends Cacheable {
     //    static CoinListImpl.Builder builder();
 
     ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol);
-
-    void setPrices(HashMap<String, Double> prices);
-
-    void setTrends(HashMap<String, Double> trends);
-
-    void setPrices(Prices prices);
-
-    interface UpdatePricesListener {
-        void finished();
-    }
 }

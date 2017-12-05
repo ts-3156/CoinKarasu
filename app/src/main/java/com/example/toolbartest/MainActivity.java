@@ -10,7 +10,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,7 +20,6 @@ import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.Prices;
-import com.example.toolbartest.tasks.GetCoinsTask;
 import com.example.toolbartest.tasks.GetPricesTask;
 import com.example.toolbartest.utils.ResourceHelper;
 
@@ -78,16 +76,7 @@ public class MainActivity extends AppCompatActivity
 
         client = new ClientImpl(this);
 
-        new GetCoinsTask(client)
-                .setFromSymbols(getCoinSymbols())
-                .setToSymbol(getToSymbol())
-                .setListener(new GetCoinsTask.Listener() {
-                    @Override
-                    public void finished(ArrayList<Coin> coins) {
-                        MainActivity.this.displayCoins = coins;
-                        initializeCoinListView();
-                    }
-                }).execute();
+        initializeCoinListView();
     }
 
     @Override
@@ -137,6 +126,7 @@ public class MainActivity extends AppCompatActivity
     private void initializeCoinListView() {
         displayCoins = client.collectCoins(getCoinSymbols(), getToSymbol());
         coinArrayAdapter = new CoinArrayAdapter(this, displayCoins);
+        updateTitle();
 
         ListView listView = findViewById(R.id.coin_list);
         listView.setAdapter(coinArrayAdapter);
@@ -157,6 +147,7 @@ public class MainActivity extends AppCompatActivity
     private void refreshCoinListView() {
         cancelAutoUpdateCoinListPrices();
 
+        updateTitle();
         displayCoins = client.collectCoins(getCoinSymbols(), getToSymbol());
         autoUpdateCoinListPrices(0);
     }
@@ -177,7 +168,6 @@ public class MainActivity extends AppCompatActivity
                             @Override
                             public void finished(Prices prices) {
                                 prices.setPriceAndTrendToCoins(displayCoins);
-                                updateTitle();
                                 coinArrayAdapter.setCoins(displayCoins);
                                 coinArrayAdapter.notifyDataSetChanged();
                             }
