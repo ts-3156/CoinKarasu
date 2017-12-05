@@ -25,6 +25,7 @@ public class Prices {
             for (Iterator<String> it = raw.keys(); it.hasNext(); ) {
                 String fromSymbol = it.next();
                 JSONObject values = raw.getJSONObject(fromSymbol);
+
                 String toSymbol = values.keys().next();
                 JSONObject attrs = raw.getJSONObject(fromSymbol).getJSONObject(toSymbol);
 

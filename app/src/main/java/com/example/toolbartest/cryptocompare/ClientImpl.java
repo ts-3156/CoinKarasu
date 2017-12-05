@@ -1,6 +1,7 @@
 package com.example.toolbartest.cryptocompare;
 
 import android.app.Activity;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.toolbartest.coins.CoinList;
@@ -55,6 +56,6 @@ public class ClientImpl implements Client {
 
                         coinList.saveToFile(activity);
                     }
-                }).execute();
+                }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 }

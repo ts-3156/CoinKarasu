@@ -2,6 +2,7 @@ package com.example.toolbartest.coins;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.toolbartest.cryptocompare.CoinListResponse;
@@ -102,7 +103,7 @@ public class CoinListImpl implements CoinList {
 
     @Override
     public ArrayList<Coin> collectCoins() {
-        final ArrayList<Coin> coins = new ArrayList<>();
+        final ArrayList<Coin> coins = new ArrayList<>(fromSymbols.length);
 
         for (String coinSymbol : fromSymbols) {
             Coin coin = getCoinBySymbol(coinSymbol);
@@ -157,7 +158,7 @@ public class CoinListImpl implements CoinList {
                     listener.finished();
                 }
             }
-        }).execute();
+        }).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     // @Override
@@ -167,11 +168,9 @@ public class CoinListImpl implements CoinList {
 
     public static class Builder {
         private Activity activity;
-        private String text;
 
         Builder() {
             this.activity = null;
-            this.text = null;
         }
 
         public CoinList build() {
@@ -185,11 +184,6 @@ public class CoinListImpl implements CoinList {
 
         public Builder setActivity(Activity activity) {
             this.activity = activity;
-            return this;
-        }
-
-        public Builder setText(String text) {
-            this.text = text;
             return this;
         }
     }
