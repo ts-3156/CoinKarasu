@@ -14,12 +14,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.toolbartest.R;
 import com.example.toolbartest.adapters.CoinArrayAdapter;
 import com.example.toolbartest.adapters.CustomAdapter;
 import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.coins.SectionHeaderCoinImpl;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.Prices;
@@ -38,8 +40,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final int AUTO_UPDATE_INTERVAL = 5000;
 
-    private ArrayList<Coin> displayCoins;
-    CoinArrayAdapter coinArrayAdapter;
+    private ArrayList<Coin> coins;
     Client client;
 
     private Timer autoUpdateTimer;
@@ -69,11 +70,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        displayCoins = new ArrayList<>();
-        coinArrayAdapter = null;
-
         client = new ClientImpl(this);
-
         initializeCoinListView();
     }
 
@@ -101,16 +98,40 @@ public class MainActivity extends AppCompatActivity
         cancelAutoUpdateCoinListPrices();
     }
 
+    private ArrayList<Coin> insertSectionHeaderToCoins(ArrayList<Coin> coins) {
+        if (!ResNameHelper.getSymbolsName(this).equals(ResNameHelper.SYMBOLS_NAME_JAPAN_ALL)) {
+            return coins;
+        }
+
+        ArrayList<Coin> sectionalCoins = new ArrayList<>();
+
+        for (int i = 0; i < coins.size(); i++) {
+            if (i % 5 == 0) {
+                sectionalCoins.add(new SectionHeaderCoinImpl("Header " + i));
+            }
+
+            Coin coin = coins.get(i);
+            sectionalCoins.add(coin);
+        }
+
+        return sectionalCoins;
+    }
+
     private void initializeCoinListView() {
-        displayCoins = client.collectCoins(ResNameHelper.getFromSymbols(this), ResNameHelper.getToSymbol());
-        coinArrayAdapter = new CoinArrayAdapter(this, displayCoins);
         getSupportActionBar().setTitle(ResNameHelper.getToolbarTitle(this));
 
+        coins = client.collectCoins(ResNameHelper.getFromSymbols(this), ResNameHelper.getToSymbol());
+        CustomAdapter adapter = new CustomAdapter(this, insertSectionHeaderToCoins(coins));
+
         ListView listView = findViewById(R.id.coin_list);
-        listView.setAdapter(coinArrayAdapter);
+        listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
                 Coin coin = (Coin) ((ListView) parent).getItemAtPosition(pos);
+                if (coin.isSectionHeader()) {
+                    return;
+                }
 
                 Intent intent = new Intent(view.getContext(), CoinActivity.class);
                 intent.putExtra(COIN_ACTIVITY_COIN_NAME_KEY, coin.getCoinName());
@@ -124,9 +145,9 @@ public class MainActivity extends AppCompatActivity
 
     private void refreshCoinListView() {
         cancelAutoUpdateCoinListPrices();
-
         getSupportActionBar().setTitle(ResNameHelper.getToolbarTitle(this));
-        displayCoins = client.collectCoins(ResNameHelper.getFromSymbols(this), ResNameHelper.getToSymbol());
+
+        coins = client.collectCoins(ResNameHelper.getFromSymbols(this), ResNameHelper.getToSymbol());
         autoUpdateCoinListPrices(0);
     }
 
@@ -146,9 +167,9 @@ public class MainActivity extends AppCompatActivity
                         .setListener(new GetPricesTask.Listener() {
                             @Override
                             public void finished(Prices prices) {
-                                prices.setPriceAndTrendToCoins(displayCoins);
-                                coinArrayAdapter.setCoins(displayCoins);
-                                coinArrayAdapter.notifyDataSetChanged();
+                                prices.setPriceAndTrendToCoins(coins);
+                                ListView view = findViewById(R.id.coin_list);
+                                ((CustomAdapter) view.getAdapter()).replaceItems(insertSectionHeaderToCoins(coins));
                             }
                         }).execute();
             }

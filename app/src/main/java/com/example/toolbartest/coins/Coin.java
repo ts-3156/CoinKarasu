@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 
 import org.json.JSONObject;
 
-public interface Coin extends CoinListCoin, PriceMultiFullCoin {
+public interface Coin extends CoinListCoin, PriceMultiFullCoin, SectionHeaderCoin {
 
     Bitmap getIcon();
 

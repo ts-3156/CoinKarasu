@@ -155,4 +155,9 @@ public class CoinImpl implements Coin {
     public double getPrevTrend() {
         return prevTrend;
     }
+
+    @Override
+    public boolean isSectionHeader() {
+        return false;
+    }
 }
