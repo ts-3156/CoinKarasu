@@ -12,4 +12,8 @@ public interface PriceMultiFullCoin {
     String getToSymbol();
 
     void setToSymbol(String toSymbol);
+
+    String getExchange();
+
+    void setExchange(String exchange);
 }

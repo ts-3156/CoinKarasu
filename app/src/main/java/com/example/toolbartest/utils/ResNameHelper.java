@@ -9,7 +9,8 @@ public class ResNameHelper {
 
     private static final String COIN_SYMBOLS_RESOURCE_NAME_KEY = "COIN_SYMBOLS_RESOURCE_NAME_KEY";
 
-    public static final String SYMBOLS_NAME_MAIN = "default_symbols";
+//    public static final String SYMBOLS_NAME_MAIN = "default_symbols";
+    public static final String SYMBOLS_NAME_MAIN = "japan_all_symbols";
     public static final String SYMBOLS_NAME_JPY_TOPLIST = "jpy_toplist_symbols";
     public static final String SYMBOLS_NAME_USD_TOPLIST = "usd_toplist_symbols";
     public static final String SYMBOLS_NAME_JAPAN_ALL = "japan_all_symbols";
@@ -40,6 +41,20 @@ public class ResNameHelper {
         return ResourceHelper.getStringArrayResourceByName(activity, getSymbolsName(activity));
     }
 
+    public static String[] getFromSymbolsByExchange(Activity activity, String exchange) {
+        String[] symbols = null;
+
+        if (exchange.equals(EXCHANGE_NAME_BITFLYER)) {
+            symbols = ResourceHelper.getStringArrayResourceByName(activity, SYMBOLS_NAME_BITFLYER);
+        } else if (exchange.equals(EXCHANGE_NAME_COINCHECK)) {
+            symbols = ResourceHelper.getStringArrayResourceByName(activity, SYMBOLS_NAME_COINCHECK);
+        } else if (exchange.equals(EXCHANGE_NAME_ZAIF)) {
+            symbols = ResourceHelper.getStringArrayResourceByName(activity, SYMBOLS_NAME_ZAIF);
+        }
+
+        return symbols;
+    }
+
     public static String getToSymbol() {
         return DEFAULT_TO_SYMBOL;
     }
@@ -58,9 +73,9 @@ public class ResNameHelper {
             case SYMBOLS_NAME_USD_TOPLIST:
                 title = res.getString(R.string.nav_usd_toplist);
                 break;
-            case SYMBOLS_NAME_JAPAN_ALL:
-                title = res.getString(R.string.nav_japan);
-                break;
+//            case SYMBOLS_NAME_JAPAN_ALL:
+//                title = res.getString(R.string.nav_japan);
+//                break;
             case SYMBOLS_NAME_BITFLYER:
                 title = res.getString(R.string.nav_bitflyer);
                 break;
@@ -73,6 +88,10 @@ public class ResNameHelper {
         }
 
         return title;
+    }
+
+    public static boolean hasMultiExchanges(Activity activity) {
+        return getSymbolsName(activity).equals(SYMBOLS_NAME_JAPAN_ALL);
     }
 
     public static String getExchangeName(Activity activity) {

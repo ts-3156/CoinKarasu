@@ -92,6 +92,15 @@ public class SectionHeaderCoinImpl implements Coin {
     }
 
     @Override
+    public String getExchange() {
+        return null;
+    }
+
+    @Override
+    public void setExchange(String exchange) {
+    }
+
+    @Override
     public String toString() {
         return name;
     }

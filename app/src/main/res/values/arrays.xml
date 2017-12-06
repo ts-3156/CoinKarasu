@@ -95,6 +95,12 @@
 
     <string-array name="japan_all_symbols">
         <item>BTC</item>
+        <item>BTC</item>
+        <item>BTC</item>
+        <item>XEM</item>
+        <item>MONA</item>
+        <item>BCH</item>
+        <item>ETH</item>
     </string-array>
 
     <string-array name="bitflyer_symbols">

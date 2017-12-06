@@ -10,25 +10,27 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import com.example.toolbartest.R;
-import com.example.toolbartest.adapters.CoinArrayAdapter;
 import com.example.toolbartest.adapters.CustomAdapter;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.coins.SectionHeaderCoinImpl;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.Prices;
+import com.example.toolbartest.tasks.GetPricesOverJapaneseExchangesTask;
 import com.example.toolbartest.tasks.GetPricesTask;
 import com.example.toolbartest.utils.ResNameHelper;
+import com.example.toolbartest.utils.ResourceHelper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -106,8 +108,12 @@ public class MainActivity extends AppCompatActivity
         ArrayList<Coin> sectionalCoins = new ArrayList<>();
 
         for (int i = 0; i < coins.size(); i++) {
-            if (i % 5 == 0) {
-                sectionalCoins.add(new SectionHeaderCoinImpl("Header " + i));
+            if (i == 0) {
+                sectionalCoins.add(new SectionHeaderCoinImpl(getResources().getString(R.string.nav_bitflyer)));
+            } else if (i == 1) {
+                sectionalCoins.add(new SectionHeaderCoinImpl(getResources().getString(R.string.nav_coincheck)));
+            } else if (i == 2) {
+                sectionalCoins.add(new SectionHeaderCoinImpl(getResources().getString(R.string.nav_zaif)));
             }
 
             Coin coin = coins.get(i);
@@ -160,18 +166,44 @@ public class MainActivity extends AppCompatActivity
         autoUpdateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                new GetPricesTask(client)
-                        .setFromSymbols(ResNameHelper.getFromSymbols(MainActivity.this))
-                        .setToSymbol(ResNameHelper.getToSymbol())
-                        .setExchange(ResNameHelper.getExchangeName(MainActivity.this))
-                        .setListener(new GetPricesTask.Listener() {
-                            @Override
-                            public void finished(Prices prices) {
-                                prices.setPriceAndTrendToCoins(coins);
-                                ListView view = findViewById(R.id.coin_list);
-                                ((CustomAdapter) view.getAdapter()).replaceItems(insertSectionHeaderToCoins(coins));
-                            }
-                        }).execute();
+                if (ResNameHelper.hasMultiExchanges(MainActivity.this)) {
+                    new GetPricesOverJapaneseExchangesTask(client)
+                            .setListener(new GetPricesOverJapaneseExchangesTask.Listener() {
+                                @Override
+                                public void finished(HashMap<String, Prices> map) {
+                                    for (Prices prices : map.values()) {
+                                        switch (prices.getExchange()) {
+                                            case GetPricesOverJapaneseExchangesTask.EXCHANGE_BITFLYER:
+                                                prices.setAttrsToCoin(coins.get(0));
+                                                break;
+                                            case GetPricesOverJapaneseExchangesTask.EXCHANGE_COINCHECK:
+                                                prices.setAttrsToCoin(coins.get(1));
+                                                break;
+                                            case GetPricesOverJapaneseExchangesTask.EXCHANGE_ZAIF:
+                                                prices.setAttrsToCoins(coins.subList(2, coins.size()));
+                                                break;
+                                        }
+                                    }
+
+                                    ListView view = findViewById(R.id.coin_list);
+                                    ((CustomAdapter) view.getAdapter()).replaceItems(insertSectionHeaderToCoins(coins));
+                                }
+                            }).execute();
+
+                } else {
+                    new GetPricesTask(client)
+                            .setFromSymbols(ResNameHelper.getFromSymbols(MainActivity.this))
+                            .setToSymbol(ResNameHelper.getToSymbol())
+                            .setExchange(ResNameHelper.getExchangeName(MainActivity.this))
+                            .setListener(new GetPricesTask.Listener() {
+                                @Override
+                                public void finished(Prices prices) {
+                                    prices.setAttrsToCoins(coins);
+                                    ListView view = findViewById(R.id.coin_list);
+                                    ((CustomAdapter) view.getAdapter()).replaceItems(insertSectionHeaderToCoins(coins));
+                                }
+                            }).execute();
+                }
             }
         }, delay, AUTO_UPDATE_INTERVAL);
     }

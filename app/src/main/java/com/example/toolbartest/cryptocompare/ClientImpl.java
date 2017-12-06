@@ -1,8 +1,6 @@
 package com.example.toolbartest.cryptocompare;
 
 import android.app.Activity;
-import android.os.AsyncTask;
-import android.util.Log;
 
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.cryptocompare.data.CoinList;
@@ -12,9 +10,7 @@ import com.example.toolbartest.cryptocompare.data.PricesImpl;
 import com.example.toolbartest.cryptocompare.request.BlockingRequest;
 import com.example.toolbartest.cryptocompare.response.CoinListResponseImpl;
 import com.example.toolbartest.cryptocompare.response.PricesResponseImpl;
-import com.example.toolbartest.tasks.FetchCoinListTask;
 import com.example.toolbartest.tasks.FetchCoinListThread;
-import com.example.toolbartest.tasks.FetchPricesTask;
 import com.example.toolbartest.utils.StringHelper;
 
 import org.json.JSONObject;
@@ -73,6 +69,6 @@ public class ClientImpl implements Client {
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
         JSONObject response = new BlockingRequest(activity, url).perform();
-        return new PricesImpl(new PricesResponseImpl(response));
+        return new PricesImpl(new PricesResponseImpl(response), exchange);
     }
 }

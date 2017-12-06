@@ -4,26 +4,32 @@ import android.app.Activity;
 import android.content.Context;
 
 import com.example.toolbartest.coins.Coin;
-import com.example.toolbartest.cryptocompare.response.CoinListResponse;
-import com.example.toolbartest.cryptocompare.response.CoinListResponseImpl;
 import com.example.toolbartest.cryptocompare.response.PricesResponse;
 import com.example.toolbartest.cryptocompare.response.PricesResponseImpl;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 
 public class PricesImpl implements Prices {
     private PricesResponse response;
+    private String exchange;
 
     private HashMap<String, Double> prices;
     private HashMap<String, Double> trends;
 
     public PricesImpl(PricesResponse response) {
         this.response = response;
+        this.exchange = null;
+        extract();
+    }
+
+    public PricesImpl(PricesResponse response, String exchange) {
+        this.response = response;
+        this.exchange = exchange;
         extract();
     }
 
@@ -75,7 +81,7 @@ public class PricesImpl implements Prices {
     }
 
     @Override
-    public void setPriceAndTrendToCoin(Coin coin) {
+    public void setAttrsToCoin(Coin coin) {
         Double price = prices.get(coin.getSymbol());
         if (price != null) {
             coin.setPrice(price);
@@ -85,20 +91,21 @@ public class PricesImpl implements Prices {
         if (trend != null) {
             coin.setTrend(trend);
         }
-    }
 
-    @Override
-    public void setPriceAndTrendToCoins(ArrayList<Coin> coins) {
-        for(Coin coin: coins) {
-            setPriceAndTrendToCoin(coin);
+        if (exchange != null) {
+            coin.setExchange(exchange);
         }
     }
 
-    public HashMap<String, Double> getPrices() {
-        return prices;
+    @Override
+    public void setAttrsToCoins(List<Coin> coins) {
+        for(Coin coin: coins) {
+            setAttrsToCoin(coin);
+        }
     }
 
-    public HashMap<String, Double> getTrends() {
-        return trends;
+    @Override
+    public String getExchange() {
+        return exchange;
     }
 }

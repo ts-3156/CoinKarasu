@@ -2,12 +2,8 @@ package com.example.toolbartest.tasks;
 
 import android.os.AsyncTask;
 
-import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.data.Prices;
-import com.example.toolbartest.utils.ResourcesAdditions;
-
-import java.util.ArrayList;
 
 public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
     private Listener listener;

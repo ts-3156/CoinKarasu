@@ -18,7 +18,7 @@
             android:title="@string/nav_skyrocket" />
     </group>
 
-    <item android:title="@string/nav_japan">
+    <item android:visible="false" android:title="@string/nav_japan">
         <menu>
             <item
                 android:id="@+id/nav_japan_all"

@@ -23,6 +23,7 @@ public class CoinImpl implements Coin {
     private String toSymbol;
     private double price;
     private double trend;
+    private String exchange;
 
     private double prevPrice;
     private double prevTrend;
@@ -46,6 +47,7 @@ public class CoinImpl implements Coin {
 
         this.price = 0.0;
         this.trend = 0.0;
+        this.exchange = null;
         this.prevPrice = 0.0;
         this.prevTrend = 0.0;
     }
@@ -139,6 +141,16 @@ public class CoinImpl implements Coin {
     @Override
     public void setToSymbol(String toSymbol) {
         this.toSymbol = toSymbol;
+    }
+
+    @Override
+    public String getExchange() {
+        return exchange;
+    }
+
+    @Override
+    public void setExchange(String exchange) {
+        this.exchange = exchange;
     }
 
     @Override

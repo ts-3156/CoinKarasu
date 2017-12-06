@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2F2F2F"
+    android:background="#eeeeee"
     android:orientation="vertical">
 
     <TextView
@@ -12,10 +12,6 @@
         android:gravity="center"
         android:padding="8dp"
         android:text=""
-        android:textAllCaps="true"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="#FFF"
-        android:textStyle="bold"
-        android:visibility="visible" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
 </LinearLayout>
