@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.data.Prices;
+import com.example.toolbartest.utils.ResourcesAdditions;
 
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
     private Prices prices;
     private String[] fromSymbols;
     private String toSymbol;
+    private String exchange;
 
     public GetPricesTask(Client client) {
         this.listener = null;
@@ -21,11 +23,12 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
         this.prices = null;
         this.fromSymbols = null;
         this.toSymbol = null;
+        this.exchange = null;
     }
 
     @Override
     protected Integer doInBackground(Integer... params) {
-        prices = client.getPrices(fromSymbols, toSymbol);
+        prices = client.getPrices(fromSymbols, toSymbol, exchange);
         return 200;
     }
 
@@ -43,6 +46,11 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
 
     public GetPricesTask setToSymbol(String toSymbol) {
         this.toSymbol = toSymbol;
+        return this;
+    }
+
+    public GetPricesTask setExchange(String exchange) {
+        this.exchange = exchange;
         return this;
     }
 

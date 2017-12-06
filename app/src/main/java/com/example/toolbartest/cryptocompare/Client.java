@@ -9,4 +9,6 @@ public interface Client {
     ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol);
 
     Prices getPrices(String[] fromSymbols, String toSymbol);
+
+    Prices getPrices(String[] fromSymbols, String toSymbol, String exchange);
 }

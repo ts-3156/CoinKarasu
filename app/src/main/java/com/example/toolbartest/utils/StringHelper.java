@@ -1,5 +1,7 @@
 package com.example.toolbartest.utils;
 
+import android.util.Log;
+
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
@@ -22,11 +24,19 @@ public class StringHelper {
         Locale locale = LocaleHelper.symbolToLocale(toSymbol);
         Currency currency = Currency.getInstance(Currency.getInstance(locale).getCurrencyCode());
         NumberFormat formatter = NumberFormat.getCurrencyInstance(locale);
+        if (price > 1000.0) {
+            formatter.setMaximumFractionDigits(0);
+            formatter.setMinimumFractionDigits(0);
+        } else {
+            formatter.setMaximumFractionDigits(2);
+            formatter.setMinimumFractionDigits(2);
+        }
         return formatter.format(price / Math.pow(10, currency.getDefaultFractionDigits()));
     }
 
     public static String formatTrend(double trend) {
         NumberFormat formatter = NumberFormat.getPercentInstance();
+        formatter.setMaximumFractionDigits(2);
         formatter.setMinimumFractionDigits(2);
         return formatter.format(trend);
     }

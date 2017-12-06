@@ -62,8 +62,16 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public Prices getPrices(final String[] fromSymbols, final String toSymbol) {
-        String url = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + StringHelper.join(",", fromSymbols) + "&tsyms=" + toSymbol;
+    public Prices getPrices(String[] fromSymbols, String toSymbol) {
+        return getPrices(fromSymbols, toSymbol, "cccagg");
+    }
+
+    @Override
+    public Prices getPrices(String[] fromSymbols, String toSymbol, String exchange) {
+        String url = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms="
+                + StringHelper.join(",", fromSymbols)
+                + "&tsyms=" + toSymbol
+                + "&e=" + exchange;
         JSONObject response = new BlockingRequest(activity, url).perform();
         return new PricesImpl(new PricesResponseImpl(response));
     }
