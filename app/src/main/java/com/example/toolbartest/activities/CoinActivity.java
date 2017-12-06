@@ -1,11 +1,12 @@
-package com.example.toolbartest;
+package com.example.toolbartest.activities;
 
 import android.content.Intent;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+
+import com.example.toolbartest.R;
 
 public class CoinActivity extends AppCompatActivity {
 

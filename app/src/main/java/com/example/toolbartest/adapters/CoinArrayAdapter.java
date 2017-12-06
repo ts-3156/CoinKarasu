@@ -1,4 +1,4 @@
-package com.example.toolbartest;
+package com.example.toolbartest.adapters;
 
 import android.animation.ValueAnimator;
 import android.app.Activity;
@@ -11,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.example.toolbartest.R;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.utils.ResourceHelper;
 import com.example.toolbartest.utils.StringHelper;
@@ -56,7 +57,7 @@ public class CoinArrayAdapter extends BaseAdapter {
         ViewHolder holder;
 
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.list_coin, parent, false);
+            convertView = layoutInflater.inflate(R.layout.list_row_item, parent, false);
             holder = new ViewHolder();
             holder.icon = convertView.findViewById(R.id.coin_icon);
             holder.name = convertView.findViewById(R.id.coin_name);

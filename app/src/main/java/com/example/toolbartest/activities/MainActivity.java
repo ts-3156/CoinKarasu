@@ -1,4 +1,4 @@
-package com.example.toolbartest;
+package com.example.toolbartest.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +16,9 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.toolbartest.R;
+import com.example.toolbartest.adapters.CoinArrayAdapter;
+import com.example.toolbartest.adapters.CustomAdapter;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
