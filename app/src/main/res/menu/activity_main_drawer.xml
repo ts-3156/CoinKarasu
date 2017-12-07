@@ -9,16 +9,22 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/nav_main" />
         <item
-            android:id="@+id/nav_custom"
-            android:icon="@drawable/ic_menu_camera"
-            android:title="@string/nav_custom" />
+            android:id="@+id/nav_jpy_toplist"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/nav_jpy_toplist" />
+        <item
+            android:id="@+id/nav_usd_toplist"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/nav_usd_toplist" />
         <item
             android:id="@+id/nav_skyrocket"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/nav_skyrocket" />
     </group>
 
-    <item android:visible="false" android:title="@string/nav_japan">
+    <item
+        android:title="@string/nav_japan"
+        android:visible="false">
         <menu>
             <item
                 android:id="@+id/nav_japan_all"
@@ -39,16 +45,10 @@
         </menu>
     </item>
 
-    <item android:title="@string/nav_fiat">
+    <item
+        android:title="@string/nav_fiat"
+        android:visible="false">
         <menu>
-            <item
-                android:id="@+id/nav_jpy_toplist"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/nav_jpy_toplist" />
-            <item
-                android:id="@+id/nav_usd_toplist"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/nav_usd_toplist" />
             <item
                 android:id="@+id/nav_cny_toplist"
                 android:icon="@drawable/ic_menu_share"
@@ -72,7 +72,7 @@
         </menu>
     </item>
 
-    <item android:title="@string/nav_crypto">
+    <item android:title="@string/nav_crypto" android:visible="false">
         <menu>
             <item
                 android:id="@+id/nav_btc_toplist"
@@ -81,7 +81,9 @@
         </menu>
     </item>
 
-    <item android:title="Communicate">
+    <item
+        android:title="Communicate"
+        android:visible="false">
         <menu>
             <item
                 android:id="@+id/nav_share"

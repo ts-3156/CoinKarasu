@@ -2,6 +2,7 @@ package com.example.toolbartest.cryptocompare.data;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.cryptocompare.response.PricesResponse;
@@ -34,13 +35,14 @@ public class PricesImpl implements Prices {
     }
 
     private void extract() {
-        JSONObject raw = response.getRaw();
-        if (raw == null) {
-            return;
-        }
-
         prices = new HashMap<>();
         trends = new HashMap<>();
+
+        JSONObject raw = response.getRaw();
+        if (raw == null) {
+            Log.d("extract", response.toString());
+            return;
+        }
 
         try {
             for (Iterator<String> it = raw.keys(); it.hasNext(); ) {

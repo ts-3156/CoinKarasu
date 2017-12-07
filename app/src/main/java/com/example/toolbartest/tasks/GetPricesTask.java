@@ -1,6 +1,7 @@
 package com.example.toolbartest.tasks;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.data.Prices;

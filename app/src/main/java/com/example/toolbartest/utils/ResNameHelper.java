@@ -94,6 +94,10 @@ public class ResNameHelper {
         return getSymbolsName(activity).equals(SYMBOLS_NAME_JAPAN_ALL);
     }
 
+    public static boolean useFixedListView(Activity activity) {
+        return getSymbolsName(activity).equals(SYMBOLS_NAME_JAPAN_ALL);
+    }
+
     public static String getExchangeName(Activity activity) {
         String symbolsName = getSymbolsName(activity);
         String name = EXCHANGE_NAME_DEFAULT;

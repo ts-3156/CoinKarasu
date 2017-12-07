@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/coin_icon"
-        android:text="Coin name"
+        android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <TextView
@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/coin_name"
         android:layout_toRightOf="@+id/coin_icon"
-        android:text="Coin symbol"
+        android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
     <TextView
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/coin_name"
         android:layout_alignParentRight="true"
-        android:text="9999.99"
+        android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <TextView
@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/coin_symbol"
         android:layout_alignParentRight="true"
-        android:text="99.99"
+        android:text=""
         android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
 

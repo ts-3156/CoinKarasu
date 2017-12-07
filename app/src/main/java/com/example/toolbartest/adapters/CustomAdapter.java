@@ -1,9 +1,7 @@
 package com.example.toolbartest.adapters;
 
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +11,8 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.toolbartest.R;
 import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.utils.AnimHelper;
 import com.example.toolbartest.utils.ResourceHelper;
-import com.example.toolbartest.utils.StringHelper;
 import com.example.toolbartest.utils.VolleyHelper;
 
 import java.util.ArrayList;
@@ -23,7 +21,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 public class CustomAdapter extends BaseAdapter {
-    private static final List<String> ICON_READY_SYMBOLS =
+    public static final List<String> ICON_READY_SYMBOLS =
             Arrays.asList("BCH", "BTC", "ETC", "ETH", "LTC", "MONA", "REP", "XEM", "XMR", "XRP", "ZEC");
 
     private static final int TYPE_ITEM = 0;
@@ -40,7 +38,7 @@ public class CustomAdapter extends BaseAdapter {
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public CustomAdapter(Activity activity, ArrayList<Coin> coins) {
+    public CustomAdapter(Activity activity, List<Coin> coins) {
         this.activity = activity;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -57,7 +55,7 @@ public class CustomAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    public void replaceItems(ArrayList<Coin> coins) {
+    public void replaceItems(List<Coin> coins) {
         this.coins = new ArrayList<>();
         sectionHeader = new TreeSet<>();
         for (Coin coin : coins) {
@@ -130,62 +128,14 @@ public class CustomAdapter extends BaseAdapter {
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());
 
-            setPriceAnim(holder.price, coin);
-            setTrendAnim(holder.trend, coin);
+            AnimHelper.setPriceAnim(holder.price, coin);
+            AnimHelper.setTrendAnim(activity, holder.trend, coin);
         } else if (rowType == TYPE_HEADER) {
             holder.name.setText(coin.getName());
         }
 
 
         return convertView;
-    }
-
-    private void setPriceAnim(final TextView view, final Coin coin) {
-        double prev = coin.getPrevPrice();
-        if (prev == 0.0) {
-            prev = 0.95 * coin.getPrice();
-        }
-
-        ValueAnimator animator = ValueAnimator.ofFloat((float) prev, (float) coin.getPrice());
-        animator.setDuration(1000);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
-                String text = StringHelper.formatPrice(Double.valueOf(animation.getAnimatedValue().toString()), coin.getToSymbol());
-                view.setText(text);
-            }
-        });
-        animator.start();
-    }
-
-    private void setTrendAnim(final TextView view, final Coin coin) {
-        view.setTextColor(getTrendColor(coin.getTrend()));
-
-        double prev = coin.getPrevTrend();
-        if (prev == 0.0) {
-            prev = 0.95 * coin.getTrend();
-        }
-
-        ValueAnimator animator = ValueAnimator.ofFloat((float) prev, (float) coin.getTrend());
-        animator.setDuration(1000);
-        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            public void onAnimationUpdate(ValueAnimator animation) {
-                String text = StringHelper.formatTrend(Double.valueOf(animation.getAnimatedValue().toString()));
-                view.setText(text);
-            }
-        });
-        animator.start();
-    }
-
-    private int getTrendColor(double trend) {
-        int color = activity.getResources().getColor(R.color.neutral_trend);
-
-        if (trend > 0) {
-            color = activity.getResources().getColor(R.color.green);
-        } else if (trend < 0) {
-            color = Color.RED;
-        }
-
-        return color;
     }
 
     private class ViewHolder {
