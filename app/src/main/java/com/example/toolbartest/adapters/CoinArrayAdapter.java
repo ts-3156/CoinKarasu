@@ -98,8 +98,10 @@ public class CoinArrayAdapter extends BaseAdapter {
 
     private void setPriceAnim(final TextView view, final Coin coin) {
         double prev = coin.getPrevPrice();
-        if (prev == 0.0){
+        if (prev < 0.95 * coin.getPrice()){
             prev = 0.95 * coin.getPrice();
+        } else if (prev > 1.05 * coin.getPrice()) {
+            prev = 1.05 * coin.getPrice();
         }
 
         ValueAnimator animator = ValueAnimator.ofFloat((float) prev, (float) coin.getPrice());

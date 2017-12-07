@@ -22,7 +22,7 @@ public class StringHelper {
         Locale locale = LocaleHelper.symbolToLocale(toSymbol);
         Currency currency = Currency.getInstance(Currency.getInstance(locale).getCurrencyCode());
         NumberFormat formatter = NumberFormat.getCurrencyInstance(locale);
-        String value = "";
+        String value;
 
         if (toSymbol.equals("JPY")) {
             if (price > 1000.0) {

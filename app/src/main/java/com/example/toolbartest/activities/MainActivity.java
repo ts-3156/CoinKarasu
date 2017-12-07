@@ -1,6 +1,7 @@
 package com.example.toolbartest.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -10,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -28,12 +30,12 @@ import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.Prices;
 import com.example.toolbartest.tasks.GetPricesOverJapaneseExchangesTask;
 import com.example.toolbartest.tasks.GetPricesTask;
+import com.example.toolbartest.timer.AutoUpdateTimer;
 import com.example.toolbartest.utils.ResNameHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<Coin> coins;
     Client client;
 
-    private Timer autoUpdateTimer;
+    private AutoUpdateTimer autoUpdateTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -141,7 +143,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initializeCoinListView() {
-        getSupportActionBar().setTitle(ResNameHelper.getToolbarTitle(this));
+        updateToolbarTitle();
 
         String toSymbol = ResNameHelper.useFixedListView(this) ? "JPY" : getToSymbol();
         coins = client.collectCoins(ResNameHelper.getFromSymbols(this), toSymbol);
@@ -153,7 +155,7 @@ public class MainActivity extends AppCompatActivity
 
     private void refreshCoinListView() {
         stopAutoUpdate();
-        getSupportActionBar().setTitle(ResNameHelper.getToolbarTitle(this));
+        updateToolbarTitle();
 
         String toSymbol = ResNameHelper.useFixedListView(this) ? "JPY" : getToSymbol();
         coins = client.collectCoins(ResNameHelper.getFromSymbols(this), toSymbol);
@@ -161,6 +163,14 @@ public class MainActivity extends AppCompatActivity
         replaceFragment();
         applyKeepScreenOn();
         startAutoUpdate(0);
+    }
+
+    public void setToSymbol(String toSymbol) {
+        SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putString("pref_currency", toSymbol);
+        edit.apply();
     }
 
     public String getToSymbol() {
@@ -202,8 +212,7 @@ public class MainActivity extends AppCompatActivity
             interval = 10000;
         }
 
-
-        autoUpdateTimer = new Timer();
+        autoUpdateTimer = new AutoUpdateTimer(getToSymbol());
 
         autoUpdateTimer.schedule(new TimerTask() {
             @Override
@@ -213,7 +222,7 @@ public class MainActivity extends AppCompatActivity
                             .setListener(new GetPricesOverJapaneseExchangesTask.Listener() {
                                 @Override
                                 public void finished(HashMap<String, Prices> map) {
-                                    if (autoUpdateTimer == null) {
+                                    if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(getToSymbol())) {
                                         return;
                                     }
                                     map.get(GetPricesOverJapaneseExchangesTask.EXCHANGE_BITFLYER).setAttrsToCoin(coins.get(0));
@@ -236,7 +245,7 @@ public class MainActivity extends AppCompatActivity
                             .setListener(new GetPricesTask.Listener() {
                                 @Override
                                 public void finished(Prices prices) {
-                                    if (autoUpdateTimer == null) {
+                                    if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(getToSymbol())) {
                                         return;
                                     }
                                     prices.setAttrsToCoins(coins);
@@ -260,6 +269,32 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public void updateToolbarTitle() {
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setTitle(ResNameHelper.getToolbarTitle(this));
+        }
+    }
+
+    private void updateCurrencyMenuTitle(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_currency);
+        if (item == null) {
+            return;
+        }
+
+        if (ResNameHelper.useFixedListView(this)) {
+            item.setVisible(false);
+        } else {
+            item.setVisible(true);
+
+            if (getToSymbol().equals("JPY")) {
+                item.setTitle("USD");
+            } else {
+                item.setTitle("JPY");
+            }
+        }
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -272,8 +307,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        updateCurrencyMenuTitle(menu);
         return true;
     }
 
@@ -281,7 +321,6 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             stopAutoUpdate();
             Intent intent = new Intent(this, SettingsActivity.class);
@@ -295,6 +334,13 @@ public class MainActivity extends AppCompatActivity
             } else {
                 startAutoUpdate(0);
             }
+
+            return true;
+        } else if (id == R.id.action_currency) {
+            stopAutoUpdate();
+            setToSymbol(item.getTitle().toString());
+            coins = client.collectCoins(ResNameHelper.getFromSymbols(this), getToSymbol());
+            startAutoUpdate(0);
 
             return true;
         }
