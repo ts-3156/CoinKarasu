@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.example.toolbartest.R;
 import com.example.toolbartest.activities.settings.SettingsActivity;
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity
         super.onResume();
 
         if (autoUpdateTimer == null) {
+            applyKeepScreenOn();
             autoUpdateCoinListPrices(0);
         }
     }
@@ -142,6 +144,7 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle(ResNameHelper.getToolbarTitle(this));
         coins = client.collectCoins(ResNameHelper.getFromSymbols(this), ResNameHelper.getToSymbol());
         replaceFragment();
+        applyKeepScreenOn();
         autoUpdateCoinListPrices(0);
     }
 
@@ -150,7 +153,22 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setTitle(ResNameHelper.getToolbarTitle(this));
         coins = client.collectCoins(ResNameHelper.getFromSymbols(this), ResNameHelper.getToSymbol());
         replaceFragment();
+        applyKeepScreenOn();
         autoUpdateCoinListPrices(0);
+    }
+
+    private void applyKeepScreenOn() {
+        boolean value = PreferenceManager
+                .getDefaultSharedPreferences(getApplicationContext())
+                .getBoolean("pref_keep_screen_on", false);
+
+        if (value) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        } else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
+        Log.d("KeepScrOn", "" + value);
     }
 
     private void autoUpdateCoinListPrices(int delay) {
