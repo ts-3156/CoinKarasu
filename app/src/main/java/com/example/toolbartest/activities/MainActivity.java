@@ -3,6 +3,7 @@ package com.example.toolbartest.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -40,8 +41,6 @@ public class MainActivity extends AppCompatActivity
 
     public static final String COIN_ACTIVITY_COIN_NAME_KEY = "COIN_NAME_KEY";
     public static final String COIN_ACTIVITY_COIN_SYMBOL_KEY = "COIN_SYMBOL_KEY";
-
-    private static final int AUTO_UPDATE_INTERVAL = 5000;
 
     private ArrayList<Coin> coins;
     Client client;
@@ -86,7 +85,10 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        autoUpdateCoinListPrices(0);
+
+        if (autoUpdateTimer == null) {
+            autoUpdateCoinListPrices(0);
+        }
     }
 
     @Override
@@ -153,8 +155,24 @@ public class MainActivity extends AppCompatActivity
 
     private void autoUpdateCoinListPrices(int delay) {
         if (autoUpdateTimer != null) {
+            stopAutoUpdateTimer();
+        }
+
+        String value = PreferenceManager
+                .getDefaultSharedPreferences(getApplicationContext())
+                .getString("sync_frequency", "10000");
+        int interval = Integer.valueOf(value);
+
+        if (interval <= 0) {
             return;
         }
+
+        if (interval < 5000) {
+            Log.d("Interval", "" + interval);
+            interval = 10000;
+        }
+
+
         autoUpdateTimer = new Timer();
 
         autoUpdateTimer.schedule(new TimerTask() {
@@ -198,7 +216,7 @@ public class MainActivity extends AppCompatActivity
                             }).execute();
                 }
             }
-        }, delay, AUTO_UPDATE_INTERVAL);
+        }, delay, interval);
     }
 
     public void stopAutoUpdateTimer() {
