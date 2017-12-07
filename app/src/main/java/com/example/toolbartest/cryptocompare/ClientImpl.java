@@ -1,6 +1,7 @@
 package com.example.toolbartest.cryptocompare;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.cryptocompare.data.CoinList;
@@ -68,6 +69,7 @@ public class ClientImpl implements Client {
                 + StringHelper.join(",", fromSymbols)
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
+        Log.d("URL", url);
         JSONObject response = new BlockingRequest(activity, url).perform();
         return new PricesImpl(new PricesResponseImpl(response), exchange);
     }

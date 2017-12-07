@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public ArrayList<Coin> getSectionInsertedCoins() {
-        if (!ResNameHelper.getSymbolsName(this).equals(ResNameHelper.SYMBOLS_NAME_JAPAN_ALL)) {
+        if (!ResNameHelper.useFixedListView(this)) {
             return coins;
         }
 
@@ -142,7 +142,10 @@ public class MainActivity extends AppCompatActivity
 
     private void initializeCoinListView() {
         getSupportActionBar().setTitle(ResNameHelper.getToolbarTitle(this));
-        coins = client.collectCoins(ResNameHelper.getFromSymbols(this), ResNameHelper.getToSymbol());
+
+        String toSymbol = ResNameHelper.useFixedListView(this) ? "JPY" : getToSymbol();
+        coins = client.collectCoins(ResNameHelper.getFromSymbols(this), toSymbol);
+
         replaceFragment();
         applyKeepScreenOn();
         startAutoUpdate(0);
@@ -151,10 +154,19 @@ public class MainActivity extends AppCompatActivity
     private void refreshCoinListView() {
         stopAutoUpdate();
         getSupportActionBar().setTitle(ResNameHelper.getToolbarTitle(this));
-        coins = client.collectCoins(ResNameHelper.getFromSymbols(this), ResNameHelper.getToSymbol());
+
+        String toSymbol = ResNameHelper.useFixedListView(this) ? "JPY" : getToSymbol();
+        coins = client.collectCoins(ResNameHelper.getFromSymbols(this), toSymbol);
+
         replaceFragment();
         applyKeepScreenOn();
         startAutoUpdate(0);
+    }
+
+    public String getToSymbol() {
+        return PreferenceManager
+                .getDefaultSharedPreferences(getApplicationContext())
+                .getString("pref_currency", "JPY");
     }
 
     private void applyKeepScreenOn() {
@@ -178,7 +190,7 @@ public class MainActivity extends AppCompatActivity
 
         String value = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext())
-                .getString("sync_frequency", "10000");
+                .getString("pref_sync_frequency", "10000");
         int interval = Integer.valueOf(value);
 
         if (interval <= 0) {
@@ -209,15 +221,17 @@ public class MainActivity extends AppCompatActivity
                                     map.get(GetPricesOverJapaneseExchangesTask.EXCHANGE_ZAIF).setAttrsToCoins(coins.subList(2, coins.size()));
 
                                     Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragment");
-                                    ((FixedMainFragment) fragment).updateCoinListView(getSectionInsertedCoins());
-                                    Log.d("UPDATED", new Date().toString());
+                                    if (fragment != null && fragment instanceof FixedMainFragment) {
+                                        ((FixedMainFragment) fragment).updateCoinListView(getSectionInsertedCoins());
+                                        Log.d("UPDATED", new Date().toString());
+                                    }
                                 }
                             }).execute();
 
                 } else {
                     new GetPricesTask(client)
                             .setFromSymbols(ResNameHelper.getFromSymbols(MainActivity.this))
-                            .setToSymbol(ResNameHelper.getToSymbol())
+                            .setToSymbol(getToSymbol())
                             .setExchange(ResNameHelper.getExchangeName(MainActivity.this))
                             .setListener(new GetPricesTask.Listener() {
                                 @Override
@@ -228,8 +242,10 @@ public class MainActivity extends AppCompatActivity
                                     prices.setAttrsToCoins(coins);
 
                                     Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragment");
-                                    ((MainFragment) fragment).updateCoinListView(getSectionInsertedCoins());
-                                    Log.d("UPDATED", new Date().toString());
+                                    if (fragment != null && fragment instanceof MainFragment) {
+                                        ((MainFragment) fragment).updateCoinListView(getSectionInsertedCoins());
+                                        Log.d("UPDATED", new Date().toString());
+                                    }
                                 }
                             }).execute();
                 }

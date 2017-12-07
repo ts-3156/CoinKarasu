@@ -23,8 +23,6 @@ public class ResNameHelper {
     private static final String EXCHANGE_NAME_COINCHECK = "coincheck";
     private static final String EXCHANGE_NAME_ZAIF = "zaif";
 
-    private static final String DEFAULT_TO_SYMBOL = "JPY";
-
     public static String getSymbolsName(Activity activity) {
         String name = activity.getIntent().getStringExtra(COIN_SYMBOLS_RESOURCE_NAME_KEY);
         if (name == null) {
@@ -53,10 +51,6 @@ public class ResNameHelper {
         }
 
         return symbols;
-    }
-
-    public static String getToSymbol() {
-        return DEFAULT_TO_SYMBOL;
     }
 
     public static String getToolbarTitle(Activity activity) {
@@ -88,10 +82,6 @@ public class ResNameHelper {
         }
 
         return title;
-    }
-
-    public static boolean hasMultiExchanges(Activity activity) {
-        return getSymbolsName(activity).equals(SYMBOLS_NAME_JAPAN_ALL);
     }
 
     public static boolean useFixedListView(Activity activity) {
