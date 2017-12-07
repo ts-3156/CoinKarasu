@@ -89,20 +89,20 @@ public class MainActivity extends AppCompatActivity
 
         if (autoUpdateTimer == null) {
             applyKeepScreenOn();
-            autoUpdateCoinListPrices(0);
+            startAutoUpdate(0);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        stopAutoUpdateTimer();
+        stopAutoUpdate();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        stopAutoUpdateTimer();
+        stopAutoUpdate();
     }
 
     public ArrayList<Coin> getSectionInsertedCoins() {
@@ -145,16 +145,16 @@ public class MainActivity extends AppCompatActivity
         coins = client.collectCoins(ResNameHelper.getFromSymbols(this), ResNameHelper.getToSymbol());
         replaceFragment();
         applyKeepScreenOn();
-        autoUpdateCoinListPrices(0);
+        startAutoUpdate(0);
     }
 
     private void refreshCoinListView() {
-        stopAutoUpdateTimer();
+        stopAutoUpdate();
         getSupportActionBar().setTitle(ResNameHelper.getToolbarTitle(this));
         coins = client.collectCoins(ResNameHelper.getFromSymbols(this), ResNameHelper.getToSymbol());
         replaceFragment();
         applyKeepScreenOn();
-        autoUpdateCoinListPrices(0);
+        startAutoUpdate(0);
     }
 
     private void applyKeepScreenOn() {
@@ -171,9 +171,9 @@ public class MainActivity extends AppCompatActivity
         Log.d("KeepScrOn", "" + value);
     }
 
-    private void autoUpdateCoinListPrices(int delay) {
+    private void startAutoUpdate(int delay) {
         if (autoUpdateTimer != null) {
-            stopAutoUpdateTimer();
+            stopAutoUpdate();
         }
 
         String value = PreferenceManager
@@ -237,7 +237,7 @@ public class MainActivity extends AppCompatActivity
         }, delay, interval);
     }
 
-    public void stopAutoUpdateTimer() {
+    public void stopAutoUpdate() {
         if (autoUpdateTimer != null) {
             autoUpdateTimer.cancel();
             autoUpdateTimer = null;
@@ -263,13 +263,23 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            stopAutoUpdate();
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+
+            return true;
+        } else if (id == R.id.action_pause) {
+            item.setChecked(!item.isChecked());
+            if (item.isChecked()) {
+                stopAutoUpdate();
+            } else {
+                startAutoUpdate(0);
+            }
+
             return true;
         }
 
@@ -318,7 +328,7 @@ public class MainActivity extends AppCompatActivity
                 refreshCoinListView();
             }
         } else if (id == R.id.nav_settings) {
-            stopAutoUpdateTimer();
+            stopAutoUpdate();
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         }

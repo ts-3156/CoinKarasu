@@ -1,26 +1,19 @@
 package com.example.toolbartest.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
 import com.example.toolbartest.R;
 import com.example.toolbartest.adapters.CustomAdapter;
 import com.example.toolbartest.coins.Coin;
-import com.example.toolbartest.utils.AnimHelper;
-import com.example.toolbartest.utils.ResourceHelper;
-import com.example.toolbartest.utils.VolleyHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +47,7 @@ public class FixedMainFragment extends Fragment {
                     return;
                 }
 
-                ((MainActivity) getActivity()).stopAutoUpdateTimer();
+                ((MainActivity) getActivity()).stopAutoUpdate();
                 Intent intent = new Intent(view.getContext(), CoinActivity.class);
                 intent.putExtra(MainActivity.COIN_ACTIVITY_COIN_NAME_KEY, coin.getCoinName());
                 intent.putExtra(MainActivity.COIN_ACTIVITY_COIN_SYMBOL_KEY, coin.getSymbol());
