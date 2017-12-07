@@ -9,6 +9,7 @@
     <string name="nav_main">メイン</string>
     <string name="nav_custom">カスタム</string>
     <string name="nav_skyrocket">急上昇</string>
+    <string name="nav_settings">設定</string>
 
     <string name="nav_fiat">法定通貨</string>
     <string name="nav_jpy_toplist">円で人気</string>

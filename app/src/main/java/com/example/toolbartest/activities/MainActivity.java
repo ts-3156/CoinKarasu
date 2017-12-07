@@ -1,5 +1,6 @@
 package com.example.toolbartest.activities;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.toolbartest.R;
+import com.example.toolbartest.activities.settings.SettingsActivity;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.coins.SectionHeaderCoinImpl;
 import com.example.toolbartest.cryptocompare.Client;
@@ -279,6 +281,10 @@ public class MainActivity extends AppCompatActivity
                 ResNameHelper.setSymbolsName(this, ResNameHelper.SYMBOLS_NAME_ZAIF);
                 refreshCoinListView();
             }
+        } else if (id == R.id.nav_settings) {
+            stopAutoUpdateTimer();
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
