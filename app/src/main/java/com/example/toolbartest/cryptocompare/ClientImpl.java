@@ -6,14 +6,20 @@ import android.util.Log;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.cryptocompare.data.CoinList;
 import com.example.toolbartest.cryptocompare.data.CoinListImpl;
+import com.example.toolbartest.cryptocompare.data.History;
+import com.example.toolbartest.cryptocompare.data.HistoryImpl;
 import com.example.toolbartest.cryptocompare.data.Prices;
 import com.example.toolbartest.cryptocompare.data.PricesImpl;
 import com.example.toolbartest.cryptocompare.request.BlockingRequest;
 import com.example.toolbartest.cryptocompare.response.CoinListResponseImpl;
+import com.example.toolbartest.cryptocompare.response.HistoryResponse;
+import com.example.toolbartest.cryptocompare.response.HistoryResponseImpl;
 import com.example.toolbartest.cryptocompare.response.PricesResponseImpl;
 import com.example.toolbartest.tasks.FetchCoinListThread;
 import com.example.toolbartest.utils.StringHelper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -32,7 +38,9 @@ public class ClientImpl implements Client {
 
     private void initializeCoinList() {
         if (CoinListResponseImpl.cacheExists(activity)) {
+            long start = System.currentTimeMillis();
             coinList = CoinListImpl.restoreFromCache(activity);
+            Log.d("CoinList", "" + (System.currentTimeMillis() - start) + " ms");
         } else {
             latch = new CountDownLatch(1);
             new FetchCoinListThread(activity)
@@ -72,5 +80,53 @@ public class ClientImpl implements Client {
         Log.d("URL", url);
         JSONObject response = new BlockingRequest(activity, url).perform();
         return new PricesImpl(new PricesResponseImpl(response), exchange);
+    }
+
+    private ArrayList<History> getHistoryXxx(String kind, String fromSymbol, String toSymbol, int limit, int aggregate) {
+        String url = "https://min-api.cryptocompare.com/data/histo" + kind +
+                "?fsym=" + fromSymbol + "&tsym=" + toSymbol +
+                "&limit=" + limit + "&aggregate=" + aggregate;
+        Log.d("URL", url);
+
+        JSONObject response = new BlockingRequest(activity, url).perform();
+        HistoryResponse historyResponse = new HistoryResponseImpl(response, fromSymbol, toSymbol);
+
+        JSONArray histories = historyResponse.getData();
+        ArrayList<History> result = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < histories.length(); i++) {
+                result.add(new HistoryImpl(histories.getJSONObject(i), fromSymbol, toSymbol));
+            }
+        } catch (JSONException e) {
+            Log.d("getHistoryMinute", e.getMessage());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ArrayList<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int aggregate) {
+        return getHistoryXxx("minute", fromSymbol, toSymbol, limit, aggregate);
+    }
+
+    @Override
+    public ArrayList<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit) {
+        return getHistoryMinute(fromSymbol, toSymbol, limit, 1);
+    }
+
+    @Override
+    public ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate) {
+        return getHistoryXxx("hour", fromSymbol, toSymbol, limit, aggregate);
+    }
+
+    @Override
+    public ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit) {
+        return getHistoryHour(fromSymbol, toSymbol, limit, 1);
+    }
+
+    @Override
+    public ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit) {
+        return getHistoryXxx("day", fromSymbol, toSymbol, limit, 1);
     }
 }

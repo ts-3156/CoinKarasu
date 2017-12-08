@@ -31,6 +31,7 @@ import com.example.toolbartest.cryptocompare.data.Prices;
 import com.example.toolbartest.tasks.GetPricesOverJapaneseExchangesTask;
 import com.example.toolbartest.tasks.GetPricesTask;
 import com.example.toolbartest.timer.AutoUpdateTimer;
+import com.example.toolbartest.utils.PrefHelper;
 import com.example.toolbartest.utils.ResNameHelper;
 
 import java.util.ArrayList;
@@ -41,9 +42,6 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         MainFragment.OnFragmentInteractionListener, FixedMainFragment.OnFragmentInteractionListener {
-
-    public static final String COIN_ACTIVITY_COIN_NAME_KEY = "COIN_NAME_KEY";
-    public static final String COIN_ACTIVITY_COIN_SYMBOL_KEY = "COIN_SYMBOL_KEY";
 
     private ArrayList<Coin> coins;
     Client client;
@@ -78,11 +76,6 @@ public class MainActivity extends AppCompatActivity
 
         client = new ClientImpl(this);
         initializeCoinListView();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
     }
 
     @Override
@@ -145,7 +138,7 @@ public class MainActivity extends AppCompatActivity
     private void initializeCoinListView() {
         updateToolbarTitle();
 
-        String toSymbol = ResNameHelper.useFixedListView(this) ? "JPY" : getToSymbol();
+        String toSymbol = ResNameHelper.useFixedListView(this) ? "JPY" : PrefHelper.getToSymbol(this);
         coins = client.collectCoins(ResNameHelper.getFromSymbols(this), toSymbol);
 
         replaceFragment();
@@ -157,26 +150,12 @@ public class MainActivity extends AppCompatActivity
         stopAutoUpdate();
         updateToolbarTitle();
 
-        String toSymbol = ResNameHelper.useFixedListView(this) ? "JPY" : getToSymbol();
+        String toSymbol = ResNameHelper.useFixedListView(this) ? "JPY" : PrefHelper.getToSymbol(this);
         coins = client.collectCoins(ResNameHelper.getFromSymbols(this), toSymbol);
 
         replaceFragment();
         applyKeepScreenOn();
         startAutoUpdate(0);
-    }
-
-    public void setToSymbol(String toSymbol) {
-        SharedPreferences prefs = PreferenceManager
-                .getDefaultSharedPreferences(getApplicationContext());
-        SharedPreferences.Editor edit = prefs.edit();
-        edit.putString("pref_currency", toSymbol);
-        edit.apply();
-    }
-
-    public String getToSymbol() {
-        return PreferenceManager
-                .getDefaultSharedPreferences(getApplicationContext())
-                .getString("pref_currency", "JPY");
     }
 
     private void applyKeepScreenOn() {
@@ -198,21 +177,7 @@ public class MainActivity extends AppCompatActivity
             stopAutoUpdate();
         }
 
-        String value = PreferenceManager
-                .getDefaultSharedPreferences(getApplicationContext())
-                .getString("pref_sync_frequency", "10000");
-        int interval = Integer.valueOf(value);
-
-        if (interval <= 0) {
-            return;
-        }
-
-        if (interval < 5000) {
-            Log.d("Interval", "" + interval);
-            interval = 10000;
-        }
-
-        autoUpdateTimer = new AutoUpdateTimer(getToSymbol());
+        autoUpdateTimer = new AutoUpdateTimer(PrefHelper.getToSymbol(this));
 
         autoUpdateTimer.schedule(new TimerTask() {
             @Override
@@ -222,7 +187,8 @@ public class MainActivity extends AppCompatActivity
                             .setListener(new GetPricesOverJapaneseExchangesTask.Listener() {
                                 @Override
                                 public void finished(HashMap<String, Prices> map) {
-                                    if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(getToSymbol())) {
+                                    String toSymbol = PrefHelper.getToSymbol(MainActivity.this);
+                                    if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(toSymbol)) {
                                         return;
                                     }
                                     map.get(GetPricesOverJapaneseExchangesTask.EXCHANGE_BITFLYER).setAttrsToCoin(coins.get(0));
@@ -240,12 +206,13 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     new GetPricesTask(client)
                             .setFromSymbols(ResNameHelper.getFromSymbols(MainActivity.this))
-                            .setToSymbol(getToSymbol())
+                            .setToSymbol(PrefHelper.getToSymbol(MainActivity.this))
                             .setExchange(ResNameHelper.getExchangeName(MainActivity.this))
                             .setListener(new GetPricesTask.Listener() {
                                 @Override
                                 public void finished(Prices prices) {
-                                    if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(getToSymbol())) {
+                                    String toSymbol = PrefHelper.getToSymbol(MainActivity.this);
+                                    if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(toSymbol)) {
                                         return;
                                     }
                                     prices.setAttrsToCoins(coins);
@@ -259,7 +226,7 @@ public class MainActivity extends AppCompatActivity
                             }).execute();
                 }
             }
-        }, delay, interval);
+        }, delay, PrefHelper.getSyncInterval(this));
     }
 
     public void stopAutoUpdate() {
@@ -287,7 +254,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             item.setVisible(true);
 
-            if (getToSymbol().equals("JPY")) {
+            if (PrefHelper.getToSymbol(this).equals("JPY")) {
                 item.setTitle("USD");
             } else {
                 item.setTitle("JPY");
@@ -338,8 +305,8 @@ public class MainActivity extends AppCompatActivity
             return true;
         } else if (id == R.id.action_currency) {
             stopAutoUpdate();
-            setToSymbol(item.getTitle().toString());
-            coins = client.collectCoins(ResNameHelper.getFromSymbols(this), getToSymbol());
+            PrefHelper.setToSymbol(this, item.getTitle().toString());
+            coins = client.collectCoins(ResNameHelper.getFromSymbols(this), PrefHelper.getToSymbol(this));
             startAutoUpdate(0);
 
             return true;
