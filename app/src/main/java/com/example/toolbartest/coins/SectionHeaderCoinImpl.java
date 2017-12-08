@@ -2,6 +2,8 @@ package com.example.toolbartest.coins;
 
 import android.graphics.Bitmap;
 
+import org.json.JSONObject;
+
 public class SectionHeaderCoinImpl implements Coin {
     private String name;
 
@@ -113,6 +115,11 @@ public class SectionHeaderCoinImpl implements Coin {
     @Override
     public double getPrevTrend() {
         return 0.0;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        return null;
     }
 
     @Override

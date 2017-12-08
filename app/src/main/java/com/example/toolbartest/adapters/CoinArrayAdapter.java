@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.toolbartest.R;
 import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.utils.CoinPriceFormat;
 import com.example.toolbartest.utils.ResourceHelper;
 import com.example.toolbartest.utils.StringHelper;
 import com.example.toolbartest.utils.VolleyHelper;
@@ -108,8 +109,8 @@ public class CoinArrayAdapter extends BaseAdapter {
         animator.setDuration(1000);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
-                String text = StringHelper.formatPrice(Double.valueOf(animation.getAnimatedValue().toString()), coin.getToSymbol());
-                view.setText(text);
+                CoinPriceFormat formatter = new CoinPriceFormat(coin.getToSymbol());
+                view.setText(formatter.format(animation.getAnimatedValue().toString()));
             }
         });
         animator.start();

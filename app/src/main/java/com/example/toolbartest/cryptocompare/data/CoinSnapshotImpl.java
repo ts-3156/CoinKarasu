@@ -2,6 +2,8 @@ package com.example.toolbartest.cryptocompare.data;
 
 import android.util.Log;
 
+import com.example.toolbartest.coins.AggregatedData;
+import com.example.toolbartest.coins.AggregatedDataImpl;
 import com.example.toolbartest.cryptocompare.response.CoinSnapshotResponse;
 
 import org.json.JSONArray;
@@ -17,7 +19,7 @@ public class CoinSnapshotImpl implements CoinSnapshot {
     private double netHashesPerSecond;
     private double totalCoinsMined;
     private double blockReward;
-    private Object aggregatedData = null;
+    private AggregatedData aggregatedData;
     private ArrayList<Exchange> exchanges;
 
     public CoinSnapshotImpl(CoinSnapshotResponse response) {
@@ -35,6 +37,8 @@ public class CoinSnapshotImpl implements CoinSnapshot {
             netHashesPerSecond = data.getDouble("NetHashesPerSecond");
             totalCoinsMined = data.getDouble("TotalCoinsMined");
             blockReward = data.getDouble("BlockReward");
+
+            aggregatedData = new AggregatedDataImpl(data.getJSONObject("AggregatedData"));
 
             JSONArray exchanges = data.getJSONArray("Exchanges");
 
@@ -73,7 +77,7 @@ public class CoinSnapshotImpl implements CoinSnapshot {
     }
 
     @Override
-    public Object getAggregatedData() {
+    public AggregatedData getAggregatedData() {
         return aggregatedData;
     }
 
@@ -86,5 +90,4 @@ public class CoinSnapshotImpl implements CoinSnapshot {
     public double getNetHashesPerSecond() {
         return netHashesPerSecond;
     }
-
 }

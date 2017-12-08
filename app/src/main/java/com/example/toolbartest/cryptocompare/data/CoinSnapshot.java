@@ -1,5 +1,7 @@
 package com.example.toolbartest.cryptocompare.data;
 
+import com.example.toolbartest.coins.AggregatedData;
+
 import java.util.ArrayList;
 
 public interface CoinSnapshot {
@@ -13,7 +15,7 @@ public interface CoinSnapshot {
 
     double getBlockReward();
 
-    Object getAggregatedData();
+    AggregatedData getAggregatedData();
 
     ArrayList<Exchange> getExchanges();
 

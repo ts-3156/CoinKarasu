@@ -15,4 +15,6 @@ public interface Coin extends CoinListCoin, PriceMultiFullCoin, SectionHeaderCoi
     double getPrevPrice();
 
     double getPrevTrend();
+
+    JSONObject toJson();
 }

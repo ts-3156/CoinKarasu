@@ -1,6 +1,7 @@
 package com.example.toolbartest.coins;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,16 +34,21 @@ public class CoinImpl implements Coin {
         this.icon = null;
 
         try {
-            this.id = Integer.parseInt((String) attrs.get("Id"));
-            this.url = (String) attrs.get("Url");
-            this.imageUrl = (String) attrs.get("ImageUrl");
-            this.name = (String) attrs.get("Name");
-            this.coinName = (String) attrs.get("CoinName");
-            this.fullName = (String) attrs.get("FullName");
-            this.algorithm = (String) attrs.get("Algorithm");
-            this.proofType = (String) attrs.get("ProofType");
-            this.sortOrder = (String) attrs.get("SortOrder");
+            this.id = attrs.getInt("Id");
+            this.url = attrs.getString("Url");
+            this.imageUrl = attrs.getString("ImageUrl");
+            this.name = attrs.getString("Name");
+            this.coinName = attrs.getString("CoinName"); // BTC
+            this.fullName = attrs.getString("FullName");
+            this.algorithm = attrs.getString("Algorithm");
+            this.proofType = attrs.getString("ProofType");
+            this.sortOrder = attrs.getString("SortOrder");
+
+            if (attrs.has("toSymbol")) {
+                toSymbol = attrs.getString("toSymbol");
+            }
         } catch (JSONException e) {
+            Log.d("CoinImpl", e.getMessage());
         }
 
         this.price = 0.0;
@@ -166,6 +172,29 @@ public class CoinImpl implements Coin {
     @Override
     public double getPrevTrend() {
         return prevTrend;
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        try {
+            json.put("Id", id);
+            json.put("Url", url);
+            json.put("ImageUrl", imageUrl);
+            json.put("Name", name);
+            json.put("CoinName", coinName);
+            json.put("FullName", fullName);
+            json.put("Algorithm", algorithm);
+            json.put("ProofType", proofType);
+            json.put("SortOrder", sortOrder);
+
+            json.put("toSymbol", toSymbol);
+        } catch (JSONException e) {
+            Log.d("toJson", e.getMessage());
+        }
+
+        return json;
     }
 
     @Override

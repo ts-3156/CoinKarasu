@@ -19,8 +19,8 @@ public class AnimHelper {
         animator.setDuration(1000);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
-                String text = StringHelper.formatPrice(Double.valueOf(animation.getAnimatedValue().toString()), coin.getToSymbol());
-                view.setText(text);
+                CoinPriceFormat formatter = new CoinPriceFormat(coin.getToSymbol());
+                view.setText(formatter.format(animation.getAnimatedValue().toString()));
             }
         });
         animator.start();

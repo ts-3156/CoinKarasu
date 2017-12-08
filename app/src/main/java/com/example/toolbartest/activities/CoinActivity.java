@@ -6,8 +6,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.toolbartest.R;
+import com.example.toolbartest.coins.AggregatedData;
+import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.coins.CoinImpl;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
@@ -19,8 +23,12 @@ import com.example.toolbartest.tasks.GetHistoryMonthTask;
 import com.example.toolbartest.tasks.GetHistoryTaskBase;
 import com.example.toolbartest.tasks.GetHistoryWeekTask;
 import com.example.toolbartest.tasks.GetHistoryYearTask;
-import com.example.toolbartest.timer.AutoUpdateTimer;
+import com.example.toolbartest.utils.AutoUpdateTimer;
+import com.example.toolbartest.utils.CoinPriceFormat;
 import com.example.toolbartest.utils.PrefHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -35,7 +43,7 @@ public class CoinActivity extends AppCompatActivity
     Client client;
     String lineChartKind;
     String pieChartKind;
-    String coinSymbol;
+    Coin coin;
 
     private AutoUpdateTimer autoUpdateTimer;
 
@@ -45,14 +53,18 @@ public class CoinActivity extends AppCompatActivity
         setContentView(R.layout.activity_coin);
 
         Intent intent = getIntent();
-        String coinName = intent.getStringExtra(COIN_NAME_KEY);
-        coinSymbol = intent.getStringExtra(COIN_SYMBOL_KEY);
+        try {
+            coin = CoinImpl.buildByJSONObject(new JSONObject(intent.getStringExtra(COIN_NAME_KEY)));
+        } catch (JSONException e) {
+            Log.d("onCreate", e.getMessage());
+        }
 
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
-            bar.setTitle(coinName);
-            bar.setSubtitle(coinSymbol);
+            bar.setTitle(coin.getFullName());
         }
+
+        ((TextView) findViewById(R.id.coin_price)).setText(new CoinPriceFormat(coin.getToSymbol()).format(coin.getPrice()));
 
         client = new ClientImpl(this);
         lineChartKind = "hour";
@@ -140,7 +152,7 @@ public class CoinActivity extends AppCompatActivity
     }
 
     private void drawLineChart() {
-        getTaskInstance().setFromSymbol(coinSymbol)
+        getTaskInstance().setFromSymbol(coin.getSymbol())
                 .setToSymbol(PrefHelper.getToSymbol(this))
                 .setListener(new GetHistoryTaskBase.Listener() {
                     @Override
@@ -159,11 +171,14 @@ public class CoinActivity extends AppCompatActivity
     }
 
     private void drawPieChart() {
-        new GetCoinSnapshotTask(client).setFromSymbol(coinSymbol)
+        new GetCoinSnapshotTask(client).setFromSymbol(coin.getSymbol())
                 .setToSymbol(PrefHelper.getToSymbol(this))
                 .setListener(new GetCoinSnapshotTask.Listener() {
                     @Override
                     public void finished(CoinSnapshot snapshot) {
+                        AggregatedData coin = snapshot.getAggregatedData();
+                        ((TextView) findViewById(R.id.coin_price)).setText(new CoinPriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+
                         Fragment fragment = getSupportFragmentManager().findFragmentByTag("pie_chart_fragment");
                         if (fragment != null) {
                             ((CoinPieChartFragment) fragment).updateView(snapshot);

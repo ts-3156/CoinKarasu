@@ -27,7 +27,7 @@ public class CoinPieChart {
     public void initialize() {
         chart.setUsePercentValues(true);
         chart.getDescription().setEnabled(false);
-        chart.setExtraOffsets(5, 10, 5, 5);
+//        chart.setExtraOffsets(5, 10, 5, 5);
 
         chart.setDragDecelerationFrictionCoef(0.95f);
 
@@ -46,8 +46,8 @@ public class CoinPieChart {
 
         chart.setRotationAngle(0);
         // enable rotation of the chart by touch
-        chart.setRotationEnabled(true);
-        chart.setHighlightPerTapEnabled(true);
+        chart.setRotationEnabled(false);
+        chart.setHighlightPerTapEnabled(false);
 
 //        chart.setUnit(" €");
 //        chart.setDrawUnitsInChart(true);
@@ -62,8 +62,6 @@ public class CoinPieChart {
         // entry label styling
         chart.setEntryLabelColor(Color.WHITE);
         chart.setEntryLabelTextSize(12f);
-
-        chart.setExtraOffsets(0f, 0f, 0f, 0f);
 
         chart.offsetLeftAndRight(0);
         chart.setExtraOffsets(0, 0, 0, 0);

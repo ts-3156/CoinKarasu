@@ -1,13 +1,6 @@
 package com.example.toolbartest.cryptocompare.data;
 
-public interface Exchange {
-    String getMarket();
+import com.example.toolbartest.coins.AggregatedData;
 
-    String getFromSymbol();
-
-    String getToSymbol();
-
-    double getPrice();
-
-    double getVolume24Hour();
+public interface Exchange extends AggregatedData {
 }

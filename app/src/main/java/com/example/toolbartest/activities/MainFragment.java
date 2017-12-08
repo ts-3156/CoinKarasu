@@ -51,7 +51,7 @@ public class MainFragment extends Fragment {
 
                 ((MainActivity) getActivity()).stopAutoUpdate();
                 Intent intent = new Intent(view.getContext(), CoinActivity.class);
-                intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.getCoinName());
+                intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.toJson().toString());
                 intent.putExtra(CoinActivity.COIN_SYMBOL_KEY, coin.getSymbol());
                 startActivity(intent);
             }

@@ -1,7 +1,6 @@
 package com.example.toolbartest.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -30,7 +29,7 @@ import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.Prices;
 import com.example.toolbartest.tasks.GetPricesOverJapaneseExchangesTask;
 import com.example.toolbartest.tasks.GetPricesTask;
-import com.example.toolbartest.timer.AutoUpdateTimer;
+import com.example.toolbartest.utils.AutoUpdateTimer;
 import com.example.toolbartest.utils.PrefHelper;
 import com.example.toolbartest.utils.ResNameHelper;
 
