@@ -6,12 +6,16 @@ import android.util.Log;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.cryptocompare.data.CoinList;
 import com.example.toolbartest.cryptocompare.data.CoinListImpl;
+import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
+import com.example.toolbartest.cryptocompare.data.CoinSnapshotImpl;
 import com.example.toolbartest.cryptocompare.data.History;
 import com.example.toolbartest.cryptocompare.data.HistoryImpl;
 import com.example.toolbartest.cryptocompare.data.Prices;
 import com.example.toolbartest.cryptocompare.data.PricesImpl;
 import com.example.toolbartest.cryptocompare.request.BlockingRequest;
 import com.example.toolbartest.cryptocompare.response.CoinListResponseImpl;
+import com.example.toolbartest.cryptocompare.response.CoinSnapshotResponse;
+import com.example.toolbartest.cryptocompare.response.CoinSnapshotResponseImpl;
 import com.example.toolbartest.cryptocompare.response.HistoryResponse;
 import com.example.toolbartest.cryptocompare.response.HistoryResponseImpl;
 import com.example.toolbartest.cryptocompare.response.PricesResponseImpl;
@@ -128,5 +132,15 @@ public class ClientImpl implements Client {
     @Override
     public ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit) {
         return getHistoryXxx("day", fromSymbol, toSymbol, limit, 1);
+    }
+
+    @Override
+    public CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol) {
+        String url = "https://www.cryptocompare.com/api/data/coinsnapshot/?fsym=" + fromSymbol + "&tsym=" + toSymbol;
+        Log.d("URL", url);
+
+        JSONObject response = new BlockingRequest(activity, url).perform();
+        CoinSnapshotResponse snapshotResponse = new CoinSnapshotResponseImpl(response, fromSymbol, toSymbol);
+        return new CoinSnapshotImpl(snapshotResponse);
     }
 }

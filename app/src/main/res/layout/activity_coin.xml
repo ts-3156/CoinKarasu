@@ -17,84 +17,15 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
+            <FrameLayout
+                android:id="@+id/line_chart_container"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:background="#ffffff"
-                android:orientation="vertical">
+                android:layout_height="match_parent" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:paddingTop="16dp">
-
-                    <Button
-                        android:id="@+id/chart_hour"
-                        style="@style/AppTheme.FlatButton"
-                        android:layout_width="@dimen/chart_buttons_width"
-                        android:layout_height="@dimen/chart_buttons_height"
-                        android:layout_weight="1"
-                        android:text="1 Hour"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textSize="@dimen/chart_buttons_text_size" />
-
-                    <Button
-                        android:id="@+id/chart_day"
-                        style="@style/AppTheme.FlatButton"
-                        android:layout_width="@dimen/chart_buttons_width"
-                        android:layout_height="@dimen/chart_buttons_height"
-                        android:layout_weight="1"
-                        android:text="1 Day"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textSize="@dimen/chart_buttons_text_size" />
-
-                    <Button
-                        android:id="@+id/chart_week"
-                        style="@style/AppTheme.FlatButton"
-                        android:layout_width="@dimen/chart_buttons_width"
-                        android:layout_height="@dimen/chart_buttons_height"
-                        android:layout_weight="1"
-                        android:text="1 Week"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textSize="@dimen/chart_buttons_text_size" />
-
-                    <Button
-                        android:id="@+id/chart_month"
-                        style="@style/AppTheme.FlatButton"
-                        android:layout_width="@dimen/chart_buttons_width"
-                        android:layout_height="@dimen/chart_buttons_height"
-                        android:layout_weight="1"
-                        android:text="1 Month"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textSize="@dimen/chart_buttons_text_size" />
-
-                    <Button
-                        android:id="@+id/chart_year"
-                        style="@style/AppTheme.FlatButton"
-                        android:layout_width="@dimen/chart_buttons_width"
-                        android:layout_height="@dimen/chart_buttons_height"
-                        android:layout_weight="1"
-                        android:text="1 Year"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                        android:textSize="@dimen/chart_buttons_text_size" />
-                </LinearLayout>
-
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/line_chart"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
-                    android:layout_marginEnd="16dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp" />
-
-            </LinearLayout>
+            <FrameLayout
+                android:id="@+id/pie_chart_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
             <LinearLayout
                 android:layout_width="match_parent"

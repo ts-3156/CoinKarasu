@@ -1,19 +1,18 @@
 package com.example.toolbartest.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
 
 import com.example.toolbartest.R;
-import com.example.toolbartest.chart.CoinLineChart;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
+import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
 import com.example.toolbartest.cryptocompare.data.History;
+import com.example.toolbartest.tasks.GetCoinSnapshotTask;
 import com.example.toolbartest.tasks.GetHistoryDayTask;
 import com.example.toolbartest.tasks.GetHistoryHourTask;
 import com.example.toolbartest.tasks.GetHistoryMonthTask;
@@ -22,22 +21,20 @@ import com.example.toolbartest.tasks.GetHistoryWeekTask;
 import com.example.toolbartest.tasks.GetHistoryYearTask;
 import com.example.toolbartest.timer.AutoUpdateTimer;
 import com.example.toolbartest.utils.PrefHelper;
-import com.github.mikephil.charting.charts.LineChart;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimerTask;
 
-public class CoinActivity extends AppCompatActivity implements View.OnClickListener {
+public class CoinActivity extends AppCompatActivity
+        implements CoinLineChartFragment.OnFragmentInteractionListener, CoinPieChartFragment.OnFragmentInteractionListener {
 
     public static final String COIN_NAME_KEY = "COIN_NAME_KEY";
     public static final String COIN_SYMBOL_KEY = "COIN_SYMBOL_KEY";
 
     Client client;
-    ArrayList<History> records;
-    CoinLineChart chart;
-    String kind;
-    Button btn;
+    String lineChartKind;
+    String pieChartKind;
     String coinSymbol;
 
     private AutoUpdateTimer autoUpdateTimer;
@@ -57,20 +54,20 @@ public class CoinActivity extends AppCompatActivity implements View.OnClickListe
             bar.setSubtitle(coinSymbol);
         }
 
-        findViewById(R.id.chart_hour).setOnClickListener(this);
-        findViewById(R.id.chart_day).setOnClickListener(this);
-        findViewById(R.id.chart_week).setOnClickListener(this);
-        findViewById(R.id.chart_month).setOnClickListener(this);
-        findViewById(R.id.chart_year).setOnClickListener(this);
-
         client = new ClientImpl(this);
-        kind = "hour";
-        btn = findViewById(R.id.chart_hour);
-        btn.setBackgroundColor(Color.LTGRAY);
-        chart = new CoinLineChart((LineChart) findViewById(R.id.line_chart), kind);
-        records = new ArrayList<>();
+        lineChartKind = "hour";
+        pieChartKind = "currency";
 
-        initializeLineChart();
+        CoinLineChartFragment frag1 = CoinLineChartFragment.newInstance(lineChartKind);
+        CoinPieChartFragment frag2 = CoinPieChartFragment.newInstance(pieChartKind);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.line_chart_container, frag1, "line_chart_fragment")
+                .replace(R.id.pie_chart_container, frag2, "pie_chart_fragment")
+                .commit();
+
+        drawPieChart();
+        startAutoUpdate(0);
     }
 
     @Override
@@ -94,26 +91,10 @@ public class CoinActivity extends AppCompatActivity implements View.OnClickListe
         stopAutoUpdate();
     }
 
-    private void initializeLineChart() {
-        chart.initialize();
-        startAutoUpdate(0);
-    }
-
-    private void refreshLineChart() {
-        if (chart == null) {
-            return;
-        }
-
-        stopAutoUpdate();
-        chart.setKind(kind);
-        chart.updateValueFormatter();
-        startAutoUpdate(0);
-    }
-
     private GetHistoryTaskBase getTaskInstance() {
         GetHistoryTaskBase instance;
 
-        switch (kind) {
+        switch (lineChartKind) {
             case "hour":
                 instance = new GetHistoryHourTask(client);
                 break;
@@ -141,29 +122,12 @@ public class CoinActivity extends AppCompatActivity implements View.OnClickListe
             stopAutoUpdate();
         }
 
-        autoUpdateTimer = new AutoUpdateTimer(kind);
+        autoUpdateTimer = new AutoUpdateTimer(lineChartKind);
 
         autoUpdateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                getTaskInstance().setFromSymbol(coinSymbol)
-                        .setToSymbol(PrefHelper.getToSymbol(CoinActivity.this))
-                        .setListener(new GetHistoryTaskBase.Listener() {
-                            @Override
-                            public void finished(ArrayList<History> records) {
-                                if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(kind)) {
-                                    return;
-                                }
-
-                                CoinActivity.this.records = records;
-                                chart.getChart().clear();
-                                chart.getChart().notifyDataSetChanged();
-                                chart.setData(records);
-                                chart.getChart().notifyDataSetChanged();
-                                chart.invalidate();
-                                Log.d("UPDATED", kind + ", " + CoinActivity.this.records.size() + ", " + new Date().toString());
-                            }
-                        }).execute();
+                drawLineChart();
             }
         }, delay, 60000);
     }
@@ -175,43 +139,50 @@ public class CoinActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void drawLineChart() {
+        getTaskInstance().setFromSymbol(coinSymbol)
+                .setToSymbol(PrefHelper.getToSymbol(this))
+                .setListener(new GetHistoryTaskBase.Listener() {
+                    @Override
+                    public void finished(ArrayList<History> records) {
+                        if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(lineChartKind)) {
+                            return;
+                        }
+
+                        Fragment fragment = getSupportFragmentManager().findFragmentByTag("line_chart_fragment");
+                        if (fragment != null) {
+                            ((CoinLineChartFragment) fragment).updateView(records);
+                            Log.d("UPDATED", lineChartKind + ", " + records.size() + ", " + new Date().toString());
+                        }
+                    }
+                }).execute();
+    }
+
+    private void drawPieChart() {
+        new GetCoinSnapshotTask(client).setFromSymbol(coinSymbol)
+                .setToSymbol(PrefHelper.getToSymbol(this))
+                .setListener(new GetCoinSnapshotTask.Listener() {
+                    @Override
+                    public void finished(CoinSnapshot snapshot) {
+                        Fragment fragment = getSupportFragmentManager().findFragmentByTag("pie_chart_fragment");
+                        if (fragment != null) {
+                            ((CoinPieChartFragment) fragment).updateView(snapshot);
+                            Log.d("UPDATED", pieChartKind + ", " + new Date().toString());
+                        }
+                    }
+                }).execute();
+    }
+
     @Override
-    public void onClick(View view) {
-        String next;
-        Button nextBtn;
+    public void onLineChartKindChanged(String kind) {
+        lineChartKind = kind;
+        stopAutoUpdate();
+        startAutoUpdate(0);
+    }
 
-        switch (view.getId()) {
-            case R.id.chart_hour:
-                next = "hour";
-                nextBtn = findViewById(R.id.chart_hour);
-                break;
-            case R.id.chart_day:
-                next = "day";
-                nextBtn = findViewById(R.id.chart_day);
-                break;
-            case R.id.chart_week:
-                next = "week";
-                nextBtn = findViewById(R.id.chart_week);
-                break;
-            case R.id.chart_month:
-                next = "month";
-                nextBtn = findViewById(R.id.chart_month);
-                break;
-            case R.id.chart_year:
-                next = "year";
-                nextBtn = findViewById(R.id.chart_year);
-                break;
-            default:
-                next = "hour";
-                nextBtn = btn;
-        }
-
-        if (!next.equals(kind)) {
-            btn.setBackgroundColor(Color.WHITE);
-            nextBtn.setBackgroundColor(Color.LTGRAY);
-            btn = nextBtn;
-            kind = next;
-            refreshLineChart();
-        }
+    @Override
+    public void onPieChartKindChanged(String kind) {
+        pieChartKind = kind;
+        drawPieChart();
     }
 }

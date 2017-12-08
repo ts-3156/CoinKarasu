@@ -100,50 +100,27 @@ public class CoinLineChart {
 
     public void initialize() {
         chart.getDescription().setEnabled(false);
-//        chart.setTouchEnabled(true);
-//        chart.setDragDecelerationFrictionCoef(0.9f);
-//        chart.setDragEnabled(true);
-//        chart.setScaleEnabled(true);
-//        chart.setDrawGridBackground(false);
-//        chart.setHighlightPerDragEnabled(true);
-//        chart.setBackgroundColor(Color.WHITE);
 //        chart.setViewPortOffsets(0f, 0f, 0f, 0f);
 
         chart.invalidate();
 
-        // get the legend (only possible after setting data)
-        Legend l = chart.getLegend();
-        l.setEnabled(false);
+        chart.getLegend().setEnabled(false);
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-////        xAxis.setTypeface(mTfLight);
-//        xAxis.setTextSize(14f);
-//        xAxis.setTextColor(Color.WHITE);
         xAxis.setDrawAxisLine(false);
         xAxis.setDrawGridLines(true);
-//        xAxis.setTextColor(Color.rgb(255, 192, 56));
-//        xAxis.setCenterAxisLabels(true);
         xAxis.setGranularity(1f); // one hour
         xAxis.setValueFormatter(new ValueFormatter(getSimpleDateFormat(kind)));
 
         YAxis leftAxis = chart.getAxisLeft();
-//        leftAxis.setPosition(YAxis.YAxisLabelPosition.INSIDE_CHART);
-////        leftAxis.setTypeface(mTfLight);
-//        leftAxis.setTextColor(ColorTemplate.getHoloBlue());
         leftAxis.setDrawAxisLine(false);
         leftAxis.setDrawGridLines(true);
-//        leftAxis.setGranularityEnabled(true);
-//        leftAxis.setAxisMinimum(0f);
-//        leftAxis.setAxisMaximum(170f);
-//        leftAxis.setYOffset(-9f);
-//        leftAxis.setTextColor(Color.rgb(255, 192, 56));
-//
-        YAxis rightAxis = chart.getAxisRight();
-        rightAxis.setEnabled(false);
+
+        chart.getAxisRight().setEnabled(false);
     }
 
-    public void updateValueFormatter() {
+    public void replaceValueFormatter() {
         chart.getXAxis().setValueFormatter(new ValueFormatter(getSimpleDateFormat(kind)));
     }
 
@@ -156,7 +133,7 @@ public class CoinLineChart {
 
         LineDataSet set = new LineDataSet(values, "DataSet 1");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set.setColor(ColorTemplate.getHoloBlue());
+        set.setColor(ColorTemplate.JOYFUL_COLORS[0]);
         set.setValueTextColor(ColorTemplate.getHoloBlue());
         set.setLineWidth(1.5f);
         set.setDrawCircles(false);
@@ -165,6 +142,8 @@ public class CoinLineChart {
         set.setFillColor(ColorTemplate.getHoloBlue());
         set.setHighLightColor(Color.rgb(244, 117, 117));
         set.setDrawCircleHole(false);
+
+//        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
 
         LineData data = new LineData(set);
         data.setValueTextColor(Color.WHITE);
@@ -180,6 +159,11 @@ public class CoinLineChart {
 
     public LineChart getChart() {
         return chart;
+    }
+
+    public void clear() {
+        chart.clear();
+        chart = null;
     }
 
     public void setKind(String kind) {

@@ -1,6 +1,7 @@
 package com.example.toolbartest.cryptocompare;
 
 import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
 import com.example.toolbartest.cryptocompare.data.History;
 import com.example.toolbartest.cryptocompare.data.Prices;
 
@@ -22,4 +23,6 @@ public interface Client {
     ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate);
 
     ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit);
+
+    CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol);
 }

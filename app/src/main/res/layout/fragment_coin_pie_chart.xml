@@ -1,0 +1,50 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="0dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginTop="16dp"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    tools:context="com.example.toolbartest.activities.CoinLineChartFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp">
+
+        <Button
+            android:id="@+id/pie_chart_currency"
+            style="@style/AppTheme.FlatButton"
+            android:layout_width="@dimen/chart_buttons_width"
+            android:layout_height="@dimen/chart_buttons_height"
+            android:layout_weight="1"
+            android:text="Volume by Currency"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textSize="@dimen/chart_buttons_text_size" />
+
+        <Button
+            android:id="@+id/pie_chart_exchange"
+            style="@style/AppTheme.FlatButton"
+            android:layout_width="@dimen/chart_buttons_width"
+            android:layout_height="@dimen/chart_buttons_height"
+            android:layout_weight="1"
+            android:text="Volume by Exchange"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textSize="@dimen/chart_buttons_text_size" />
+    </LinearLayout>
+
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pie_chart"
+        android:layout_width="match_parent"
+        android:layout_height="320dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
+
+</LinearLayout>
