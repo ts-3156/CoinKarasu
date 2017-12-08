@@ -46,14 +46,32 @@ public class CoinImpl implements Coin {
 
             if (attrs.has("toSymbol")) {
                 toSymbol = attrs.getString("toSymbol");
+            } else {
+                toSymbol = null;
             }
+
+            if (attrs.has("price")) {
+                price = attrs.getDouble("price");
+            } else {
+                price = 0.0;
+            }
+
+            if (attrs.has("trend")) {
+                trend = attrs.getDouble("trend");
+            } else {
+                trend = 0.0;
+            }
+
+            if (attrs.has("exchange")) {
+                exchange = attrs.getString("exchange");
+            } else {
+                exchange = null;
+            }
+
         } catch (JSONException e) {
             Log.d("CoinImpl", e.getMessage());
         }
 
-        this.price = 0.0;
-        this.trend = 0.0;
-        this.exchange = null;
         this.prevPrice = 0.0;
         this.prevTrend = 0.0;
     }
@@ -190,6 +208,9 @@ public class CoinImpl implements Coin {
             json.put("SortOrder", sortOrder);
 
             json.put("toSymbol", toSymbol);
+            json.put("price", price);
+            json.put("trend", trend);
+            json.put("exchange", exchange);
         } catch (JSONException e) {
             Log.d("toJson", e.getMessage());
         }

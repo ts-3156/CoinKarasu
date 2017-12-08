@@ -192,13 +192,8 @@ public class CoinPieChartFragment extends Fragment implements View.OnClickListen
 
             kind = next;
 
-            if (chart != null) {
-//                chart.setKind(lineChartKind);
-//                chart.replaceValueFormatter();
-
-                if (listener != null) {
-                    listener.onPieChartKindChanged(kind);
-                }
+            if (listener != null) {
+                listener.onPieChartKindChanged(kind);
             }
         }
     }

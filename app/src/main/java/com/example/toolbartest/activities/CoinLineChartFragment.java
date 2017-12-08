@@ -57,8 +57,8 @@ public class CoinLineChartFragment extends Fragment implements View.OnClickListe
         btn = view.findViewById(R.id.chart_hour);
         btn.setBackgroundColor(Color.LTGRAY);
 
-        chart = new CoinLineChart((LineChart) view.findViewById(R.id.line_chart), kind);
-        chart.initialize();
+        chart = new CoinLineChart((LineChart) view.findViewById(R.id.line_chart));
+        chart.initialize(kind);
 
         return view;
     }
@@ -70,8 +70,8 @@ public class CoinLineChartFragment extends Fragment implements View.OnClickListe
 
         chart.clear();
 
-        chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart), kind);
-        chart.initialize();
+        chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart));
+        chart.initialize(kind);
         chart.setData(records);
         chart.invalidate();
     }
@@ -120,13 +120,8 @@ public class CoinLineChartFragment extends Fragment implements View.OnClickListe
 
             kind = next;
 
-            if (chart != null) {
-                chart.setKind(kind);
-                chart.replaceValueFormatter();
-
-                if (listener != null) {
-                    listener.onLineChartKindChanged(kind);
-                }
+            if (listener != null) {
+                listener.onLineChartKindChanged(kind);
             }
         }
     }
