@@ -4,6 +4,7 @@ import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
 import com.example.toolbartest.cryptocompare.data.History;
 import com.example.toolbartest.cryptocompare.data.Prices;
+import com.example.toolbartest.cryptocompare.data.TopPairs;
 
 import java.util.ArrayList;
 
@@ -27,4 +28,6 @@ public interface Client {
     ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate);
 
     CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol);
+
+    TopPairs getTopPairs(String fromSymbol);
 }

@@ -16,6 +16,7 @@ import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
 import com.example.toolbartest.cryptocompare.data.History;
+import com.example.toolbartest.cryptocompare.data.TopPairs;
 import com.example.toolbartest.tasks.GetCoinSnapshotTask;
 import com.example.toolbartest.tasks.GetHistoryDayTask;
 import com.example.toolbartest.tasks.GetHistoryHourTask;
@@ -23,6 +24,7 @@ import com.example.toolbartest.tasks.GetHistoryMonthTask;
 import com.example.toolbartest.tasks.GetHistoryTaskBase;
 import com.example.toolbartest.tasks.GetHistoryWeekTask;
 import com.example.toolbartest.tasks.GetHistoryYearTask;
+import com.example.toolbartest.tasks.GetTopPairsTask;
 import com.example.toolbartest.utils.AutoUpdateTimer;
 import com.example.toolbartest.utils.CoinPriceFormat;
 import com.example.toolbartest.utils.PrefHelper;
@@ -170,7 +172,7 @@ public class CoinActivity extends AppCompatActivity
                 }).execute();
     }
 
-    private void drawPieChart() {
+    private void drawExchangePieChart() {
         new GetCoinSnapshotTask(client).setFromSymbol(coin.getSymbol())
                 .setToSymbol(PrefHelper.getToSymbol(this))
                 .setListener(new GetCoinSnapshotTask.Listener() {
@@ -186,6 +188,28 @@ public class CoinActivity extends AppCompatActivity
                         }
                     }
                 }).execute();
+    }
+
+    private void drawCurrencyPieChart() {
+        new GetTopPairsTask(client).setFromSymbol(coin.getSymbol())
+                .setListener(new GetTopPairsTask.Listener() {
+                    @Override
+                    public void finished(TopPairs topPairs) {
+                        Fragment fragment = getSupportFragmentManager().findFragmentByTag("pie_chart_fragment");
+                        if (fragment != null) {
+                            ((CoinPieChartFragment) fragment).updateView(topPairs);
+                            Log.d("UPDATED", pieChartKind + ", " + new Date().toString());
+                        }
+                    }
+                }).execute();
+    }
+
+    private void drawPieChart() {
+        if (pieChartKind.equals("currency")) {
+            drawCurrencyPieChart();
+        } else if (pieChartKind.equals("exchange")) {
+            drawExchangePieChart();
+        }
     }
 
     @Override

@@ -6,11 +6,11 @@ import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
 
 public class GetCoinSnapshotTask extends AsyncTask<Integer, Integer, Integer> {
-    Listener listener;
-    Client client;
-    CoinSnapshot snapshot;
-    String fromSymbol;
-    String toSymbol;
+    private Listener listener;
+    private Client client;
+    private CoinSnapshot snapshot;
+    private String fromSymbol;
+    private String toSymbol;
 
     public GetCoinSnapshotTask(Client client) {
         this.listener = null;

@@ -13,6 +13,8 @@ import com.example.toolbartest.R;
 import com.example.toolbartest.chart.CoinPieChart;
 import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
 import com.example.toolbartest.cryptocompare.data.Exchange;
+import com.example.toolbartest.cryptocompare.data.TopPair;
+import com.example.toolbartest.cryptocompare.data.TopPairs;
 import com.github.mikephil.charting.charts.PieChart;
 
 import java.util.ArrayList;
@@ -93,6 +95,52 @@ public class CoinPieChartFragment extends Fragment implements View.OnClickListen
             } else {
                 values.add(value);
                 labels.add(exchange.getMarket());
+            }
+        }
+
+        if (others > 0.0) {
+            values.add(others);
+            labels.add("others");
+        }
+
+        chart.clear();
+
+        chart = new CoinPieChart((PieChart) getView().findViewById(R.id.pie_chart));
+        chart.initialize();
+        chart.setData(values, labels);
+        chart.invalidate();
+    }
+
+    public void updateView(TopPairs topPairs) {
+        if (isDetached() || getView() == null) {
+            return;
+        }
+
+        ArrayList<TopPair> pairs = topPairs.getTopPairs();
+
+        Collections.sort(pairs, new Comparator<TopPair>() {
+            public int compare(TopPair tp1, TopPair tp2) {
+                return tp1.getVolume24h() > tp2.getVolume24h() ? -1 : 1;
+            }
+        });
+
+        double sum = 0.0;
+        for (TopPair pair : pairs) {
+            sum += pair.getVolume24h();
+        }
+        sum *= 0.05;
+
+        double others = 0.0;
+        ArrayList<Double> values = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+
+        for (TopPair pair : pairs) {
+            double value = pair.getVolume24h();
+            if (value < sum) {
+                others += value;
+            } else {
+                values.add(value);
+                labels.add(pair.getToSymbol());
             }
         }
 

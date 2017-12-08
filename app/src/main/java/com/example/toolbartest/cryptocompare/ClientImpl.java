@@ -12,6 +12,8 @@ import com.example.toolbartest.cryptocompare.data.History;
 import com.example.toolbartest.cryptocompare.data.HistoryImpl;
 import com.example.toolbartest.cryptocompare.data.Prices;
 import com.example.toolbartest.cryptocompare.data.PricesImpl;
+import com.example.toolbartest.cryptocompare.data.TopPairs;
+import com.example.toolbartest.cryptocompare.data.TopPairsImpl;
 import com.example.toolbartest.cryptocompare.request.BlockingRequest;
 import com.example.toolbartest.cryptocompare.response.CoinListResponseImpl;
 import com.example.toolbartest.cryptocompare.response.CoinSnapshotResponse;
@@ -19,6 +21,8 @@ import com.example.toolbartest.cryptocompare.response.CoinSnapshotResponseImpl;
 import com.example.toolbartest.cryptocompare.response.HistoryResponse;
 import com.example.toolbartest.cryptocompare.response.HistoryResponseImpl;
 import com.example.toolbartest.cryptocompare.response.PricesResponseImpl;
+import com.example.toolbartest.cryptocompare.response.TopPairsResponse;
+import com.example.toolbartest.cryptocompare.response.TopPairsResponseImpl;
 import com.example.toolbartest.tasks.FetchCoinListThread;
 import com.example.toolbartest.utils.StringHelper;
 
@@ -26,7 +30,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
@@ -163,6 +166,16 @@ public class ClientImpl implements Client {
         JSONObject response = new BlockingRequest(activity, url).perform();
         CoinSnapshotResponse snapshotResponse = new CoinSnapshotResponseImpl(response, fromSymbol, toSymbol);
         return new CoinSnapshotImpl(snapshotResponse);
+    }
+
+    @Override
+    public TopPairs getTopPairs(String fromSymbol) {
+        String url = "https://min-api.cryptocompare.com/data/top/pairs?fsym=" + fromSymbol;
+        Log.d("URL", url);
+
+        JSONObject response = new BlockingRequest(activity, url).perform();
+        TopPairsResponse topPairsResponse = new TopPairsResponseImpl(response, fromSymbol);
+        return new TopPairsImpl(topPairsResponse);
     }
 
     private ArrayList<History> sampling(ArrayList<History> records, int aggregate) {
