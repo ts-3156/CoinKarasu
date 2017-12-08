@@ -24,5 +24,7 @@ public interface Client {
 
     ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit);
 
+    ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate);
+
     CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol);
 }

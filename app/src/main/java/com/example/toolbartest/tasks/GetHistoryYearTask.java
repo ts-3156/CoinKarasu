@@ -10,7 +10,7 @@ public class GetHistoryYearTask extends GetHistoryTaskBase {
 
     @Override
     protected Integer doInBackground(Integer... params) {
-        histories = client.getHistoryDay(fromSymbol, toSymbol, 365);
+        histories = client.getHistoryDay(fromSymbol, toSymbol, 365, 5);
         return 200;
     }
 }

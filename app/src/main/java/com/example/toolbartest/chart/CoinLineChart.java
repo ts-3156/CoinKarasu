@@ -1,17 +1,19 @@
 package com.example.toolbartest.chart;
 
 import android.graphics.Color;
+import android.util.Log;
 
 import com.example.toolbartest.cryptocompare.data.History;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.SimpleDateFormat;
@@ -23,9 +25,12 @@ public class CoinLineChart {
     private LineChart chart;
     private String kind;
 
+    private long offset;
+
     public CoinLineChart(LineChart chart, String kind) {
         this.chart = chart;
         this.kind = kind;
+        this.offset = 0;
     }
 
     private SimpleDateFormat getSimpleDateFormat(String kind) {
@@ -33,7 +38,7 @@ public class CoinLineChart {
 
         switch (kind) {
             case "hour":
-                formatter = new SimpleDateFormat("HH:mm");
+                formatter = new SimpleDateFormat("HH:mm:ss");
                 break;
             case "day":
                 formatter = new SimpleDateFormat("HH:mm");
@@ -84,16 +89,30 @@ public class CoinLineChart {
         return converted;
     }
 
-    private class ValueFormatter implements IAxisValueFormatter {
+    private class CutOffFormatter implements IAxisValueFormatter {
         private SimpleDateFormat format;
 
-        ValueFormatter(SimpleDateFormat format) {
+        CutOffFormatter(SimpleDateFormat format) {
             this.format = format;
         }
 
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
             long millis = convert((long) value);
+            return format.format(new Date(millis));
+        }
+    }
+
+    private class OffsetFormatter implements IAxisValueFormatter {
+        private SimpleDateFormat format;
+
+        OffsetFormatter(SimpleDateFormat format) {
+            this.format = format;
+        }
+
+        @Override
+        public String getFormattedValue(float value, AxisBase axis) {
+            long millis = (long) value + offset;
             return format.format(new Date(millis));
         }
     }
@@ -105,30 +124,51 @@ public class CoinLineChart {
         chart.invalidate();
 
         chart.getLegend().setEnabled(false);
+        chart.animateX(1000);
+        // enable touch gestures
+        chart.setTouchEnabled(false);
+        chart.setDoubleTapToZoomEnabled(false);
+
+        // enable scaling and dragging
+        chart.setDragEnabled(false);
+        chart.setScaleEnabled(false);
+        // mChart.setScaleXEnabled(true);
+        // mChart.setScaleYEnabled(true);
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        chart.setPinchZoom(false);
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawAxisLine(false);
         xAxis.setDrawGridLines(true);
         xAxis.setGranularity(1f); // one hour
-        xAxis.setValueFormatter(new ValueFormatter(getSimpleDateFormat(kind)));
+//        xAxis.setValueFormatter(new CutOffFormatter(getSimpleDateFormat(kind)));
+        xAxis.setValueFormatter(new OffsetFormatter(getSimpleDateFormat(kind)));
 
         YAxis leftAxis = chart.getAxisLeft();
         leftAxis.setDrawAxisLine(false);
         leftAxis.setDrawGridLines(true);
 
         chart.getAxisRight().setEnabled(false);
+
+        chart.setHighlightPerDragEnabled(false);
     }
 
     public void replaceValueFormatter() {
-        chart.getXAxis().setValueFormatter(new ValueFormatter(getSimpleDateFormat(kind)));
+//        chart.getXAxis().setValueFormatter(new CutOffFormatter(getSimpleDateFormat(kind)));
+        chart.getXAxis().setValueFormatter(new OffsetFormatter(getSimpleDateFormat(kind)));
     }
 
     public void setData(ArrayList<History> histories) {
         ArrayList<Entry> values = new ArrayList<>(histories.size());
 
+        offset = histories.get(0).getTime() * 1000;
+
         for (History history : histories) {
-            values.add(new Entry(inverseConvert(history.getTime() * 1000), (float) history.getClose()));
+//            long x = inverseConvert(history.getTime() * 1000);
+            long x = history.getTime() * 1000 - offset;
+            values.add(new Entry(x, (float) history.getClose()));
         }
 
         LineDataSet set = new LineDataSet(values, "DataSet 1");
@@ -162,6 +202,7 @@ public class CoinLineChart {
     }
 
     public void clear() {
+        chart.fitScreen();
         chart.clear();
         chart = null;
     }

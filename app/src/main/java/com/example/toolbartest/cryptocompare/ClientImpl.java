@@ -26,6 +26,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
@@ -111,7 +112,12 @@ public class ClientImpl implements Client {
 
     @Override
     public ArrayList<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int aggregate) {
-        return getHistoryXxx("minute", fromSymbol, toSymbol, limit, aggregate);
+        ArrayList<History> records = getHistoryXxx("minute", fromSymbol, toSymbol, limit, 1);
+        if (aggregate == 1) {
+            return records;
+        } else {
+            return sampling(records, aggregate);
+        }
     }
 
     @Override
@@ -121,7 +127,12 @@ public class ClientImpl implements Client {
 
     @Override
     public ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate) {
-        return getHistoryXxx("hour", fromSymbol, toSymbol, limit, aggregate);
+        ArrayList<History> records = getHistoryXxx("hour", fromSymbol, toSymbol, limit, 1);
+        if (aggregate == 1) {
+            return records;
+        } else {
+            return sampling(records, aggregate);
+        }
     }
 
     @Override
@@ -131,7 +142,17 @@ public class ClientImpl implements Client {
 
     @Override
     public ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit) {
-        return getHistoryXxx("day", fromSymbol, toSymbol, limit, 1);
+        return getHistoryDay(fromSymbol, toSymbol, limit, 1);
+    }
+
+    @Override
+    public ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate) {
+        ArrayList<History> records = getHistoryXxx("day", fromSymbol, toSymbol, limit, 1);
+        if (aggregate == 1) {
+            return records;
+        } else {
+            return sampling(records, aggregate);
+        }
     }
 
     @Override
@@ -143,4 +164,20 @@ public class ClientImpl implements Client {
         CoinSnapshotResponse snapshotResponse = new CoinSnapshotResponseImpl(response, fromSymbol, toSymbol);
         return new CoinSnapshotImpl(snapshotResponse);
     }
+
+    private ArrayList<History> sampling(ArrayList<History> records, int aggregate) {
+        ArrayList<History> sampled = new ArrayList<>();
+        int size = records.size();
+
+        for (int i = 0; i < size; i++) {
+            if (i != 0 && i != size - 1 && i % aggregate == 0) {
+                sampled.add(records.get(i));
+            }
+        }
+
+        Log.d("SAMPLING", "" + aggregate + ", " + records.size() + ", " + sampled.size());
+
+        return sampled;
+    }
+
 }

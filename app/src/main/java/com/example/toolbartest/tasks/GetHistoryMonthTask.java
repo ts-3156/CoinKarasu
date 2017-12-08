@@ -11,7 +11,7 @@ public class GetHistoryMonthTask extends GetHistoryTaskBase {
     @Override
     protected Integer doInBackground(Integer... params) {
 //        histories = client.getHistoryDay(fromSymbol, toSymbol, 30);
-        histories = client.getHistoryHour(fromSymbol, toSymbol, 720, 2); // 30 * 24
+        histories = client.getHistoryHour(fromSymbol, toSymbol, 720, 10); // 30 * 24
         return 200;
     }
 }

@@ -10,7 +10,7 @@ public class GetHistoryWeekTask extends GetHistoryTaskBase {
 
     @Override
     protected Integer doInBackground(Integer... params) {
-        histories = client.getHistoryHour(fromSymbol, toSymbol, 168); // 24 * 7
+        histories = client.getHistoryHour(fromSymbol, toSymbol, 168, 2); // 24 * 7
         return 200;
     }
 }
