@@ -44,11 +44,20 @@ public class ClientImpl implements Client {
         initializeCoinList();
     }
 
+    public ClientImpl(Activity activity, boolean skipLoadCoinList) {
+        this.activity = activity;
+        this.coinList = null;
+
+        if (!skipLoadCoinList) {
+            initializeCoinList();
+        }
+    }
+
     private void initializeCoinList() {
         if (CoinListResponseImpl.cacheExists(activity)) {
             long start = System.currentTimeMillis();
             coinList = CoinListImpl.restoreFromCache(activity);
-            Log.d("CoinList", "" + (System.currentTimeMillis() - start) + " ms");
+            Log.d("RestoreCoinList", (System.currentTimeMillis() - start) + " ms");
         } else {
             latch = new CountDownLatch(1);
             new FetchCoinListThread(activity)
@@ -65,10 +74,13 @@ public class ClientImpl implements Client {
     @Override
     public ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol) {
         if (coinList == null) {
+            long start = System.currentTimeMillis();
             try {
                 latch.await();
             } catch (InterruptedException e) {
+                Log.d("collectCoins", e.getMessage());
             }
+            Log.d("collectCoins", "Blocked " + (System.currentTimeMillis() - start) + " ms");
         }
 
         return coinList.collectCoins(fromSymbols, toSymbol);

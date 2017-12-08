@@ -68,7 +68,7 @@ public class CoinActivity extends AppCompatActivity
 
         ((TextView) findViewById(R.id.coin_price)).setText(new CoinPriceFormat(coin.getToSymbol()).format(coin.getPrice()));
 
-        client = new ClientImpl(this);
+        client = new ClientImpl(this, true);
         lineChartKind = "hour";
         pieChartKind = "currency";
 
