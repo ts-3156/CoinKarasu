@@ -31,7 +31,7 @@ public class CoinLineChartFragment extends Fragment implements View.OnClickListe
     public static CoinLineChartFragment newInstance(String kind) {
         CoinLineChartFragment fragment = new CoinLineChartFragment();
         Bundle args = new Bundle();
-        args.putString("lineChartKind", kind);
+        args.putString("kind", kind);
         fragment.setArguments(args);
         return fragment;
     }
@@ -40,7 +40,7 @@ public class CoinLineChartFragment extends Fragment implements View.OnClickListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = getArguments().getString("lineChartKind");
+            kind = getArguments().getString("kind");
         }
     }
 

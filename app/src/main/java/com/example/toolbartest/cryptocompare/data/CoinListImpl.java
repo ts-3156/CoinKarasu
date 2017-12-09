@@ -73,7 +73,7 @@ public class CoinListImpl implements CoinList {
     }
 
     @Override
-    public ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol) {
+    public ArrayList<Coin> collectCoins(String[] fromSymbols) {
         final ArrayList<Coin> coins = new ArrayList<>(fromSymbols.length);
 
         for (String coinSymbol : fromSymbols) {
@@ -82,7 +82,6 @@ public class CoinListImpl implements CoinList {
                 continue;
             }
 
-            coin.setToSymbol(toSymbol);
             coins.add(coin);
         }
 

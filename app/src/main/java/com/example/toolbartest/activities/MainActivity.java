@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -23,27 +24,27 @@ import android.view.WindowManager;
 import com.example.toolbartest.R;
 import com.example.toolbartest.activities.settings.SettingsActivity;
 import com.example.toolbartest.coins.Coin;
-import com.example.toolbartest.coins.SectionHeaderCoinImpl;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.Prices;
-import com.example.toolbartest.tasks.GetPricesOverJapaneseExchangesTask;
 import com.example.toolbartest.tasks.GetPricesTask;
 import com.example.toolbartest.utils.AutoUpdateTimer;
+import com.example.toolbartest.utils.Exchange;
+import com.example.toolbartest.utils.ExchangeImpl;
 import com.example.toolbartest.utils.PrefHelper;
 import com.example.toolbartest.utils.ResNameHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        MainFragment.OnFragmentInteractionListener, FixedMainFragment.OnFragmentInteractionListener {
+        ListWithHeaderFragment.OnFragmentInteractionListener, GetPricesTask.Listener {
 
     private ArrayList<Coin> coins;
-    Client client;
+    private Client client;
+    private ArrayList<String> exchanges = new ArrayList<>();
 
     private AutoUpdateTimer autoUpdateTimer;
 
@@ -99,39 +100,86 @@ public class MainActivity extends AppCompatActivity
         stopAutoUpdate();
     }
 
-    public ArrayList<Coin> getSectionInsertedCoins() {
+    public ArrayList<Coin> filterCoins(String exchange) {
         if (!ResNameHelper.useFixedListView(this)) {
             return coins;
         }
 
         ArrayList<Coin> sectionalCoins = new ArrayList<>();
 
-        for (int i = 0; i < coins.size(); i++) {
-            if (i == 0) {
-                sectionalCoins.add(new SectionHeaderCoinImpl(getResources().getString(R.string.nav_bitflyer)));
-            } else if (i == 1) {
-                sectionalCoins.add(new SectionHeaderCoinImpl(getResources().getString(R.string.nav_coincheck)));
-            } else if (i == 2) {
-                sectionalCoins.add(new SectionHeaderCoinImpl(getResources().getString(R.string.nav_zaif)));
-            }
-
-            Coin coin = coins.get(i);
-            sectionalCoins.add(coin);
+        switch (exchange) {
+            case "bitflyer":
+                sectionalCoins.addAll(coins.subList(0, 1));
+                break;
+            case "coincheck":
+                sectionalCoins.addAll(coins.subList(1, 2));
+                break;
+            case "zaif":
+                sectionalCoins.addAll(coins.subList(2, coins.size()));
+                break;
+            default:
+                throw new RuntimeException("Invalid exchange " + exchange);
         }
 
         return sectionalCoins;
     }
 
-    private void replaceFragment() {
-        Fragment fragment = null;
+    private String exchangeToTag(String exchange) {
+        return "fragment_" + exchange;
+    }
 
-        if (ResNameHelper.useFixedListView(this)) {
-            fragment = FixedMainFragment.newInstance();
-        } else {
-            fragment = MainFragment.newInstance();
+    private int exchangeToContainerId(String exchange) {
+        int resId;
+
+        switch (exchange) {
+            case "bitflyer":
+                resId = R.id.fragment_container_bitflyer;
+                break;
+            case "coincheck":
+                resId = R.id.fragment_container_coincheck;
+                break;
+            case "zaif":
+                resId = R.id.fragment_container_zaif;
+                break;
+            case "cccagg":
+                resId = R.id.fragment_container;
+                break;
+            default:
+                throw new RuntimeException("Invalid exchange " + exchange);
         }
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment, "fragment").commit();
+        return resId;
+    }
+
+    private void replaceFragment() {
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        for (String exchange : exchanges) {
+            Fragment fragment = getSupportFragmentManager().findFragmentByTag(exchangeToTag(exchange));
+            if (fragment != null) {
+                transaction.remove(fragment);
+            }
+        }
+        exchanges.clear();
+
+        if (ResNameHelper.useFixedListView(this)) {
+            exchanges.add("bitflyer");
+            exchanges.add("coincheck");
+            exchanges.add("zaif");
+
+            for (String exchange : exchanges) {
+                transaction.replace(exchangeToContainerId(exchange),
+                        ListWithHeaderFragment.newInstance(exchange), exchangeToTag(exchange));
+            }
+        } else {
+            String exchange = "cccagg";
+            exchanges.add(exchange);
+
+            transaction.replace(exchangeToContainerId(exchange),
+                    ListWithHeaderFragment.newInstance(exchange, false, false), exchangeToTag(exchange));
+        }
+
+        transaction.commit();
     }
 
     private void initializeCoinListView() {
@@ -182,47 +230,18 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void run() {
                 if (ResNameHelper.useFixedListView(MainActivity.this)) {
-                    new GetPricesOverJapaneseExchangesTask(client)
-                            .setListener(new GetPricesOverJapaneseExchangesTask.Listener() {
-                                @Override
-                                public void finished(HashMap<String, Prices> map) {
-                                    String toSymbol = PrefHelper.getToSymbol(MainActivity.this);
-                                    if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(toSymbol)) {
-                                        return;
-                                    }
-                                    map.get(GetPricesOverJapaneseExchangesTask.EXCHANGE_BITFLYER).setAttrsToCoin(coins.get(0));
-                                    map.get(GetPricesOverJapaneseExchangesTask.EXCHANGE_COINCHECK).setAttrsToCoin(coins.get(1));
-                                    map.get(GetPricesOverJapaneseExchangesTask.EXCHANGE_ZAIF).setAttrsToCoins(coins.subList(2, coins.size()));
-
-                                    Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragment");
-                                    if (fragment != null && fragment instanceof FixedMainFragment) {
-                                        ((FixedMainFragment) fragment).updateCoinListView(getSectionInsertedCoins());
-                                        Log.d("UPDATED", new Date().toString());
-                                    }
-                                }
-                            }).execute();
-
+                    for (String exchange : exchanges) {
+                        Exchange ex = new ExchangeImpl(exchange);
+                        new GetPricesTask(client)
+                                .setFromSymbols(ex.getFromSymbols())
+                                .setToSymbol("JPY")
+                                .setExchange(exchange).setListener(MainActivity.this).execute();
+                    }
                 } else {
                     new GetPricesTask(client)
                             .setFromSymbols(ResNameHelper.getFromSymbols(MainActivity.this))
                             .setToSymbol(PrefHelper.getToSymbol(MainActivity.this))
-                            .setExchange(ResNameHelper.getExchangeName(MainActivity.this))
-                            .setListener(new GetPricesTask.Listener() {
-                                @Override
-                                public void finished(Prices prices) {
-                                    String toSymbol = PrefHelper.getToSymbol(MainActivity.this);
-                                    if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(toSymbol)) {
-                                        return;
-                                    }
-                                    prices.setAttrsToCoins(coins);
-
-                                    Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragment");
-                                    if (fragment != null && fragment instanceof MainFragment) {
-                                        ((MainFragment) fragment).updateCoinListView(getSectionInsertedCoins());
-                                        Log.d("UPDATED", new Date().toString());
-                                    }
-                                }
-                            }).execute();
+                            .setExchange("cccagg").setListener(MainActivity.this).execute();
                 }
             }
         }, delay, PrefHelper.getSyncInterval(this));
@@ -232,6 +251,24 @@ public class MainActivity extends AppCompatActivity
         if (autoUpdateTimer != null) {
             autoUpdateTimer.cancel();
             autoUpdateTimer = null;
+        }
+    }
+
+
+    @Override
+    public void finished(Prices prices) {
+        String toSymbol = PrefHelper.getToSymbol(this);
+        if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(toSymbol)) {
+            return;
+        }
+
+        prices.setAttrsToCoins(coins);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(exchangeToTag(prices.getExchange()));
+
+        if (fragment != null) {
+            String exchange = prices.getExchange();
+            ((ListWithHeaderFragment) fragment).updateView();
+            Log.d("UPDATED", exchange + ", " + new Date().toString());
         }
     }
 

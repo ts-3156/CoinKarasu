@@ -83,7 +83,12 @@ public class ClientImpl implements Client {
             Log.d("collectCoins", "Blocked " + (System.currentTimeMillis() - start) + " ms");
         }
 
-        return coinList.collectCoins(fromSymbols, toSymbol);
+        ArrayList<Coin> coins = coinList.collectCoins(fromSymbols);
+        for (Coin coin : coins) {
+            coin.setToSymbol(toSymbol);
+        }
+
+        return coins;
     }
 
     @Override

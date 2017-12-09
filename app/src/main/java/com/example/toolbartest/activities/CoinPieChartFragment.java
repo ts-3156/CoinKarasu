@@ -36,7 +36,7 @@ public class CoinPieChartFragment extends Fragment implements View.OnClickListen
     public static CoinPieChartFragment newInstance(String kind) {
         CoinPieChartFragment fragment = new CoinPieChartFragment();
         Bundle args = new Bundle();
-        args.putString("lineChartKind", kind);
+        args.putString("kind", kind);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,7 +45,7 @@ public class CoinPieChartFragment extends Fragment implements View.OnClickListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = getArguments().getString("lineChartKind");
+            kind = getArguments().getString("kind");
         }
     }
 
