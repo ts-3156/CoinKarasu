@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,7 +20,8 @@ import com.example.toolbartest.coins.Coin;
 import java.util.ArrayList;
 
 
-public class ListWithHeaderFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class ListWithHeaderFragment extends Fragment
+        implements AdapterView.OnItemClickListener, ListView.OnScrollListener {
 
     private OnFragmentInteractionListener listener;
 
@@ -43,29 +44,6 @@ public class ListWithHeaderFragment extends Fragment implements AdapterView.OnIt
         args.putBoolean("dividerVisibility", dividerVisibility);
         fragment.setArguments(args);
         return fragment;
-    }
-
-    private String exchangeToDisplayName() {
-        String name;
-
-        switch (exchange) {
-            case "bitflyer":
-                name = "BitFlyer";
-                break;
-            case "coincheck":
-                name = "Coincheck";
-                break;
-            case "zaif":
-                name = "Zaif";
-                break;
-            case "cccagg":
-                name = "Aggregated Index";
-                break;
-            default:
-                throw new RuntimeException("Invalid exchange " + exchange);
-        }
-
-        return name;
     }
 
     @Override
@@ -102,6 +80,7 @@ public class ListWithHeaderFragment extends Fragment implements AdapterView.OnIt
         ListView listView = view.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
+        listView.setOnScrollListener(this);
 
         return view;
     }
@@ -139,6 +118,29 @@ public class ListWithHeaderFragment extends Fragment implements AdapterView.OnIt
         }
     }
 
+    private String exchangeToDisplayName() {
+        String name;
+
+        switch (exchange) {
+            case "bitflyer":
+                name = "BitFlyer";
+                break;
+            case "coincheck":
+                name = "Coincheck";
+                break;
+            case "zaif":
+                name = "Zaif";
+                break;
+            case "cccagg":
+                name = "Aggregated Index";
+                break;
+            default:
+                throw new RuntimeException("Invalid exchange " + exchange);
+        }
+
+        return name;
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -163,6 +165,24 @@ public class ListWithHeaderFragment extends Fragment implements AdapterView.OnIt
         intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.toJson().toString());
         intent.putExtra(CoinActivity.COIN_SYMBOL_KEY, coin.getSymbol());
         startActivity(intent);
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView listView, int state) {
+        switch (state) {
+            case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+                ((CustomAdapter) listView.getAdapter()).setShowAnim(true);
+                break;
+            case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+                ((CustomAdapter) listView.getAdapter()).setShowAnim(false);
+                break;
+            case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
+                break;
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView absListView, int i, int i1, int i2) {
     }
 
     public interface OnFragmentInteractionListener {

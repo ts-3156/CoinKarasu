@@ -3,6 +3,8 @@ package com.example.toolbartest.utils;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.graphics.Color;
+import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.toolbartest.R;
@@ -45,7 +47,11 @@ public class AnimHelper {
         animator.start();
     }
 
-    private static int getTrendColor(Activity activity, double trend) {
+    public static void setTrendIcon(ImageView view, Coin coin) {
+        view.setImageResource(getTrendIconResId(coin.getTrend()));
+    }
+
+    public static int getTrendColor(Activity activity, double trend) {
         int color = activity.getResources().getColor(R.color.neutral_trend);
 
         if (trend > 0) {
@@ -55,6 +61,20 @@ public class AnimHelper {
         }
 
         return color;
+    }
+
+    private static int getTrendIconResId(double trend) {
+        int resId;
+
+        if (trend > 0) {
+            resId = R.drawable.ic_trending_up;
+        } else if (trend < 0) {
+            resId = R.drawable.ic_trending_down;
+        } else {
+            resId = R.drawable.ic_trending_flat;
+        }
+
+        return resId;
     }
 
 }

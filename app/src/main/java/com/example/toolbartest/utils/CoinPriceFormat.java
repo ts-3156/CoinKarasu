@@ -16,7 +16,7 @@ public class CoinPriceFormat {
     }
 
     public String format(double price) {
-        Locale locale = LocaleHelper.symbolToLocale(toSymbol);
+        Locale locale = symbolToLocale(toSymbol);
         Currency currency = Currency.getInstance(Currency.getInstance(locale).getCurrencyCode());
         NumberFormat formatter = NumberFormat.getCurrencyInstance(locale);
         String value;
@@ -35,5 +35,22 @@ public class CoinPriceFormat {
         }
 
         return value;
+    }
+
+    private Locale symbolToLocale(String symbol) {
+        Locale locale = null;
+
+        switch (symbol) {
+            case "JPY":
+                locale = Locale.JAPAN;
+                break;
+            case "USD":
+                locale = Locale.US;
+                break;
+            default:
+                locale = Locale.JAPAN;
+        }
+
+        return locale;
     }
 }

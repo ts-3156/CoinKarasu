@@ -6,13 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.toolbartest.R;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.utils.AnimHelper;
+import com.example.toolbartest.utils.CoinPriceFormat;
 import com.example.toolbartest.utils.ResourceHelper;
+import com.example.toolbartest.utils.StringHelper;
 import com.example.toolbartest.utils.VolleyHelper;
 
 import java.util.ArrayList;
@@ -32,19 +35,19 @@ public class CustomAdapter extends BaseAdapter {
 
     private ArrayList<Coin> coins = new ArrayList<>();
     private TreeSet<Integer> sectionHeader = new TreeSet<>();
-
-    public CustomAdapter(Activity activity) {
-        this.activity = activity;
-        inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
+    private boolean showAnim;
 
     public CustomAdapter(Activity activity, List<Coin> coins) {
         this.activity = activity;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
+        showAnim = true;
         for (Coin coin : coins) {
             addItem(coin);
         }
+    }
+
+    public void setShowAnim(boolean showAnim) {
+        this.showAnim = showAnim;
     }
 
     public void addItem(Coin coin) {
@@ -56,8 +59,12 @@ public class CustomAdapter extends BaseAdapter {
     }
 
     public void replaceItems(List<Coin> coins) {
+        this.coins.clear();
         this.coins = new ArrayList<>();
+
+        sectionHeader.clear();
         sectionHeader = new TreeSet<>();
+
         for (Coin coin : coins) {
             addItem(coin);
         }
@@ -102,8 +109,9 @@ public class CustomAdapter extends BaseAdapter {
                 holder.symbol = convertView.findViewById(R.id.coin_symbol);
                 holder.price = convertView.findViewById(R.id.coin_price);
                 holder.trend = convertView.findViewById(R.id.coin_trend);
+                holder.trend_icon = convertView.findViewById(R.id.coin_trend_icon);
             } else if (rowType == TYPE_HEADER) {
-                convertView = inflater.inflate(R.layout.list_header_item, null);
+                convertView = inflater.inflate(R.layout.list_header_item, parent, false);
                 holder.name = convertView.findViewById(R.id.text_separator);
             }
             convertView.setTag(holder);
@@ -128,12 +136,20 @@ public class CustomAdapter extends BaseAdapter {
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());
 
-            AnimHelper.setPriceAnim(holder.price, coin);
-            AnimHelper.setTrendAnim(activity, holder.trend, coin);
+            if (showAnim) {
+                AnimHelper.setPriceAnim(holder.price, coin);
+                AnimHelper.setTrendAnim(activity, holder.trend, coin);
+                AnimHelper.setTrendIcon(holder.trend_icon, coin);
+            } else {
+                holder.price.setText(new CoinPriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+
+                holder.trend.setText(StringHelper.formatTrend(coin.getTrend()));
+                holder.trend.setTextColor(AnimHelper.getTrendColor(activity, coin.getTrend()));
+                AnimHelper.setTrendIcon(holder.trend_icon, coin);
+            }
         } else if (rowType == TYPE_HEADER) {
             holder.name.setText(coin.getName());
         }
-
 
         return convertView;
     }
@@ -144,5 +160,6 @@ public class CustomAdapter extends BaseAdapter {
         TextView symbol;
         TextView price;
         TextView trend;
+        ImageView trend_icon;
     }
 }
