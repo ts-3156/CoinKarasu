@@ -1,0 +1,91 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    tools:context="com.example.toolbartest.activities.CoinLineChartFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp">
+
+        <Button
+            android:id="@+id/board_order_book"
+            style="@style/AppTheme.FlatButton"
+            android:layout_width="@dimen/chart_buttons_width"
+            android:layout_height="@dimen/chart_buttons_height"
+            android:layout_weight="1"
+            android:text="Order book"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textSize="@dimen/chart_buttons_text_size" />
+
+        <Button
+            android:id="@+id/board_time_and_sales"
+            style="@style/AppTheme.FlatButton"
+            android:layout_width="@dimen/chart_buttons_width"
+            android:layout_height="@dimen/chart_buttons_height"
+            android:layout_weight="1"
+            android:text="Time and Sales"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textSize="@dimen/chart_buttons_text_size" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:id="@+id/column_ask"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Ask (売数量)" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/column_price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Price (気配値)" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/column_bid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Bid (買数量)" />
+
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

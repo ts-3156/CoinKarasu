@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Response;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
 import com.example.toolbartest.utils.VolleyHelper;
 
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class BlockingRequest implements Request {
@@ -24,7 +27,7 @@ public class BlockingRequest implements Request {
     @Override
     public JSONObject perform() {
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(url, new JSONObject(), future, future);
+        JsonObjectRequest request = new JsonObjectRequest(url, null, future, future);
 
         request.setShouldCache(true);
         request.setRetryPolicy(new DefaultRetryPolicy(3000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
