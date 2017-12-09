@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity
             exchanges.add(exchange);
 
             transaction.replace(exchangeToContainerId(exchange),
-                    ListWithHeaderFragment.newInstance(exchange, false, false), exchangeToTag(exchange));
+                    ListWithHeaderFragment.newInstance(exchange, true, false), exchangeToTag(exchange));
         }
 
         transaction.commit();
@@ -235,13 +235,15 @@ public class MainActivity extends AppCompatActivity
                         new GetPricesTask(client)
                                 .setFromSymbols(ex.getFromSymbols())
                                 .setToSymbol("JPY")
-                                .setExchange(exchange).setListener(MainActivity.this).execute();
+                                .setExchange(exchange)
+                                .setListener(MainActivity.this).execute();
                     }
                 } else {
                     new GetPricesTask(client)
                             .setFromSymbols(ResNameHelper.getFromSymbols(MainActivity.this))
                             .setToSymbol(PrefHelper.getToSymbol(MainActivity.this))
-                            .setExchange("cccagg").setListener(MainActivity.this).execute();
+                            .setExchange("cccagg")
+                            .setListener(MainActivity.this).execute();
                 }
             }
         }, delay, PrefHelper.getSyncInterval(this));
@@ -256,6 +258,15 @@ public class MainActivity extends AppCompatActivity
 
 
     @Override
+    public void started(String exchange, String[] fromSymbols, String toSymbol) {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(exchangeToTag(exchange));
+
+        if (fragment != null) {
+            ((ListWithHeaderFragment) fragment).setProgressbarVisibility(true);
+        }
+    }
+
+    @Override
     public void finished(Prices prices) {
         String toSymbol = PrefHelper.getToSymbol(this);
         if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(toSymbol)) {
@@ -268,6 +279,7 @@ public class MainActivity extends AppCompatActivity
         if (fragment != null) {
             String exchange = prices.getExchange();
             ((ListWithHeaderFragment) fragment).updateView();
+            ((ListWithHeaderFragment) fragment).setProgressbarVisibility(false);
             Log.d("UPDATED", exchange + ", " + new Date().toString());
         }
     }
