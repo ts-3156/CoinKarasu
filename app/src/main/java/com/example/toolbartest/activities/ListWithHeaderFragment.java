@@ -59,7 +59,7 @@ public class ListWithHeaderFragment extends Fragment implements AdapterView.OnIt
                 name = "Zaif";
                 break;
             case "cccagg":
-                name = "CCCAGG";
+                name = "Aggregated Index";
                 break;
             default:
                 throw new RuntimeException("Invalid exchange " + exchange);

@@ -66,7 +66,7 @@ public class CoinActivity extends AppCompatActivity
             bar.setTitle(coin.getFullName());
         }
 
-        ((TextView) findViewById(R.id.coin_price)).setText(new CoinPriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+        ((TextView) findViewById(R.id.price_day)).setText(new CoinPriceFormat(coin.getToSymbol()).format(coin.getPrice()));
 
         client = new ClientImpl(this, true);
         lineChartKind = "hour";
@@ -179,7 +179,7 @@ public class CoinActivity extends AppCompatActivity
                     @Override
                     public void finished(CoinSnapshot snapshot) {
                         AggregatedData coin = snapshot.getAggregatedData();
-                        ((TextView) findViewById(R.id.coin_price)).setText(new CoinPriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+                        ((TextView) findViewById(R.id.price_day)).setText(new CoinPriceFormat(coin.getToSymbol()).format(coin.getPrice()));
 
                         Fragment fragment = getSupportFragmentManager().findFragmentByTag("pie_chart_fragment");
                         if (fragment != null) {
