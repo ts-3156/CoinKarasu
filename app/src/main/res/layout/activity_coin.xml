@@ -18,7 +18,7 @@
             android:orientation="vertical">
 
             <android.support.v7.widget.CardView
-                android:id="@+id/cart_day"
+                android:id="@+id/card_day"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="0dp"
@@ -27,113 +27,57 @@
                 android:layout_marginTop="16dp"
                 android:background="#ffffff">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:padding="16dp">
 
                     <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="本日 24時間前との比較"
-                        android:textSize="15dp" />
+                        android:id="@+id/caption_day"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentTop="true"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        tools:text="Today so far" />
+
+                    <TextView
+                        android:id="@+id/caption_desc_day"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@id/caption_day"
+                        android:layout_toRightOf="@id/caption_day"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        tools:text=" vs last 24 hours" />
 
                     <TextView
                         android:id="@+id/price_day"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="¥ 1,000,000"
-                        android:textSize="30dp" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_below="@id/caption_day"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                        tools:text="¥ 1,000,000" />
+
+                    <ImageView
+                        android:id="@+id/trend_icon_day"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_below="@id/price_day"
+                        android:paddingRight="4dp"
+                        tools:src="@drawable/ic_trending_down" />
 
                     <TextView
                         android:id="@+id/trend_day"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="¥ 162 (29%)"
-                        android:textColor="#ff0000"
-                        android:textSize="15dp" />
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/card_week"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:background="#ffffff">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="今週 7日前との比較"
-                        android:textSize="15dp" />
-
-                    <TextView
-                        android:id="@+id/price_week"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="¥ 1,000,000"
-                        android:textSize="30dp" />
-
-                    <TextView
-                        android:id="@+id/trend_week"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="¥ 1000 (52%)"
-                        android:textColor="#ff0000"
-                        android:textSize="15dp" />
-                </LinearLayout>
-
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                android:id="@+id/card_month"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="0dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:background="#ffffff">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="今月 30日前との比較"
-                        android:textSize="15dp" />
-
-                    <TextView
-                        android:id="@+id/price_month"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="¥ 1,000,000"
-                        android:textSize="30dp" />
-
-                    <TextView
-                        android:id="@+id/trend_month"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="¥ 1000 (52%)"
-                        android:textColor="#ff0000"
-                        android:textSize="15dp" />
-                </LinearLayout>
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/price_day"
+                        android:layout_toRightOf="@id/trend_icon_day"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+                        tools:text="¥ 162 (29%)"
+                        tools:textColor="#ff0000" />
+                </RelativeLayout>
 
             </android.support.v7.widget.CardView>
 
@@ -145,7 +89,8 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="16dp"
-                android:background="#ffffff" />
+                android:background="#ffffff"
+                tools:layout_height="200dp" />
 
             <android.support.v7.widget.CardView
                 android:id="@+id/card_pie_chart"
@@ -155,7 +100,8 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="16dp"
-                android:background="#ffffff" />
+                android:background="#ffffff"
+                tools:layout_height="200dp" />
 
             <android.support.v7.widget.CardView
                 android:id="@+id/card_board"
@@ -165,9 +111,8 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="16dp"
-                android:background="#ffffff">
-
-            </android.support.v7.widget.CardView>
+                android:background="#ffffff"
+                tools:layout_height="200dp" />
 
             <View
                 android:id="@+id/divider"
