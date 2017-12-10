@@ -17,6 +17,7 @@ import android.widget.ListView;
 import com.example.toolbartest.R;
 import com.example.toolbartest.adapters.CustomAdapter;
 import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.format.PriceViewFormat;
 import com.example.toolbartest.utils.AnimHelper;
 
 import java.util.ArrayList;
@@ -103,7 +104,7 @@ public class ListWithHeaderFragment extends Fragment
             public void run() {
                 setProgressbarVisibility(flag, exchange);
             }
-        }, AnimHelper.DURATION);
+        }, PriceViewFormat.DURATION);
     }
 
     public void setProgressbarVisibility(boolean flag, String exchange) {

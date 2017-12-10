@@ -12,8 +12,9 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.toolbartest.R;
 import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.format.PriceViewFormat;
+import com.example.toolbartest.format.TrendViewFormat;
 import com.example.toolbartest.utils.AnimHelper;
-import com.example.toolbartest.utils.CoinPriceFormat;
 import com.example.toolbartest.utils.ResourceHelper;
 import com.example.toolbartest.utils.StringHelper;
 import com.example.toolbartest.utils.VolleyHelper;
@@ -139,15 +140,12 @@ public class CustomAdapter extends BaseAdapter {
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());
 
+            new PriceViewFormat(coin, isAnimEnabled).format(holder.price);
+            new TrendViewFormat(coin, isAnimEnabled).format(holder.trend);
+
             if (isAnimEnabled) {
-                AnimHelper.setPriceAnim(holder.price, coin);
-                AnimHelper.setTrendAnim(activity, holder.trend, coin);
                 AnimHelper.setTrendIcon(holder.trend_icon, coin);
             } else {
-                holder.price.setText(new CoinPriceFormat(coin.getToSymbol()).format(coin.getPrice()));
-
-                holder.trend.setText(StringHelper.formatTrend(coin.getTrend()));
-                holder.trend.setTextColor(AnimHelper.getTrendColor(activity, coin.getTrend()));
                 AnimHelper.setTrendIcon(holder.trend_icon, coin);
             }
         } else if (rowType == TYPE_HEADER) {

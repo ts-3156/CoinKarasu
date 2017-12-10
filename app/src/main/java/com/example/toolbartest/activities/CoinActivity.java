@@ -18,6 +18,7 @@ import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
 import com.example.toolbartest.cryptocompare.data.History;
 import com.example.toolbartest.cryptocompare.data.TopPairs;
+import com.example.toolbartest.format.PriceViewFormat;
 import com.example.toolbartest.tasks.GetBoardTask;
 import com.example.toolbartest.tasks.GetCoinSnapshotTask;
 import com.example.toolbartest.tasks.GetHistoryDayTask;
@@ -28,7 +29,6 @@ import com.example.toolbartest.tasks.GetHistoryWeekTask;
 import com.example.toolbartest.tasks.GetHistoryYearTask;
 import com.example.toolbartest.tasks.GetTopPairsTask;
 import com.example.toolbartest.utils.AutoUpdateTimer;
-import com.example.toolbartest.utils.CoinPriceFormat;
 import com.example.toolbartest.utils.PrefHelper;
 
 import org.json.JSONException;
@@ -71,7 +71,7 @@ public class CoinActivity extends AppCompatActivity
             bar.setTitle(coin.getFullName());
         }
 
-        ((TextView) findViewById(R.id.price_day)).setText(new CoinPriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+        new PriceViewFormat(coin).format((TextView) findViewById(R.id.price_day));
 
         client = new ClientImpl(this, true);
         lineChartKind = "hour";
@@ -189,7 +189,7 @@ public class CoinActivity extends AppCompatActivity
                     @Override
                     public void finished(CoinSnapshot snapshot) {
                         AggregatedData coin = snapshot.getAggregatedData();
-                        ((TextView) findViewById(R.id.price_day)).setText(new CoinPriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+                        new PriceViewFormat(coin).format((TextView) findViewById(R.id.price_day));
 
                         Fragment fragment = getSupportFragmentManager().findFragmentByTag("pie_chart_fragment");
                         if (fragment != null) {
