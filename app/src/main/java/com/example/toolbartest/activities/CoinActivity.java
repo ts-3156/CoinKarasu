@@ -11,14 +11,12 @@ import android.widget.TextView;
 
 import com.example.toolbartest.R;
 import com.example.toolbartest.bitflyer.data.Board;
-import com.example.toolbartest.coins.AggregatedData;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.coins.CoinImpl;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
 import com.example.toolbartest.cryptocompare.data.History;
-import com.example.toolbartest.cryptocompare.data.Prices;
 import com.example.toolbartest.cryptocompare.data.TopPairs;
 import com.example.toolbartest.format.PriceViewFormat;
 import com.example.toolbartest.format.TrendViewFormat;
@@ -30,12 +28,10 @@ import com.example.toolbartest.tasks.GetHistoryMonthTask;
 import com.example.toolbartest.tasks.GetHistoryTaskBase;
 import com.example.toolbartest.tasks.GetHistoryWeekTask;
 import com.example.toolbartest.tasks.GetHistoryYearTask;
-import com.example.toolbartest.tasks.GetPricesTask;
 import com.example.toolbartest.tasks.GetTopPairsTask;
 import com.example.toolbartest.utils.AnimHelper;
 import com.example.toolbartest.utils.AutoUpdateTimer;
 import com.example.toolbartest.utils.PrefHelper;
-import com.example.toolbartest.utils.ResNameHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,6 +44,10 @@ public class CoinActivity extends AppCompatActivity
         implements CoinLineChartFragment.OnFragmentInteractionListener,
         CoinPieChartFragment.OnFragmentInteractionListener,
         CoinBoardFragment.OnFragmentInteractionListener {
+
+    private static final String FRAG_LINE_CHART = "line_chart_fragment";
+    private static final String FRAG_PIE_CHART = "pie_chart_fragment";
+    private static final String FRAG_BOARD = "board_fragment";
 
     public static final String COIN_NAME_KEY = "COIN_NAME_KEY";
     public static final String COIN_SYMBOL_KEY = "COIN_SYMBOL_KEY";
@@ -89,9 +89,9 @@ public class CoinActivity extends AppCompatActivity
         CoinBoardFragment frag3 = CoinBoardFragment.newInstance(boardKind);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.card_line_chart, frag1, "line_chart_fragment")
-                .replace(R.id.card_pie_chart, frag2, "pie_chart_fragment")
-                .replace(R.id.card_board, frag3, "board_fragment")
+                .replace(R.id.card_line_chart, frag1, FRAG_LINE_CHART)
+                .replace(R.id.card_pie_chart, frag2, FRAG_PIE_CHART)
+                .replace(R.id.card_board, frag3, FRAG_BOARD)
                 .commit();
 
         updateCardToday();
@@ -180,7 +180,7 @@ public class CoinActivity extends AppCompatActivity
                             return;
                         }
 
-                        Fragment fragment = getSupportFragmentManager().findFragmentByTag("line_chart_fragment");
+                        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAG_LINE_CHART);
                         if (fragment != null) {
                             ((CoinLineChartFragment) fragment).updateView(records);
                             Log.d("UPDATED", lineChartKind + ", " + records.size() + ", " + new Date().toString());
@@ -195,7 +195,7 @@ public class CoinActivity extends AppCompatActivity
                 .setListener(new GetCoinSnapshotTask.Listener() {
                     @Override
                     public void finished(CoinSnapshot snapshot) {
-                        Fragment fragment = getSupportFragmentManager().findFragmentByTag("pie_chart_fragment");
+                        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAG_PIE_CHART);
                         if (fragment != null) {
                             ((CoinPieChartFragment) fragment).updateView(snapshot);
                             Log.d("UPDATED", pieChartKind + ", " + new Date().toString());
@@ -209,7 +209,7 @@ public class CoinActivity extends AppCompatActivity
                 .setListener(new GetTopPairsTask.Listener() {
                     @Override
                     public void finished(TopPairs topPairs) {
-                        Fragment fragment = getSupportFragmentManager().findFragmentByTag("pie_chart_fragment");
+                        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAG_PIE_CHART);
                         if (fragment != null) {
                             ((CoinPieChartFragment) fragment).updateView(topPairs);
                             Log.d("UPDATED", pieChartKind + ", " + new Date().toString());
@@ -230,7 +230,7 @@ public class CoinActivity extends AppCompatActivity
         new GetBoardTask(this).setListener(new GetBoardTask.Listener() {
             @Override
             public void finished(Board board) {
-                Fragment fragment = getSupportFragmentManager().findFragmentByTag("board_fragment");
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAG_BOARD);
                 if (fragment != null) {
                     ((CoinBoardFragment) fragment).updateView(board);
                     Log.d("UPDATED", new Date().toString());
