@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.getMenu().getItem(0).setChecked(true);
 
         client = new ClientImpl(this);
-        initializeCoinListView();
+        refreshCoinListView();
     }
 
     @Override
@@ -157,17 +157,6 @@ public class MainActivity extends AppCompatActivity
                 ListWithHeaderFragment.newInstance(exchanges.toArray(new String[exchanges.size()])), FRAGMENT_TAG);
 
         transaction.commit();
-    }
-
-    private void initializeCoinListView() {
-        updateToolbarTitle();
-
-        String toSymbol = ResNameHelper.useFixedListView(this) ? "JPY" : PrefHelper.getToSymbol(this);
-        coins = client.collectCoins(ResNameHelper.getFromSymbols(this), toSymbol);
-
-        replaceFragment();
-        applyKeepScreenOn();
-        startAutoUpdate(0);
     }
 
     private void refreshCoinListView() {
