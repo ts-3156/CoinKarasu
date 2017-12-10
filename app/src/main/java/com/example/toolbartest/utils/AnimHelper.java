@@ -3,7 +3,6 @@ package com.example.toolbartest.utils;
 import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.graphics.Color;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,6 +10,9 @@ import com.example.toolbartest.R;
 import com.example.toolbartest.coins.Coin;
 
 public class AnimHelper {
+
+    public static final int DURATION = 1000;
+
     public static void setPriceAnim(final TextView view, final Coin coin) {
         double prev = coin.getPrevPrice();
         if (prev == 0.0) {
@@ -18,7 +20,7 @@ public class AnimHelper {
         }
 
         ValueAnimator animator = ValueAnimator.ofFloat((float) prev, (float) coin.getPrice());
-        animator.setDuration(1000);
+        animator.setDuration(DURATION);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
                 CoinPriceFormat formatter = new CoinPriceFormat(coin.getToSymbol());
@@ -37,7 +39,7 @@ public class AnimHelper {
         }
 
         ValueAnimator animator = ValueAnimator.ofFloat((float) prev, (float) coin.getTrend());
-        animator.setDuration(1000);
+        animator.setDuration(DURATION);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             public void onAnimationUpdate(ValueAnimator animation) {
                 String text = StringHelper.formatTrend(Double.valueOf(animation.getAnimatedValue().toString()));

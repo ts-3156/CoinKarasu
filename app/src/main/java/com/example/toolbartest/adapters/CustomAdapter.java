@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 public class CustomAdapter extends BaseAdapter {
-    public static final List<String> ICON_READY_SYMBOLS =
+    private static final List<String> ICON_READY_SYMBOLS =
             Arrays.asList("BCH", "BTC", "ETC", "ETH", "LTC", "MONA", "REP", "XEM", "XMR", "XRP", "ZEC");
 
     private static final int TYPE_ITEM = 0;
@@ -35,19 +35,19 @@ public class CustomAdapter extends BaseAdapter {
 
     private ArrayList<Coin> coins = new ArrayList<>();
     private TreeSet<Integer> sectionHeader = new TreeSet<>();
-    private boolean showAnim;
+    private boolean isAnimEnabled;
 
     public CustomAdapter(Activity activity, List<Coin> coins) {
         this.activity = activity;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        showAnim = true;
+        isAnimEnabled = true;
         for (Coin coin : coins) {
             addItem(coin);
         }
     }
 
-    public void setShowAnim(boolean showAnim) {
-        this.showAnim = showAnim;
+    public void setAnimEnabled(boolean flag) {
+        this.isAnimEnabled = flag;
     }
 
     public void addItem(Coin coin) {
@@ -98,6 +98,7 @@ public class CustomAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         int rowType = getItemViewType(position);
+        Coin coin = getItem(position);
 
         if (convertView == null) {
             holder = new ViewHolder();
@@ -112,14 +113,16 @@ public class CustomAdapter extends BaseAdapter {
                 holder.trend_icon = convertView.findViewById(R.id.coin_trend_icon);
             } else if (rowType == TYPE_HEADER) {
                 convertView = inflater.inflate(R.layout.list_header_item, parent, false);
-                holder.name = convertView.findViewById(R.id.text_separator);
+                holder.header = convertView.findViewById(R.id.text_separator);
+                holder.divider = convertView.findViewById(R.id.divider);
+                holder.progressbar = convertView.findViewById(R.id.progressbar);
+
+                holder.progressbar.setTag(coin.getExchange());
             }
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
-        Coin coin = getItem(position);
 
         if (rowType == TYPE_ITEM) {
             if (ICON_READY_SYMBOLS.contains(coin.getSymbol())) {
@@ -136,7 +139,7 @@ public class CustomAdapter extends BaseAdapter {
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());
 
-            if (showAnim) {
+            if (isAnimEnabled) {
                 AnimHelper.setPriceAnim(holder.price, coin);
                 AnimHelper.setTrendAnim(activity, holder.trend, coin);
                 AnimHelper.setTrendIcon(holder.trend_icon, coin);
@@ -148,7 +151,12 @@ public class CustomAdapter extends BaseAdapter {
                 AnimHelper.setTrendIcon(holder.trend_icon, coin);
             }
         } else if (rowType == TYPE_HEADER) {
-            holder.name.setText(coin.getName());
+            holder.header.setText(coin.getName());
+            if (position == 0) {
+                holder.divider.setVisibility(View.GONE);
+            } else {
+                holder.divider.setVisibility(View.VISIBLE);
+            }
         }
 
         return convertView;
@@ -161,5 +169,9 @@ public class CustomAdapter extends BaseAdapter {
         TextView price;
         TextView trend;
         ImageView trend_icon;
+
+        TextView header;
+        View divider;
+        View progressbar;
     }
 }

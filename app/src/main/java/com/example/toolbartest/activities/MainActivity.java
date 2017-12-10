@@ -3,6 +3,7 @@ package com.example.toolbartest.activities;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -24,10 +25,12 @@ import android.view.WindowManager;
 import com.example.toolbartest.R;
 import com.example.toolbartest.activities.settings.SettingsActivity;
 import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.coins.SectionHeaderCoinImpl;
 import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.Prices;
 import com.example.toolbartest.tasks.GetPricesTask;
+import com.example.toolbartest.utils.AnimHelper;
 import com.example.toolbartest.utils.AutoUpdateTimer;
 import com.example.toolbartest.utils.Exchange;
 import com.example.toolbartest.utils.ExchangeImpl;
@@ -41,6 +44,8 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         ListWithHeaderFragment.OnFragmentInteractionListener, GetPricesTask.Listener {
+
+    private static final String FRAGMENT_TAG = "fragment";
 
     private ArrayList<Coin> coins;
     private Client client;
@@ -100,84 +105,56 @@ public class MainActivity extends AppCompatActivity
         stopAutoUpdate();
     }
 
-    public ArrayList<Coin> filterCoins(String exchange) {
-        if (!ResNameHelper.useFixedListView(this)) {
-            return coins;
-        }
-
+    public ArrayList<Coin> groupedCoins(String[] exchanges) {
         ArrayList<Coin> sectionalCoins = new ArrayList<>();
 
-        switch (exchange) {
-            case "bitflyer":
-                sectionalCoins.addAll(coins.subList(0, 1));
-                break;
-            case "coincheck":
-                sectionalCoins.addAll(coins.subList(1, 2));
-                break;
-            case "zaif":
-                sectionalCoins.addAll(coins.subList(2, coins.size()));
-                break;
-            default:
-                throw new RuntimeException("Invalid exchange " + exchange);
+        if (exchanges.length == 1) {
+            sectionalCoins.add(new SectionHeaderCoinImpl(ExchangeImpl.exchangeToDisplayName(exchanges[0]), exchanges[0]));
+            sectionalCoins.addAll(coins);
+            return sectionalCoins;
+        }
+
+        for (String exchange : exchanges) {
+            sectionalCoins.add(new SectionHeaderCoinImpl(ExchangeImpl.exchangeToDisplayName(exchange), exchange));
+
+            switch (exchange) {
+                case "bitflyer":
+                    sectionalCoins.addAll(coins.subList(0, 1));
+                    break;
+                case "coincheck":
+                    sectionalCoins.addAll(coins.subList(1, 2));
+                    break;
+                case "zaif":
+                    sectionalCoins.addAll(coins.subList(2, coins.size()));
+                    break;
+                default:
+                    throw new RuntimeException("Invalid exchange " + exchange);
+            }
         }
 
         return sectionalCoins;
     }
 
-    private String exchangeToTag(String exchange) {
-        return "fragment_" + exchange;
-    }
-
-    private int exchangeToContainerId(String exchange) {
-        int resId;
-
-        switch (exchange) {
-            case "bitflyer":
-                resId = R.id.fragment_container_bitflyer;
-                break;
-            case "coincheck":
-                resId = R.id.fragment_container_coincheck;
-                break;
-            case "zaif":
-                resId = R.id.fragment_container_zaif;
-                break;
-            case "cccagg":
-                resId = R.id.fragment_container;
-                break;
-            default:
-                throw new RuntimeException("Invalid exchange " + exchange);
-        }
-
-        return resId;
-    }
-
     private void replaceFragment() {
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-        for (String exchange : exchanges) {
-            Fragment fragment = getSupportFragmentManager().findFragmentByTag(exchangeToTag(exchange));
-            if (fragment != null) {
-                transaction.remove(fragment);
-            }
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        if (fragment != null) {
+            transaction.remove(fragment);
         }
+
         exchanges.clear();
 
         if (ResNameHelper.useFixedListView(this)) {
             exchanges.add("bitflyer");
             exchanges.add("coincheck");
             exchanges.add("zaif");
-
-            for (String exchange : exchanges) {
-                transaction.replace(exchangeToContainerId(exchange),
-                        ListWithHeaderFragment.newInstance(exchange), exchangeToTag(exchange));
-            }
         } else {
-            String exchange = "cccagg";
-            exchanges.add(exchange);
-
-            transaction.replace(exchangeToContainerId(exchange),
-                    ListWithHeaderFragment.newInstance(exchange, true, false), exchangeToTag(exchange));
+            exchanges.add("cccagg");
         }
+
+        transaction.replace(R.id.fragment_container,
+                ListWithHeaderFragment.newInstance(exchanges.toArray(new String[exchanges.size()])), FRAGMENT_TAG);
 
         transaction.commit();
     }
@@ -259,10 +236,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void started(String exchange, String[] fromSymbols, String toSymbol) {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(exchangeToTag(exchange));
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 
         if (fragment != null) {
-            ((ListWithHeaderFragment) fragment).setProgressbarVisibility(true);
+            ((ListWithHeaderFragment) fragment).setProgressbarVisibility(true, exchange);
         }
     }
 
@@ -273,13 +250,24 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        prices.setAttrsToCoins(coins);
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(exchangeToTag(prices.getExchange()));
+        final String exchange = prices.getExchange();
+        ArrayList<Coin> filteredCoins = groupedCoins(new String[]{exchange});
+        prices.setAttrsToCoins(filteredCoins);
+
+        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 
         if (fragment != null) {
-            String exchange = prices.getExchange();
             ((ListWithHeaderFragment) fragment).updateView();
-            ((ListWithHeaderFragment) fragment).setProgressbarVisibility(false);
+
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ((ListWithHeaderFragment) fragment).setProgressbarVisibility(false, exchange);
+
+                }
+            }, AnimHelper.DURATION);
+
             Log.d("UPDATED", exchange + ", " + new Date().toString());
         }
     }

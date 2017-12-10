@@ -4,6 +4,4 @@ public interface Exchange {
     String toFragmentTag();
 
     String[] getFromSymbols();
-
-    String getDisplayName();
 }

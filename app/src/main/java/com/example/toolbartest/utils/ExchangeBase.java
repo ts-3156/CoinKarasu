@@ -35,28 +35,4 @@ public abstract class ExchangeBase implements Exchange {
 
         return symbols;
     }
-
-    @Override
-    public String getDisplayName() {
-        String displayName;
-
-        switch (name) {
-            case "bitflyer":
-                displayName = "BitFlyer";
-                break;
-            case "coincheck":
-                displayName = "Coincheck";
-                break;
-            case "zaif":
-                displayName = "Zaif";
-                break;
-            case "cccagg":
-                displayName = "CCCAGG";
-                break;
-            default:
-                throw new RuntimeException("Invalid exchange " + name);
-        }
-
-        return displayName;
-    }
 }

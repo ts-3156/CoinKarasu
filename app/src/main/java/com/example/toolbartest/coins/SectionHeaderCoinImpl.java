@@ -6,9 +6,16 @@ import org.json.JSONObject;
 
 public class SectionHeaderCoinImpl implements Coin {
     private String name;
+    private String exchange;
 
     public SectionHeaderCoinImpl(String name) {
         this.name = name;
+        this.exchange = null;
+    }
+
+    public SectionHeaderCoinImpl(String name, String exchange) {
+        this.name = name;
+        this.exchange = exchange;
     }
 
     @Override
@@ -95,7 +102,7 @@ public class SectionHeaderCoinImpl implements Coin {
 
     @Override
     public String getExchange() {
-        return null;
+        return exchange;
     }
 
     @Override
