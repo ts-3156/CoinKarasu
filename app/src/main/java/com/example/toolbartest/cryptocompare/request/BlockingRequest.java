@@ -15,23 +15,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class BlockingRequest implements Request {
-    private Activity activity;
-    private String url;
+public class BlockingRequest extends RequestBase {
 
     public BlockingRequest(Activity activity, String url) {
-        this.activity = activity;
-        this.url = url;
+        super(activity, url);
     }
 
     @Override
     public JSONObject perform() {
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new JsonObjectRequest(url, null, future, future);
+        JsonObjectRequest request = new JsonObjectRequest(getUrl(), null, future, future);
 
         request.setShouldCache(true);
-        request.setRetryPolicy(new DefaultRetryPolicy(3000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleyHelper.getInstance(activity).addToRequestQueue(request);
+        request.setRetryPolicy(getRetryPolicy());
+        VolleyHelper.getInstance(getActivity()).addToRequestQueue(request);
 
         JSONObject response = null;
 
@@ -44,9 +41,5 @@ public class BlockingRequest implements Request {
         }
 
         return response;
-    }
-
-    @Override
-    public void perform(Listener listener) {
     }
 }

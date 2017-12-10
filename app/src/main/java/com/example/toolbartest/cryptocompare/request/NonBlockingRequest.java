@@ -11,23 +11,16 @@ import com.example.toolbartest.utils.VolleyHelper;
 
 import org.json.JSONObject;
 
-public class NonBlockingRequest implements Request {
-    private Activity activity;
-    private String url;
+public class NonBlockingRequest extends RequestBase {
 
     public NonBlockingRequest(Activity activity, String url) {
-        this.activity = activity;
-        this.url = url;
-    }
-
-    @Override
-    public JSONObject perform() {
-        return null;
+        super(activity, url);
     }
 
     @Override
     public void perform(final Listener listener) {
-        JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.GET, url, null,
+        // TODO Bug fix
+        JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.GET, getUrl(), null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -40,14 +33,15 @@ public class NonBlockingRequest implements Request {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        Log.d("onErrRes", getUrl());
                         VolleyError e = new VolleyError(new String(error.networkResponse.data));
-                        Log.d("perform", e.getMessage());
+                        throw new RuntimeException(e.getMessage());
                     }
 
                 });
 
         request.setShouldCache(true);
-        request.setRetryPolicy(new DefaultRetryPolicy(3000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        VolleyHelper.getInstance(activity).addToRequestQueue(request);
+        request.setRetryPolicy(getRetryPolicy());
+        VolleyHelper.getInstance(getActivity()).addToRequestQueue(request);
     }
 }

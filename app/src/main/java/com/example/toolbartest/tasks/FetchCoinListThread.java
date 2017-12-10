@@ -1,6 +1,7 @@
 package com.example.toolbartest.tasks;
 
 import android.app.Activity;
+import android.util.Log;
 
 import com.example.toolbartest.cryptocompare.request.NonBlockingRequest;
 import com.example.toolbartest.cryptocompare.request.Request;

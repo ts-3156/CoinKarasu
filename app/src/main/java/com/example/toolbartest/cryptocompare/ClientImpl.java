@@ -59,6 +59,7 @@ public class ClientImpl implements Client {
             coinList = CoinListImpl.restoreFromCache(activity);
             Log.d("RestoreCoinList", (System.currentTimeMillis() - start) + " ms");
         } else {
+            // TODO Bug fix
             latch = new CountDownLatch(1);
             new FetchCoinListThread(activity)
                     .setLatch(latch)
