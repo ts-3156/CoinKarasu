@@ -38,8 +38,7 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="20dp"
             android:indeterminate="true"
-            android:indeterminateTint="#999999"
-            android:visibility="gone" />
+            android:indeterminateTint="#999999" />
     </RelativeLayout>
 
 </LinearLayout>

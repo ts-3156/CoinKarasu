@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.ListView;
 import com.example.toolbartest.R;
 import com.example.toolbartest.adapters.CustomAdapter;
 import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.utils.AnimHelper;
 
 import java.util.ArrayList;
 
@@ -93,6 +95,15 @@ public class ListWithHeaderFragment extends Fragment
                 adapter.notifyDataSetChanged();
             }
         }
+    }
+
+    public void setProgressbarVisibilityDelayed(final boolean flag, final String exchange) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setProgressbarVisibility(flag, exchange);
+            }
+        }, AnimHelper.DURATION);
     }
 
     public void setProgressbarVisibility(boolean flag, String exchange) {

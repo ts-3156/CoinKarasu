@@ -250,24 +250,15 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        final String exchange = prices.getExchange();
+        String exchange = prices.getExchange();
         ArrayList<Coin> filteredCoins = groupedCoins(new String[]{exchange});
         prices.setAttrsToCoins(filteredCoins);
 
-        final Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
 
         if (fragment != null) {
             ((ListWithHeaderFragment) fragment).updateView();
-
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ((ListWithHeaderFragment) fragment).setProgressbarVisibility(false, exchange);
-
-                }
-            }, AnimHelper.DURATION);
-
+            ((ListWithHeaderFragment) fragment).setProgressbarVisibilityDelayed(false, exchange);
             Log.d("UPDATED", exchange + ", " + new Date().toString());
         }
     }
@@ -340,10 +331,8 @@ public class MainActivity extends AppCompatActivity
 
             return true;
         } else if (id == R.id.action_currency) {
-            stopAutoUpdate();
             PrefHelper.setToSymbol(this, item.getTitle().toString());
-            coins = client.collectCoins(ResNameHelper.getFromSymbols(this), PrefHelper.getToSymbol(this));
-            startAutoUpdate(0);
+            refreshCoinListView();
 
             return true;
         }
