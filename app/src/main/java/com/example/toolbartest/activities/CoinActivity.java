@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.toolbartest.R;
@@ -17,8 +18,10 @@ import com.example.toolbartest.cryptocompare.Client;
 import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
 import com.example.toolbartest.cryptocompare.data.History;
+import com.example.toolbartest.cryptocompare.data.Prices;
 import com.example.toolbartest.cryptocompare.data.TopPairs;
 import com.example.toolbartest.format.PriceViewFormat;
+import com.example.toolbartest.format.TrendViewFormat;
 import com.example.toolbartest.tasks.GetBoardTask;
 import com.example.toolbartest.tasks.GetCoinSnapshotTask;
 import com.example.toolbartest.tasks.GetHistoryDayTask;
@@ -27,9 +30,12 @@ import com.example.toolbartest.tasks.GetHistoryMonthTask;
 import com.example.toolbartest.tasks.GetHistoryTaskBase;
 import com.example.toolbartest.tasks.GetHistoryWeekTask;
 import com.example.toolbartest.tasks.GetHistoryYearTask;
+import com.example.toolbartest.tasks.GetPricesTask;
 import com.example.toolbartest.tasks.GetTopPairsTask;
+import com.example.toolbartest.utils.AnimHelper;
 import com.example.toolbartest.utils.AutoUpdateTimer;
 import com.example.toolbartest.utils.PrefHelper;
+import com.example.toolbartest.utils.ResNameHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -88,9 +94,10 @@ public class CoinActivity extends AppCompatActivity
                 .replace(R.id.card_board, frag3, "board_fragment")
                 .commit();
 
+        updateCardToday();
+        startAutoUpdate(0);
         drawPieChart();
         drawBoardChart();
-        startAutoUpdate(0);
 
     }
 
@@ -188,9 +195,6 @@ public class CoinActivity extends AppCompatActivity
                 .setListener(new GetCoinSnapshotTask.Listener() {
                     @Override
                     public void finished(CoinSnapshot snapshot) {
-                        AggregatedData coin = snapshot.getAggregatedData();
-                        new PriceViewFormat(coin).format((TextView) findViewById(R.id.price_day));
-
                         Fragment fragment = getSupportFragmentManager().findFragmentByTag("pie_chart_fragment");
                         if (fragment != null) {
                             ((CoinPieChartFragment) fragment).updateView(snapshot);
@@ -214,6 +218,14 @@ public class CoinActivity extends AppCompatActivity
                 }).execute();
     }
 
+    private void drawPieChart() {
+        if (pieChartKind.equals("currency")) {
+            drawCurrencyPieChart();
+        } else if (pieChartKind.equals("exchange")) {
+            drawExchangePieChart();
+        }
+    }
+
     private void drawBoardChart() {
         new GetBoardTask(this).setListener(new GetBoardTask.Listener() {
             @Override
@@ -227,12 +239,10 @@ public class CoinActivity extends AppCompatActivity
         }).execute();
     }
 
-    private void drawPieChart() {
-        if (pieChartKind.equals("currency")) {
-            drawCurrencyPieChart();
-        } else if (pieChartKind.equals("exchange")) {
-            drawExchangePieChart();
-        }
+    private void updateCardToday() {
+        new PriceViewFormat(coin).format((TextView) findViewById(R.id.price_day));
+        new TrendViewFormat(coin).format((TextView) findViewById(R.id.trend_day));
+        AnimHelper.setTrendIcon((ImageView) findViewById(R.id.trend_icon_day), coin);
     }
 
     @Override

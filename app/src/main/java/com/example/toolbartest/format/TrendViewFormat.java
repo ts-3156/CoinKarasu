@@ -24,6 +24,10 @@ public class TrendViewFormat {
     private double curTrend;
     private boolean anim;
 
+    public TrendViewFormat(Coin coin) {
+        this(-1.0, coin.getTrend(), false);
+    }
+
     public TrendViewFormat(Coin coin, boolean anim) {
         this(coin.getPrevTrend(), coin.getTrend(), anim);
     }

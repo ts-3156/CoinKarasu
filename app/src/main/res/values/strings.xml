@@ -30,6 +30,9 @@
     <string name="nav_coincheck">Coincheck</string>
     <string name="nav_zaif">Zaif</string>
 
+    <string name="caption_day">Today so far</string>
+    <string name="caption_desc_day">vs last 24 hours</string>
+
 
     <!-- Strings related to Settings -->
 
