@@ -9,6 +9,8 @@ public interface CoinListCoin {
 
     String getName();
 
+    String getSymbol();
+
     String getCoinName();
 
     String getFullName();
@@ -17,5 +19,13 @@ public interface CoinListCoin {
 
     String getProofType();
 
-    String getSortOrder();
+    int getFullyPremined();
+
+    long getTotalCoinSupply();
+
+    String getPreMinedValue();
+
+    String getTotalCoinsFreeFloat();
+
+    int getSortOrder();
 }

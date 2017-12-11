@@ -9,17 +9,20 @@ import org.json.JSONObject;
 public class CoinImpl implements Coin {
     private static final String BASE_URL = "https://www.cryptocompare.com";
 
-    private JSONObject attrs;
     private int id;
-    private Bitmap icon;
     private String url;
     private String imageUrl;
     private String name;
+    private String symbol;
     private String coinName;
     private String fullName;
     private String algorithm;
     private String proofType;
-    private String sortOrder;
+    private int fullyPremined;
+    private long totalCoinSupply;
+    private String preminedValue;
+    private String totalCoinsFreeFloat;
+    private int sortOrder;
 
     private String toSymbol;
     private double price;
@@ -30,50 +33,39 @@ public class CoinImpl implements Coin {
     private double prevTrend;
 
     private CoinImpl(JSONObject attrs) {
-        this.attrs = attrs;
-        this.icon = null;
-
         try {
             this.id = attrs.getInt("Id");
             this.url = attrs.getString("Url");
             this.imageUrl = attrs.getString("ImageUrl");
-            this.name = attrs.getString("Name");
-            this.coinName = attrs.getString("CoinName"); // BTC
-            this.fullName = attrs.getString("FullName");
-            this.algorithm = attrs.getString("Algorithm");
-            this.proofType = attrs.getString("ProofType");
-            this.sortOrder = attrs.getString("SortOrder");
+            this.name = attrs.getString("Name"); // BTC
+            this.symbol = attrs.getString("Symbol"); // BTC
+            this.coinName = attrs.getString("CoinName"); // Bitcoin
+            this.fullName = attrs.getString("FullName"); // Bitcoin (BTC)
+            this.algorithm = attrs.getString("Algorithm"); // SHA256
+            this.proofType = attrs.getString("ProofType"); // PoW
+            this.fullyPremined = attrs.getInt("FullyPremined"); // 0
+            this.totalCoinSupply = attrs.getInt("TotalCoinSupply"); // 21000000
+            this.preminedValue = attrs.getString("PreMinedValue"); // N/A
+            this.totalCoinsFreeFloat = attrs.getString("TotalCoinsFreeFloat"); // N/A
+            this.sortOrder = attrs.getInt("SortOrder"); // 1
 
-            if (attrs.has("toSymbol")) {
-                toSymbol = attrs.getString("toSymbol");
-            } else {
-                toSymbol = null;
-            }
+            toSymbol = null;
+            price = 0.0;
+            trend = 0.0;
+            exchange = null;
+            prevPrice = 0.0;
+            prevTrend = 0.0;
 
-            if (attrs.has("price")) {
-                price = attrs.getDouble("price");
-            } else {
-                price = 0.0;
-            }
-
-            if (attrs.has("trend")) {
-                trend = attrs.getDouble("trend");
-            } else {
-                trend = 0.0;
-            }
-
-            if (attrs.has("exchange")) {
-                exchange = attrs.getString("exchange");
-            } else {
-                exchange = null;
-            }
-
+            if (attrs.has("toSymbol")) toSymbol = attrs.getString("toSymbol");
+            if (attrs.has("price")) price = attrs.getDouble("price");
+            if (attrs.has("trend")) trend = attrs.getDouble("trend");
+            if (attrs.has("exchange")) exchange = attrs.getString("exchange");
+            if (attrs.has("prevPrice")) prevPrice = attrs.getDouble("prevPrice");
+            if (attrs.has("prevTrend")) prevTrend = attrs.getDouble("prevTrend");
         } catch (JSONException e) {
             Log.d("CoinImpl", e.getMessage());
         }
 
-        this.prevPrice = 0.0;
-        this.prevTrend = 0.0;
     }
 
     public static Coin buildByJSONObject(JSONObject attrs) {
@@ -83,11 +75,6 @@ public class CoinImpl implements Coin {
     @Override
     public int getId() {
         return id;
-    }
-
-    @Override
-    public Bitmap getIcon() {
-        return icon;
     }
 
     @Override
@@ -107,7 +94,7 @@ public class CoinImpl implements Coin {
 
     @Override
     public String getSymbol() {
-        return getName();
+        return symbol;
     }
 
     @Override
@@ -153,7 +140,27 @@ public class CoinImpl implements Coin {
     }
 
     @Override
-    public String getSortOrder() {
+    public int getFullyPremined() {
+        return fullyPremined;
+    }
+
+    @Override
+    public long getTotalCoinSupply() {
+        return totalCoinSupply;
+    }
+
+    @Override
+    public String getPreMinedValue() {
+        return preminedValue;
+    }
+
+    @Override
+    public String getTotalCoinsFreeFloat() {
+        return totalCoinsFreeFloat;
+    }
+
+    @Override
+    public int getSortOrder() {
         return sortOrder;
     }
 
@@ -179,7 +186,7 @@ public class CoinImpl implements Coin {
 
     @Override
     public String toString() {
-        return attrs.toString();
+        return toJson().toString();
     }
 
     @Override
@@ -201,16 +208,23 @@ public class CoinImpl implements Coin {
             json.put("Url", url);
             json.put("ImageUrl", imageUrl);
             json.put("Name", name);
+            json.put("Symbol", symbol);
             json.put("CoinName", coinName);
             json.put("FullName", fullName);
             json.put("Algorithm", algorithm);
             json.put("ProofType", proofType);
+            json.put("FullyPremined", fullyPremined);
+            json.put("TotalCoinSupply", totalCoinSupply);
+            json.put("PreminedValue", preminedValue);
+            json.put("TotalCoinsFreeFloat", totalCoinsFreeFloat);
             json.put("SortOrder", sortOrder);
 
             json.put("toSymbol", toSymbol);
             json.put("price", price);
             json.put("trend", trend);
             json.put("exchange", exchange);
+            json.put("prevPrice", prevPrice);
+            json.put("prevTrend", prevTrend);
         } catch (JSONException e) {
             Log.d("toJson", e.getMessage());
         }

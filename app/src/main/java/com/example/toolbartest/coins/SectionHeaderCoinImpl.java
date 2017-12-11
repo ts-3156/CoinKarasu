@@ -24,11 +24,6 @@ public class SectionHeaderCoinImpl implements Coin {
     }
 
     @Override
-    public Bitmap getIcon() {
-        return null;
-    }
-
-    @Override
     public String getUrl() {
         return null;
     }
@@ -87,8 +82,28 @@ public class SectionHeaderCoinImpl implements Coin {
     }
 
     @Override
-    public String getSortOrder() {
+    public int getFullyPremined() {
+        return 0;
+    }
+
+    @Override
+    public long getTotalCoinSupply() {
+        return 0;
+    }
+
+    @Override
+    public String getPreMinedValue() {
         return null;
+    }
+
+    @Override
+    public String getTotalCoinsFreeFloat() {
+        return null;
+    }
+
+    @Override
+    public int getSortOrder() {
+        return 0;
     }
 
     @Override
