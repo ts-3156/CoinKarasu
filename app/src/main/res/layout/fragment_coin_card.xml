@@ -1,0 +1,70 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context="com.example.toolbartest.activities.CoinLineChartFragment">
+
+    <TextView
+        android:id="@+id/caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="8dp"
+        android:text="@string/caption_day"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        tools:text="@string/caption_day" />
+
+    <TextView
+        android:id="@+id/caption_desc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/caption"
+        android:layout_toRightOf="@id/caption"
+        android:text="@string/caption_desc_day"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        tools:text="@string/caption_desc_day" />
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/caption"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="#90000000"
+        android:textSize="30sp"
+        tools:text="¥ 1,000,000" />
+
+    <ImageView
+        android:id="@+id/trend_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/price"
+        android:paddingRight="4dp"
+        tools:src="@drawable/ic_trending_down" />
+
+    <TextView
+        android:id="@+id/trend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/price"
+        android:layout_toRightOf="@id/trend_icon"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        tools:text="¥ 162 (29%)"
+        tools:textColor="#ff0000" />
+
+    <ImageButton
+        android:id="@+id/popup_menu"
+        android:layout_width="20dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:background="@null"
+        android:src="@drawable/ic_more_vert" />
+</RelativeLayout>

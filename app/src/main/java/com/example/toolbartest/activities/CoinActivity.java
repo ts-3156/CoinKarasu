@@ -3,6 +3,7 @@ package com.example.toolbartest.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -41,11 +42,13 @@ import java.util.Date;
 import java.util.TimerTask;
 
 public class CoinActivity extends AppCompatActivity implements
+        CoinCardFragment.OnFragmentInteractionListener,
         CoinLineChartFragment.OnFragmentInteractionListener,
         CoinPieChartFragment.OnFragmentInteractionListener,
         CoinBoardFragment.OnFragmentInteractionListener,
         CoinLineChartTabContentFragment.OnFragmentInteractionListener {
 
+    private static final String FRAG_CARD = "card_fragment";
     private static final String FRAG_LINE_CHART = "line_chart_fragment";
     private static final String FRAG_PIE_CHART = "pie_chart_fragment";
     private static final String FRAG_BOARD = "board_fragment";
@@ -78,25 +81,23 @@ public class CoinActivity extends AppCompatActivity implements
             bar.setTitle(coin.getFullName());
         }
 
-        new PriceViewFormat(coin).format((TextView) findViewById(R.id.price_day));
-
         client = new ClientImpl(this, true);
         lineChartKind = "hour";
         pieChartKind = "currency";
         boardKind = "order_book";
 
-        CoinLineChartFragment frag1 = CoinLineChartFragment.newInstance(lineChartKind,
-                coin.getSymbol(), PrefHelper.getToSymbol(this));
-        CoinPieChartFragment frag2 = CoinPieChartFragment.newInstance(pieChartKind);
-        CoinBoardFragment frag3 = CoinBoardFragment.newInstance(boardKind);
+        Fragment frag1 = CoinCardFragment.newInstance("overview", coin.toJson().toString());
+        Fragment frag2 = CoinLineChartFragment.newInstance(lineChartKind, coin.getSymbol(), PrefHelper.getToSymbol(this));
+        Fragment frag3 = CoinPieChartFragment.newInstance(pieChartKind);
+        Fragment frag4 = CoinBoardFragment.newInstance(boardKind);
 
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.card_line_chart, frag1, FRAG_LINE_CHART)
-                .replace(R.id.card_pie_chart, frag2, FRAG_PIE_CHART)
-                .replace(R.id.card_board, frag3, FRAG_BOARD)
+                .replace(R.id.card_overview, frag1, FRAG_CARD)
+                .replace(R.id.card_line_chart, frag2, FRAG_LINE_CHART)
+                .replace(R.id.card_pie_chart, frag3, FRAG_PIE_CHART)
+                .replace(R.id.card_board, frag4, FRAG_BOARD)
                 .commit();
 
-        updateCardToday();
         startAutoUpdate(0);
         drawPieChart();
         drawBoardChart();
@@ -194,12 +195,6 @@ public class CoinActivity extends AppCompatActivity implements
                 }
             }
         }).execute();
-    }
-
-    private void updateCardToday() {
-        new PriceViewFormat(coin).format((TextView) findViewById(R.id.price_day));
-        new TrendViewFormat(coin).format((TextView) findViewById(R.id.trend_day));
-        AnimHelper.setTrendIcon((ImageView) findViewById(R.id.trend_icon_day), coin);
     }
 
     @Override

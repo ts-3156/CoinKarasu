@@ -96,6 +96,7 @@ public class PriceViewFormat {
                 locale = Locale.US;
                 break;
             default:
+                Log.d("Invalid locale", symbol);
                 locale = Locale.JAPAN;
         }
 
