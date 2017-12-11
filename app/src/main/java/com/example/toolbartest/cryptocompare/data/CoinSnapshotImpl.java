@@ -30,6 +30,10 @@ public class CoinSnapshotImpl implements CoinSnapshot {
         JSONObject data = response.getData();
         exchanges = new ArrayList<>();
 
+        if (data == null) {
+            return;
+        }
+
         try {
             algorithm = data.getString("Algorithm");
             proofOfType = data.getString("ProofType");

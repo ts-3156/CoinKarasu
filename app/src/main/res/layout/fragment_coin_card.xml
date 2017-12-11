@@ -16,7 +16,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="8dp"
         android:text="@string/caption_day"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         tools:text="@string/caption_day" />
 
     <TextView

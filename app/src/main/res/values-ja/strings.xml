@@ -30,6 +30,6 @@
     <string name="nav_zaif">Zaif</string>
 
     <string name="caption_day">本日</string>
-    <string name="caption_desc_day">(直前の24時間との比較)</string>
+    <string name="caption_desc_day">(現時点)</string>
 
 </resources>

@@ -15,16 +15,17 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 public class CoinLineChart {
     private LineChart chart;
 
-    private long offset;
+    private long offsetSeconds;
 
     public CoinLineChart(LineChart chart) {
         this.chart = chart;
-        this.offset = 0;
+        this.offsetSeconds = 0;
     }
 
     public void initialize(String kind) {
@@ -70,33 +71,33 @@ public class CoinLineChart {
         chart.getXAxis().setValueFormatter(new OffsetFormatter(getSimpleDateFormat(kind)));
     }
 
-    public void setData(ArrayList<History> histories) {
-        ArrayList<Entry> values = new ArrayList<>(histories.size());
+    public void setData(ArrayList<History> records) {
+        ArrayList<Entry> values = new ArrayList<>(records.size());
 
-        offset = histories.get(0).getTime() * 1000;
+        offsetSeconds = records.get(0).getTime();
 
-        for (History history : histories) {
-            long x = history.getTime() * 1000 - offset;
+        for (int i = 0; i < records.size(); i++) {
+            History history = records.get(i);
+            long x = history.getTime() - offsetSeconds;
             values.add(new Entry(x, (float) history.getClose()));
         }
 
         LineDataSet set = new LineDataSet(values, "DataSet 1");
         set.setAxisDependency(YAxis.AxisDependency.LEFT);
         set.setColor(ColorTemplate.JOYFUL_COLORS[0]);
-        set.setValueTextColor(ColorTemplate.getHoloBlue());
         set.setLineWidth(1.5f);
         set.setDrawCircles(false);
         set.setDrawValues(false);
-        set.setFillAlpha(65);
-        set.setFillColor(ColorTemplate.getHoloBlue());
-        set.setHighLightColor(Color.rgb(244, 117, 117));
+//        set.setFillAlpha(255);
+//        set.setFillColor(ColorTemplate.JOYFUL_COLORS[1]);
         set.setDrawCircleHole(false);
-
-//        set.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+//        set.setDrawFilled(true);
 
         LineData data = new LineData(set);
         data.setValueTextColor(Color.WHITE);
         data.setValueTextSize(9f);
+
+//        chart.setRenderer(new StackedLineChartRenderer(chart, chart.getAnimator(), chart.getViewPortHandler()));
 
         chart.setData(data);
     }
@@ -150,7 +151,7 @@ public class CoinLineChart {
 
         @Override
         public String getFormattedValue(float value, AxisBase axis) {
-            long millis = (long) value + offset;
+            long millis = (long) (value + offsetSeconds) * 1000;
             return format.format(new Date(millis));
         }
     }

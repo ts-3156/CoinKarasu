@@ -19,10 +19,15 @@ public class TopPairsImpl implements TopPairs {
         }
 
         JSONArray data = response.getData();
+        if (data == null) {
+            topPairs = new ArrayList<>();
+            return;
+        }
+
         topPairs = new ArrayList<>(data.length());
 
         try {
-            for(int i = 0; i < data.length(); i++) {
+            for (int i = 0; i < data.length(); i++) {
                 topPairs.add(new TopPairImpl(data.getJSONObject(i)));
             }
         } catch (JSONException e) {

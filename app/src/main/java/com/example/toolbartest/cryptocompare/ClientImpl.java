@@ -193,7 +193,7 @@ public class ClientImpl implements Client {
 
     @Override
     public TopPairs getTopPairs(String fromSymbol) {
-        String url = "https://min-api.cryptocompare.com/data/top/pairs?fsym=" + fromSymbol;
+        String url = "https://min-api.cryptocompare.com/data/top/pairs?fsym=" + fromSymbol + "&limit=100";
         Log.d("URL", url);
 
         JSONObject response = new BlockingRequest(activity, url).perform();

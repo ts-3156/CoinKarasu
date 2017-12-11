@@ -4,6 +4,7 @@ import android.graphics.Color;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -26,6 +27,7 @@ public class CoinPieChart {
 
     public void initialize() {
         chart.setUsePercentValues(true);
+
         chart.getDescription().setEnabled(false);
 //        chart.setExtraOffsets(5, 10, 5, 5);
 
@@ -88,19 +90,19 @@ public class CoinPieChart {
 
         // add a lot of colors
 
-        ArrayList<Integer> colors = new ArrayList<Integer>();
+        ArrayList<Integer> colors = new ArrayList<>();
 
 //        for (int c : ColorTemplate.VORDIPLOM_COLORS)
 //            colors.add(c);
 //
-//        for (int c : ColorTemplate.JOYFUL_COLORS)
-//            colors.add(c);
+        for (int c : ColorTemplate.JOYFUL_COLORS)
+            colors.add(c);
 
         for (int c : ColorTemplate.COLORFUL_COLORS)
             colors.add(c);
 
-//        for (int c : ColorTemplate.LIBERTY_COLORS)
-//            colors.add(c);
+        for (int c : ColorTemplate.LIBERTY_COLORS)
+            colors.add(c);
 //
 //        for (int c : ColorTemplate.PASTEL_COLORS)
 //            colors.add(c);
@@ -122,6 +124,10 @@ public class CoinPieChart {
         chart.highlightValues(null);
 
         chart.invalidate();
+    }
+
+    public void animateY() {
+        chart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
     }
 
     public void clear() {

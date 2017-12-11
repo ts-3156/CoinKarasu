@@ -7,8 +7,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -31,7 +29,6 @@ public class CoinLineChartFragment extends Fragment implements
 
     private OnFragmentInteractionListener listener;
 
-    private String kind;
     private String fromSymbol;
     private String toSymbol;
     private ViewPager pager;
@@ -41,18 +38,9 @@ public class CoinLineChartFragment extends Fragment implements
     public CoinLineChartFragment() {
     }
 
-    public static CoinLineChartFragment newInstance(String kind) {
+    public static CoinLineChartFragment newInstance(String fromSymbol, String toSymbol) {
         CoinLineChartFragment fragment = new CoinLineChartFragment();
         Bundle args = new Bundle();
-        args.putString("kind", kind);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public static CoinLineChartFragment newInstance(String kind, String fromSymbol, String toSymbol) {
-        CoinLineChartFragment fragment = new CoinLineChartFragment();
-        Bundle args = new Bundle();
-        args.putString("kind", kind);
         args.putString("fromSymbol", fromSymbol);
         args.putString("toSymbol", toSymbol);
         fragment.setArguments(args);
@@ -63,7 +51,6 @@ public class CoinLineChartFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = getArguments().getString("kind");
             fromSymbol = getArguments().getString("fromSymbol");
             toSymbol = getArguments().getString("toSymbol");
         }
@@ -102,11 +89,11 @@ public class CoinLineChartFragment extends Fragment implements
     }
 
     private View createTab(LayoutInflater inflater, ViewGroup container, String label) {
-        View view = inflater.inflate(R.layout.tab_custom, container, false);
+        View view = inflater.inflate(R.layout.tab_line_chart, container, false);
 
         ((TextView) view.findViewById(R.id.tab_label)).setText(label);
-        ((TextView) view.findViewById(R.id.tab_price)).setText("0");
-        ((TextView) view.findViewById(R.id.tab_trend)).setText("0%");
+        ((TextView) view.findViewById(R.id.tab_price)).setText("0.00");
+        ((TextView) view.findViewById(R.id.tab_trend)).setText("0.00%");
         ((ImageView) view.findViewById(R.id.tab_trend_icon)).setImageResource(R.drawable.ic_trending_flat);
 
         return view;
@@ -143,7 +130,9 @@ public class CoinLineChartFragment extends Fragment implements
 
         TextView trend = view.findViewById(R.id.tab_trend);
         trend.setTextColor(Color.parseColor("#80000000"));
-        AnimHelper.setTrendIcon((ImageView) view.findViewById(R.id.tab_trend_icon), parseTrendValue(trend.getText()));
+        if (trend.getText().length() != 0){
+            AnimHelper.setTrendIcon((ImageView) view.findViewById(R.id.tab_trend_icon), parseTrendValue(trend.getText()));
+        }
 
         tab = tabs.getTabAt(position);
         view = tab.getCustomView();
@@ -153,7 +142,9 @@ public class CoinLineChartFragment extends Fragment implements
 
         trend = view.findViewById(R.id.tab_trend);
         trend.setTextColor(Color.WHITE);
-        AnimHelper.setWhiteTrendIcon((ImageView) view.findViewById(R.id.tab_trend_icon), parseTrendValue(trend.getText()));
+        if (trend.getText().length() != 0){
+            AnimHelper.setWhiteTrendIcon((ImageView) view.findViewById(R.id.tab_trend_icon), parseTrendValue(trend.getText()));
+        }
     }
 
     private double parseTrendValue(CharSequence str) {
@@ -183,7 +174,6 @@ public class CoinLineChartFragment extends Fragment implements
 
     @Override
     public void onPageScrollStateChanged(int state) {
-
         if (state == ViewPager.SCROLL_STATE_SETTLING) {
             int position = pager.getCurrentItem();
 

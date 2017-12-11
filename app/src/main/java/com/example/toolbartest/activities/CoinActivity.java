@@ -46,7 +46,8 @@ public class CoinActivity extends AppCompatActivity implements
         CoinLineChartFragment.OnFragmentInteractionListener,
         CoinPieChartFragment.OnFragmentInteractionListener,
         CoinBoardFragment.OnFragmentInteractionListener,
-        CoinLineChartTabContentFragment.OnFragmentInteractionListener {
+        CoinLineChartTabContentFragment.OnFragmentInteractionListener,
+        CoinPieChartTabContentFragment.OnFragmentInteractionListener {
 
     private static final String FRAG_CARD = "card_fragment";
     private static final String FRAG_LINE_CHART = "line_chart_fragment";
@@ -58,7 +59,6 @@ public class CoinActivity extends AppCompatActivity implements
 
     Client client;
     String lineChartKind;
-    String pieChartKind;
     String boardKind;
     Coin coin;
 
@@ -78,17 +78,15 @@ public class CoinActivity extends AppCompatActivity implements
 
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
-            bar.setTitle(coin.getFullName());
+            bar.setTitle(coin.getSymbol() + " - " + coin.getToSymbol());
         }
 
         client = new ClientImpl(this, true);
-        lineChartKind = "hour";
-        pieChartKind = "currency";
         boardKind = "order_book";
 
         Fragment frag1 = CoinCardFragment.newInstance("overview", coin.toJson().toString());
-        Fragment frag2 = CoinLineChartFragment.newInstance(lineChartKind, coin.getSymbol(), PrefHelper.getToSymbol(this));
-        Fragment frag3 = CoinPieChartFragment.newInstance(pieChartKind);
+        Fragment frag2 = CoinLineChartFragment.newInstance(coin.getSymbol(), PrefHelper.getToSymbol(this));
+        Fragment frag3 = CoinPieChartFragment.newInstance(coin.getSymbol(), PrefHelper.getToSymbol(this));
         Fragment frag4 = CoinBoardFragment.newInstance(boardKind);
 
         getSupportFragmentManager().beginTransaction()
@@ -98,10 +96,7 @@ public class CoinActivity extends AppCompatActivity implements
                 .replace(R.id.card_board, frag4, FRAG_BOARD)
                 .commit();
 
-        startAutoUpdate(0);
-        drawPieChart();
         drawBoardChart();
-
     }
 
     @Override
@@ -135,7 +130,6 @@ public class CoinActivity extends AppCompatActivity implements
         autoUpdateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-//                drawLineChart();
             }
         }, delay, 60000);
     }
@@ -144,43 +138,6 @@ public class CoinActivity extends AppCompatActivity implements
         if (autoUpdateTimer != null) {
             autoUpdateTimer.cancel();
             autoUpdateTimer = null;
-        }
-    }
-
-    private void drawExchangePieChart() {
-        new GetCoinSnapshotTask(client).setFromSymbol(coin.getSymbol())
-                .setToSymbol(PrefHelper.getToSymbol(this))
-                .setListener(new GetCoinSnapshotTask.Listener() {
-                    @Override
-                    public void finished(CoinSnapshot snapshot) {
-                        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAG_PIE_CHART);
-                        if (fragment != null) {
-                            ((CoinPieChartFragment) fragment).updateView(snapshot);
-                            Log.d("UPDATED", pieChartKind + ", " + new Date().toString());
-                        }
-                    }
-                }).execute();
-    }
-
-    private void drawCurrencyPieChart() {
-        new GetTopPairsTask(client).setFromSymbol(coin.getSymbol())
-                .setListener(new GetTopPairsTask.Listener() {
-                    @Override
-                    public void finished(TopPairs topPairs) {
-                        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAG_PIE_CHART);
-                        if (fragment != null) {
-                            ((CoinPieChartFragment) fragment).updateView(topPairs);
-                            Log.d("UPDATED", pieChartKind + ", " + new Date().toString());
-                        }
-                    }
-                }).execute();
-    }
-
-    private void drawPieChart() {
-        if (pieChartKind.equals("currency")) {
-            drawCurrencyPieChart();
-        } else if (pieChartKind.equals("exchange")) {
-            drawExchangePieChart();
         }
     }
 
@@ -199,15 +156,12 @@ public class CoinActivity extends AppCompatActivity implements
 
     @Override
     public void onLineChartKindChanged(String kind) {
-        lineChartKind = kind;
         stopAutoUpdate();
         startAutoUpdate(0);
     }
 
     @Override
     public void onPieChartKindChanged(String kind) {
-        pieChartKind = kind;
-        drawPieChart();
     }
 
     @Override

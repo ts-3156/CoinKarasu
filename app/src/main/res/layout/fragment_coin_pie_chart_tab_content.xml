@@ -5,21 +5,19 @@
     android:layout_height="wrap_content"
     android:background="#ffffff"
     android:orientation="vertical"
-    tools:context="com.example.toolbartest.activities.CoinLineChartTabContentFragment">
+    tools:context="com.example.toolbartest.activities.CoinPieChartTabContentFragment">
 
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/line_chart"
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pie_chart"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="320dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="0dp" />
+        android:layout_marginTop="16dp" />
 
     <TextView
-        android:id="@+id/line_chart_desc"
+        android:id="@+id/pie_chart_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -28,5 +26,4 @@
         android:layout_marginRight="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         tools:text="Volume by currency" />
-
 </RelativeLayout>

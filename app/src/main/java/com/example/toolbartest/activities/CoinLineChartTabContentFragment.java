@@ -62,11 +62,6 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         return view;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
-
     private void startTask() {
         if (taskStarted) {
             return;

@@ -3,40 +3,46 @@ package com.example.toolbartest.activities;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.toolbartest.R;
-import com.example.toolbartest.chart.CoinPieChart;
-import com.example.toolbartest.cryptocompare.data.CoinSnapshot;
-import com.example.toolbartest.cryptocompare.data.Exchange;
-import com.example.toolbartest.cryptocompare.data.TopPair;
-import com.example.toolbartest.cryptocompare.data.TopPairs;
-import com.github.mikephil.charting.charts.PieChart;
+import com.example.toolbartest.adapters.ViewPagerAdapter;
+import com.example.toolbartest.cryptocompare.data.History;
+import com.example.toolbartest.format.PriceViewFormat;
+import com.example.toolbartest.format.TrendViewFormat;
+import com.example.toolbartest.utils.AnimHelper;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 
-public class CoinPieChartFragment extends Fragment implements View.OnClickListener {
+public class CoinPieChartFragment extends Fragment implements
+        ViewPager.OnPageChangeListener {
+
+    public static final int DEFAULT_POSITION = 0;
 
     private OnFragmentInteractionListener listener;
 
-    Button btn;
-    String kind;
-    CoinPieChart chart;
+    private ViewPager pager;
+    private TabLayout tabs;
+    private TabLayout.Tab tab;
+    private String fromSymbol;
+    private String toSymbol;
 
     public CoinPieChartFragment() {
     }
 
-    public static CoinPieChartFragment newInstance(String kind) {
+    public static CoinPieChartFragment newInstance(String fromSymbol, String toSymbol) {
         CoinPieChartFragment fragment = new CoinPieChartFragment();
         Bundle args = new Bundle();
-        args.putString("kind", kind);
+        args.putString("fromSymbol", fromSymbol);
+        args.putString("toSymbol", toSymbol);
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,7 +51,8 @@ public class CoinPieChartFragment extends Fragment implements View.OnClickListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = getArguments().getString("kind");
+            fromSymbol = getArguments().getString("fromSymbol");
+            toSymbol = getArguments().getString("toSymbol");
         }
     }
 
@@ -53,108 +60,48 @@ public class CoinPieChartFragment extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_pie_chart, container, false);
 
-        view.findViewById(R.id.pie_chart_currency).setOnClickListener(this);
-        view.findViewById(R.id.pie_chart_exchange).setOnClickListener(this);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
+        adapter.addItem(CoinPieChartTabContentFragment.newInstance("currency", fromSymbol, toSymbol, 0));
+        adapter.addItem(CoinPieChartTabContentFragment.newInstance("exchange", fromSymbol, toSymbol, 1));
 
-        btn = view.findViewById(R.id.pie_chart_currency);
-        btn.setBackgroundColor(Color.LTGRAY);
+        pager = view.findViewById(R.id.view_pager);
+        pager.setAdapter(adapter);
+        pager.setCurrentItem(DEFAULT_POSITION);
+        pager.addOnPageChangeListener(this);
+        pager.setOffscreenPageLimit(2);
 
-        chart = new CoinPieChart((PieChart) view.findViewById(R.id.pie_chart));
-        chart.initialize();
+        tabs = view.findViewById(R.id.tab_layout);
+        tabs.setupWithViewPager(pager);
+
+        tabs.getTabAt(0).setCustomView(createTab(inflater, container, "Money flow"));
+        tabs.getTabAt(1).setCustomView(createTab(inflater, container, "Trading volume"));
+
+        tab = tabs.getTabAt(DEFAULT_POSITION);
+        setSelected(DEFAULT_POSITION);
 
         return view;
     }
 
-    public void updateView(CoinSnapshot snapshot) {
-        if (isDetached() || getView() == null) {
-            return;
-        }
+    private View createTab(LayoutInflater inflater, ViewGroup container, String label) {
+        View view = inflater.inflate(R.layout.tab_pie_chart, container, false);
 
-        ArrayList<Exchange> exchanges = snapshot.getExchanges();
+        ((TextView) view.findViewById(R.id.tab_label)).setText(label);
 
-        Collections.sort(exchanges, new Comparator<Exchange>() {
-            public int compare(Exchange ex1, Exchange ex2) {
-                return ex1.getVolume24Hour() > ex2.getVolume24Hour() ? -1 : 1;
-            }
-        });
-
-        double sum = 0.0;
-        for (Exchange exchange : exchanges) {
-            sum += exchange.getVolume24Hour();
-        }
-        sum *= 0.05;
-
-        double others = 0.0;
-        ArrayList<Double> values = new ArrayList<>();
-        ArrayList<String> labels = new ArrayList<>();
-
-        for (Exchange exchange : exchanges) {
-            double value = exchange.getVolume24Hour();
-            if (value < sum) {
-                others += value;
-            } else {
-                values.add(value);
-                labels.add(exchange.getMarket());
-            }
-        }
-
-        if (others > 0.0) {
-            values.add(others);
-            labels.add("others");
-        }
-
-        chart.clear();
-
-        chart = new CoinPieChart((PieChart) getView().findViewById(R.id.pie_chart));
-        chart.initialize();
-        chart.setData(values, labels);
-        chart.invalidate();
+        return view;
     }
 
-    public void updateView(TopPairs topPairs) {
-        if (isDetached() || getView() == null) {
-            return;
-        }
+    public void updateTab(int position) {
+    }
 
-        ArrayList<TopPair> pairs = topPairs.getTopPairs();
+    private void setSelected(int position) {
+        View view = tab.getCustomView();
+        view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
+        ((TextView) view.findViewById(R.id.tab_label)).setTextColor(Color.parseColor("#80000000"));
 
-        Collections.sort(pairs, new Comparator<TopPair>() {
-            public int compare(TopPair tp1, TopPair tp2) {
-                return tp1.getVolume24h() > tp2.getVolume24h() ? -1 : 1;
-            }
-        });
-
-        double sum = 0.0;
-        for (TopPair pair : pairs) {
-            sum += pair.getVolume24h();
-        }
-        sum *= 0.05;
-
-        double others = 0.0;
-        ArrayList<Double> values = new ArrayList<>();
-        ArrayList<String> labels = new ArrayList<>();
-
-        for (TopPair pair : pairs) {
-            double value = pair.getVolume24h();
-            if (value < sum) {
-                others += value;
-            } else {
-                values.add(value);
-                labels.add(pair.getToSymbol());
-            }
-        }
-
-        if (others > 0.0) {
-            values.add(others);
-            labels.add("others");
-        }
-
-        chart.clear();
-
-        chart = new CoinPieChart((PieChart) getView().findViewById(R.id.pie_chart));
-        chart.initialize();
-        chart.setData(values, labels);
-        chart.invalidate();
+        tab = tabs.getTabAt(position);
+        view = tab.getCustomView();
+        view.findViewById(R.id.tab_container).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        ((TextView) view.findViewById(R.id.tab_label)).setTextColor(Color.WHITE);
     }
 
     @Override
@@ -170,30 +117,24 @@ public class CoinPieChartFragment extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public void onClick(View view) {
-        String next;
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
 
-        switch (view.getId()) {
-            case R.id.pie_chart_currency:
-                next = "currency";
-                break;
-            case R.id.pie_chart_exchange:
-                next = "exchange";
-                break;
-            default:
-                next = "currency";
-        }
+    @Override
+    public void onPageSelected(int position) {
+    }
 
-        if (!next.equals(kind)) {
-            Button nextBtn = (Button) view;
-            btn.setBackgroundColor(Color.WHITE);
-            nextBtn.setBackgroundColor(Color.LTGRAY);
-            btn = nextBtn;
+    @Override
+    public void onPageScrollStateChanged(int state) {
+        if (state == ViewPager.SCROLL_STATE_SETTLING) {
+            int position = pager.getCurrentItem();
 
-            kind = next;
+            if (position != tab.getPosition()) {
+                ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
+                CoinPieChartTabContentFragment fragment = (CoinPieChartTabContentFragment) adapter.getItem(position);
 
-            if (listener != null) {
-                listener.onPieChartKindChanged(kind);
+                setSelected(position);
+                fragment.updateView(true);
             }
         }
     }
