@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tab_container"
+    android:layout_width="match_parent"
+    android:layout_height="90dp" android:paddingLeft="10dp" android:paddingRight="10dp"
+    android:paddingTop="16dp">
+
+    <TextView
+        android:id="@+id/tab_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        tools:text="1 Hour" />
+
+    <TextView
+        android:id="@+id/tab_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tab_label"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        tools:text="¥ 1,000"
+        tools:textColor="#008000" />
+
+    <ImageView
+        android:id="@+id/tab_trend_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tab_price"
+        android:paddingRight="4dp"
+        tools:src="@drawable/ic_trending_up" />
+
+    <TextView
+        android:id="@+id/tab_trend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tab_price"
+        android:layout_toRightOf="@id/tab_trend_icon"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        tools:text="10%"
+        tools:textColor="#008000" />
+
+</RelativeLayout>

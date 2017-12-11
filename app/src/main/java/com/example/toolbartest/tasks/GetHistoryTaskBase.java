@@ -1,8 +1,10 @@
 package com.example.toolbartest.tasks;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 
 import com.example.toolbartest.cryptocompare.Client;
+import com.example.toolbartest.cryptocompare.ClientImpl;
 import com.example.toolbartest.cryptocompare.data.History;
 
 import java.util.ArrayList;
@@ -32,6 +34,32 @@ public class GetHistoryTaskBase extends AsyncTask<Integer, Integer, Integer> {
         if (listener != null) {
             listener.finished(histories);
         }
+    }
+
+    public static GetHistoryTaskBase newInstance(Client client, String kind) {
+        GetHistoryTaskBase instance;
+
+        switch (kind) {
+            case "hour":
+                instance = new GetHistoryHourTask(client);
+                break;
+            case "day":
+                instance = new GetHistoryDayTask(client);
+                break;
+            case "week":
+                instance = new GetHistoryWeekTask(client);
+                break;
+            case "month":
+                instance = new GetHistoryMonthTask(client);
+                break;
+            case "year":
+                instance = new GetHistoryYearTask(client);
+                break;
+            default:
+                instance = new GetHistoryHourTask(client);
+        }
+
+        return instance;
     }
 
     public GetHistoryTaskBase setFromSymbol(String fromSymbol) {

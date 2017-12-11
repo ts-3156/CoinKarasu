@@ -40,10 +40,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimerTask;
 
-public class CoinActivity extends AppCompatActivity
-        implements CoinLineChartFragment.OnFragmentInteractionListener,
+public class CoinActivity extends AppCompatActivity implements
+        CoinLineChartFragment.OnFragmentInteractionListener,
         CoinPieChartFragment.OnFragmentInteractionListener,
-        CoinBoardFragment.OnFragmentInteractionListener {
+        CoinBoardFragment.OnFragmentInteractionListener,
+        CoinLineChartTabContentFragment.OnFragmentInteractionListener {
 
     private static final String FRAG_LINE_CHART = "line_chart_fragment";
     private static final String FRAG_PIE_CHART = "pie_chart_fragment";
@@ -84,7 +85,8 @@ public class CoinActivity extends AppCompatActivity
         pieChartKind = "currency";
         boardKind = "order_book";
 
-        CoinLineChartFragment frag1 = CoinLineChartFragment.newInstance(lineChartKind);
+        CoinLineChartFragment frag1 = CoinLineChartFragment.newInstance(lineChartKind,
+                coin.getSymbol(), PrefHelper.getToSymbol(this));
         CoinPieChartFragment frag2 = CoinPieChartFragment.newInstance(pieChartKind);
         CoinBoardFragment frag3 = CoinBoardFragment.newInstance(boardKind);
 
@@ -122,32 +124,6 @@ public class CoinActivity extends AppCompatActivity
         stopAutoUpdate();
     }
 
-    private GetHistoryTaskBase getTaskInstance() {
-        GetHistoryTaskBase instance;
-
-        switch (lineChartKind) {
-            case "hour":
-                instance = new GetHistoryHourTask(client);
-                break;
-            case "day":
-                instance = new GetHistoryDayTask(client);
-                break;
-            case "week":
-                instance = new GetHistoryWeekTask(client);
-                break;
-            case "month":
-                instance = new GetHistoryMonthTask(client);
-                break;
-            case "year":
-                instance = new GetHistoryYearTask(client);
-                break;
-            default:
-                instance = new GetHistoryHourTask(client);
-        }
-
-        return instance;
-    }
-
     private void startAutoUpdate(int delay) {
         if (autoUpdateTimer != null) {
             stopAutoUpdate();
@@ -158,7 +134,7 @@ public class CoinActivity extends AppCompatActivity
         autoUpdateTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                drawLineChart();
+//                drawLineChart();
             }
         }, delay, 60000);
     }
@@ -168,25 +144,6 @@ public class CoinActivity extends AppCompatActivity
             autoUpdateTimer.cancel();
             autoUpdateTimer = null;
         }
-    }
-
-    private void drawLineChart() {
-        getTaskInstance().setFromSymbol(coin.getSymbol())
-                .setToSymbol(PrefHelper.getToSymbol(this))
-                .setListener(new GetHistoryTaskBase.Listener() {
-                    @Override
-                    public void finished(ArrayList<History> records) {
-                        if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(lineChartKind)) {
-                            return;
-                        }
-
-                        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAG_LINE_CHART);
-                        if (fragment != null) {
-                            ((CoinLineChartFragment) fragment).updateView(records);
-                            Log.d("UPDATED", lineChartKind + ", " + records.size() + ", " + new Date().toString());
-                        }
-                    }
-                }).execute();
     }
 
     private void drawExchangePieChart() {
@@ -233,7 +190,7 @@ public class CoinActivity extends AppCompatActivity
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAG_BOARD);
                 if (fragment != null) {
                     ((CoinBoardFragment) fragment).updateView(board);
-                    Log.d("UPDATED", new Date().toString());
+                    Log.d("UPDATED", "board, " + new Date().toString());
                 }
             }
         }).execute();

@@ -21,6 +21,7 @@ public class HistoryResponseImpl implements HistoryResponse {
     @Override
     public JSONArray getData() {
         if (response == null) {
+            Log.d("getData", "Response is null.");
             return null;
         }
 

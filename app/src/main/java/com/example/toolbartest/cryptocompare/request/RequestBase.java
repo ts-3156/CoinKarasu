@@ -1,16 +1,10 @@
 package com.example.toolbartest.cryptocompare.request;
 
 import android.app.Activity;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.RequestFuture;
-import com.example.toolbartest.utils.VolleyHelper;
 
 import org.json.JSONObject;
-
-import java.util.concurrent.ExecutionException;
 
 public class RequestBase implements Request {
     private Activity activity;
@@ -32,7 +26,8 @@ public class RequestBase implements Request {
     }
 
     DefaultRetryPolicy getRetryPolicy() {
-        return new DefaultRetryPolicy(3000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        return new DefaultRetryPolicy(DefaultRetryPolicy.DEFAULT_TIMEOUT_MS,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
     }
 
     Activity getActivity() {

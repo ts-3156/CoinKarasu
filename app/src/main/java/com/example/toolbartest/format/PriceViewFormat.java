@@ -1,6 +1,7 @@
 package com.example.toolbartest.format;
 
 import android.animation.ValueAnimator;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.example.toolbartest.coins.AggregatedData;
@@ -30,7 +31,7 @@ public class PriceViewFormat {
         this(coin.getPrevPrice(), coin.getPrice(), coin.getToSymbol(), anim);
     }
 
-    private PriceViewFormat(String curPrice, String toSymbol) {
+    public PriceViewFormat(String curPrice, String toSymbol) {
         this(-1.0, Double.valueOf(curPrice), toSymbol, false);
     }
 
@@ -48,7 +49,7 @@ public class PriceViewFormat {
         String value;
 
         if (toSymbol.equals("JPY")) {
-            if (curPrice > 1000.0) {
+            if (curPrice > 1000.0 || curPrice < -1000.0) {
                 formatter.setMaximumFractionDigits(0);
                 formatter.setMinimumFractionDigits(0);
             } else {

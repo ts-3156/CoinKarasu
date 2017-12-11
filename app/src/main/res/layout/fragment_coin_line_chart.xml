@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -6,72 +7,33 @@
     android:orientation="vertical"
     tools:context="com.example.toolbartest.activities.CoinLineChartFragment">
 
-    <LinearLayout
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp">
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="?android:attr/listDivider" />
 
-        <Button
-            android:id="@+id/chart_hour"
-            style="@style/AppTheme.FlatButton"
-            android:layout_width="@dimen/chart_buttons_width"
-            android:layout_height="@dimen/chart_buttons_height"
-            android:layout_weight="1"
-            android:text="1 Hour"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textSize="@dimen/chart_buttons_text_size" />
-
-        <Button
-            android:id="@+id/chart_day"
-            style="@style/AppTheme.FlatButton"
-            android:layout_width="@dimen/chart_buttons_width"
-            android:layout_height="@dimen/chart_buttons_height"
-            android:layout_weight="1"
-            android:text="1 Day"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textSize="@dimen/chart_buttons_text_size" />
-
-        <Button
-            android:id="@+id/chart_week"
-            style="@style/AppTheme.FlatButton"
-            android:layout_width="@dimen/chart_buttons_width"
-            android:layout_height="@dimen/chart_buttons_height"
-            android:layout_weight="1"
-            android:text="1 Week"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textSize="@dimen/chart_buttons_text_size" />
-
-        <Button
-            android:id="@+id/chart_month"
-            style="@style/AppTheme.FlatButton"
-            android:layout_width="@dimen/chart_buttons_width"
-            android:layout_height="@dimen/chart_buttons_height"
-            android:layout_weight="1"
-            android:text="1 Month"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textSize="@dimen/chart_buttons_text_size" />
-
-        <Button
-            android:id="@+id/chart_year"
-            style="@style/AppTheme.FlatButton"
-            android:layout_width="@dimen/chart_buttons_width"
-            android:layout_height="@dimen/chart_buttons_height"
-            android:layout_weight="1"
-            android:text="1 Year"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            android:textSize="@dimen/chart_buttons_text_size" />
-    </LinearLayout>
-
-    <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/line_chart"
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="0dp" />
+        android:layout_height="90dp"
+        app:tabIndicatorHeight="0dp"
+        app:tabMode="scrollable"
+        app:tabPaddingBottom="0dp"
+        app:tabPaddingEnd="0dp"
+        app:tabPaddingStart="0dp"
+        app:tabPaddingTop="0dp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="0dp"
+        android:background="?android:attr/listDivider" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="316dp"
+        android:layout_marginTop="10dp" />
 
 </LinearLayout>

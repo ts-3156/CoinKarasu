@@ -118,6 +118,11 @@ public class ClientImpl implements Client {
         HistoryResponse historyResponse = new HistoryResponseImpl(response, fromSymbol, toSymbol);
 
         JSONArray histories = historyResponse.getData();
+        if (histories == null) {
+            Log.d("getHistoryXxx", "empty, " + kind);
+            new ArrayList<>();
+        }
+
         ArrayList<History> result = new ArrayList<>();
 
         try {

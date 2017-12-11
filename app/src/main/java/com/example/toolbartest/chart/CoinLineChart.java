@@ -53,7 +53,7 @@ public class CoinLineChart {
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setDrawAxisLine(false);
-        xAxis.setDrawGridLines(true);
+        xAxis.setDrawGridLines(false);
         xAxis.setGranularity(1f); // one hour
         xAxis.setValueFormatter(new OffsetFormatter(getSimpleDateFormat(kind)));
 
@@ -103,6 +103,10 @@ public class CoinLineChart {
 
     public void invalidate() {
         chart.invalidate();
+    }
+
+    public void animateX() {
+        chart.animateX(1000);
     }
 
     public void clear() {

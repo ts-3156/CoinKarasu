@@ -32,7 +32,7 @@ public class TrendViewFormat {
         this(coin.getPrevTrend(), coin.getTrend(), anim);
     }
 
-    private TrendViewFormat(String curTrend) {
+    public TrendViewFormat(String curTrend) {
         this(-1.0, Double.valueOf(curTrend), false);
     }
 
@@ -43,11 +43,22 @@ public class TrendViewFormat {
     }
 
     public void format(TextView view) {
-        view.setTextColor(getTrendColor(curTrend));
+        format(view, true);
+    }
+
+    public void format(TextView view, boolean setColor) {
+        if (setColor) {
+            view.setTextColor(getTrendColor(curTrend));
+        }
 
         NumberFormat formatter = NumberFormat.getPercentInstance();
-        formatter.setMaximumFractionDigits(2);
-        formatter.setMinimumFractionDigits(2);
+        if (curTrend > 1.0 || curTrend < -1.0) {
+            formatter.setMaximumFractionDigits(0);
+            formatter.setMinimumFractionDigits(0);
+        } else {
+            formatter.setMaximumFractionDigits(2);
+            formatter.setMinimumFractionDigits(2);
+        }
         view.setText(formatter.format(curTrend));
 
         if (anim && prevTrend != -0.1) {
