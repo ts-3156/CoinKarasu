@@ -17,4 +17,8 @@ public interface CoinList extends Cacheable {
     //    static CoinListImpl.Builder builder();
 
     ArrayList<Coin> collectCoins(String[] fromSymbols);
+
+    ArrayList<String> getAllSymbols(int limit);
+
+    ArrayList<String> getAllSymbols(int offset, int limit);
 }

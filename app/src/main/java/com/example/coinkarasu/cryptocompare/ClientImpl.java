@@ -3,35 +3,35 @@ package com.example.coinkarasu.cryptocompare;
 import android.app.Activity;
 import android.util.Log;
 
-import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.cryptocompare.data.History;
-import com.example.coinkarasu.cryptocompare.data.Prices;
-import com.example.coinkarasu.cryptocompare.response.CoinSnapshotResponse;
-import com.example.coinkarasu.cryptocompare.response.CoinSnapshotResponseImpl;
-import com.example.coinkarasu.cryptocompare.response.TopPairsResponse;
-import com.example.coinkarasu.cryptocompare.response.TopPairsResponseImpl;
-import com.example.coinkarasu.tasks.FetchCoinListThread;
-import com.example.coinkarasu.utils.StringHelper;
+import com.example.coinkarasu.coins.PriceMultiFullCoin;
 import com.example.coinkarasu.cryptocompare.data.CoinList;
-import com.example.coinkarasu.cryptocompare.data.CoinListImpl;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshotImpl;
+import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.cryptocompare.data.HistoryImpl;
+import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.cryptocompare.data.TopPairs;
 import com.example.coinkarasu.cryptocompare.data.TopPairsImpl;
+import com.example.coinkarasu.cryptocompare.data.ToplistImpl;
 import com.example.coinkarasu.cryptocompare.request.BlockingRequest;
+import com.example.coinkarasu.cryptocompare.request.NonBlockingRequest;
+import com.example.coinkarasu.cryptocompare.request.Request;
 import com.example.coinkarasu.cryptocompare.response.CoinListResponseImpl;
+import com.example.coinkarasu.cryptocompare.response.CoinSnapshotResponse;
+import com.example.coinkarasu.cryptocompare.response.CoinSnapshotResponseImpl;
 import com.example.coinkarasu.cryptocompare.response.HistoryResponse;
 import com.example.coinkarasu.cryptocompare.response.HistoryResponseImpl;
 import com.example.coinkarasu.cryptocompare.response.PricesResponseImpl;
+import com.example.coinkarasu.cryptocompare.response.TopPairsResponse;
+import com.example.coinkarasu.cryptocompare.response.TopPairsResponseImpl;
+import com.example.coinkarasu.utils.StringHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
 
 public class ClientImpl implements Client {
     private Activity activity;
@@ -182,4 +182,30 @@ public class ClientImpl implements Client {
         return sampled;
     }
 
+    @Override
+    public ArrayList<PriceMultiFullCoin> getBtcToplist(final CoinList coinList) {
+//        StringBuilder builder = new StringBuilder();
+//        ArrayList<String> symbols = coinList.getAllSymbols(20);
+//
+//        for (int i = 0; i < symbols.size(); i++) {
+//            builder.append(symbols.get(i)).append(',');
+//        }
+//
+//        String url = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC"
+//                + "&tsyms=" + builder.substring(0, builder.length() - 1);
+//
+//        Log.d("URL", url);
+//        new NonBlockingRequest(activity, url).perform(new Request.Listener() {
+//            @Override
+//            public void finished(JSONObject response) {
+//                ArrayList<PriceMultiFullCoin> coins = new ToplistImpl(response).getCoins();
+//                for (PriceMultiFullCoin coin : coins) {
+//                    Log.d("COINS", coin.getFromSymbol() + ", " + coin.getToSymbol());
+//                }
+//            }
+//        });
+//
+//
+        return null;
+    }
 }

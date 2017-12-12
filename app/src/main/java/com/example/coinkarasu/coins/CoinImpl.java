@@ -113,6 +113,116 @@ public class CoinImpl implements Coin {
     }
 
     @Override
+    public long geLastUpdate() {
+        return 0;
+    }
+
+    @Override
+    public double getLastVolume() {
+        return 0;
+    }
+
+    @Override
+    public double getLastVolumeTo() {
+        return 0;
+    }
+
+    @Override
+    public double getVolumeDay() {
+        return 0;
+    }
+
+    @Override
+    public double getVolumeDayTo() {
+        return 0;
+    }
+
+    @Override
+    public double getVolume24Hour() {
+        return 0;
+    }
+
+    @Override
+    public double getVolume24HourTo() {
+        return 0;
+    }
+
+    @Override
+    public double getOpenDay() {
+        return 0;
+    }
+
+    @Override
+    public double getHighDay() {
+        return 0;
+    }
+
+    @Override
+    public double getLowDay() {
+        return 0;
+    }
+
+    @Override
+    public double getOpen24Hour() {
+        return 0;
+    }
+
+    @Override
+    public double getHigh24Hour() {
+        return 0;
+    }
+
+    @Override
+    public double getLow24Hour() {
+        return 0;
+    }
+
+    @Override
+    public String getLastMarket() {
+        return null;
+    }
+
+    @Override
+    public double getChange24Hour() {
+        return 0;
+    }
+
+    @Override
+    public double getChangePct24Hour() {
+        return 0;
+    }
+
+    @Override
+    public double getChangeDay() {
+        return 0;
+    }
+
+    @Override
+    public double getChangePctDay() {
+        return 0;
+    }
+
+    @Override
+    public double getSupply() {
+        return 0;
+    }
+
+    @Override
+    public double getMktCap() {
+        return 0;
+    }
+
+    @Override
+    public double getTotalVolume24h() {
+        return 0;
+    }
+
+    @Override
+    public double getTotalVolume24hTo() {
+        return 0;
+    }
+
+    @Override
     public void setTrend(double trend) {
         prevTrend = this.trend;
         this.trend = trend;
@@ -166,6 +276,16 @@ public class CoinImpl implements Coin {
     @Override
     public int getSortOrder() {
         return sortOrder;
+    }
+
+    @Override
+    public String getMarket() {
+        return null;
+    }
+
+    @Override
+    public String getFromSymbol() {
+        return null;
     }
 
     @Override

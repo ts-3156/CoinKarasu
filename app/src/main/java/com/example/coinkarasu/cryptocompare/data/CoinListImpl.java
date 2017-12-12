@@ -89,6 +89,41 @@ public class CoinListImpl implements CoinList {
     }
 
     @Override
+    public ArrayList<String> getAllSymbols(int limit) {
+        return getAllSymbols(0, limit);
+    }
+
+    @Override
+    public ArrayList<String> getAllSymbols(int offset, int limit) {
+        if (response == null || response.getData() == null) {
+            return null;
+        }
+
+        ArrayList<String> symbols = new ArrayList<>();
+        Iterator<String> keys = response.getData().keys();
+        int i = 0;
+
+        while (keys.hasNext()) {
+            String symbol = keys.next();
+            if (symbol.contains("*")) {
+                continue;
+            }
+
+            i++;
+            if (i <= offset) {
+                continue;
+            }
+
+            symbols.add(symbol);
+            if (symbols.size() >= limit) {
+                break;
+            }
+        }
+
+        return symbols;
+    }
+
+    @Override
     public boolean saveToCache(Context context) {
         return response != null && response.saveToCache(context);
     }

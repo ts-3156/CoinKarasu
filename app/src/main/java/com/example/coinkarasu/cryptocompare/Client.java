@@ -1,5 +1,7 @@
 package com.example.coinkarasu.cryptocompare;
 
+import com.example.coinkarasu.coins.PriceMultiFullCoin;
+import com.example.coinkarasu.cryptocompare.data.CoinList;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.cryptocompare.data.Prices;
@@ -27,4 +29,6 @@ public interface Client {
     CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol);
 
     TopPairs getTopPairs(String fromSymbol);
+
+    ArrayList<PriceMultiFullCoin> getBtcToplist(CoinList coinList);
 }
