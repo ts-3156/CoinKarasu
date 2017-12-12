@@ -68,7 +68,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
         taskStarted = true;
 
-        GetHistoryTaskBase.newInstance(new ClientImpl(getActivity(), true), kind)
+        GetHistoryTaskBase.newInstance(new ClientImpl(getActivity()), kind)
                 .setFromSymbol(fromSymbol)
                 .setToSymbol(toSymbol)
                 .setListener(CoinLineChartTabContentFragment.this).execute();

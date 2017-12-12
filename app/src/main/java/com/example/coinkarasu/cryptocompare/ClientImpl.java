@@ -35,56 +35,27 @@ import java.util.concurrent.CountDownLatch;
 
 public class ClientImpl implements Client {
     private Activity activity;
-    private CoinList coinList;
-    private CountDownLatch latch;
 
     public ClientImpl(Activity activity) {
         this.activity = activity;
-        this.coinList = null;
-        initializeCoinList();
-    }
-
-    public ClientImpl(Activity activity, boolean skipLoadCoinList) {
-        this.activity = activity;
-        this.coinList = null;
-
-        if (!skipLoadCoinList) {
-            initializeCoinList();
-        }
     }
 
     private void initializeCoinList() {
         if (CoinListResponseImpl.cacheExists(activity)) {
-            long start = System.currentTimeMillis();
-            coinList = CoinListImpl.restoreFromCache(activity);
-            Log.d("RestoreCoinList", (System.currentTimeMillis() - start) + " ms");
+//            long start = System.currentTimeMillis();
+//            coinList = CoinListImpl.restoreFromCache(activity);
+//            Log.d("RestoreCoinList", (System.currentTimeMillis() - start) + " ms");
         } else {
-            // TODO Bug fix
-            latch = new CountDownLatch(1);
-            new FetchCoinListThread(activity)
-                    .setLatch(latch)
-                    .setListener(new FetchCoinListThread.Listener() {
-                        @Override
-                        public void finished(JSONObject response) {
-                            coinList = CoinListImpl.buildByResponse(response);
-                        }
-                    }).start();
+//            latch = new CountDownLatch(1);
+//            new FetchCoinListThread(activity)
+//                    .setLatch(latch)
+//                    .setListener(new FetchCoinListThread.Listener() {
+//                        @Override
+//                        public void finished(JSONObject response) {
+//                            coinList = CoinListImpl.buildByResponse(response);
+//                        }
+//                    }).start();
         }
-    }
-
-    @Override
-    public ArrayList<Coin> collectCoins(String[] fromSymbols) {
-        if (coinList == null) {
-            long start = System.currentTimeMillis();
-            try {
-                latch.await();
-            } catch (InterruptedException e) {
-                Log.d("collectCoins", e.getMessage());
-            }
-            Log.d("collectCoins", "Blocked " + (System.currentTimeMillis() - start) + " ms");
-        }
-
-        return coinList.collectCoins(fromSymbols);
     }
 
     @Override

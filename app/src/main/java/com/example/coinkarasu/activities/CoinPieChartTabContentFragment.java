@@ -79,7 +79,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             return;
         }
         taskStarted = true;
-        Client client = new ClientImpl(getActivity(), true);
+        Client client = new ClientImpl(getActivity());
 
         if (CoinPieChartFragment.Kind.currency == CoinPieChartFragment.Kind.valueOf(kind)) {
             new GetTopPairsTask(client).setFromSymbol(fromSymbol)

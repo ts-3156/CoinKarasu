@@ -63,7 +63,7 @@ public class CoinActivity extends AppCompatActivity implements
             bar.setTitle(coin.getSymbol() + " - " + coin.getToSymbol());
         }
 
-        client = new ClientImpl(this, true);
+        client = new ClientImpl(this);
         boardKind = "order_book";
 
         Fragment frag1 = CoinCardFragment.newInstance("overview", coin.toJson().toString());

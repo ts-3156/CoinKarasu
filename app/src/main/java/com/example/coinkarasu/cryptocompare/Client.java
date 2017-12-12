@@ -1,6 +1,5 @@
 package com.example.coinkarasu.cryptocompare;
 
-import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.cryptocompare.data.Prices;
@@ -9,8 +8,6 @@ import com.example.coinkarasu.cryptocompare.data.TopPairs;
 import java.util.ArrayList;
 
 public interface Client {
-    ArrayList<Coin> collectCoins(String[] fromSymbols);
-
     Prices getPrices(String[] fromSymbols, String toSymbol);
 
     Prices getPrices(String[] fromSymbols, String toSymbol, String exchange);

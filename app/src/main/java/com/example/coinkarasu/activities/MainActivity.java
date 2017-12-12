@@ -20,12 +20,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.settings.SettingsActivity;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
+import com.example.coinkarasu.cryptocompare.CoinListReader;
+import com.example.coinkarasu.cryptocompare.data.CoinList;
+import com.example.coinkarasu.cryptocompare.data.CoinListImpl;
+import com.example.coinkarasu.tasks.FetchCoinListTask;
 import com.example.coinkarasu.utils.PrefHelper;
-import com.example.coinkarasu.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -47,6 +54,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String FRAGMENT_TAG = "fragment";
 
+    private CoinList coinList;
     private Client client;
     private NavigationKind navigationKind;
 
@@ -76,8 +84,19 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
 
-        navigationKind = NavigationKind.japan_all;
+
+        coinList = null;
+        try {
+            long start = System.currentTimeMillis();
+            coinList = CoinListImpl.buildByResponse(
+                    new JSONObject(CoinListReader.read(this)));
+            Log.d("LOAD", (System.currentTimeMillis() - start) + " ms");
+        } catch (JSONException e) {
+            Log.d("CLReader", e.getMessage());
+        }
+
         client = new ClientImpl(this);
+        navigationKind = NavigationKind.japan_all;
         refreshView(navigationKind);
     }
 
@@ -98,7 +117,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol) {
-        ArrayList<Coin> coins = client.collectCoins(fromSymbols);
+        ArrayList<Coin> coins = coinList.collectCoins(fromSymbols);
         for (Coin coin : coins) {
             coin.setToSymbol(toSymbol);
         }
