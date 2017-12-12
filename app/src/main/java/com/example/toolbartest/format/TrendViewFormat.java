@@ -1,18 +1,12 @@
 package com.example.toolbartest.format;
 
 import android.animation.ValueAnimator;
-import android.app.Activity;
 import android.graphics.Color;
 import android.widget.TextView;
 
-import com.example.toolbartest.R;
-import com.example.toolbartest.coins.AggregatedData;
 import com.example.toolbartest.coins.Coin;
-import com.example.toolbartest.utils.StringHelper;
 
 import java.text.NumberFormat;
-import java.util.Currency;
-import java.util.Locale;
 
 public class TrendViewFormat {
     private static final long DURATION = 1000;

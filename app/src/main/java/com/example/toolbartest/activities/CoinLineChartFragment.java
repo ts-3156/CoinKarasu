@@ -147,7 +147,7 @@ public class CoinLineChartFragment extends Fragment implements
         trend.setTextColor(Color.parseColor("#80000000"));
         if (trend.getText().length() != 0) {
             ((ImageView) view.findViewById(R.id.tab_trend_icon))
-                    .setImageResource(IconHelper.getTrendIconResId(parseTrendValue(trend.getText())));
+                    .setImageResource(IconHelper.getTrendIconResId(trend.getText().toString()));
         }
 
         tab = tabs.getTabAt(position);
@@ -160,13 +160,8 @@ public class CoinLineChartFragment extends Fragment implements
         trend.setTextColor(Color.WHITE);
         if (trend.getText().length() != 0) {
             ((ImageView) view.findViewById(R.id.tab_trend_icon))
-                    .setImageResource(IconHelper.getWhiteTrendIconResId(parseTrendValue(trend.getText())));
+                    .setImageResource(IconHelper.getWhiteTrendIconResId(trend.getText().toString()));
         }
-    }
-
-    private double parseTrendValue(CharSequence str) {
-        String str2 = str.toString().replace("%", "").replace(",", "");
-        return Double.valueOf(str2);
     }
 
     @Override

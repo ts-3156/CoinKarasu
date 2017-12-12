@@ -9,6 +9,26 @@ public class IconHelper {
         return getTrendIconResId(coin.getTrend());
     }
 
+    public static int getTrendIconResId(String trend) {
+        String str = trend.replace("%", "").replace(",", "");
+
+        int resId;
+
+        switch (str) {
+            case "∞":
+                resId = R.drawable.ic_trending_up;
+                break;
+            case "-∞":
+                resId = R.drawable.ic_trending_down;
+                break;
+            default:
+                resId = getTrendIconResId(Double.valueOf(str));
+                break;
+        }
+
+        return resId;
+    }
+
     public static int getTrendIconResId(double trend) {
         int resId;
 
@@ -18,6 +38,26 @@ public class IconHelper {
             resId = R.drawable.ic_trending_down;
         } else {
             resId = R.drawable.ic_trending_flat;
+        }
+
+        return resId;
+    }
+
+    public static int getWhiteTrendIconResId(String trend) {
+        String str = trend.replace("%", "").replace(",", "");
+
+        int resId;
+
+        switch (str) {
+            case "∞":
+                resId = R.drawable.ic_trending_up_white;
+                break;
+            case "-∞":
+                resId = R.drawable.ic_trending_down_white;
+                break;
+            default:
+                resId = getWhiteTrendIconResId(Double.valueOf(str));
+                break;
         }
 
         return resId;
