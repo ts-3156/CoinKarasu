@@ -25,22 +25,24 @@ public class PricesImpl implements Prices {
     public PricesImpl(PricesResponse response) {
         this.response = response;
         this.exchange = null;
-        extract();
+        add(response);
     }
 
     public PricesImpl(PricesResponse response, String exchange) {
         this.response = response;
         this.exchange = exchange;
-        extract();
+        add(response);
     }
 
-    private void extract() {
-        prices = new HashMap<>();
-        trends = new HashMap<>();
+    private void add(PricesResponse response) {
+        if (prices == null) {
+            prices = new HashMap<>();
+            trends = new HashMap<>();
+        }
 
         JSONObject raw = response.getRaw();
         if (raw == null) {
-            Log.d("extract", response.toString());
+            Log.e("add", response.toString());
             return;
         }
 
@@ -56,6 +58,15 @@ public class PricesImpl implements Prices {
                 trends.put(fromSymbol, attrs.getDouble("CHANGEPCT24HOUR") / 100.0);
             }
         } catch (JSONException e) {
+            Log.e("add", e.getMessage());
+        }
+    }
+
+    @Override
+    public void merge(Prices prices) {
+        for (String s : prices.getPrices().keySet()) {
+            this.prices.put(s, prices.getPrices().get(s));
+            this.trends.put(s, prices.getTrends().get(s));
         }
     }
 
@@ -101,6 +112,16 @@ public class PricesImpl implements Prices {
         if (exchange != null) {
             coin.setExchange(exchange);
         }
+    }
+
+    @Override
+    public HashMap<String, Double> getPrices() {
+        return prices;
+    }
+
+    @Override
+    public HashMap<String, Double> getTrends() {
+        return trends;
     }
 
     @Override

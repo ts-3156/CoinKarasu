@@ -38,7 +38,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     private int position;
     private boolean taskStarted;
     private CoinPieChart chart = null;
-
+    private int errorCount = 0;
 
     public CoinPieChartTabContentFragment() {
     }
@@ -75,7 +75,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     }
 
     private void startTask() {
-        if (taskStarted) {
+        if (taskStarted || errorCount >= 3) {
             return;
         }
         taskStarted = true;
@@ -109,8 +109,9 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     @Override
     public void finished(TopPairs topPairs) {
         if (topPairs.getTopPairs().isEmpty()) {
-            Log.d("finished", "empty, " + kind);
+            Log.e("finished", "empty, " + kind + ", " + errorCount);
             taskStarted = false;
+            errorCount++;
             startTask();
             return;
         }
@@ -146,8 +147,9 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     @Override
     public void finished(CoinSnapshot snapshot) {
         if (snapshot.getExchanges().isEmpty()) {
-            Log.d("finished", "empty, " + kind);
+            Log.e("finished", "empty, " + kind + ", " + errorCount);
             taskStarted = false;
+            errorCount++;
             startTask();
             return;
         }

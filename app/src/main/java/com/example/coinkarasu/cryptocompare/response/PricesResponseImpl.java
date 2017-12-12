@@ -29,8 +29,8 @@ public class PricesResponseImpl implements PricesResponse {
         try {
             raw = response.getJSONObject("RAW");
         } catch (JSONException e) {
-            Log.d("getRaw", e.getMessage());
-            Log.d("getRaw", response.toString());
+            Log.e("getRaw", e.getMessage());
+            Log.e("getRaw", response.toString());
         }
 
         return raw;

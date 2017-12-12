@@ -35,22 +35,32 @@ public class CoinSnapshotImpl implements CoinSnapshot {
         }
 
         try {
-            algorithm = data.getString("Algorithm");
-            proofOfType = data.getString("ProofType");
-            blockNumber = data.getLong("BlockNumber");
-            netHashesPerSecond = data.getDouble("NetHashesPerSecond");
-            totalCoinsMined = data.getDouble("TotalCoinsMined");
-            blockReward = data.getDouble("BlockReward");
+            if (data.has("Algorithm"))
+                algorithm = data.getString("Algorithm");
+            if (data.has("ProofType"))
+                proofOfType = data.getString("ProofType");
+            if (data.has("BlockNumber"))
+                blockNumber = data.getLong("BlockNumber");
+            if (data.has("NetHashesPerSecond"))
+                netHashesPerSecond = data.getDouble("NetHashesPerSecond");
+            if (data.has("TotalCoinsMined"))
+                totalCoinsMined = data.getDouble("TotalCoinsMined");
+            if (data.has("BlockReward"))
+                blockReward = data.getDouble("BlockReward");
 
-            aggregatedData = new AggregatedDataImpl(data.getJSONObject("AggregatedData"));
+            if (data.has("AggregatedData"))
+                aggregatedData = new AggregatedDataImpl(data.getJSONObject("AggregatedData"));
 
-            JSONArray exchanges = data.getJSONArray("Exchanges");
+            if (data.has("Exchanges")) {
+                JSONArray exchanges = data.getJSONArray("Exchanges");
 
-            for (int i = 0; i < exchanges.length(); i++) {
-                this.exchanges.add(new ExchangeImpl(exchanges.getJSONObject(i)));
+                for (int i = 0; i < exchanges.length(); i++) {
+                    this.exchanges.add(new ExchangeImpl(exchanges.getJSONObject(i)));
+                }
             }
         } catch (JSONException e) {
-            Log.d("CoinSnapshotImpl", e.getMessage());
+            Log.e("CoinSnapshotImpl", e.getMessage());
+            Log.e("CoinSnapshotImpl", response.toString());
         }
 
     }

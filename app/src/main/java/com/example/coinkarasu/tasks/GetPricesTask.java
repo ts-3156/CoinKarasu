@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.data.Prices;
 
+import java.util.Arrays;
+
 public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
     private Listener listener;
     private Client client;
@@ -25,7 +27,26 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
     @Override
     protected Integer doInBackground(Integer... params) {
         publishProgress(0);
-        prices = client.getPrices(fromSymbols, toSymbol, exchange);
+
+        for (int i = 0; i < fromSymbols.length; i += 20) {
+            int index = i + 19;
+            if (index >= fromSymbols.length) {
+                index = fromSymbols.length - 1;
+            }
+
+            String[] target = Arrays.copyOfRange(fromSymbols, i, index + 1);
+
+            if (prices == null) {
+                prices = client.getPrices(target, toSymbol, exchange);
+            } else {
+                prices.merge(client.getPrices(target, toSymbol, exchange));
+            }
+
+            if (index >= fromSymbols.length) {
+                break;
+            }
+        }
+
         return 200;
     }
 

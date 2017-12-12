@@ -28,7 +28,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     private int position;
     private boolean taskStarted;
     private CoinLineChart chart = null;
-
+    private int errorCount = 0;
 
     public CoinLineChartTabContentFragment() {
     }
@@ -63,7 +63,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     }
 
     private void startTask() {
-        if (taskStarted) {
+        if (taskStarted || errorCount >= 3) {
             return;
         }
         taskStarted = true;
@@ -92,8 +92,9 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     @Override
     public void finished(ArrayList<History> records) {
         if (records.isEmpty()) {
-            Log.d("finished", "empty, " + kind);
+            Log.e("finished", "empty, " + kind + ", " + errorCount);
             taskStarted = false;
+            errorCount++;
             startTask();
             return;
         }

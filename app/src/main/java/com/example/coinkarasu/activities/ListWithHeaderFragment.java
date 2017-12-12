@@ -38,7 +38,9 @@ public class ListWithHeaderFragment extends Fragment
     private enum NavigationKind {
         japan_all(R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}),
         jpy_toplist(R.array.jpy_toplist_symbols, new String[]{"cccagg"}),
-        usd_toplist(R.array.usd_toplist_symbols, new String[]{"cccagg"});
+        usd_toplist(R.array.usd_toplist_symbols, new String[]{"cccagg"}),
+        eur_toplist(R.array.eur_toplist_symbols, new String[]{"cccagg"}),
+        btc_toplist(R.array.btc_toplist_symbols, new String[]{"cccagg"});
 
         int symbolsResId;
         String[] exchanges;

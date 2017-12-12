@@ -43,7 +43,9 @@ public class MainActivity extends AppCompatActivity
     private enum NavigationKind {
         japan_all(R.string.nav_japan_all),
         jpy_toplist(R.string.nav_jpy_toplist),
-        usd_toplist(R.string.nav_usd_toplist);
+        usd_toplist(R.string.nav_usd_toplist),
+        eur_toplist(R.string.nav_eur_toplist),
+        btc_toplist(R.string.nav_btc_toplist);
 
         int symbolsResId;
 
@@ -243,6 +245,12 @@ public class MainActivity extends AppCompatActivity
             refreshView(navigationKind);
         } else if (id == R.id.nav_usd_toplist && navigationKind != NavigationKind.usd_toplist) {
             navigationKind = NavigationKind.usd_toplist;
+            refreshView(navigationKind);
+        } else if (id == R.id.nav_eur_toplist && navigationKind != NavigationKind.eur_toplist) {
+            navigationKind = NavigationKind.eur_toplist;
+            refreshView(navigationKind);
+        } else if (id == R.id.nav_btc_toplist && navigationKind != NavigationKind.btc_toplist) {
+            navigationKind = NavigationKind.btc_toplist;
             refreshView(navigationKind);
         } else if (id == R.id.nav_settings) {
             stopAutoUpdate();

@@ -17,6 +17,14 @@
             android:icon="@drawable/ic_menu_share"
             android:title="@string/nav_usd_toplist" />
         <item
+            android:id="@+id/nav_eur_toplist"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/nav_eur_toplist" />
+        <item
+            android:id="@+id/nav_btc_toplist"
+            android:icon="@drawable/ic_menu_share"
+            android:title="@string/nav_btc_toplist" />
+        <item
             android:id="@+id/nav_skyrocket"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/nav_skyrocket" />
@@ -46,57 +54,6 @@
                 android:id="@+id/nav_zaif"
                 android:icon="@drawable/ic_menu_send"
                 android:title="@string/nav_zaif" />
-        </menu>
-    </item>
-
-    <item
-        android:title="@string/nav_fiat"
-        android:visible="false">
-        <menu>
-            <item
-                android:id="@+id/nav_cny_toplist"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/nav_cny_toplist" />
-            <item
-                android:id="@+id/nav_eur_toplist"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/nav_eur_toplist" />
-            <item
-                android:id="@+id/nav_gbp_toplist"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/nav_gbp_toplist" />
-            <item
-                android:id="@+id/nav_krw_toplist"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/nav_krw_toplist" />
-            <item
-                android:id="@+id/nav_inr_toplist"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/nav_inr_toplist" />
-        </menu>
-    </item>
-
-    <item android:title="@string/nav_crypto" android:visible="false">
-        <menu>
-            <item
-                android:id="@+id/nav_btc_toplist"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/nav_btc_toplist" />
-        </menu>
-    </item>
-
-    <item
-        android:title="Communicate"
-        android:visible="false">
-        <menu>
-            <item
-                android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
-            <item
-                android:id="@+id/nav_send"
-                android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
         </menu>
     </item>
 
