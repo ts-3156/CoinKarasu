@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.toolbartest">
+    package="com.example.coinkarasu">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.MainActivity"
+            android:name="com.example.coinkarasu.activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -22,18 +22,18 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.CoinActivity"
-            android:parentActivityName=".activities.MainActivity">
+            android:name="com.example.coinkarasu.activities.CoinActivity"
+            android:parentActivityName="com.example.coinkarasu.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+                android:value="com.example.coinkarasu.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".activities.settings.SettingsActivity"
-            android:parentActivityName=".activities.MainActivity">
+            android:name="com.example.coinkarasu.activities.settings.SettingsActivity"
+            android:parentActivityName="com.example.coinkarasu.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".activities.MainActivity" />
+                android:value="com.example.coinkarasu.activities.MainActivity" />
         </activity>
     </application>
 
