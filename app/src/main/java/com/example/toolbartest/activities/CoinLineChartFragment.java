@@ -17,7 +17,7 @@ import com.example.toolbartest.adapters.ViewPagerAdapter;
 import com.example.toolbartest.cryptocompare.data.History;
 import com.example.toolbartest.format.PriceViewFormat;
 import com.example.toolbartest.format.TrendViewFormat;
-import com.example.toolbartest.utils.AnimHelper;
+import com.example.toolbartest.utils.IconHelper;
 
 import java.util.ArrayList;
 
@@ -26,6 +26,20 @@ public class CoinLineChartFragment extends Fragment implements
         ViewPager.OnPageChangeListener {
 
     public static final int DEFAULT_POSITION = 0;
+
+    private enum Kind {
+        hour("1 Hour"),
+        day("1 Day"),
+        week("1 Week"),
+        month("1 Month"),
+        year("1 Year");
+
+        String label;
+
+        Kind(String label) {
+            this.label = label;
+        }
+    }
 
     private OnFragmentInteractionListener listener;
 
@@ -61,11 +75,11 @@ public class CoinLineChartFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_coin_line_chart, container, false);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance("hour", fromSymbol, toSymbol, 0));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance("day", fromSymbol, toSymbol, 1));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance("week", fromSymbol, toSymbol, 2));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance("month", fromSymbol, toSymbol, 3));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance("year", fromSymbol, toSymbol, 4));
+        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.hour.name(), fromSymbol, toSymbol, 0));
+        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.day.name(), fromSymbol, toSymbol, 1));
+        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.week.name(), fromSymbol, toSymbol, 2));
+        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.month.name(), fromSymbol, toSymbol, 3));
+        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.year.name(), fromSymbol, toSymbol, 4));
 
         pager = view.findViewById(R.id.view_pager);
         pager.setAdapter(adapter);
@@ -76,11 +90,11 @@ public class CoinLineChartFragment extends Fragment implements
         tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
-        tabs.getTabAt(0).setCustomView(createTab(inflater, container, "1 Hour"));
-        tabs.getTabAt(1).setCustomView(createTab(inflater, container, "1 Day"));
-        tabs.getTabAt(2).setCustomView(createTab(inflater, container, "1 Week"));
-        tabs.getTabAt(3).setCustomView(createTab(inflater, container, "1 Month"));
-        tabs.getTabAt(4).setCustomView(createTab(inflater, container, "1 Year"));
+        tabs.getTabAt(0).setCustomView(createTab(inflater, container, Kind.hour.label));
+        tabs.getTabAt(1).setCustomView(createTab(inflater, container, Kind.day.label));
+        tabs.getTabAt(2).setCustomView(createTab(inflater, container, Kind.week.label));
+        tabs.getTabAt(3).setCustomView(createTab(inflater, container, Kind.month.label));
+        tabs.getTabAt(4).setCustomView(createTab(inflater, container, Kind.year.label));
 
         tab = tabs.getTabAt(DEFAULT_POSITION);
         setSelected(DEFAULT_POSITION);
@@ -115,10 +129,11 @@ public class CoinLineChartFragment extends Fragment implements
         new TrendViewFormat(String.valueOf(trend))
                 .format((TextView) view.findViewById(R.id.tab_trend), !isSelected);
 
+        ImageView icon = view.findViewById(R.id.tab_trend_icon);
         if (isSelected) {
-            AnimHelper.setWhiteTrendIcon((ImageView) view.findViewById(R.id.tab_trend_icon), trend);
+            icon.setImageResource(IconHelper.getWhiteTrendIconResId(trend));
         } else {
-            AnimHelper.setTrendIcon((ImageView) view.findViewById(R.id.tab_trend_icon), trend);
+            icon.setImageResource(IconHelper.getTrendIconResId(trend));
         }
     }
 
@@ -130,8 +145,9 @@ public class CoinLineChartFragment extends Fragment implements
 
         TextView trend = view.findViewById(R.id.tab_trend);
         trend.setTextColor(Color.parseColor("#80000000"));
-        if (trend.getText().length() != 0){
-            AnimHelper.setTrendIcon((ImageView) view.findViewById(R.id.tab_trend_icon), parseTrendValue(trend.getText()));
+        if (trend.getText().length() != 0) {
+            ((ImageView) view.findViewById(R.id.tab_trend_icon))
+                    .setImageResource(IconHelper.getTrendIconResId(parseTrendValue(trend.getText())));
         }
 
         tab = tabs.getTabAt(position);
@@ -142,8 +158,9 @@ public class CoinLineChartFragment extends Fragment implements
 
         trend = view.findViewById(R.id.tab_trend);
         trend.setTextColor(Color.WHITE);
-        if (trend.getText().length() != 0){
-            AnimHelper.setWhiteTrendIcon((ImageView) view.findViewById(R.id.tab_trend_icon), parseTrendValue(trend.getText()));
+        if (trend.getText().length() != 0) {
+            ((ImageView) view.findViewById(R.id.tab_trend_icon))
+                    .setImageResource(IconHelper.getWhiteTrendIconResId(parseTrendValue(trend.getText())));
         }
     }
 

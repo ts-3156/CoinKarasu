@@ -1,6 +1,5 @@
 package com.example.toolbartest.coins;
 
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import org.json.JSONException;
@@ -43,11 +42,16 @@ public class CoinImpl implements Coin {
             this.fullName = attrs.getString("FullName"); // Bitcoin (BTC)
             this.algorithm = attrs.getString("Algorithm"); // SHA256
             this.proofType = attrs.getString("ProofType"); // PoW
-            this.fullyPremined = attrs.getInt("FullyPremined"); // 0
-            this.totalCoinSupply = attrs.getInt("TotalCoinSupply"); // 21000000
-            this.preminedValue = attrs.getString("PreMinedValue"); // N/A
-            this.totalCoinsFreeFloat = attrs.getString("TotalCoinsFreeFloat"); // N/A
-            this.sortOrder = attrs.getInt("SortOrder"); // 1
+
+            try {
+                this.fullyPremined = attrs.getInt("FullyPremined"); // 0
+                this.totalCoinSupply = attrs.getInt("TotalCoinSupply"); // 21000000
+                this.preminedValue = attrs.getString("PreMinedValue"); // N/A
+                this.totalCoinsFreeFloat = attrs.getString("TotalCoinsFreeFloat"); // N/A
+                this.sortOrder = attrs.getInt("SortOrder"); // 1
+            } catch (JSONException e) {
+                Log.d("CoinImpl", e.getMessage());
+            }
 
             toSymbol = null;
             price = 0.0;

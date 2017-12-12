@@ -14,9 +14,8 @@ import com.example.toolbartest.R;
 import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.format.PriceViewFormat;
 import com.example.toolbartest.format.TrendViewFormat;
-import com.example.toolbartest.utils.AnimHelper;
+import com.example.toolbartest.utils.IconHelper;
 import com.example.toolbartest.utils.ResourceHelper;
-import com.example.toolbartest.utils.StringHelper;
 import com.example.toolbartest.utils.VolleyHelper;
 
 import java.util.ArrayList;
@@ -91,6 +90,20 @@ public class CustomAdapter extends BaseAdapter {
         return coins.get(position);
     }
 
+    public ArrayList<Coin> getItems(String exchange) {
+        ArrayList<Coin> filtered = new ArrayList<>();
+        for (Coin coin : coins) {
+            if (coin.isSectionHeader()) {
+                continue;
+            }
+            if (coin.getExchange().equals(exchange)) {
+                filtered.add(coin);
+            }
+        }
+
+        return filtered;
+    }
+
     @Override
     public long getItemId(int position) {
         return position;
@@ -132,8 +145,8 @@ public class CustomAdapter extends BaseAdapter {
                 holder.icon.setImageUrl(null, VolleyHelper.getInstance(activity).getImageLoader());
             } else {
                 String iconUrl = coin.getImageUrl();
-                holder.icon.setDefaultImageResId(R.drawable.ic_coin_android);
-                holder.icon.setErrorImageResId(R.drawable.ic_coin_android);
+                holder.icon.setDefaultImageResId(R.drawable.ic_white);
+                holder.icon.setErrorImageResId(R.drawable.ic_white);
                 holder.icon.setImageUrl(iconUrl, VolleyHelper.getInstance(activity).getImageLoader());
             }
 
@@ -143,11 +156,7 @@ public class CustomAdapter extends BaseAdapter {
             new PriceViewFormat(coin, isAnimEnabled).format(holder.price);
             new TrendViewFormat(coin, isAnimEnabled).format(holder.trend);
 
-            if (isAnimEnabled) {
-                AnimHelper.setTrendIcon(holder.trend_icon, coin);
-            } else {
-                AnimHelper.setTrendIcon(holder.trend_icon, coin);
-            }
+            holder.trend_icon.setImageResource(IconHelper.getTrendIconResId(coin));
         } else if (rowType == TYPE_HEADER) {
             holder.header.setText(coin.getName());
             if (position == 0) {

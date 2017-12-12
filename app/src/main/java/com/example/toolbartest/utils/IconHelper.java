@@ -1,25 +1,15 @@
 package com.example.toolbartest.utils;
 
-import android.widget.ImageView;
-
 import com.example.toolbartest.R;
 import com.example.toolbartest.coins.Coin;
 
-public class AnimHelper {
+public class IconHelper {
 
-    public static void setTrendIcon(ImageView view, Coin coin) {
-        view.setImageResource(getTrendIconResId(coin.getTrend()));
+    public static int getTrendIconResId(Coin coin) {
+        return getTrendIconResId(coin.getTrend());
     }
 
-    public static void setTrendIcon(ImageView view, double trend) {
-        view.setImageResource(getTrendIconResId(trend));
-    }
-
-    public static void setWhiteTrendIcon(ImageView view, double trend) {
-        view.setImageResource(getWhiteTrendIconResId(trend));
-    }
-
-    private static int getTrendIconResId(double trend) {
+    public static int getTrendIconResId(double trend) {
         int resId;
 
         if (trend > 0) {
@@ -33,7 +23,7 @@ public class AnimHelper {
         return resId;
     }
 
-    private static int getWhiteTrendIconResId(double trend) {
+    public static int getWhiteTrendIconResId(double trend) {
         int resId;
 
         if (trend > 0) {

@@ -73,7 +73,7 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol) {
+    public ArrayList<Coin> collectCoins(String[] fromSymbols) {
         if (coinList == null) {
             long start = System.currentTimeMillis();
             try {
@@ -84,12 +84,7 @@ public class ClientImpl implements Client {
             Log.d("collectCoins", "Blocked " + (System.currentTimeMillis() - start) + " ms");
         }
 
-        ArrayList<Coin> coins = coinList.collectCoins(fromSymbols);
-        for (Coin coin : coins) {
-            coin.setToSymbol(toSymbol);
-        }
-
-        return coins;
+        return coinList.collectCoins(fromSymbols);
     }
 
     @Override

@@ -17,42 +17,74 @@ import android.widget.ListView;
 import com.example.toolbartest.R;
 import com.example.toolbartest.adapters.CustomAdapter;
 import com.example.toolbartest.coins.Coin;
+import com.example.toolbartest.coins.SectionHeaderCoinImpl;
+import com.example.toolbartest.cryptocompare.Client;
+import com.example.toolbartest.cryptocompare.data.Prices;
 import com.example.toolbartest.format.PriceViewFormat;
-import com.example.toolbartest.utils.AnimHelper;
+import com.example.toolbartest.tasks.GetPricesTask;
+import com.example.toolbartest.utils.AutoUpdateTimer;
+import com.example.toolbartest.utils.ExchangeImpl;
+import com.example.toolbartest.utils.PrefHelper;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TimerTask;
 
 
 public class ListWithHeaderFragment extends Fragment
-        implements AdapterView.OnItemClickListener, ListView.OnScrollListener {
+        implements AdapterView.OnItemClickListener, ListView.OnScrollListener, GetPricesTask.Listener {
+
+    private enum NavigationKind {
+        japan_all(R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}),
+        jpy_toplist(R.array.jpy_toplist_symbols, new String[]{"cccagg"}),
+        usd_toplist(R.array.usd_toplist_symbols, new String[]{"cccagg"});
+
+        int symbolsResId;
+        String[] exchanges;
+
+        NavigationKind(int symbolsResId, String[] exchanges) {
+            this.symbolsResId = symbolsResId;
+            this.exchanges = exchanges;
+        }
+    }
+
+    private enum Exchange {
+        bitflyer(R.array.bitflyer_symbols),
+        coincheck(R.array.coincheck_symbols),
+        zaif(R.array.zaif_symbols);
+
+        int symbolsResId;
+
+        Exchange(int symbolsResId) {
+            this.symbolsResId = symbolsResId;
+        }
+
+        public static boolean contains(String value) {
+            for (Exchange ex : values()) {
+                if (ex.name().equals(value)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
 
     private OnFragmentInteractionListener listener;
 
-    String[] exchanges;
-    boolean textSeparatorVisibility;
-    boolean dividerVisibility;
+    private AutoUpdateTimer autoUpdateTimer;
+
+    private Client client;
+    String kind;
 
     public ListWithHeaderFragment() {
     }
 
-    public static ListWithHeaderFragment newInstance(String exchange) {
-        return newInstance(exchange, true, true);
-    }
-
-    public static ListWithHeaderFragment newInstance(String exchange, boolean textSeparatorVisibility, boolean dividerVisibility) {
-        return newInstance(new String[]{exchange}, textSeparatorVisibility, dividerVisibility);
-    }
-
-    public static ListWithHeaderFragment newInstance(String[] exchanges) {
-        return newInstance(exchanges, true, true);
-    }
-
-    public static ListWithHeaderFragment newInstance(String[] exchanges, boolean textSeparatorVisibility, boolean dividerVisibility) {
+    public static ListWithHeaderFragment newInstance(String kind) {
         ListWithHeaderFragment fragment = new ListWithHeaderFragment();
         Bundle args = new Bundle();
-        args.putStringArray("exchanges", exchanges);
-        args.putBoolean("textSeparatorVisibility", textSeparatorVisibility);
-        args.putBoolean("dividerVisibility", dividerVisibility);
+        args.putString("kind", kind);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,16 +93,18 @@ public class ListWithHeaderFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            exchanges = getArguments().getStringArray("exchanges");
-            textSeparatorVisibility = getArguments().getBoolean("textSeparatorVisibility");
-            dividerVisibility = getArguments().getBoolean("dividerVisibility");
+            kind = getArguments().getString("kind");
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_with_header, container, false);
-        ArrayList<Coin> coins = ((MainActivity) getActivity()).groupedCoins(exchanges);
+
+        client = ((MainActivity) getActivity()).getClient();
+
+        ArrayList<Coin> coins = ((MainActivity) getActivity()).collectCoins(getFromSymbols(kind), getToSymbol(kind));
+        coins = insertSectionHeader(coins, getExchanges(kind));
 
         CustomAdapter adapter = new CustomAdapter(getActivity(), coins);
         ListView listView = view.findViewById(R.id.list_view);
@@ -78,7 +112,7 @@ public class ListWithHeaderFragment extends Fragment
         listView.setOnItemClickListener(this);
         listView.setOnScrollListener(this);
 
-        exchanges = null;
+        startAutoUpdate(0);
 
         return view;
     }
@@ -88,21 +122,83 @@ public class ListWithHeaderFragment extends Fragment
             return;
         }
 
-        ListView listView = getView().findViewById(R.id.list_view);
-        if (listView != null) {
-            CustomAdapter adapter = (CustomAdapter) listView.getAdapter();
-            if (adapter != null) {
-//                adapter.replaceItems(coins);
-                adapter.notifyDataSetChanged();
+        if (autoUpdateTimer != null) {
+            return;
+        }
+
+        startAutoUpdate(0);
+    }
+
+    private void startAutoUpdate(int delay) {
+        if (autoUpdateTimer != null) {
+            stopAutoUpdate();
+        }
+
+        autoUpdateTimer = new AutoUpdateTimer(getTimerTag(kind));
+
+        autoUpdateTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (!isAdded()) {
+                    return;
+                }
+
+                for (String exchange : getExchanges(kind)) {
+                    new GetPricesTask(client)
+                            .setFromSymbols(getFromSymbolsByExchange(exchange))
+                            .setToSymbol(getToSymbol(kind))
+                            .setExchange(exchange)
+                            .setListener(ListWithHeaderFragment.this).execute();
+                }
             }
+        }, delay, PrefHelper.getSyncInterval(getActivity()));
+    }
+
+    public void stopAutoUpdate() {
+        if (autoUpdateTimer != null) {
+            autoUpdateTimer.cancel();
+            autoUpdateTimer = null;
         }
     }
 
-    public void setProgressbarVisibilityDelayed(final boolean flag, final String exchange) {
+    private String getTimerTag(String kind) {
+        return kind + "-" + getToSymbol(kind);
+    }
+
+    @Override
+    public void started(String exchange, String[] fromSymbols, String toSymbol) {
+        setProgressbarVisibility(true, exchange);
+    }
+
+    @Override
+    public void finished(Prices prices) {
+        if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(getTimerTag(kind))) {
+            return;
+        }
+
+        if (isDetached() || getView() == null) {
+            return;
+        }
+
+        ListView listView = getView().findViewById(R.id.list_view);
+        CustomAdapter adapter = (CustomAdapter) listView.getAdapter();
+
+        String exchange = prices.getExchange();
+        ArrayList<Coin> filtered = adapter.getItems(exchange);
+        prices.setAttrsToCoins(filtered);
+
+        adapter.notifyDataSetChanged();
+        hideProgressbarDelayed(exchange);
+
+        updateView();
+        Log.d("UPDATED", exchange + ", " + new Date().toString());
+    }
+
+    private void hideProgressbarDelayed(final String exchange) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                setProgressbarVisibility(flag, exchange);
+                setProgressbarVisibility(false, exchange);
             }
         }, PriceViewFormat.DURATION);
     }
@@ -112,20 +208,113 @@ public class ListWithHeaderFragment extends Fragment
             return;
         }
 
-        View view = getView().findViewWithTag(exchange);
-        if (view == null) {
+        View progressbar = getView().findViewWithTag(exchange);
+        if (progressbar == null) {
             return;
         }
 
-        if (flag && textSeparatorVisibility) {
-            if (view.getVisibility() != View.VISIBLE) {
-                view.setVisibility(View.VISIBLE);
+        if (flag) {
+            if (progressbar.getVisibility() != View.VISIBLE) {
+                progressbar.setVisibility(View.VISIBLE);
             }
         } else {
-            if (view.getVisibility() != View.GONE) {
-                view.setVisibility(View.GONE);
+            if (progressbar.getVisibility() != View.GONE) {
+                progressbar.setVisibility(View.GONE);
             }
         }
+    }
+
+    private ArrayList<Coin> insertSectionHeader(ArrayList<Coin> coins, String[] exchanges) {
+        ArrayList<Coin> sectionalCoins = new ArrayList<>();
+
+        if (exchanges.length == 1) {
+            sectionalCoins.add(new SectionHeaderCoinImpl(ExchangeImpl.exchangeToDisplayName(exchanges[0]), exchanges[0]));
+            for (Coin coin : coins) {
+                coin.setExchange(exchanges[0]);
+            }
+            sectionalCoins.addAll(coins);
+            return sectionalCoins;
+        }
+
+        for (String exchange : exchanges) {
+            sectionalCoins.add(new SectionHeaderCoinImpl(ExchangeImpl.exchangeToDisplayName(exchange), exchange));
+            List<Coin> sub;
+
+            switch (exchange) {
+                case "bitflyer":
+                    sub = coins.subList(0, 1);
+                    break;
+                case "coincheck":
+                    sub = coins.subList(1, 2);
+                    break;
+                case "zaif":
+                    sub = coins.subList(2, coins.size());
+                    break;
+                default:
+                    throw new RuntimeException("Invalid exchange " + exchange);
+            }
+
+            for (Coin coin : sub) {
+                coin.setExchange(exchange);
+            }
+
+            sectionalCoins.addAll(sub);
+        }
+
+        return sectionalCoins;
+    }
+
+    private String[] getExchanges(String kind) {
+        return NavigationKind.valueOf(kind).exchanges;
+    }
+
+    private String[] getFromSymbols(String kind) {
+        return getResources().getStringArray(NavigationKind.valueOf(kind).symbolsResId);
+    }
+
+    private String[] getFromSymbolsByExchange(String exchange) {
+        String[] symbols;
+
+        if (Exchange.contains(exchange)) {
+            symbols = getResources().getStringArray(Exchange.valueOf(exchange).symbolsResId);
+        } else {
+            symbols = getFromSymbols(kind);
+        }
+
+        return symbols;
+    }
+
+    private String getToSymbol(String kind) {
+        String symbol;
+
+        if (NavigationKind.japan_all.name().equals(kind)) {
+            symbol = "JPY";
+        } else {
+            symbol = PrefHelper.getToSymbol(getActivity());
+        }
+
+        return symbol;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (autoUpdateTimer == null) {
+            startAutoUpdate(0);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopAutoUpdate();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopAutoUpdate();
     }
 
     @Override
@@ -147,7 +336,7 @@ public class ListWithHeaderFragment extends Fragment
             return;
         }
 
-        ((MainActivity) getActivity()).stopAutoUpdate();
+        stopAutoUpdate();
         Intent intent = new Intent(view.getContext(), CoinActivity.class);
         intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.toJson().toString());
         intent.putExtra(CoinActivity.COIN_SYMBOL_KEY, coin.getSymbol());

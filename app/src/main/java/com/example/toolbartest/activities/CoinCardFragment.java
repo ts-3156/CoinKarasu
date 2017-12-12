@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +17,7 @@ import com.example.toolbartest.coins.Coin;
 import com.example.toolbartest.coins.CoinImpl;
 import com.example.toolbartest.format.PriceViewFormat;
 import com.example.toolbartest.format.TrendViewFormat;
-import com.example.toolbartest.utils.AnimHelper;
+import com.example.toolbartest.utils.IconHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,7 +63,7 @@ public class CoinCardFragment extends Fragment {
 
         new PriceViewFormat(coin).format((TextView) view.findViewById(R.id.price));
         new TrendViewFormat(coin).format((TextView) view.findViewById(R.id.trend));
-        AnimHelper.setTrendIcon((ImageView) view.findViewById(R.id.trend_icon), coin);
+        ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(IconHelper.getTrendIconResId(coin));
 
         view.findViewById(R.id.popup_menu).setOnClickListener(new View.OnClickListener() {
             @Override

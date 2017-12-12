@@ -9,7 +9,7 @@ import com.example.toolbartest.cryptocompare.data.TopPairs;
 import java.util.ArrayList;
 
 public interface Client {
-    ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol);
+    ArrayList<Coin> collectCoins(String[] fromSymbols);
 
     Prices getPrices(String[] fromSymbols, String toSymbol);
 

@@ -81,10 +81,10 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         taskStarted = true;
         Client client = new ClientImpl(getActivity(), true);
 
-        if (kind.equals("currency")) {
+        if (CoinPieChartFragment.Kind.currency == CoinPieChartFragment.Kind.valueOf(kind)) {
             new GetTopPairsTask(client).setFromSymbol(fromSymbol)
                     .setListener(this).execute();
-        } else if (kind.equals("exchange")) {
+        } else if (CoinPieChartFragment.Kind.exchange == CoinPieChartFragment.Kind.valueOf(kind)) {
             new GetCoinSnapshotTask(client).setFromSymbol(fromSymbol)
                     .setToSymbol(PrefHelper.getToSymbol(getActivity()))
                     .setListener(this).execute();

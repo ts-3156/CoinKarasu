@@ -15,7 +15,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="16dp"
-        android:src="@drawable/ic_coin_android" />
+        tools:src="@drawable/ic_coin_btc" />
 
     <TextView
         android:id="@+id/coin_name"

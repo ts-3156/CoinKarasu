@@ -9,23 +9,27 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.toolbartest.R;
 import com.example.toolbartest.adapters.ViewPagerAdapter;
-import com.example.toolbartest.cryptocompare.data.History;
-import com.example.toolbartest.format.PriceViewFormat;
-import com.example.toolbartest.format.TrendViewFormat;
-import com.example.toolbartest.utils.AnimHelper;
-
-import java.util.ArrayList;
 
 
 public class CoinPieChartFragment extends Fragment implements
         ViewPager.OnPageChangeListener {
 
     public static final int DEFAULT_POSITION = 0;
+
+    public enum Kind {
+        currency("Money flow"),
+        exchange("Trading volume");
+
+        String label;
+
+        Kind(String label) {
+            this.label = label;
+        }
+    }
 
     private OnFragmentInteractionListener listener;
 
@@ -61,8 +65,8 @@ public class CoinPieChartFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_coin_pie_chart, container, false);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        adapter.addItem(CoinPieChartTabContentFragment.newInstance("currency", fromSymbol, toSymbol, 0));
-        adapter.addItem(CoinPieChartTabContentFragment.newInstance("exchange", fromSymbol, toSymbol, 1));
+        adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.currency.name(), fromSymbol, toSymbol, 0));
+        adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.exchange.name(), fromSymbol, toSymbol, 1));
 
         pager = view.findViewById(R.id.view_pager);
         pager.setAdapter(adapter);
@@ -73,8 +77,8 @@ public class CoinPieChartFragment extends Fragment implements
         tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
-        tabs.getTabAt(0).setCustomView(createTab(inflater, container, "Money flow"));
-        tabs.getTabAt(1).setCustomView(createTab(inflater, container, "Trading volume"));
+        tabs.getTabAt(0).setCustomView(createTab(inflater, container, Kind.currency.label));
+        tabs.getTabAt(1).setCustomView(createTab(inflater, container, Kind.exchange.label));
 
         tab = tabs.getTabAt(DEFAULT_POSITION);
         setSelected(DEFAULT_POSITION);

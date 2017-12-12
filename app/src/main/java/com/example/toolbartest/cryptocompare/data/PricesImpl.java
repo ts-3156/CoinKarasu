@@ -84,6 +84,10 @@ public class PricesImpl implements Prices {
 
     @Override
     public void setAttrsToCoin(Coin coin) {
+        if (coin.isSectionHeader()) {
+            return;
+        }
+
         Double price = prices.get(coin.getSymbol());
         if (price != null) {
             coin.setPrice(price);
@@ -101,7 +105,7 @@ public class PricesImpl implements Prices {
 
     @Override
     public void setAttrsToCoins(List<Coin> coins) {
-        for(Coin coin: coins) {
+        for (Coin coin : coins) {
             setAttrsToCoin(coin);
         }
     }
