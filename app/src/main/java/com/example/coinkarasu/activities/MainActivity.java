@@ -97,7 +97,6 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
 
-
         coinList = null;
         try {
             long start = System.currentTimeMillis();

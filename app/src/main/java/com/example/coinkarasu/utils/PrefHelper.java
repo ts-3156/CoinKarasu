@@ -26,10 +26,17 @@ public class PrefHelper {
     }
 
     public static String getToSymbol(Activity activity) {
-        return getPref(activity).getString("pref_currency", "JPY");
+        SharedPreferences pref = getPref(activity);
+        if (pref == null) {
+            return null;
+        }
+        return pref.getString("pref_currency", "JPY");
     }
 
     private static SharedPreferences getPref(Activity activity) {
+        if (activity == null) {
+            return null;
+        }
         return PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
     }
 }

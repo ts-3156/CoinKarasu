@@ -164,6 +164,10 @@ public class ListViewFragment extends Fragment
     }
 
     private String getTimerTag(NavigationKind kind) {
+        String suffix = getToSymbol(kind);
+        if (suffix == null) {
+            return null;
+        }
         return kind.name() + "-" + getToSymbol(kind);
     }
 
@@ -174,7 +178,8 @@ public class ListViewFragment extends Fragment
 
     @Override
     public void finished(Prices prices) {
-        if (autoUpdateTimer == null || !autoUpdateTimer.getTag().equals(getTimerTag(kind))) {
+        String tag = getTimerTag(kind);
+        if (autoUpdateTimer == null || tag == null || !autoUpdateTimer.getTag().equals(tag)) {
             return;
         }
 
@@ -288,6 +293,9 @@ public class ListViewFragment extends Fragment
         if (kind == NavigationKind.nav_main) {
             symbol = "JPY";
         } else {
+            if (getActivity() == null) {
+                return null;
+            }
             symbol = PrefHelper.getToSymbol(getActivity());
         }
 
