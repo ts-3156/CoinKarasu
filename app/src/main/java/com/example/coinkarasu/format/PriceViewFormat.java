@@ -19,10 +19,6 @@ public class PriceViewFormat {
     private String toSymbol;
     private boolean anim;
 
-    public PriceViewFormat(AggregatedData coin) {
-        this(-1.0, coin.getPrice(), coin.getToSymbol(), false);
-    }
-
     public PriceViewFormat(Coin coin) {
         this(-1.0, coin.getPrice(), coin.getToSymbol(), false);
     }

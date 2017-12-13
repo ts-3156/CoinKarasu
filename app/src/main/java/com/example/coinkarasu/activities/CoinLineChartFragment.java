@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.ViewPagerAdapter;
 import com.example.coinkarasu.cryptocompare.data.History;
-import com.example.coinkarasu.format.PriceViewFormat;
+import com.example.coinkarasu.format.PriceTabFormat;
 import com.example.coinkarasu.format.TrendViewFormat;
 import com.example.coinkarasu.utils.IconHelper;
 
@@ -119,10 +119,10 @@ public class CoinLineChartFragment extends Fragment implements
 
         double curPrice = records.get(records.size() - 1).getClose();
         double prevPrice = records.get(0).getClose();
+        double priceDiff = curPrice - prevPrice;
 
-        double priceDiff = Math.round(curPrice - prevPrice);
-        new PriceViewFormat(String.valueOf(priceDiff), records.get(0).getToSymbol())
-                .format((TextView) view.findViewById(R.id.tab_price));
+        String priceString = new PriceTabFormat(records.get(0).getToSymbol()).format(priceDiff);
+        ((TextView) view.findViewById(R.id.tab_price)).setText(priceString);
 
         boolean isSelected = this.tab != null && this.tab.getPosition() == position;
         double trend = priceDiff / prevPrice;
@@ -135,6 +135,8 @@ public class CoinLineChartFragment extends Fragment implements
         } else {
             icon.setImageResource(IconHelper.getTrendIconResId(trend));
         }
+
+        tab.setTag(priceDiff);
     }
 
     private void setSelected(int position) {
@@ -143,12 +145,11 @@ public class CoinLineChartFragment extends Fragment implements
         ((TextView) view.findViewById(R.id.tab_label)).setTextColor(Color.parseColor("#80000000"));
         ((TextView) view.findViewById(R.id.tab_price)).setTextColor(Color.parseColor("#80000000"));
 
-        TextView trend = view.findViewById(R.id.tab_trend);
-        trend.setTextColor(Color.parseColor("#80000000"));
-        if (trend.getText().length() != 0) {
-            ((ImageView) view.findViewById(R.id.tab_trend_icon))
-                    .setImageResource(IconHelper.getTrendIconResId(trend.getText().toString()));
-        }
+        ((TextView) view.findViewById(R.id.tab_trend)).setTextColor(Color.parseColor("#80000000"));
+        Object tag = tab.getTag();
+        double priceDiff = tag == null ? 0 : (double) tag;
+        ((ImageView) view.findViewById(R.id.tab_trend_icon))
+                .setImageResource(IconHelper.getTrendIconResId(priceDiff));
 
         tab = tabs.getTabAt(position);
         view = tab.getCustomView();
@@ -156,12 +157,11 @@ public class CoinLineChartFragment extends Fragment implements
         ((TextView) view.findViewById(R.id.tab_label)).setTextColor(Color.WHITE);
         ((TextView) view.findViewById(R.id.tab_price)).setTextColor(Color.WHITE);
 
-        trend = view.findViewById(R.id.tab_trend);
-        trend.setTextColor(Color.WHITE);
-        if (trend.getText().length() != 0) {
-            ((ImageView) view.findViewById(R.id.tab_trend_icon))
-                    .setImageResource(IconHelper.getWhiteTrendIconResId(trend.getText().toString()));
-        }
+        tag = tab.getTag();
+        priceDiff = tag == null ? 0 : (double) tag;
+        ((TextView) view.findViewById(R.id.tab_trend)).setTextColor(Color.WHITE);
+        ((ImageView) view.findViewById(R.id.tab_trend_icon))
+                .setImageResource(IconHelper.getWhiteTrendIconResId(priceDiff));
     }
 
     @Override
