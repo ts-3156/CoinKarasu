@@ -9,17 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.coinkarasu.cryptocompare.Client;
-import com.example.coinkarasu.tasks.GetTopPairsTask;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.chart.CoinPieChart;
+import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.Exchange;
 import com.example.coinkarasu.cryptocompare.data.TopPair;
 import com.example.coinkarasu.cryptocompare.data.TopPairs;
 import com.example.coinkarasu.tasks.GetCoinSnapshotTask;
-import com.example.coinkarasu.utils.PrefHelper;
+import com.example.coinkarasu.tasks.GetTopPairsTask;
 import com.github.mikephil.charting.charts.PieChart;
 
 import java.util.ArrayList;
@@ -86,7 +85,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
                     .setListener(this).execute();
         } else if (CoinPieChartFragment.Kind.exchange == CoinPieChartFragment.Kind.valueOf(kind)) {
             new GetCoinSnapshotTask(client).setFromSymbol(fromSymbol)
-                    .setToSymbol(PrefHelper.getToSymbol(getActivity()))
+                    .setToSymbol(toSymbol)
                     .setListener(this).execute();
         }
     }
