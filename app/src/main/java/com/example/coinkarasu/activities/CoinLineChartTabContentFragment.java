@@ -1,6 +1,7 @@
 package com.example.coinkarasu.activities;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -71,7 +72,8 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         GetHistoryTaskBase.newInstance(new ClientImpl(getActivity()), kind)
                 .setFromSymbol(fromSymbol)
                 .setToSymbol(toSymbol)
-                .setListener(CoinLineChartTabContentFragment.this).execute();
+                .setListener(CoinLineChartTabContentFragment.this)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void updateView(boolean isScroll) {

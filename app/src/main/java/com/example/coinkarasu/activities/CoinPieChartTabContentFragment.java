@@ -1,6 +1,7 @@
 package com.example.coinkarasu.activities;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -31,7 +32,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
     private OnFragmentInteractionListener listener;
 
-    private String kind;
+    private CoinPieChartFragment.Kind kind;
     private String fromSymbol;
     private String toSymbol;
     private int position;
@@ -57,7 +58,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = getArguments().getString("kind");
+            kind = CoinPieChartFragment.Kind.valueOf(getArguments().getString("kind"));
             fromSymbol = getArguments().getString("fromSymbol");
             toSymbol = getArguments().getString("toSymbol");
             position = getArguments().getInt("position");
@@ -80,13 +81,15 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         taskStarted = true;
         Client client = new ClientImpl(getActivity());
 
-        if (CoinPieChartFragment.Kind.currency == CoinPieChartFragment.Kind.valueOf(kind)) {
+        if (kind == CoinPieChartFragment.Kind.currency) {
             new GetTopPairsTask(client).setFromSymbol(fromSymbol)
-                    .setListener(this).execute();
-        } else if (CoinPieChartFragment.Kind.exchange == CoinPieChartFragment.Kind.valueOf(kind)) {
+                    .setListener(this)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else if (kind == CoinPieChartFragment.Kind.exchange) {
             new GetCoinSnapshotTask(client).setFromSymbol(fromSymbol)
                     .setToSymbol(toSymbol)
-                    .setListener(this).execute();
+                    .setListener(this)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
