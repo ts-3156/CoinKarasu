@@ -10,23 +10,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
-import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.utils.ResourceHelper;
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.format.PriceViewFormat;
 import com.example.coinkarasu.format.TrendViewFormat;
 import com.example.coinkarasu.utils.IconHelper;
+import com.example.coinkarasu.utils.ResourceHelper;
 import com.example.coinkarasu.utils.VolleyHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 
 public class CustomAdapter extends BaseAdapter {
-    private static final List<String> ICON_READY_SYMBOLS =
-            Arrays.asList("BCH", "BTC", "ETC", "ETH", "LTC", "MONA", "REP", "XEM", "XMR", "XRP", "ZEC");
-
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_HEADER = 1;
 
@@ -139,16 +135,8 @@ public class CustomAdapter extends BaseAdapter {
         }
 
         if (rowType == TYPE_ITEM) {
-            if (ICON_READY_SYMBOLS.contains(coin.getSymbol())) {
-                String name = "ic_coin_" + coin.getSymbol().toLowerCase();
-                holder.icon.setDefaultImageResId(ResourceHelper.getDrawableResourceIdByName(activity, name));
-                holder.icon.setImageUrl(null, VolleyHelper.getInstance(activity).getImageLoader());
-            } else {
-                String iconUrl = coin.getImageUrl();
-                holder.icon.setDefaultImageResId(R.drawable.ic_white);
-                holder.icon.setErrorImageResId(R.drawable.ic_white);
-                holder.icon.setImageUrl(iconUrl, VolleyHelper.getInstance(activity).getImageLoader());
-            }
+            holder.icon.setDefaultImageResId(ResourceHelper.getRawResId(activity, coin.getSymbol()));
+            holder.icon.setImageUrl(coin.getImageUrl(), VolleyHelper.getInstance(activity).getImageLoader());
 
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());

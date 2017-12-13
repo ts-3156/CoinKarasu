@@ -6,6 +6,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CoinImpl implements Coin {
+
+    private static final int ICON_SIZE = 96;
+
     private static final String BASE_URL = "https://www.cryptocompare.com";
 
     private int id;
@@ -88,7 +91,7 @@ public class CoinImpl implements Coin {
 
     @Override
     public String getImageUrl() {
-        return BASE_URL + imageUrl + "?width=192";
+        return BASE_URL + imageUrl + "?width=" + ICON_SIZE;
     }
 
     @Override
