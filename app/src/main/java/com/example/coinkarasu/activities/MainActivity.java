@@ -40,16 +40,27 @@ public class MainActivity extends AppCompatActivity
         ListViewFragment.OnFragmentInteractionListener {
 
     private enum NavigationKind {
-        japan_all(R.string.nav_japan_all),
-        jpy_toplist(R.string.nav_jpy_toplist),
-        usd_toplist(R.string.nav_usd_toplist),
-        eur_toplist(R.string.nav_eur_toplist),
-        btc_toplist(R.string.nav_btc_toplist);
+        nav_main(R.string.nav_main, R.id.nav_main),
+        jpy_toplist(R.string.nav_jpy_toplist, R.id.nav_jpy_toplist),
+        usd_toplist(R.string.nav_usd_toplist, R.id.nav_usd_toplist),
+        eur_toplist(R.string.nav_eur_toplist, R.id.nav_eur_toplist),
+        btc_toplist(R.string.nav_btc_toplist, R.id.nav_btc_toplist);
 
-        int symbolsResId;
+        int titleStrResId;
+        int navResId;
 
-        NavigationKind(int symbolsResId) {
-            this.symbolsResId = symbolsResId;
+        NavigationKind(int titleStrResId, int navResId) {
+            this.titleStrResId = titleStrResId;
+            this.navResId = navResId;
+        }
+
+        static NavigationKind valueByNavResId(int navResId) {
+            for (NavigationKind kind : values()) {
+                if (kind.navResId == navResId) {
+                    return kind;
+                }
+            }
+            return null;
         }
     }
 
@@ -97,7 +108,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         client = new ClientImpl(this);
-        navigationKind = NavigationKind.japan_all;
+        navigationKind = NavigationKind.nav_main;
         refreshView(navigationKind);
     }
 
@@ -159,7 +170,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        bar.setTitle(getResources().getString(kind.symbolsResId));
+        bar.setTitle(getResources().getString(kind.titleStrResId));
     }
 
     private void updateCurrencyMenuTitle(Menu menu) {
@@ -168,7 +179,7 @@ public class MainActivity extends AppCompatActivity
             return;
         }
 
-        if (navigationKind == NavigationKind.japan_all) {
+        if (navigationKind == NavigationKind.nav_main) {
             item.setVisible(false);
         } else {
             item.setVisible(true);
@@ -231,25 +242,13 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
+        NavigationKind clickedKind = NavigationKind.valueByNavResId(id);
 
-        if (id == R.id.nav_main && navigationKind != NavigationKind.japan_all) {
-            navigationKind = NavigationKind.japan_all;
-            refreshView(navigationKind);
-        } else if (id == R.id.nav_jpy_toplist && navigationKind != NavigationKind.jpy_toplist) {
-            navigationKind = NavigationKind.jpy_toplist;
-            refreshView(navigationKind);
-        } else if (id == R.id.nav_usd_toplist && navigationKind != NavigationKind.usd_toplist) {
-            navigationKind = NavigationKind.usd_toplist;
-            refreshView(navigationKind);
-        } else if (id == R.id.nav_eur_toplist && navigationKind != NavigationKind.eur_toplist) {
-            navigationKind = NavigationKind.eur_toplist;
-            refreshView(navigationKind);
-        } else if (id == R.id.nav_btc_toplist && navigationKind != NavigationKind.btc_toplist) {
-            navigationKind = NavigationKind.btc_toplist;
+        if (clickedKind != null && clickedKind != navigationKind) {
+            navigationKind = clickedKind;
             refreshView(navigationKind);
         } else if (id == R.id.nav_settings) {
             stopAutoUpdate();

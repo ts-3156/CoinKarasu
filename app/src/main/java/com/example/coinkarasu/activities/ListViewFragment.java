@@ -36,7 +36,7 @@ public class ListViewFragment extends Fragment
         implements AdapterView.OnItemClickListener, ListView.OnScrollListener, GetPricesTask.Listener {
 
     private enum NavigationKind {
-        japan_all(R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}),
+        nav_main(R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}),
         jpy_toplist(R.array.jpy_toplist_symbols, new String[]{"cccagg"}),
         usd_toplist(R.array.usd_toplist_symbols, new String[]{"cccagg"}),
         eur_toplist(R.array.eur_toplist_symbols, new String[]{"cccagg"}),
@@ -285,7 +285,7 @@ public class ListViewFragment extends Fragment
     private String getToSymbol(NavigationKind kind) {
         String symbol;
 
-        if (kind == NavigationKind.japan_all) {
+        if (kind == NavigationKind.nav_main) {
             symbol = "JPY";
         } else {
             symbol = PrefHelper.getToSymbol(getActivity());
