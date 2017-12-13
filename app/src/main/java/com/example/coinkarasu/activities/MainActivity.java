@@ -8,7 +8,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -112,12 +111,23 @@ public class MainActivity extends AppCompatActivity implements
                     new JSONObject(CoinListReader.read(this)));
             Log.d("LOAD", (System.currentTimeMillis() - start) + " ms");
         } catch (JSONException e) {
-            Log.d("CLReader", e.getMessage());
+            Log.e("CLReader", e.getMessage());
         }
 
         client = new ClientImpl(this);
         navigationKind = NavigationKind.nav_main;
         refreshView(navigationKind);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (navigationKind != null) {
+            applyKeepScreenOn();
+            applyIsAnimEnabled();
+            setNavChecked(navigationKind); // Return from SettingsActivity
+        }
     }
 
     private void refreshView(NavigationKind kind) {
@@ -137,6 +147,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     public ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol) {
+        if (coinList == null) {
+            Log.e("collectCoins", "coinList is null");
+            return new ArrayList<>();
+        }
         ArrayList<Coin> coins = coinList.collectCoins(fromSymbols);
         for (Coin coin : coins) {
             coin.setToSymbol(toSymbol);
@@ -156,6 +170,16 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         Log.d("KeepScrOn", "" + value);
+    }
+
+    private void applyIsAnimEnabled() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
+        boolean value = PrefHelper.isAnimEnabled(this);
+        if (fragment != null) {
+            ((ListViewFragment) fragment).applyIsAnimEnabled(value);
+        }
+
+        Log.d("EnableAnim", "" + value);
     }
 
     private void startAutoUpdate() {

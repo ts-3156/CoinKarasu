@@ -7,20 +7,38 @@ import android.util.Log;
 
 public class PrefHelper {
 
+    private static final int DEFAULT_SYNC_INTERVAL = 10000;
+
     public static int getSyncInterval(Activity activity) {
-        String value = getPref(activity).getString("pref_sync_frequency", "10000");
+        SharedPreferences pref = getPref(activity);
+        if (pref == null) {
+            return DEFAULT_SYNC_INTERVAL;
+        }
+        String value = pref.getString("pref_sync_frequency", String.valueOf(DEFAULT_SYNC_INTERVAL));
         int interval = Integer.valueOf(value);
 
         if (interval < 5000) {
             Log.d("INVALID_Interval", "" + interval);
-            interval = 10000;
+            interval = DEFAULT_SYNC_INTERVAL;
         }
 
         return interval;
     }
 
+    public static boolean isAnimEnabled(Activity activity) {
+        SharedPreferences pref = getPref(activity);
+        if (pref == null) {
+            return false;
+        }
+        return pref.getBoolean("pref_enable_price_anim", false);
+    }
+
     public static void setToSymbol(Activity activity, String toSymbol) {
-        SharedPreferences.Editor edit = getPref(activity).edit();
+        SharedPreferences pref = getPref(activity);
+        if (pref == null) {
+            return;
+        }
+        SharedPreferences.Editor edit = pref.edit();
         edit.putString("pref_currency", toSymbol);
         edit.apply();
     }

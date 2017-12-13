@@ -12,6 +12,12 @@
         android:summary="@string/pref_description_keep_screen_on"
         android:title="@string/pref_title_keep_screen_on" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="pref_enable_price_anim"
+        android:summary="@string/pref_description_enable_price_anim"
+        android:title="@string/pref_title_enable_price_anim" />
+
     <ListPreference
         android:defaultValue="JPY"
         android:entries="@array/pref_currency_titles"

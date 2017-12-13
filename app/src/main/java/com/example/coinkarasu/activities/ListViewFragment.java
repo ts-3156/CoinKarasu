@@ -231,6 +231,16 @@ public class ListViewFragment extends Fragment
         }
     }
 
+    public void applyIsAnimEnabled(boolean flag) {
+        if (isDetached() || getView() == null) {
+            return;
+        }
+
+        ListView listView = getView().findViewById(R.id.list_view);
+        ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
+        adapter.setAnimEnabled(flag);
+    }
+
     private ArrayList<Coin> insertSectionHeader(ArrayList<Coin> coins, String[] exchanges) {
         ArrayList<Coin> sectionalCoins = new ArrayList<>();
 
@@ -353,10 +363,10 @@ public class ListViewFragment extends Fragment
     public void onScrollStateChanged(AbsListView listView, int state) {
         switch (state) {
             case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                ((ListViewAdapter) listView.getAdapter()).setAnimEnabled(true);
+                ((ListViewAdapter) listView.getAdapter()).setIsScrolled(false);
                 break;
             case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                ((ListViewAdapter) listView.getAdapter()).setAnimEnabled(false);
+                ((ListViewAdapter) listView.getAdapter()).setIsScrolled(true);
                 break;
             case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
                 break;

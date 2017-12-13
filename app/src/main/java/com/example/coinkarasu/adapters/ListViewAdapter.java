@@ -2,6 +2,7 @@ package com.example.coinkarasu.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,16 +10,18 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.format.PriceViewFormat;
 import com.example.coinkarasu.format.TrendViewFormat;
 import com.example.coinkarasu.utils.IconHelper;
-import com.example.coinkarasu.utils.ResourceHelper;
+import com.example.coinkarasu.utils.PrefHelper;
 import com.example.coinkarasu.utils.VolleyHelper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -26,20 +29,45 @@ public class ListViewAdapter extends BaseAdapter {
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_HEADER = 1;
 
-    private Activity activity;
+    private HashMap<String, Integer> symbolIconResIdMap;
+    private ImageLoader imageLoader;
     private LayoutInflater inflater;
-
     private ArrayList<Coin> coins = new ArrayList<>();
     private TreeSet<Integer> sectionHeader = new TreeSet<>();
     private boolean isAnimEnabled;
+    private boolean isScrolled;
 
     public ListViewAdapter(Activity activity, List<Coin> coins) {
-        this.activity = activity;
+        symbolIconResIdMap = buildIconResIdMap(activity, coins);
+        imageLoader = VolleyHelper.getInstance(activity).getImageLoader();
+        isAnimEnabled = PrefHelper.isAnimEnabled(activity);
+        isScrolled = false;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        isAnimEnabled = true;
+
         for (Coin coin : coins) {
             addItem(coin);
         }
+    }
+
+    private HashMap<String, Integer> buildIconResIdMap(Activity activity, List<Coin> coins) {
+        HashMap<String, Integer> map = new HashMap<>();
+        Resources resources = activity.getResources();
+        String packageName = activity.getPackageName();
+
+        for (Coin coin : coins) {
+            if (coin.isSectionHeader()) {
+                continue;
+            }
+            String name = "ic_coin_" + coin.getSymbol().toLowerCase();
+            int resId = resources.getIdentifier(name, "raw", packageName);
+            map.put(coin.getSymbol(), resId);
+        }
+
+        return map;
+    }
+
+    public void setIsScrolled(boolean flag) {
+        this.isScrolled = flag;
     }
 
     public void setAnimEnabled(boolean flag) {
@@ -135,14 +163,14 @@ public class ListViewAdapter extends BaseAdapter {
         }
 
         if (rowType == TYPE_ITEM) {
-            holder.icon.setDefaultImageResId(ResourceHelper.getRawResId(activity, coin.getSymbol()));
-            holder.icon.setImageUrl(coin.getImageUrl(), VolleyHelper.getInstance(activity).getImageLoader());
+            holder.icon.setDefaultImageResId(symbolIconResIdMap.get(coin.getSymbol()));
+            holder.icon.setImageUrl(coin.getImageUrl(), imageLoader);
 
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());
 
-            new PriceViewFormat(coin, isAnimEnabled).format(holder.price);
-            new TrendViewFormat(coin, isAnimEnabled).format(holder.trend);
+            new PriceViewFormat(coin, (isAnimEnabled && !isScrolled)).format(holder.price);
+            new TrendViewFormat(coin, (isAnimEnabled && !isScrolled)).format(holder.trend);
 
             holder.trend_icon.setImageResource(IconHelper.getTrendIconResId(coin));
         } else if (rowType == TYPE_HEADER) {
