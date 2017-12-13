@@ -8,6 +8,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -38,23 +40,25 @@ import java.util.ArrayList;
 
 import io.fabric.sdk.android.Fabric;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
+public class MainActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
         ListViewFragment.OnFragmentInteractionListener {
 
     private enum NavigationKind {
-        nav_main(R.string.nav_main, R.id.nav_main),
-        jpy_toplist(R.string.nav_jpy_toplist, R.id.nav_jpy_toplist),
-        usd_toplist(R.string.nav_usd_toplist, R.id.nav_usd_toplist),
-        eur_toplist(R.string.nav_eur_toplist, R.id.nav_eur_toplist),
-        btc_toplist(R.string.nav_btc_toplist, R.id.nav_btc_toplist);
+        nav_main(R.string.nav_main, R.id.nav_main, 0),
+        jpy_toplist(R.string.nav_jpy_toplist, R.id.nav_jpy_toplist, 1),
+        usd_toplist(R.string.nav_usd_toplist, R.id.nav_usd_toplist, 2),
+        eur_toplist(R.string.nav_eur_toplist, R.id.nav_eur_toplist, 3),
+        btc_toplist(R.string.nav_btc_toplist, R.id.nav_btc_toplist, 4);
 
         int titleStrResId;
         int navResId;
+        int navPos;
 
-        NavigationKind(int titleStrResId, int navResId) {
+        NavigationKind(int titleStrResId, int navResId, int navPos) {
             this.titleStrResId = titleStrResId;
             this.navResId = navResId;
+            this.navPos = navPos;
         }
 
         static NavigationKind valueByNavResId(int navResId) {
@@ -99,7 +103,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        navigationView.getMenu().getItem(0).setChecked(true);
+        setNavChecked(NavigationKind.nav_main);
 
         coinList = null;
         try {
@@ -120,9 +124,12 @@ public class MainActivity extends AppCompatActivity
         updateToolbarTitle(kind);
         applyKeepScreenOn();
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, ListViewFragment.newInstance(kind.name()), FRAGMENT_TAG)
-                .commit();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_container, ListViewFragment.newInstance(kind.name()), FRAGMENT_TAG);
+        if (!kindHistories.isEmpty()) {
+            transaction.addToBackStack(null);
+        }
+        transaction.commit();
     }
 
     public Client getClient() {
@@ -165,6 +172,10 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void setNavChecked(NavigationKind kind) {
+        ((NavigationView) findViewById(R.id.nav_view)).getMenu().getItem(kind.navPos).setChecked(true);
+    }
+
     private void updateToolbarTitle(NavigationKind kind) {
         ActionBar bar = getSupportActionBar();
         if (bar == null) {
@@ -199,10 +210,11 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (!kindHistories.isEmpty()) {
-            NavigationKind nextKind = kindHistories.get(kindHistories.size() - 1);
+            navigationKind = kindHistories.get(kindHistories.size() - 1);
             kindHistories.remove(kindHistories.size() - 1);
-            navigationKind = nextKind;
-            refreshView(navigationKind);
+            updateToolbarTitle(navigationKind);
+            setNavChecked(navigationKind);
+            super.onBackPressed();
         } else {
             super.onBackPressed();
         }
