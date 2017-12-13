@@ -14,13 +14,17 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class PricesImpl implements Prices {
     private PricesResponse response;
     private String exchange;
 
-    private HashMap<String, Double> prices;
-    private HashMap<String, Double> trends;
+    private HashMap<String, Double> prices = new HashMap<>();
+    private HashMap<String, Double> trends = new HashMap<>();
+
+    public PricesImpl() {
+    }
 
     public PricesImpl(PricesResponse response) {
         this.response = response;
@@ -35,11 +39,6 @@ public class PricesImpl implements Prices {
     }
 
     private void add(PricesResponse response) {
-        if (prices == null) {
-            prices = new HashMap<>();
-            trends = new HashMap<>();
-        }
-
         JSONObject raw = response.getRaw();
         if (raw == null) {
             Log.e("add", response.toString());
@@ -64,7 +63,8 @@ public class PricesImpl implements Prices {
 
     @Override
     public void merge(Prices prices) {
-        for (String s : prices.getPrices().keySet()) {
+        Set<String> keySet = prices.getPrices().keySet();
+        for (String s : keySet) {
             this.prices.put(s, prices.getPrices().get(s));
             this.trends.put(s, prices.getTrends().get(s));
         }
@@ -129,6 +129,11 @@ public class PricesImpl implements Prices {
         for (Coin coin : coins) {
             setAttrsToCoin(coin);
         }
+    }
+
+    @Override
+    public void setExchange(String exchange) {
+        this.exchange = exchange;
     }
 
     @Override

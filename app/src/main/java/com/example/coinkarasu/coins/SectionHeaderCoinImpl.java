@@ -195,8 +195,8 @@ public class SectionHeaderCoinImpl implements Coin {
     }
 
     @Override
-    public long getTotalCoinSupply() {
-        return 0;
+    public String getTotalCoinSupply() {
+        return null;
     }
 
     @Override

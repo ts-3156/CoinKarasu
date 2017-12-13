@@ -4,13 +4,18 @@ import android.os.AsyncTask;
 
 import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.data.Prices;
+import com.example.coinkarasu.cryptocompare.data.PricesImpl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
     private Listener listener;
     private Client client;
-    private Prices prices;
+    ArrayList<GetPricesThread> threads;
     private String[] fromSymbols;
     private String toSymbol;
     private String exchange;
@@ -18,7 +23,7 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
     public GetPricesTask(Client client) {
         this.listener = null;
         this.client = client;
-        this.prices = null;
+        this.threads = new ArrayList<>();
         this.fromSymbols = null;
         this.toSymbol = null;
         this.exchange = null;
@@ -35,16 +40,24 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
             }
 
             String[] target = Arrays.copyOfRange(fromSymbols, i, index + 1);
-
-            if (prices == null) {
-                prices = client.getPrices(target, toSymbol, exchange);
-            } else {
-                prices.merge(client.getPrices(target, toSymbol, exchange));
-            }
+            threads.add(new GetPricesThread(client, target, toSymbol, exchange));
 
             if (index >= fromSymbols.length) {
                 break;
             }
+        }
+
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        CountDownLatch latch = new CountDownLatch(threads.size());
+
+        for (GetPricesThread thread : threads) {
+            thread.setLatch(latch);
+            executor.submit(thread);
+        }
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
         }
 
         return 200;
@@ -60,6 +73,13 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer integer) {
         if (listener != null) {
+            Prices prices = new PricesImpl();
+            prices.setExchange(threads.get(0).getExchange());
+
+            for (GetPricesThread thread : threads) {
+                prices.merge(thread.getPrices());
+            }
+
             listener.finished(prices);
         }
     }

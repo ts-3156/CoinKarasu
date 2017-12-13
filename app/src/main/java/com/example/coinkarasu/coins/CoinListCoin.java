@@ -21,7 +21,7 @@ public interface CoinListCoin {
 
     int getFullyPremined();
 
-    long getTotalCoinSupply();
+    String getTotalCoinSupply();
 
     String getPreMinedValue();
 

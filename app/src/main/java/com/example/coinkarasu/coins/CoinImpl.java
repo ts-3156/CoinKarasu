@@ -21,7 +21,7 @@ public class CoinImpl implements Coin {
     private String algorithm;
     private String proofType;
     private int fullyPremined;
-    private long totalCoinSupply;
+    private String totalCoinSupply;
     private String preminedValue;
     private String totalCoinsFreeFloat;
     private int sortOrder;
@@ -48,12 +48,13 @@ public class CoinImpl implements Coin {
 
             try {
                 this.fullyPremined = attrs.getInt("FullyPremined"); // 0
-                this.totalCoinSupply = attrs.getInt("TotalCoinSupply"); // 21000000
+                this.totalCoinSupply = attrs.getString("TotalCoinSupply"); // N/A or 21000000
                 this.preminedValue = attrs.getString("PreMinedValue"); // N/A
                 this.totalCoinsFreeFloat = attrs.getString("TotalCoinsFreeFloat"); // N/A
                 this.sortOrder = attrs.getInt("SortOrder"); // 1
             } catch (JSONException e) {
-                Log.d("CoinImpl", e.getMessage());
+                Log.e("CoinImpl", e.getMessage());
+                Log.e("CoinImpl", attrs.toString());
             }
 
             toSymbol = null;
@@ -70,7 +71,8 @@ public class CoinImpl implements Coin {
             if (attrs.has("prevPrice")) prevPrice = attrs.getDouble("prevPrice");
             if (attrs.has("prevTrend")) prevTrend = attrs.getDouble("prevTrend");
         } catch (JSONException e) {
-            Log.d("CoinImpl", e.getMessage());
+            Log.e("CoinImpl", e.getMessage());
+            Log.e("CoinImpl", attrs.toString());
         }
 
     }
@@ -262,7 +264,7 @@ public class CoinImpl implements Coin {
     }
 
     @Override
-    public long getTotalCoinSupply() {
+    public String getTotalCoinSupply() {
         return totalCoinSupply;
     }
 
