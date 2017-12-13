@@ -20,7 +20,6 @@ public class TopPairsImpl implements TopPairs {
 
         JSONArray data = response.getData();
         if (data == null) {
-            topPairs = new ArrayList<>();
             return;
         }
 
@@ -31,7 +30,7 @@ public class TopPairsImpl implements TopPairs {
                 topPairs.add(new TopPairImpl(data.getJSONObject(i)));
             }
         } catch (JSONException e) {
-            Log.d("TopPairsImpl", e.getMessage());
+            Log.e("TopPairsImpl", e.getMessage());
         }
 
     }

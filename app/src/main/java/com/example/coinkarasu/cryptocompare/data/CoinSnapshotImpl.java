@@ -28,11 +28,11 @@ public class CoinSnapshotImpl implements CoinSnapshot {
         }
 
         JSONObject data = response.getData();
-        exchanges = new ArrayList<>();
-
         if (data == null) {
             return;
         }
+
+        exchanges = new ArrayList<>();
 
         try {
             if (data.has("Algorithm"))

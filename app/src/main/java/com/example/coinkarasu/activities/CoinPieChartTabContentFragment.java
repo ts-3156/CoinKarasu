@@ -107,19 +107,23 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
     @Override
     public void finished(TopPairs topPairs) {
-        if (topPairs.getTopPairs().isEmpty()) {
-            Log.e("finished", "empty, " + kind + ", " + errorCount);
+        ArrayList<TopPair> pairs = topPairs.getTopPairs();
+        if (pairs == null) {
+            Log.e("finished", "null(retry), " + kind + ", " + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
             return;
         }
 
-        if (isDetached() || getView() == null) {
+        if (pairs.isEmpty()) {
+            Log.e("finished", "empty, " + kind + ", " + errorCount);
             return;
         }
 
-        ArrayList<TopPair> pairs = topPairs.getTopPairs();
+        if (isDetached() || getView() == null) {
+            return;
+        }
 
         Collections.sort(pairs, new Comparator<TopPair>() {
             public int compare(TopPair tp1, TopPair tp2) {
@@ -145,19 +149,23 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
     @Override
     public void finished(CoinSnapshot snapshot) {
-        if (snapshot.getExchanges().isEmpty()) {
-            Log.e("finished", "empty, " + kind + ", " + errorCount);
+        ArrayList<Exchange> exchanges = snapshot.getExchanges();
+        if (exchanges == null) {
+            Log.e("finished", "null(retry), " + kind + ", " + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
             return;
         }
 
-        if (isDetached() || getView() == null) {
+        if (exchanges.isEmpty()) {
+            Log.e("finished", "empty, " + kind + ", " + errorCount);
             return;
         }
 
-        ArrayList<Exchange> exchanges = snapshot.getExchanges();
+        if (isDetached() || getView() == null) {
+            return;
+        }
 
         Collections.sort(exchanges, new Comparator<Exchange>() {
             public int compare(Exchange ex1, Exchange ex2) {

@@ -27,8 +27,8 @@ public class TopPairsResponseImpl implements TopPairsResponse {
         try {
             data = response.getJSONArray("Data");
         } catch (JSONException e) {
-            Log.d("getData", e.getMessage());
-            Log.d("getData", response.toString());
+            Log.e("getData", e.getMessage());
+            Log.e("getData", response.toString());
         }
 
         return data;
