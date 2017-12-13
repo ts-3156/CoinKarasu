@@ -14,7 +14,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.example.coinkarasu.adapters.CustomAdapter;
+import com.example.coinkarasu.adapters.ListViewAdapter;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.SectionHeaderCoinImpl;
 import com.example.coinkarasu.cryptocompare.Client;
@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.TimerTask;
 
 
-public class ListWithHeaderFragment extends Fragment
+public class ListViewFragment extends Fragment
         implements AdapterView.OnItemClickListener, ListView.OnScrollListener, GetPricesTask.Listener {
 
     private enum NavigationKind {
@@ -80,11 +80,11 @@ public class ListWithHeaderFragment extends Fragment
     private Client client;
     String kind;
 
-    public ListWithHeaderFragment() {
+    public ListViewFragment() {
     }
 
-    public static ListWithHeaderFragment newInstance(String kind) {
-        ListWithHeaderFragment fragment = new ListWithHeaderFragment();
+    public static ListViewFragment newInstance(String kind) {
+        ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
         args.putString("kind", kind);
         fragment.setArguments(args);
@@ -101,14 +101,14 @@ public class ListWithHeaderFragment extends Fragment
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list_with_header, container, false);
+        View view = inflater.inflate(R.layout.fragment_list_view, container, false);
 
         client = ((MainActivity) getActivity()).getClient();
 
         ArrayList<Coin> coins = ((MainActivity) getActivity()).collectCoins(getFromSymbols(kind), getToSymbol(kind));
         coins = insertSectionHeader(coins, getExchanges(kind));
 
-        CustomAdapter adapter = new CustomAdapter(getActivity(), coins);
+        ListViewAdapter adapter = new ListViewAdapter(getActivity(), coins);
         ListView listView = view.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
@@ -150,7 +150,7 @@ public class ListWithHeaderFragment extends Fragment
                             .setFromSymbols(getFromSymbolsByExchange(exchange))
                             .setToSymbol(getToSymbol(kind))
                             .setExchange(exchange)
-                            .setListener(ListWithHeaderFragment.this).execute();
+                            .setListener(ListViewFragment.this).execute();
                 }
             }
         }, delay, PrefHelper.getSyncInterval(getActivity()));
@@ -183,7 +183,7 @@ public class ListWithHeaderFragment extends Fragment
         }
 
         ListView listView = getView().findViewById(R.id.list_view);
-        CustomAdapter adapter = (CustomAdapter) listView.getAdapter();
+        ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
 
         String exchange = prices.getExchange();
         ArrayList<Coin> filtered = adapter.getItems(exchange);
@@ -349,10 +349,10 @@ public class ListWithHeaderFragment extends Fragment
     public void onScrollStateChanged(AbsListView listView, int state) {
         switch (state) {
             case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                ((CustomAdapter) listView.getAdapter()).setAnimEnabled(true);
+                ((ListViewAdapter) listView.getAdapter()).setAnimEnabled(true);
                 break;
             case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                ((CustomAdapter) listView.getAdapter()).setAnimEnabled(false);
+                ((ListViewAdapter) listView.getAdapter()).setAnimEnabled(false);
                 break;
             case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
                 break;

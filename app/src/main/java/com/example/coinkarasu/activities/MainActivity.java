@@ -28,7 +28,6 @@ import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.CoinListReader;
 import com.example.coinkarasu.cryptocompare.data.CoinList;
 import com.example.coinkarasu.cryptocompare.data.CoinListImpl;
-import com.example.coinkarasu.tasks.FetchCoinListTask;
 import com.example.coinkarasu.utils.PrefHelper;
 
 import org.json.JSONException;
@@ -38,7 +37,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        ListWithHeaderFragment.OnFragmentInteractionListener {
+        ListViewFragment.OnFragmentInteractionListener {
 
     private enum NavigationKind {
         japan_all(R.string.nav_japan_all),
@@ -104,7 +103,7 @@ public class MainActivity extends AppCompatActivity
 
     private void replaceFragment(NavigationKind kind) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, ListWithHeaderFragment.newInstance(kind.name()), FRAGMENT_TAG)
+                .replace(R.id.fragment_container, ListViewFragment.newInstance(kind.name()), FRAGMENT_TAG)
                 .commit();
     }
 
@@ -143,14 +142,14 @@ public class MainActivity extends AppCompatActivity
     private void startAutoUpdate() {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (fragment != null) {
-            ((ListWithHeaderFragment) fragment).updateView();
+            ((ListViewFragment) fragment).updateView();
         }
     }
 
     private void stopAutoUpdate() {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (fragment != null) {
-            ((ListWithHeaderFragment) fragment).stopAutoUpdate();
+            ((ListViewFragment) fragment).stopAutoUpdate();
         }
     }
 

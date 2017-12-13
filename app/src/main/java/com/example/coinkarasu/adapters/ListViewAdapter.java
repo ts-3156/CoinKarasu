@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 
-public class CustomAdapter extends BaseAdapter {
+public class ListViewAdapter extends BaseAdapter {
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_HEADER = 1;
 
@@ -33,7 +33,7 @@ public class CustomAdapter extends BaseAdapter {
     private TreeSet<Integer> sectionHeader = new TreeSet<>();
     private boolean isAnimEnabled;
 
-    public CustomAdapter(Activity activity, List<Coin> coins) {
+    public ListViewAdapter(Activity activity, List<Coin> coins) {
         this.activity = activity;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         isAnimEnabled = true;
