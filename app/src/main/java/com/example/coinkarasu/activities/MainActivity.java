@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity
 
     private static final String FRAGMENT_TAG = "fragment";
 
+    private ArrayList<NavigationKind> kindHistories = new ArrayList<>();
     private CoinList coinList;
     private Client client;
     private NavigationKind navigationKind;
@@ -112,16 +113,13 @@ public class MainActivity extends AppCompatActivity
         refreshView(navigationKind);
     }
 
-    private void replaceFragment(NavigationKind kind) {
+    private void refreshView(NavigationKind kind) {
+        updateToolbarTitle(kind);
+        applyKeepScreenOn();
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, ListViewFragment.newInstance(kind.name()), FRAGMENT_TAG)
                 .commit();
-    }
-
-    private void refreshView(NavigationKind kind) {
-        updateToolbarTitle(kind);
-        replaceFragment(kind);
-        applyKeepScreenOn();
     }
 
     public Client getClient() {
@@ -194,9 +192,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (!kindHistories.isEmpty()) {
+            NavigationKind nextKind = kindHistories.get(kindHistories.size() - 1);
+            kindHistories.remove(kindHistories.size() - 1);
+            navigationKind = nextKind;
+            refreshView(navigationKind);
         } else {
             super.onBackPressed();
         }
@@ -248,6 +251,7 @@ public class MainActivity extends AppCompatActivity
         NavigationKind clickedKind = NavigationKind.valueByNavResId(id);
 
         if (clickedKind != null && clickedKind != navigationKind) {
+            kindHistories.add(navigationKind);
             navigationKind = clickedKind;
             refreshView(navigationKind);
         } else if (id == R.id.nav_settings) {

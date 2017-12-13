@@ -49,7 +49,13 @@ public class CoinImpl implements Coin {
             try {
                 this.fullyPremined = attrs.getInt("FullyPremined"); // 0
                 this.totalCoinSupply = attrs.getString("TotalCoinSupply"); // N/A or 21000000
-                this.preminedValue = attrs.getString("PreminedValue"); // N/A
+
+                if (attrs.has("PreminedValue")) {
+                    this.preminedValue = attrs.getString("PreminedValue"); // N/A
+                } else if (attrs.has("PremMinedValue")) {
+                    this.preminedValue = attrs.getString("PreMinedValue");
+                }
+
                 this.totalCoinsFreeFloat = attrs.getString("TotalCoinsFreeFloat"); // N/A
                 this.sortOrder = attrs.getInt("SortOrder"); // 1
             } catch (JSONException e) {
