@@ -78,7 +78,7 @@ public class ListViewFragment extends Fragment
     private AutoUpdateTimer autoUpdateTimer;
 
     private Client client;
-    String kind;
+    private NavigationKind kind;
 
     public ListViewFragment() {
     }
@@ -95,7 +95,7 @@ public class ListViewFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = getArguments().getString("kind");
+            kind = NavigationKind.valueOf(getArguments().getString("kind"));
         }
     }
 
@@ -106,7 +106,7 @@ public class ListViewFragment extends Fragment
         client = ((MainActivity) getActivity()).getClient();
 
         ArrayList<Coin> coins = ((MainActivity) getActivity()).collectCoins(getFromSymbols(kind), getToSymbol(kind));
-        coins = insertSectionHeader(coins, getExchanges(kind));
+        coins = insertSectionHeader(coins, kind.exchanges);
 
         ListViewAdapter adapter = new ListViewAdapter(getActivity(), coins);
         ListView listView = view.findViewById(R.id.list_view);
@@ -145,7 +145,7 @@ public class ListViewFragment extends Fragment
                     return;
                 }
 
-                for (String exchange : getExchanges(kind)) {
+                for (String exchange : kind.exchanges) {
                     new GetPricesTask(client)
                             .setFromSymbols(getFromSymbolsByExchange(exchange))
                             .setToSymbol(getToSymbol(kind))
@@ -163,8 +163,8 @@ public class ListViewFragment extends Fragment
         }
     }
 
-    private String getTimerTag(String kind) {
-        return kind + "-" + getToSymbol(kind);
+    private String getTimerTag(NavigationKind kind) {
+        return kind.name() + "-" + getToSymbol(kind);
     }
 
     @Override
@@ -266,12 +266,8 @@ public class ListViewFragment extends Fragment
         return sectionalCoins;
     }
 
-    private String[] getExchanges(String kind) {
-        return NavigationKind.valueOf(kind).exchanges;
-    }
-
-    private String[] getFromSymbols(String kind) {
-        return getResources().getStringArray(NavigationKind.valueOf(kind).symbolsResId);
+    private String[] getFromSymbols(NavigationKind kind) {
+        return getResources().getStringArray(kind.symbolsResId);
     }
 
     private String[] getFromSymbolsByExchange(String exchange) {
@@ -286,10 +282,10 @@ public class ListViewFragment extends Fragment
         return symbols;
     }
 
-    private String getToSymbol(String kind) {
+    private String getToSymbol(NavigationKind kind) {
         String symbol;
 
-        if (NavigationKind.japan_all.name().equals(kind)) {
+        if (kind == NavigationKind.japan_all) {
             symbol = "JPY";
         } else {
             symbol = PrefHelper.getToSymbol(getActivity());
