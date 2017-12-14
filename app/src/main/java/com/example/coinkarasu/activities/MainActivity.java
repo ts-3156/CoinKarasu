@@ -125,7 +125,6 @@ public class MainActivity extends AppCompatActivity implements
 
         if (navigationKind != null) {
             applyKeepScreenOn();
-            applyIsAnimEnabled();
             setNavChecked(navigationKind); // Return from SettingsActivity
         }
     }
@@ -170,16 +169,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         Log.d("KeepScrOn", "" + value);
-    }
-
-    private void applyIsAnimEnabled() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        boolean value = PrefHelper.isAnimEnabled(this);
-        if (fragment != null) {
-            ((ListViewFragment) fragment).applyIsAnimEnabled(value);
-        }
-
-        Log.d("EnableAnim", "" + value);
     }
 
     private void startAutoUpdate() {

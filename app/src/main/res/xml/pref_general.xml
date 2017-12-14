@@ -18,6 +18,12 @@
         android:summary="@string/pref_description_enable_price_anim"
         android:title="@string/pref_title_enable_price_anim" />
 
+    <SwitchPreference
+        android:defaultValue="true"
+        android:key="pref_enable_download_icon"
+        android:summary="@string/pref_description_enable_download_icon"
+        android:title="@string/pref_title_enable_download_icon" />
+
     <ListPreference
         android:defaultValue="JPY"
         android:entries="@array/pref_currency_titles"

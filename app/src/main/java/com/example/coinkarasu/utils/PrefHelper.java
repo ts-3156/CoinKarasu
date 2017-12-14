@@ -30,7 +30,15 @@ public class PrefHelper {
         if (pref == null) {
             return false;
         }
-        return pref.getBoolean("pref_enable_price_anim", false);
+        return pref.getBoolean("pref_enable_price_anim", true);
+    }
+
+    public static boolean isDownloadIconEnabled(Activity activity) {
+        SharedPreferences pref = getPref(activity);
+        if (pref == null) {
+            return false;
+        }
+        return pref.getBoolean("pref_enable_download_icon", true);
     }
 
     public static void setToSymbol(Activity activity, String toSymbol) {

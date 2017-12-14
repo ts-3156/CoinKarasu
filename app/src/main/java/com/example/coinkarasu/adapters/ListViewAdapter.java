@@ -35,12 +35,14 @@ public class ListViewAdapter extends BaseAdapter {
     private ArrayList<Coin> coins = new ArrayList<>();
     private TreeSet<Integer> sectionHeader = new TreeSet<>();
     private boolean isAnimEnabled;
+    private boolean isDownloadIconEnabled;
     private boolean isScrolled;
 
     public ListViewAdapter(Activity activity, List<Coin> coins) {
         symbolIconResIdMap = buildIconResIdMap(activity, coins);
         imageLoader = VolleyHelper.getInstance(activity).getImageLoader();
         isAnimEnabled = PrefHelper.isAnimEnabled(activity);
+        isDownloadIconEnabled = PrefHelper.isDownloadIconEnabled(activity);
         isScrolled = false;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -72,6 +74,10 @@ public class ListViewAdapter extends BaseAdapter {
 
     public void setAnimEnabled(boolean flag) {
         this.isAnimEnabled = flag;
+    }
+
+    public void setDownloadIconEnabled(boolean flag) {
+        this.isDownloadIconEnabled = flag;
     }
 
     public void addItem(Coin coin) {
@@ -164,7 +170,11 @@ public class ListViewAdapter extends BaseAdapter {
 
         if (rowType == TYPE_ITEM) {
             holder.icon.setDefaultImageResId(symbolIconResIdMap.get(coin.getSymbol()));
-            holder.icon.setImageUrl(coin.getImageUrl(), imageLoader);
+            if (isDownloadIconEnabled) {
+                holder.icon.setImageUrl(coin.getImageUrl(), imageLoader);
+            } else {
+                holder.icon.setImageUrl(null, imageLoader);
+            }
 
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());

@@ -1,5 +1,6 @@
 package com.example.coinkarasu.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -102,13 +103,14 @@ public class ListViewFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
+        Activity activity = getActivity();
 
-        client = ((MainActivity) getActivity()).getClient();
+        client = ((MainActivity) activity).getClient();
 
-        ArrayList<Coin> coins = ((MainActivity) getActivity()).collectCoins(getFromSymbols(kind), getToSymbol(kind));
+        ArrayList<Coin> coins = ((MainActivity) activity).collectCoins(getFromSymbols(kind), getToSymbol(kind));
         coins = insertSectionHeader(coins, kind.exchanges);
 
-        ListViewAdapter adapter = new ListViewAdapter(getActivity(), coins);
+        ListViewAdapter adapter = new ListViewAdapter(activity, coins);
         ListView listView = view.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
@@ -231,7 +233,7 @@ public class ListViewFragment extends Fragment
         }
     }
 
-    public void applyIsAnimEnabled(boolean flag) {
+    private void applyIsAnimEnabled(boolean flag) {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -239,6 +241,20 @@ public class ListViewFragment extends Fragment
         ListView listView = getView().findViewById(R.id.list_view);
         ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
         adapter.setAnimEnabled(flag);
+
+        Log.d("Animation", "" + flag);
+    }
+
+    private void applyIsDownloadIconEnabled(boolean flag) {
+        if (isDetached() || getView() == null) {
+            return;
+        }
+
+        ListView listView = getView().findViewById(R.id.list_view);
+        ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
+        adapter.setAnimEnabled(flag);
+
+        Log.d("DownloadIcon", "" + flag);
     }
 
     private ArrayList<Coin> insertSectionHeader(ArrayList<Coin> coins, String[] exchanges) {
@@ -315,6 +331,11 @@ public class ListViewFragment extends Fragment
     @Override
     public void onResume() {
         super.onResume();
+
+        if (getActivity() != null) {
+            applyIsAnimEnabled(PrefHelper.isAnimEnabled(getActivity()));
+            applyIsDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
+        }
 
         if (autoUpdateTimer == null) {
             startAutoUpdate(0);
