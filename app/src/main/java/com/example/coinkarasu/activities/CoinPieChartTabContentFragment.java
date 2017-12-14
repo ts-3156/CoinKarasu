@@ -69,8 +69,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_pie_chart_tab_content, container, false);
         startTask();
-
-        ((TextView) view.findViewById(R.id.pie_chart_desc)).setText("Volume by " + kind);
         return view;
     }
 
@@ -195,6 +193,11 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     private void drawChart(ArrayList<Double> values, ArrayList<String> labels) {
         chart = new CoinPieChart((PieChart) getView().findViewById(R.id.pie_chart));
         chart.initialize();
+        if (kind == CoinPieChartFragment.Kind.currency) {
+            chart.setCurrencyCenterText(getActivity(), fromSymbol);
+        }else {
+            chart.setExchangeCenterText(getActivity(), fromSymbol, toSymbol);
+        }
         chart.setData(values, labels);
         chart.invalidate();
     }

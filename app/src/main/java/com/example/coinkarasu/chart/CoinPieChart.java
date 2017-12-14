@@ -1,10 +1,15 @@
 package com.example.coinkarasu.chart;
 
+import android.app.Activity;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.RelativeSizeSpan;
+import android.text.style.StyleSpan;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -33,18 +38,13 @@ public class CoinPieChart {
 
         chart.setDragDecelerationFrictionCoef(0.95f);
 
-//        chart.setCenterText(generateCenterSpannableText());
-
         chart.setDrawHoleEnabled(true);
         chart.setHoleColor(Color.WHITE);
-
         chart.setTransparentCircleColor(Color.WHITE);
         chart.setTransparentCircleAlpha(110);
-
-        chart.setHoleRadius(35f);
-        chart.setTransparentCircleRadius(38f);
-
-        chart.setDrawCenterText(false);
+        chart.setHoleRadius(58f);
+        chart.setTransparentCircleRadius(61f);
+        chart.setDrawCenterText(true);
 
         chart.setRotationAngle(0);
         // enable rotation of the chart by touch
@@ -124,6 +124,54 @@ public class CoinPieChart {
         chart.highlightValues(null);
 
         chart.invalidate();
+    }
+
+    public void setCurrencyCenterText(Activity activity, String symbol) {
+        if (activity == null) {
+            return;
+        }
+        Typeface typeFace = Typeface.createFromAsset(activity.getAssets(), "OpenSans-Light.ttf");
+        chart.setCenterTextTypeface(typeFace);
+        chart.setCenterText(currencySpannableText(symbol));
+    }
+
+    private SpannableString currencySpannableText(String symbol) {
+        String text = "Money flow into " + symbol + "\nvolume by Currency";
+        int len = ("Money flow into " + symbol).length();
+
+        SpannableString s = new SpannableString(text);
+        s.setSpan(new RelativeSizeSpan(1.4f), 0, len, 0);
+        s.setSpan(new StyleSpan(Typeface.NORMAL), len, s.length() - 9, 0);
+        s.setSpan(new ForegroundColorSpan(Color.GRAY), len, s.length() - 9, 0);
+        s.setSpan(new RelativeSizeSpan(.8f), len, s.length() - len, 0);
+        s.setSpan(new StyleSpan(Typeface.ITALIC), s.length() - 8, s.length(), 0);
+        s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), s.length() - 8, s.length(), 0);
+
+        return s;
+    }
+
+    public void setExchangeCenterText(Activity activity, String fromSymbol, String toSymbol) {
+        if (activity == null) {
+            return;
+        }
+        Typeface typeFace = Typeface.createFromAsset(activity.getAssets(), "OpenSans-Light.ttf");
+        chart.setCenterTextTypeface(typeFace);
+        chart.setCenterText(exchangeSpannableText(fromSymbol, toSymbol));
+    }
+
+    private SpannableString exchangeSpannableText(String fromSymbol, String toSymbol) {
+        String text = "Trading " + toSymbol + " for " + fromSymbol + "\nvolume by Exchange";
+        int len = ("Trading " + toSymbol + " for " + fromSymbol).length();
+
+        SpannableString s = new SpannableString(text);
+        s.setSpan(new RelativeSizeSpan(1.4f), 0, len, 0);
+        s.setSpan(new StyleSpan(Typeface.NORMAL), len, s.length() - 9, 0);
+        s.setSpan(new ForegroundColorSpan(Color.GRAY), len, s.length() - 9, 0);
+        s.setSpan(new RelativeSizeSpan(.8f), len, s.length() - len, 0);
+        s.setSpan(new StyleSpan(Typeface.ITALIC), s.length() - 8, s.length(), 0);
+        s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), s.length() - 8, s.length(), 0);
+
+        return s;
     }
 
     public void animateY() {

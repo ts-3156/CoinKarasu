@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="#ffffff"
     android:orientation="vertical"
-    tools:context="com.example.coinkarasu.com.example.coinkarasu.activities.CoinPieChartTabContentFragment">
+    tools:context="com.example.coinkarasu.activities.CoinPieChartTabContentFragment">
 
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pie_chart"
@@ -15,15 +15,4 @@
         android:layout_alignParentTop="true"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp" />
-
-    <TextView
-        android:id="@+id/pie_chart_desc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="16dp"
-        android:layout_marginRight="16dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        tools:text="Volume by currency" />
 </RelativeLayout>
