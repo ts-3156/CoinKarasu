@@ -3,58 +3,58 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_main"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_nav_japan"
             android:title="@string/nav_main" />
         <item
+            android:id="@+id/nav_skyrocket"
+            android:icon="@drawable/ic_nav_rocket"
+            android:title="@string/nav_skyrocket" />
+    </group>
+
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="single">
+        <item
             android:id="@+id/nav_jpy_toplist"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_nav_jpy"
             android:title="@string/nav_jpy_toplist" />
         <item
             android:id="@+id/nav_usd_toplist"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_nav_usd"
             android:title="@string/nav_usd_toplist" />
         <item
             android:id="@+id/nav_eur_toplist"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_nav_eur"
             android:title="@string/nav_eur_toplist" />
         <item
             android:id="@+id/nav_btc_toplist"
-            android:icon="@drawable/ic_menu_share"
+            android:icon="@drawable/ic_nav_btc"
             android:title="@string/nav_btc_toplist" />
-        <item
-            android:id="@+id/nav_skyrocket"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/nav_skyrocket" />
+    </group>
+
+    <group
+        android:id="@+id/group3"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/ic_nav_settings"
             android:title="@string/nav_settings" />
     </group>
 
-    <item
-        android:title="@string/nav_japan"
-        android:visible="false">
-        <menu>
-            <item
-                android:id="@+id/nav_japan_all"
-                android:icon="@drawable/ic_menu_share"
-                android:title="@string/nav_japan_all" />
-            <item
-                android:id="@+id/nav_bitflyer"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/nav_bitflyer" />
-            <item
-                android:id="@+id/nav_coincheck"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/nav_coincheck" />
-            <item
-                android:id="@+id/nav_zaif"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/nav_zaif" />
-        </menu>
-    </item>
+    <!--<item-->
+        <!--android:title="@string/nav_japan"-->
+        <!--android:visible="false">-->
+        <!--<menu>-->
+            <!--<item-->
+                <!--android:id="@+id/nav_settings"-->
+                <!--android:icon="@drawable/ic_nav_settings"-->
+                <!--android:title="@string/nav_settings" />-->
+        <!--</menu>-->
+    <!--</item>-->
 
 </menu>

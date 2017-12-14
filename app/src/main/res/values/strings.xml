@@ -30,7 +30,7 @@
     <string name="nav_coincheck">Coincheck</string>
     <string name="nav_zaif">Zaif</string>
 
-    <string name="caption_day">Today so far</string>
+    <string name="caption_day">Today</string>
     <string name="caption_desc_day">so far</string>
 
 
@@ -44,8 +44,8 @@
         based on your message history
     </string>
 
-    <string name="pref_title_keep_screen_on">Keep screen on</string>
-    <string name="pref_description_keep_screen_on">Keep the screen on when watching prices</string>
+    <string name="pref_title_keep_screen_on">Stay awake</string>
+    <string name="pref_description_keep_screen_on">Screen will never sleep while watching prices</string>
 
     <string name="pref_title_enable_price_anim">Enable price animation</string>
     <string name="pref_description_enable_price_anim">To speed up to set disabled</string>
