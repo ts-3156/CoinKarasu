@@ -233,7 +233,7 @@ public class MainActivity extends AppCompatActivity implements
         bar.setTitle(getResources().getString(kind.navStrResId));
     }
 
-    private void updateCurrencyMenuTitle(Menu menu) {
+    private void switchCurrencyMenuTitle(Menu menu) {
         MenuItem item = menu.findItem(R.id.action_currency);
         if (item == null) {
             return;
@@ -274,7 +274,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        updateCurrencyMenuTitle(menu);
+        switchCurrencyMenuTitle(menu);
         return true;
     }
 

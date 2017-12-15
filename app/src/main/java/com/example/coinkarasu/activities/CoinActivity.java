@@ -6,7 +6,10 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import com.example.coinkarasu.activities.settings.SettingsActivity;
 import com.example.coinkarasu.bitflyer.data.Board;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
@@ -31,16 +34,12 @@ public class CoinActivity extends AppCompatActivity implements
         CoinLineChartTabContentFragment.OnFragmentInteractionListener,
         CoinPieChartTabContentFragment.OnFragmentInteractionListener {
 
-    private static final String FRAG_CARD = "card_fragment";
-    private static final String FRAG_LINE_CHART = "line_chart_fragment";
-    private static final String FRAG_PIE_CHART = "pie_chart_fragment";
-    private static final String FRAG_BOARD = "board_fragment";
+    public enum Tag {card, line, pie, board}
 
     public static final String COIN_NAME_KEY = "COIN_NAME_KEY";
     public static final String COIN_SYMBOL_KEY = "COIN_SYMBOL_KEY";
 
     Client client;
-    String lineChartKind;
     String boardKind;
     Coin coin;
 
@@ -58,68 +57,78 @@ public class CoinActivity extends AppCompatActivity implements
             Log.d("onCreate", e.getMessage());
         }
 
-        ActionBar bar = getSupportActionBar();
-        if (bar != null) {
-            bar.setTitle(coin.getSymbol() + " - " + coin.getToSymbol());
-        }
-
         client = new ClientImpl(this);
         boardKind = "order_book";
-
-        Fragment frag1 = CoinCardFragment.newInstance("overview", coin.toJson().toString());
-        Fragment frag2 = CoinLineChartFragment.newInstance(coin.getSymbol(), PrefHelper.getToSymbol(this));
-        Fragment frag3 = CoinPieChartFragment.newInstance(coin.getSymbol(), PrefHelper.getToSymbol(this));
-        Fragment frag4 = CoinBoardFragment.newInstance(boardKind);
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.card_overview, frag1, FRAG_CARD)
-                .replace(R.id.card_line_chart, frag2, FRAG_LINE_CHART)
-                .replace(R.id.card_pie_chart, frag3, FRAG_PIE_CHART)
-                .replace(R.id.card_board, frag4, FRAG_BOARD)
-                .commit();
-
+        updateView();
         drawBoardChart();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void updateView() {
+        String toSymbol = PrefHelper.getToSymbol(this);
+        updateToolbarTitle(toSymbol);
 
-        if (autoUpdateTimer == null) {
-            startAutoUpdate(0);
-        }
+        Fragment frag1 = CoinCardFragment.newInstance("overview", coin.toJson().toString());
+        Fragment frag2 = CoinLineChartFragment.newInstance(coin.getSymbol(), toSymbol);
+        Fragment frag3 = CoinPieChartFragment.newInstance(coin.getSymbol(), toSymbol);
+        Fragment frag4 = CoinBoardFragment.newInstance(boardKind);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.card_overview, frag1, Tag.card.name())
+                .replace(R.id.card_line_chart, frag2, Tag.line.name())
+                .replace(R.id.card_pie_chart, frag3, Tag.pie.name())
+                .replace(R.id.card_board, frag4, Tag.board.name())
+                .commit();
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        stopAutoUpdate();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.coin, menu);
+        return true;
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        stopAutoUpdate();
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        switchCurrencyMenuTitle(menu);
+        return true;
     }
 
-    private void startAutoUpdate(int delay) {
-        if (autoUpdateTimer != null) {
-            stopAutoUpdate();
-        }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
-        autoUpdateTimer = new AutoUpdateTimer(lineChartKind);
-
-        autoUpdateTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
+        if (id == R.id.action_currency) {
+            if (item.getTitle().toString().equals(getResources().getString(MainActivity.Currency.USD.titleStrResId))) {
+                PrefHelper.setToSymbol(this, MainActivity.Currency.JPY.name());
+            } else {
+                PrefHelper.setToSymbol(this, MainActivity.Currency.USD.name());
             }
-        }, delay, 60000);
+            updateView();
+
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
-    public void stopAutoUpdate() {
-        if (autoUpdateTimer != null) {
-            autoUpdateTimer.cancel();
-            autoUpdateTimer = null;
+    private void updateToolbarTitle(String symbol) {
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setTitle(coin.getSymbol() + " - " + symbol);
+        }
+    }
+
+    private void switchCurrencyMenuTitle(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_currency);
+        if (item == null) {
+            return;
+        }
+
+        String symbol = PrefHelper.getToSymbol(this);
+
+        if (symbol != null && symbol.equals(MainActivity.Currency.JPY.name())) {
+            item.setTitle(getResources().getString(MainActivity.Currency.JPY.titleStrResId));
+        } else {
+            item.setTitle(getResources().getString(MainActivity.Currency.USD.titleStrResId));
         }
     }
 
@@ -127,7 +136,7 @@ public class CoinActivity extends AppCompatActivity implements
         new GetBoardTask(this).setListener(new GetBoardTask.Listener() {
             @Override
             public void finished(Board board) {
-                Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAG_BOARD);
+                Fragment fragment = getSupportFragmentManager().findFragmentByTag(Tag.board.name());
                 if (fragment != null) {
                     ((CoinBoardFragment) fragment).updateView(board);
                     Log.d("UPDATED", "board, " + new Date().toString());
@@ -138,8 +147,6 @@ public class CoinActivity extends AppCompatActivity implements
 
     @Override
     public void onLineChartKindChanged(String kind) {
-        stopAutoUpdate();
-        startAutoUpdate(0);
     }
 
     @Override

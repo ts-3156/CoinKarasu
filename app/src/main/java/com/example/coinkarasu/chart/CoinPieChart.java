@@ -7,6 +7,7 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
+import android.util.Log;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -143,7 +144,7 @@ public class CoinPieChart {
         s.setSpan(new RelativeSizeSpan(1.4f), 0, len, 0);
         s.setSpan(new StyleSpan(Typeface.NORMAL), len, s.length() - 9, 0);
         s.setSpan(new ForegroundColorSpan(Color.GRAY), len, s.length() - 9, 0);
-        s.setSpan(new RelativeSizeSpan(.8f), len, s.length() - len, 0);
+        s.setSpan(new RelativeSizeSpan(.8f), len, s.length() - 9, 0);
         s.setSpan(new StyleSpan(Typeface.ITALIC), s.length() - 8, s.length(), 0);
         s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), s.length() - 8, s.length(), 0);
 
@@ -167,7 +168,7 @@ public class CoinPieChart {
         s.setSpan(new RelativeSizeSpan(1.4f), 0, len, 0);
         s.setSpan(new StyleSpan(Typeface.NORMAL), len, s.length() - 9, 0);
         s.setSpan(new ForegroundColorSpan(Color.GRAY), len, s.length() - 9, 0);
-        s.setSpan(new RelativeSizeSpan(.8f), len, s.length() - len, 0);
+        s.setSpan(new RelativeSizeSpan(.8f), len, s.length() - 9, 0);
         s.setSpan(new StyleSpan(Typeface.ITALIC), s.length() - 8, s.length(), 0);
         s.setSpan(new ForegroundColorSpan(ColorTemplate.getHoloBlue()), s.length() - 8, s.length(), 0);
 
