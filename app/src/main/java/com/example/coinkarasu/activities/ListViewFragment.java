@@ -317,7 +317,7 @@ public class ListViewFragment extends Fragment
         String symbol;
 
         if (kind == NavigationKind.nav_main) {
-            symbol = "JPY";
+            symbol = MainActivity.Currency.JPY.name();
         } else {
             if (getActivity() == null) {
                 return null;

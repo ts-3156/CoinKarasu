@@ -5,6 +5,10 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">設定</string>
+    <string name="action_pause">更新を一時停止</string>
+    <string name="action_currency_switch_to_jpy">JPYで見る</string>
+    <string name="action_currency_switch_to_usd">USDで見る</string>
+    <string name="action_currency_only_for_jpy">JPYのみ</string>
 
     <string name="nav_main">日本で取引できるコイン</string>
     <string name="nav_custom">カスタム</string>
@@ -31,7 +35,6 @@
 
     <string name="caption_day">本日</string>
     <string name="caption_desc_day">(現時点)</string>
-    <string name="action_pause">更新を一時停止</string>
     <string name="pref_header_general">一般</string>
     <string name="pref_title_keep_screen_on">スリープモードにしない</string>
     <string name="pref_description_keep_screen_on">価格一覧を見ている時は画面をスリープにしない</string>

@@ -70,6 +70,19 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
+    public enum Currency {
+        JPY(R.string.action_currency_switch_to_usd, R.string.action_currency_only_for_jpy),
+        USD(R.string.action_currency_switch_to_jpy, -1);
+
+        int titleStrResId;
+        int disabledTitleStrResId;
+
+        Currency(int titleStrResId, int disabledTitleStrResId) {
+            this.titleStrResId = titleStrResId;
+            this.disabledTitleStrResId = disabledTitleStrResId;
+        }
+    }
+
     private static final String FRAGMENT_TAG = "fragment";
 
     private ArrayList<NavigationKind> kindHistories = new ArrayList<>();
@@ -205,14 +218,16 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         if (navigationKind == NavigationKind.nav_main) {
-            item.setVisible(false);
+            item.setEnabled(false);
+            item.setTitle(getResources().getString(Currency.JPY.disabledTitleStrResId));
         } else {
-            item.setVisible(true);
+            item.setEnabled(true);
+            String symbol = PrefHelper.getToSymbol(this);
 
-            if (PrefHelper.getToSymbol(this).equals("JPY")) {
-                item.setTitle("USD");
+            if (symbol != null && symbol.equals(Currency.JPY.name())) {
+                item.setTitle(getResources().getString(Currency.JPY.titleStrResId));
             } else {
-                item.setTitle("JPY");
+                item.setTitle(getResources().getString(Currency.USD.titleStrResId));
             }
         }
     }
@@ -250,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            stopAutoUpdate();
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
 
@@ -264,7 +280,11 @@ public class MainActivity extends AppCompatActivity implements
 
             return true;
         } else if (id == R.id.action_currency) {
-            PrefHelper.setToSymbol(this, item.getTitle().toString());
+            if (item.getTitle().toString().equals(getResources().getString(Currency.USD.titleStrResId))) {
+                PrefHelper.setToSymbol(this, Currency.JPY.name());
+            } else {
+                PrefHelper.setToSymbol(this, Currency.USD.name());
+            }
             refreshView(navigationKind);
 
             return true;
