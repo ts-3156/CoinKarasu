@@ -26,8 +26,9 @@ public class CoinLineChartFragment extends Fragment implements
         ViewPager.OnPageChangeListener {
 
     public static final int DEFAULT_POSITION = 0;
+    private static final Kind DEFAULT_KIND = Kind.hour;
 
-    private enum Kind {
+    public enum Kind {
         hour("1 Hour"),
         day("1 Day"),
         week("1 Week"),
@@ -75,29 +76,29 @@ public class CoinLineChartFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_coin_line_chart, container, false);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.hour.name(), fromSymbol, toSymbol, 0));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.day.name(), fromSymbol, toSymbol, 1));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.week.name(), fromSymbol, toSymbol, 2));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.month.name(), fromSymbol, toSymbol, 3));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.year.name(), fromSymbol, toSymbol, 4));
+        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.hour, fromSymbol, toSymbol));
+        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.day, fromSymbol, toSymbol));
+        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.week, fromSymbol, toSymbol));
+        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.month, fromSymbol, toSymbol));
+        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.year, fromSymbol, toSymbol));
 
         pager = view.findViewById(R.id.view_pager);
         pager.setAdapter(adapter);
-        pager.setCurrentItem(DEFAULT_POSITION);
+        pager.setCurrentItem(DEFAULT_KIND.ordinal());
         pager.addOnPageChangeListener(this);
-        pager.setOffscreenPageLimit(5);
+        pager.setOffscreenPageLimit(Kind.values().length);
 
         tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
-        tabs.getTabAt(0).setCustomView(createTab(inflater, container, Kind.hour.label));
-        tabs.getTabAt(1).setCustomView(createTab(inflater, container, Kind.day.label));
-        tabs.getTabAt(2).setCustomView(createTab(inflater, container, Kind.week.label));
-        tabs.getTabAt(3).setCustomView(createTab(inflater, container, Kind.month.label));
-        tabs.getTabAt(4).setCustomView(createTab(inflater, container, Kind.year.label));
+        tabs.getTabAt(Kind.hour.ordinal()).setCustomView(createTab(inflater, container, Kind.hour.label));
+        tabs.getTabAt(Kind.day.ordinal()).setCustomView(createTab(inflater, container, Kind.day.label));
+        tabs.getTabAt(Kind.week.ordinal()).setCustomView(createTab(inflater, container, Kind.week.label));
+        tabs.getTabAt(Kind.month.ordinal()).setCustomView(createTab(inflater, container, Kind.month.label));
+        tabs.getTabAt(Kind.year.ordinal()).setCustomView(createTab(inflater, container, Kind.year.label));
 
-        tab = tabs.getTabAt(DEFAULT_POSITION);
-        setSelected(DEFAULT_POSITION);
+        tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
+        setSelected(DEFAULT_KIND.ordinal());
 
         return view;
     }

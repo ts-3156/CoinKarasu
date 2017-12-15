@@ -18,7 +18,7 @@ import com.example.coinkarasu.R;
 public class CoinPieChartFragment extends Fragment implements
         ViewPager.OnPageChangeListener {
 
-    public static final int DEFAULT_POSITION = 0;
+    private static final Kind DEFAULT_KIND = Kind.currency;
 
     public enum Kind {
         currency("Money flow"),
@@ -65,23 +65,23 @@ public class CoinPieChartFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_coin_pie_chart, container, false);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.currency.name(), fromSymbol, toSymbol, 0));
-        adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.exchange.name(), fromSymbol, toSymbol, 1));
+        adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.currency, fromSymbol, toSymbol));
+        adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.exchange, fromSymbol, toSymbol));
 
         pager = view.findViewById(R.id.view_pager);
         pager.setAdapter(adapter);
-        pager.setCurrentItem(DEFAULT_POSITION);
+        pager.setCurrentItem(DEFAULT_KIND.ordinal());
         pager.addOnPageChangeListener(this);
-        pager.setOffscreenPageLimit(2);
+        pager.setOffscreenPageLimit(Kind.values().length);
 
         tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
-        tabs.getTabAt(0).setCustomView(createTab(inflater, container, Kind.currency.label));
-        tabs.getTabAt(1).setCustomView(createTab(inflater, container, Kind.exchange.label));
+        tabs.getTabAt(Kind.currency.ordinal()).setCustomView(createTab(inflater, container, Kind.currency.label));
+        tabs.getTabAt(Kind.exchange.ordinal()).setCustomView(createTab(inflater, container, Kind.exchange.label));
 
-        tab = tabs.getTabAt(DEFAULT_POSITION);
-        setSelected(DEFAULT_POSITION);
+        tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
+        setSelected(DEFAULT_KIND.ordinal());
 
         return view;
     }

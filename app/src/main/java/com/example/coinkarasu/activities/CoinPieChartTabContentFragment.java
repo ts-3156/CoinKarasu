@@ -43,6 +43,17 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     public CoinPieChartTabContentFragment() {
     }
 
+    public static CoinPieChartTabContentFragment newInstance(CoinPieChartFragment.Kind kind, String fromSymbol, String toSymbol) {
+        CoinPieChartTabContentFragment fragment = new CoinPieChartTabContentFragment();
+        Bundle args = new Bundle();
+        args.putString("kind", kind.name());
+        args.putString("fromSymbol", fromSymbol);
+        args.putString("toSymbol", toSymbol);
+        args.putInt("position", kind.ordinal());
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public static CoinPieChartTabContentFragment newInstance(String kind, String fromSymbol, String toSymbol, int position) {
         CoinPieChartTabContentFragment fragment = new CoinPieChartTabContentFragment();
         Bundle args = new Bundle();

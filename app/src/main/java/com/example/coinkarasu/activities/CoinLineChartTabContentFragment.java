@@ -34,6 +34,17 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     public CoinLineChartTabContentFragment() {
     }
 
+    public static CoinLineChartTabContentFragment newInstance(CoinLineChartFragment.Kind kind, String fromSymbol, String toSymbol) {
+        CoinLineChartTabContentFragment fragment = new CoinLineChartTabContentFragment();
+        Bundle args = new Bundle();
+        args.putString("kind", kind.name());
+        args.putString("fromSymbol", fromSymbol);
+        args.putString("toSymbol", toSymbol);
+        args.putInt("position", kind.ordinal());
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     public static CoinLineChartTabContentFragment newInstance(String kind, String fromSymbol, String toSymbol, int position) {
         CoinLineChartTabContentFragment fragment = new CoinLineChartTabContentFragment();
         Bundle args = new Bundle();
