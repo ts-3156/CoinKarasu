@@ -7,9 +7,10 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -24,6 +25,7 @@ import android.view.WindowManager;
 import com.crashlytics.android.Crashlytics;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.settings.SettingsActivity;
+import com.example.coinkarasu.adapters.ViewPagerAdapter;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
@@ -36,26 +38,32 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        ListViewFragment.OnFragmentInteractionListener {
+        ListViewFragment.OnFragmentInteractionListener,
+        ViewPager.OnPageChangeListener {
 
-    private enum NavigationKind {
-        nav_main(R.string.nav_main, R.id.nav_main, 0),
-        jpy_toplist(R.string.nav_jpy_toplist, R.id.nav_jpy_toplist, 1),
-        usd_toplist(R.string.nav_usd_toplist, R.id.nav_usd_toplist, 2),
-        eur_toplist(R.string.nav_eur_toplist, R.id.nav_eur_toplist, 3),
-        btc_toplist(R.string.nav_btc_toplist, R.id.nav_btc_toplist, 4);
+    public static final NavigationKind DEFAULT_KIND = NavigationKind.nav_main;
 
-        int titleStrResId;
+    public enum NavigationKind {
+        nav_main(R.string.nav_main, R.string.tab_main, R.id.nav_main, 0),
+        jpy_toplist(R.string.nav_jpy_toplist, R.string.tab_jpy_toplist, R.id.nav_jpy_toplist, 2),
+        usd_toplist(R.string.nav_usd_toplist, R.string.tab_usd_toplist, R.id.nav_usd_toplist, 3),
+        eur_toplist(R.string.nav_eur_toplist, R.string.tab_eur_toplist, R.id.nav_eur_toplist, 4),
+        btc_toplist(R.string.nav_btc_toplist, R.string.tab_btc_toplist, R.id.nav_btc_toplist, 5);
+
+        int navStrResId;
+        int tabStrResId;
         int navResId;
         int navPos;
 
-        NavigationKind(int titleStrResId, int navResId, int navPos) {
-            this.titleStrResId = titleStrResId;
+        NavigationKind(int navStrResId, int tabStrResId, int navResId, int navPos) {
+            this.navStrResId = navStrResId;
+            this.tabStrResId = tabStrResId;
             this.navResId = navResId;
             this.navPos = navPos;
         }
@@ -85,10 +93,13 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String FRAGMENT_TAG = "fragment";
 
-    private ArrayList<NavigationKind> kindHistories = new ArrayList<>();
     private CoinList coinList;
     private Client client;
     private NavigationKind navigationKind;
+
+    private ViewPager pager;
+    private TabLayout tabs;
+    private TabLayout.Tab tab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +128,29 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
         setNavChecked(NavigationKind.nav_main);
 
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        adapter.addItem(ListViewFragment.newInstance(NavigationKind.nav_main));
+        adapter.addItem(ListViewFragment.newInstance(NavigationKind.jpy_toplist));
+        adapter.addItem(ListViewFragment.newInstance(NavigationKind.usd_toplist));
+        adapter.addItem(ListViewFragment.newInstance(NavigationKind.eur_toplist));
+        adapter.addItem(ListViewFragment.newInstance(NavigationKind.btc_toplist));
+
+        pager = findViewById(R.id.view_pager);
+        pager.setAdapter(adapter);
+        pager.addOnPageChangeListener(this);
+        pager.setOffscreenPageLimit(NavigationKind.values().length);
+
+        tabs = findViewById(R.id.tab_layout);
+        tabs.setupWithViewPager(pager);
+
+        tabs.getTabAt(NavigationKind.nav_main.ordinal()).setText(getResources().getString(NavigationKind.nav_main.tabStrResId));
+        tabs.getTabAt(NavigationKind.jpy_toplist.ordinal()).setText(getResources().getString(NavigationKind.jpy_toplist.tabStrResId));
+        tabs.getTabAt(NavigationKind.usd_toplist.ordinal()).setText(getResources().getString(NavigationKind.usd_toplist.tabStrResId));
+        tabs.getTabAt(NavigationKind.eur_toplist.ordinal()).setText(getResources().getString(NavigationKind.eur_toplist.tabStrResId));
+        tabs.getTabAt(NavigationKind.btc_toplist.ordinal()).setText(getResources().getString(NavigationKind.btc_toplist.tabStrResId));
+
+        tab = tabs.getTabAt(NavigationKind.nav_main.ordinal());
+
         coinList = null;
         try {
             long start = System.currentTimeMillis();
@@ -128,8 +162,9 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         client = new ClientImpl(this);
-        navigationKind = NavigationKind.nav_main;
-        refreshView(navigationKind);
+        navigationKind = DEFAULT_KIND;
+        pager.setCurrentItem(navigationKind.ordinal());
+        pageChanged(navigationKind.ordinal()); // repeated in onResume
     }
 
     @Override
@@ -138,20 +173,8 @@ public class MainActivity extends AppCompatActivity implements
 
         if (navigationKind != null) {
             applyKeepScreenOn();
-            setNavChecked(navigationKind); // Return from SettingsActivity
+            pageChanged(navigationKind.ordinal()); // Return from SettingsActivity
         }
-    }
-
-    private void refreshView(NavigationKind kind) {
-        updateToolbarTitle(kind);
-        applyKeepScreenOn();
-
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.fragment_container, ListViewFragment.newInstance(kind.name()), FRAGMENT_TAG);
-        if (!kindHistories.isEmpty()) {
-            transaction.addToBackStack(null);
-        }
-        transaction.commit();
     }
 
     public Client getClient() {
@@ -184,17 +207,16 @@ public class MainActivity extends AppCompatActivity implements
         Log.d("KeepScrOn", "" + value);
     }
 
-    private void startAutoUpdate() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        if (fragment != null) {
-            ((ListViewFragment) fragment).updateView();
-        }
+    private void startAutoUpdate(int position) {
+        ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
+        ((ListViewFragment) adapter.getItem(position)).updateView();
     }
 
     private void stopAutoUpdate() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        if (fragment != null) {
-            ((ListViewFragment) fragment).stopAutoUpdate();
+        ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
+        List<Fragment> fragments = adapter.getItems();
+        for (int i = 0; i < fragments.size(); i++) {
+            ((ListViewFragment) fragments.get(i)).stopAutoUpdate();
         }
     }
 
@@ -208,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
 
-        bar.setTitle(getResources().getString(kind.titleStrResId));
+        bar.setTitle(getResources().getString(kind.navStrResId));
     }
 
     private void updateCurrencyMenuTitle(Menu menu) {
@@ -237,12 +259,8 @@ public class MainActivity extends AppCompatActivity implements
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else if (!kindHistories.isEmpty()) {
-            navigationKind = kindHistories.get(kindHistories.size() - 1);
-            kindHistories.remove(kindHistories.size() - 1);
-            updateToolbarTitle(navigationKind);
-            setNavChecked(navigationKind);
-            super.onBackPressed();
+        } else if (navigationKind != NavigationKind.nav_main) {
+            pager.setCurrentItem(NavigationKind.nav_main.ordinal());
         } else {
             super.onBackPressed();
         }
@@ -275,7 +293,9 @@ public class MainActivity extends AppCompatActivity implements
             if (item.isChecked()) {
                 stopAutoUpdate();
             } else {
-                startAutoUpdate();
+                if (tab != null) {
+                    startAutoUpdate(tab.getPosition());
+                }
             }
 
             return true;
@@ -285,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements
             } else {
                 PrefHelper.setToSymbol(this, Currency.USD.name());
             }
-            refreshView(navigationKind);
+            pageChanged(navigationKind.ordinal());
 
             return true;
         }
@@ -299,9 +319,7 @@ public class MainActivity extends AppCompatActivity implements
         NavigationKind clickedKind = NavigationKind.valueByNavResId(id);
 
         if (clickedKind != null && clickedKind != navigationKind) {
-            kindHistories.add(navigationKind);
-            navigationKind = clickedKind;
-            refreshView(navigationKind);
+            pager.setCurrentItem(clickedKind.ordinal());
         } else if (id == R.id.nav_settings) {
             stopAutoUpdate();
             Intent intent = new Intent(this, SettingsActivity.class);
@@ -311,6 +329,35 @@ public class MainActivity extends AppCompatActivity implements
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+        if (state == ViewPager.SCROLL_STATE_SETTLING) {
+            int position = pager.getCurrentItem();
+
+            if (position != tab.getPosition()) {
+                pageChanged(position);
+            }
+        }
+    }
+
+    private void pageChanged(int position) {
+        stopAutoUpdate();
+        startAutoUpdate(position);
+
+        navigationKind = NavigationKind.values()[position];
+        tab = tabs.getTabAt(navigationKind.ordinal());
+        setNavChecked(navigationKind);
+        updateToolbarTitle(navigationKind);
     }
 
     @Override

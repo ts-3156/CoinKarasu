@@ -76,6 +76,12 @@ public class ListViewAdapter extends BaseAdapter {
         this.isAnimEnabled = flag;
     }
 
+    public void setToSymbol(String symbol) {
+        for (Coin coin : coins) {
+            coin.setToSymbol(symbol);
+        }
+    }
+
     public void setDownloadIconEnabled(boolean flag) {
         this.isDownloadIconEnabled = flag;
     }
@@ -94,6 +100,8 @@ public class ListViewAdapter extends BaseAdapter {
 
         sectionHeader.clear();
         sectionHeader = new TreeSet<>();
+
+        notifyDataSetChanged();
 
         for (Coin coin : coins) {
             addItem(coin);

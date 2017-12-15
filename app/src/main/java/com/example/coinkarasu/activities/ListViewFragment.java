@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,17 +17,17 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.ListViewAdapter;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.SectionHeaderCoinImpl;
 import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.format.PriceViewFormat;
+import com.example.coinkarasu.tasks.GetPricesTask;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
 import com.example.coinkarasu.utils.ExchangeImpl;
 import com.example.coinkarasu.utils.PrefHelper;
-import com.example.coinkarasu.R;
-import com.example.coinkarasu.tasks.GetPricesTask;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,14 +82,15 @@ public class ListViewFragment extends Fragment
 
     private Client client;
     private NavigationKind kind;
+    private boolean isVisibleToUser = false;
 
     public ListViewFragment() {
     }
 
-    public static ListViewFragment newInstance(String kind) {
+    public static ListViewFragment newInstance(MainActivity.NavigationKind kind) {
         ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
-        args.putString("kind", kind);
+        args.putString("kind", kind.name());
         fragment.setArguments(args);
         return fragment;
     }
@@ -115,8 +118,9 @@ public class ListViewFragment extends Fragment
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
         listView.setOnScrollListener(this);
+        ViewCompat.setNestedScrollingEnabled(listView, true); // <= 21 http://starzero.hatenablog.com/entry/2015/09/30/114136
 
-        startAutoUpdate(0);
+        startAutoUpdate(0, MainActivity.DEFAULT_KIND == MainActivity.NavigationKind.valueOf(kind.name()));
 
         return view;
     }
@@ -130,32 +134,48 @@ public class ListViewFragment extends Fragment
             return;
         }
 
-        startAutoUpdate(0);
+        startAutoUpdate(0, true);
     }
 
-    private void startAutoUpdate(int delay) {
+    private void startTask() {
+        if (!isAdded() || getActivity() == null || isDetached() || getView() == null) {
+            return;
+        }
+
+        ListView listView = getView().findViewById(R.id.list_view);
+        ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
+
+        adapter.setAnimEnabled(PrefHelper.isAnimEnabled(getActivity()));
+        adapter.setDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
+        adapter.setToSymbol(getToSymbol(kind));
+
+        for (String exchange : kind.exchanges) {
+            new GetPricesTask(client)
+                    .setFromSymbols(getFromSymbolsByExchange(exchange))
+                    .setToSymbol(getToSymbol(kind))
+                    .setExchange(exchange)
+                    .setListener(this)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+    }
+
+    private void startAutoUpdate(int delay, boolean isRepeated) {
         if (autoUpdateTimer != null) {
             stopAutoUpdate();
         }
 
         autoUpdateTimer = new AutoUpdateTimer(getTimerTag(kind));
 
-        autoUpdateTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (!isAdded()) {
-                    return;
+        if (isRepeated) {
+            autoUpdateTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    startTask();
                 }
-
-                for (String exchange : kind.exchanges) {
-                    new GetPricesTask(client)
-                            .setFromSymbols(getFromSymbolsByExchange(exchange))
-                            .setToSymbol(getToSymbol(kind))
-                            .setExchange(exchange)
-                            .setListener(ListViewFragment.this).execute();
-                }
-            }
-        }, delay, PrefHelper.getSyncInterval(getActivity()));
+            }, delay, PrefHelper.getSyncInterval(getActivity()));
+        } else {
+            startTask();
+        }
     }
 
     public void stopAutoUpdate() {
@@ -199,7 +219,6 @@ public class ListViewFragment extends Fragment
         adapter.notifyDataSetChanged();
         hideProgressbarDelayed(exchange);
 
-        updateView();
         Log.d("UPDATED", exchange + ", " + new Date().toString());
     }
 
@@ -231,30 +250,6 @@ public class ListViewFragment extends Fragment
                 progressbar.setVisibility(View.GONE);
             }
         }
-    }
-
-    private void applyIsAnimEnabled(boolean flag) {
-        if (isDetached() || getView() == null) {
-            return;
-        }
-
-        ListView listView = getView().findViewById(R.id.list_view);
-        ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
-        adapter.setAnimEnabled(flag);
-
-        Log.d("Animation", "" + flag);
-    }
-
-    private void applyIsDownloadIconEnabled(boolean flag) {
-        if (isDetached() || getView() == null) {
-            return;
-        }
-
-        ListView listView = getView().findViewById(R.id.list_view);
-        ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
-        adapter.setAnimEnabled(flag);
-
-        Log.d("DownloadIcon", "" + flag);
     }
 
     private ArrayList<Coin> insertSectionHeader(ArrayList<Coin> coins, String[] exchanges) {
@@ -332,13 +327,8 @@ public class ListViewFragment extends Fragment
     public void onResume() {
         super.onResume();
 
-        if (getActivity() != null) {
-            applyIsAnimEnabled(PrefHelper.isAnimEnabled(getActivity()));
-            applyIsDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
-        }
-
         if (autoUpdateTimer == null) {
-            startAutoUpdate(0);
+            startAutoUpdate(0, isVisibleToUser);
         }
     }
 
@@ -396,6 +386,12 @@ public class ListViewFragment extends Fragment
 
     @Override
     public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        // This method may be called outside of the fragment lifecycle.
+        this.isVisibleToUser = isVisibleToUser;
     }
 
     public interface OnFragmentInteractionListener {
