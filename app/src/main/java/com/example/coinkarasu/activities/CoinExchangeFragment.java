@@ -9,6 +9,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.PopupMenu;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -111,6 +113,9 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
 
         ((TextView) view.findViewById(R.id.caption_left)).setText(getString(R.string.caption_left, coin.getSymbol(), coin.getToSymbol()));
 
+        Spanned text = Html.fromHtml(getString(R.string.exchange_info, coin.getSymbol(), coin.getToSymbol()));
+        ((TextView) view.findViewById(R.id.info_text)).setText(text);
+
         startTask();
 
         return view;
@@ -193,6 +198,10 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
     }
 
     private void setSelected(int position) {
+        if (tab == null) {
+            return;
+        }
+
         View view = tab.getCustomView();
         view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
         ((TextView) view.findViewById(R.id.tab_label)).setTextColor(Color.parseColor("#80000000"));
@@ -243,6 +252,14 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
 
         if (coins.isEmpty()) {
             Log.e("finished", "empty, " + kind + ", " + errorCount);
+            if (getView() != null) {
+                View view = getView();
+                view.findViewById(R.id.pager_container).setVisibility(View.GONE);
+                view.findViewById(R.id.info).setVisibility(View.GONE);
+                Spanned text = Html.fromHtml(getString(R.string.exchange_warn, coin.getSymbol(), coin.getToSymbol()));
+                ((TextView) view.findViewById(R.id.warn_text)).setText(text);
+                view.findViewById(R.id.warn).setVisibility(View.VISIBLE);
+            }
             return;
         }
 

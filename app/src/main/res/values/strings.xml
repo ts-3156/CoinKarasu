@@ -47,6 +47,10 @@
     <string name="caption_desc_day">so far</string>
 
 
+    <string name="exchange_info">Only showing exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
+    <string name="exchange_warn">There are no exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
+
+
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->

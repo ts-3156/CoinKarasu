@@ -101,7 +101,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:background="#f4f9ff"
+        android:background="@color/colorInfoBackground"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="10dp">
@@ -117,7 +117,7 @@
             android:layout_marginLeft="10dp"
             android:text="The prices for this chart are aggregated from all exchanges and using a VWAP approach."
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="#2c4c76" />
+            android:textColor="@color/colorInfoText" />
     </LinearLayout>
 
 </RelativeLayout>
