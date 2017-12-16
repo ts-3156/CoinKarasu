@@ -13,6 +13,7 @@ public class GetHistoryTaskBase extends AsyncTask<Integer, Integer, Integer> {
     ArrayList<History> histories;
     String fromSymbol;
     String toSymbol;
+    String exchange;
 
     public GetHistoryTaskBase(Client client) {
         this.listener = null;
@@ -20,6 +21,7 @@ public class GetHistoryTaskBase extends AsyncTask<Integer, Integer, Integer> {
         this.histories = null;
         this.fromSymbol = null;
         this.toSymbol = null;
+        this.exchange = "cccagg";
     }
 
     @Override
@@ -55,6 +57,20 @@ public class GetHistoryTaskBase extends AsyncTask<Integer, Integer, Integer> {
                 break;
             default:
                 instance = new GetHistoryHourTask(client);
+        }
+
+        return instance;
+    }
+
+    public static GetHistoryTaskBase newInstance(Client client, String kind, String exchange) {
+        GetHistoryTaskBase instance;
+
+        switch (kind) {
+            case "day":
+                instance = new GetHistoryDayTask(client, exchange);
+                break;
+            default:
+                throw new RuntimeException("Invalid kind " + kind);
         }
 
         return instance;

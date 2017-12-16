@@ -2,6 +2,7 @@ package com.example.coinkarasu.activities;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -63,6 +64,11 @@ public class CoinPieChartFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_pie_chart, container, false);
+
+        Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Light.ttf");
+        ((TextView) view.findViewById(R.id.caption_left)).setTypeface(typeFace);
+        ((TextView) view.findViewById(R.id.caption_right)).setTypeface(typeFace);
+        ((TextView) view.findViewById(R.id.caption_left)).setText(getString(R.string.caption_left, fromSymbol, toSymbol));
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
         adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.currency, fromSymbol, toSymbol));

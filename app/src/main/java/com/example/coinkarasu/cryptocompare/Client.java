@@ -16,7 +16,7 @@ public interface Client {
 
     ArrayList<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit);
 
-    ArrayList<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int aggregate);
+    ArrayList<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange);
 
     ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit);
 

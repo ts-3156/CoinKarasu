@@ -361,7 +361,7 @@ public class CoinImpl implements Coin {
             json.put("prevPrice", prevPrice);
             json.put("prevTrend", prevTrend);
         } catch (JSONException e) {
-            Log.d("toJson", e.getMessage());
+            Log.e("toJson", e.getMessage());
         }
 
         return json;

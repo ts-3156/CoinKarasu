@@ -143,11 +143,11 @@ public class MainActivity extends AppCompatActivity implements
         tabs = findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
-        tabs.getTabAt(NavigationKind.nav_main.ordinal()).setText(getResources().getString(NavigationKind.nav_main.tabStrResId));
-        tabs.getTabAt(NavigationKind.jpy_toplist.ordinal()).setText(getResources().getString(NavigationKind.jpy_toplist.tabStrResId));
-        tabs.getTabAt(NavigationKind.usd_toplist.ordinal()).setText(getResources().getString(NavigationKind.usd_toplist.tabStrResId));
-        tabs.getTabAt(NavigationKind.eur_toplist.ordinal()).setText(getResources().getString(NavigationKind.eur_toplist.tabStrResId));
-        tabs.getTabAt(NavigationKind.btc_toplist.ordinal()).setText(getResources().getString(NavigationKind.btc_toplist.tabStrResId));
+        tabs.getTabAt(NavigationKind.nav_main.ordinal()).setText(NavigationKind.nav_main.tabStrResId);
+        tabs.getTabAt(NavigationKind.jpy_toplist.ordinal()).setText(NavigationKind.jpy_toplist.tabStrResId);
+        tabs.getTabAt(NavigationKind.usd_toplist.ordinal()).setText(NavigationKind.usd_toplist.tabStrResId);
+        tabs.getTabAt(NavigationKind.eur_toplist.ordinal()).setText(NavigationKind.eur_toplist.tabStrResId);
+        tabs.getTabAt(NavigationKind.btc_toplist.ordinal()).setText(NavigationKind.btc_toplist.tabStrResId);
 
         tab = tabs.getTabAt(NavigationKind.nav_main.ordinal());
 
@@ -230,7 +230,13 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
 
-        bar.setTitle(getResources().getString(kind.navStrResId));
+        bar.setTitle(kind.navStrResId);
+
+        if (navigationKind == NavigationKind.nav_main) {
+            bar.setSubtitle(Currency.JPY.disabledTitleStrResId);
+        } else {
+            bar.setSubtitle(null);
+        }
     }
 
     private void switchCurrencyMenuTitle(Menu menu) {
@@ -241,15 +247,15 @@ public class MainActivity extends AppCompatActivity implements
 
         if (navigationKind == NavigationKind.nav_main) {
             item.setEnabled(false);
-            item.setTitle(getResources().getString(Currency.JPY.disabledTitleStrResId));
+            item.setTitle(Currency.JPY.disabledTitleStrResId);
         } else {
             item.setEnabled(true);
             String symbol = PrefHelper.getToSymbol(this);
 
             if (symbol != null && symbol.equals(Currency.JPY.name())) {
-                item.setTitle(getResources().getString(Currency.JPY.titleStrResId));
+                item.setTitle(Currency.JPY.titleStrResId);
             } else {
-                item.setTitle(getResources().getString(Currency.USD.titleStrResId));
+                item.setTitle(Currency.USD.titleStrResId);
             }
         }
     }
@@ -300,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements
 
             return true;
         } else if (id == R.id.action_currency) {
-            if (item.getTitle().toString().equals(getResources().getString(Currency.USD.titleStrResId))) {
+            if (item.getTitle().toString().equals(getString(Currency.USD.titleStrResId))) {
                 PrefHelper.setToSymbol(this, Currency.JPY.name());
             } else {
                 PrefHelper.setToSymbol(this, Currency.USD.name());

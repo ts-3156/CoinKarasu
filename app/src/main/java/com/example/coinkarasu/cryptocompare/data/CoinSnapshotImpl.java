@@ -3,6 +3,8 @@ package com.example.coinkarasu.cryptocompare.data;
 import android.util.Log;
 
 import com.example.coinkarasu.coins.AggregatedDataImpl;
+import com.example.coinkarasu.coins.SnapshotCoin;
+import com.example.coinkarasu.coins.SnapshotCoinImpl;
 import com.example.coinkarasu.cryptocompare.response.CoinSnapshotResponse;
 import com.example.coinkarasu.coins.AggregatedData;
 
@@ -20,7 +22,7 @@ public class CoinSnapshotImpl implements CoinSnapshot {
     private double totalCoinsMined;
     private double blockReward;
     private AggregatedData aggregatedData;
-    private ArrayList<Exchange> exchanges;
+    private ArrayList<SnapshotCoin> snapshotCoins;
 
     public CoinSnapshotImpl(CoinSnapshotResponse response) {
         if (response == null || response.getData() == null) {
@@ -32,7 +34,7 @@ public class CoinSnapshotImpl implements CoinSnapshot {
             return;
         }
 
-        exchanges = new ArrayList<>();
+        snapshotCoins = new ArrayList<>();
 
         try {
             if (data.has("Algorithm"))
@@ -55,7 +57,7 @@ public class CoinSnapshotImpl implements CoinSnapshot {
                 JSONArray exchanges = data.getJSONArray("Exchanges");
 
                 for (int i = 0; i < exchanges.length(); i++) {
-                    this.exchanges.add(new ExchangeImpl(exchanges.getJSONObject(i)));
+                    this.snapshotCoins.add(new SnapshotCoinImpl(exchanges.getJSONObject(i)));
                 }
             }
         } catch (JSONException e) {
@@ -96,8 +98,8 @@ public class CoinSnapshotImpl implements CoinSnapshot {
     }
 
     @Override
-    public ArrayList<Exchange> getExchanges() {
-        return exchanges;
+    public ArrayList<SnapshotCoin> getSnapshotCoins() {
+        return snapshotCoins;
     }
 
     @Override

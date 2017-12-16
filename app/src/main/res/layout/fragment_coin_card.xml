@@ -20,7 +20,7 @@
         tools:text="@string/caption_day" />
 
     <TextView
-        android:id="@+id/caption_desc"
+        android:id="@+id/caption_desc_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/caption"

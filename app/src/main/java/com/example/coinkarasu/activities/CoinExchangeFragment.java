@@ -3,11 +3,15 @@ package com.example.coinkarasu.activities;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.PopupMenu;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -15,50 +19,47 @@ import android.widget.TextView;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.ViewPagerAdapter;
+import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.coins.CoinImpl;
+import com.example.coinkarasu.coins.SnapshotCoin;
+import com.example.coinkarasu.cryptocompare.ClientImpl;
+import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.format.PriceTabFormat;
 import com.example.coinkarasu.format.TrendViewFormat;
+import com.example.coinkarasu.tasks.GetCoinSnapshotTask;
 import com.example.coinkarasu.utils.IconHelper;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
-public class CoinLineChartFragment extends Fragment implements
-        ViewPager.OnPageChangeListener {
-
-    public static final int DEFAULT_POSITION = 0;
-    private static final Kind DEFAULT_KIND = Kind.hour;
-
-    public enum Kind {
-        hour("1 Hour"),
-        day("1 Day"),
-        week("1 Week"),
-        month("1 Month"),
-        year("1 Year");
-
-        String label;
-
-        Kind(String label) {
-            this.label = label;
-        }
-    }
+public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTask.Listener, ViewPager.OnPageChangeListener {
 
     private OnFragmentInteractionListener listener;
 
-    private String fromSymbol;
-    private String toSymbol;
+    private String kind;
+    private Coin coin;
+    private boolean taskStarted;
+    private int errorCount = 0;
+
+    private boolean tabsCreated = false;
     private ViewPager pager;
     private TabLayout tabs;
     private TabLayout.Tab tab;
 
-    public CoinLineChartFragment() {
+    public CoinExchangeFragment() {
     }
 
-    public static CoinLineChartFragment newInstance(String fromSymbol, String toSymbol) {
-        CoinLineChartFragment fragment = new CoinLineChartFragment();
+    public static CoinExchangeFragment newInstance(String kind, String coinJson) {
+        CoinExchangeFragment fragment = new CoinExchangeFragment();
         Bundle args = new Bundle();
-        args.putString("fromSymbol", fromSymbol);
-        args.putString("toSymbol", toSymbol);
+        args.putString("kind", kind);
+        args.putString("coinJson", coinJson);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,14 +68,37 @@ public class CoinLineChartFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            fromSymbol = getArguments().getString("fromSymbol");
-            toSymbol = getArguments().getString("toSymbol");
+            kind = getArguments().getString("kind");
+            String coinJson = getArguments().getString("coinJson");
+
+            try {
+                coin = CoinImpl.buildByJSONObject(new JSONObject(coinJson));
+            } catch (JSONException e) {
+                Log.e("onCreate", e.getMessage());
+            }
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_coin_line_chart, container, false);
+        View view = inflater.inflate(R.layout.fragment_coin_exchange, container, false);
+
+        view.findViewById(R.id.popup_menu).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PopupMenu popup = new PopupMenu(getContext(), view);
+                popup.inflate(R.menu.coin_card);
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getItemId() == R.id.action_settings) {
+                        }
+                        return true;
+                    }
+                });
+                popup.show();
+            }
+        });
 
         Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Light.ttf");
         ((TextView) view.findViewById(R.id.caption_left)).setTypeface(typeFace);
@@ -84,41 +108,57 @@ public class CoinLineChartFragment extends Fragment implements
         typeFace = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-LightItalic.ttf");
         ((TextView) view.findViewById(R.id.caption_desc_right)).setTypeface(typeFace);
 
-        ((TextView) view.findViewById(R.id.caption_left)).setText(getString(R.string.caption_left, fromSymbol, toSymbol));
+        ((TextView) view.findViewById(R.id.caption_left)).setText(getString(R.string.caption_left, coin.getSymbol(), coin.getToSymbol()));
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.hour, fromSymbol, toSymbol));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.day, fromSymbol, toSymbol));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.week, fromSymbol, toSymbol));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.month, fromSymbol, toSymbol));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.year, fromSymbol, toSymbol));
-
-        pager = view.findViewById(R.id.view_pager);
-        pager.setAdapter(adapter);
-        pager.setCurrentItem(DEFAULT_KIND.ordinal());
-        pager.addOnPageChangeListener(this);
-        pager.setOffscreenPageLimit(Kind.values().length);
-
-        tabs = view.findViewById(R.id.tab_layout);
-        tabs.setupWithViewPager(pager);
-
-        tabs.getTabAt(Kind.hour.ordinal()).setCustomView(createTab(inflater, container, Kind.hour.label));
-        tabs.getTabAt(Kind.day.ordinal()).setCustomView(createTab(inflater, container, Kind.day.label));
-        tabs.getTabAt(Kind.week.ordinal()).setCustomView(createTab(inflater, container, Kind.week.label));
-        tabs.getTabAt(Kind.month.ordinal()).setCustomView(createTab(inflater, container, Kind.month.label));
-        tabs.getTabAt(Kind.year.ordinal()).setCustomView(createTab(inflater, container, Kind.year.label));
-
-        tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
-        setSelected(DEFAULT_KIND.ordinal());
+        startTask();
 
         return view;
     }
 
-    private View createTab(LayoutInflater inflater, ViewGroup container, String label) {
-        View view = inflater.inflate(R.layout.tab_line_chart, container, false);
+    private void createTabs(ArrayList<SnapshotCoin> coins) {
+        if (tabsCreated || getView() == null || getActivity() == null) {
+            return;
+        }
+        tabsCreated = true;
 
-        ((TextView) view.findViewById(R.id.tab_label)).setText(label);
-        ((TextView) view.findViewById(R.id.tab_price)).setText("0.00");
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
+        View view = getView();
+        String fromSymbol = coin.getSymbol();
+        String toSymbol = coin.getToSymbol();
+
+        for (int i = 0; i < coins.size(); i++) {
+            SnapshotCoin coin = coins.get(i);
+            adapter.addItem(CoinExchangeTabContentFragment.newInstance(coin, fromSymbol, toSymbol, i, coin.getMarket().toLowerCase()));
+        }
+
+        pager = view.findViewById(R.id.view_pager);
+        pager.setAdapter(adapter);
+        pager.setCurrentItem(0);
+        pager.addOnPageChangeListener(this);
+        pager.setOffscreenPageLimit(Math.min(coins.size(), 5));
+
+        tabs = view.findViewById(R.id.tab_layout);
+        tabs.setupWithViewPager(pager);
+
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        for (int i = 0; i < coins.size(); i++) {
+            SnapshotCoin coin = coins.get(i);
+            tabs.getTabAt(i).setCustomView(createTab(inflater, null, coin));
+        }
+
+        tab = tabs.getTabAt(0);
+        setSelected(0);
+    }
+
+    private View createTab(LayoutInflater inflater, ViewGroup container, SnapshotCoin coin) {
+        View view = inflater.inflate(R.layout.tab_exchange, container, false);
+
+        ((TextView) view.findViewById(R.id.tab_label)).setText(coin.getMarket());
+
+        String priceString = new PriceTabFormat(coin.getToSymbol()).format(coin.getPrice());
+        ((TextView) view.findViewById(R.id.tab_price)).setText(priceString);
+
         ((TextView) view.findViewById(R.id.tab_trend)).setText("0.00%");
         ((ImageView) view.findViewById(R.id.tab_trend_icon)).setImageResource(R.drawable.ic_trending_flat);
 
@@ -133,8 +173,8 @@ public class CoinLineChartFragment extends Fragment implements
         double prevPrice = records.get(0).getClose();
         double priceDiff = curPrice - prevPrice;
 
-        String priceString = new PriceTabFormat(records.get(0).getToSymbol()).format(priceDiff);
-        ((TextView) view.findViewById(R.id.tab_price)).setText(priceString);
+//        String priceString = new PriceTabFormat(records.get(0).getToSymbol()).format(priceDiff);
+//        ((TextView) view.findViewById(R.id.tab_price)).setText(priceString);
 
         boolean isSelected = this.tab != null && this.tab.getPosition() == position;
         double trend = priceDiff / prevPrice;
@@ -176,6 +216,48 @@ public class CoinLineChartFragment extends Fragment implements
                 .setImageResource(IconHelper.getWhiteTrendIconResId(priceDiff));
     }
 
+    private void startTask() {
+        if (taskStarted || errorCount >= 3) {
+            return;
+        }
+        taskStarted = true;
+
+        new GetCoinSnapshotTask(new ClientImpl(getActivity()))
+                .setFromSymbol(coin.getSymbol())
+                .setToSymbol(coin.getToSymbol())
+                .setListener(this)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    @Override
+    public void finished(CoinSnapshot snapshot) {
+        ArrayList<SnapshotCoin> coins = snapshot.getSnapshotCoins();
+        if (coins == null) {
+            Log.e("finished", "null(retry), " + kind + ", " + errorCount);
+            taskStarted = false;
+            errorCount++;
+            startTask();
+            return;
+        }
+
+        if (coins.isEmpty()) {
+            Log.e("finished", "empty, " + kind + ", " + errorCount);
+            return;
+        }
+
+        if (isDetached() || getView() == null) {
+            return;
+        }
+
+        Collections.sort(coins, new Comparator<SnapshotCoin>() {
+            public int compare(SnapshotCoin c1, SnapshotCoin c2) {
+                return c1.getPrice() > c2.getPrice() ? -1 : 1;
+            }
+        });
+
+        createTabs(coins);
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -203,10 +285,10 @@ public class CoinLineChartFragment extends Fragment implements
 
             if (position != tab.getPosition()) {
                 ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
-                CoinLineChartTabContentFragment fragment = (CoinLineChartTabContentFragment) adapter.getItem(position);
+                CoinExchangeTabContentFragment fragment = (CoinExchangeTabContentFragment) adapter.getItem(position);
 
                 setSelected(position);
-                fragment.updateView(true);
+                fragment.updateView();
             }
         }
     }

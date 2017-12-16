@@ -9,36 +9,49 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.chart.CoinLineChart;
+import com.example.coinkarasu.coins.SnapshotCoin;
+import com.example.coinkarasu.coins.SnapshotCoinImpl;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
+import com.example.coinkarasu.cryptocompare.data.History;
+import com.example.coinkarasu.tasks.GetHistoryHourTask;
 import com.example.coinkarasu.tasks.GetHistoryTaskBase;
 import com.github.mikephil.charting.charts.LineChart;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-public class CoinLineChartTabContentFragment extends Fragment implements GetHistoryTaskBase.Listener {
+public class CoinExchangeTabContentFragment extends Fragment implements GetHistoryHourTask.Listener {
 
     private OnFragmentInteractionListener listener;
 
-    private CoinLineChartFragment.Kind kind;
+    private SnapshotCoin coin;
+    private String kind;
     private String fromSymbol;
     private String toSymbol;
+    private int position;
+    private String exchange;
     private boolean taskStarted;
     private CoinLineChart chart = null;
     private int errorCount = 0;
 
-    public CoinLineChartTabContentFragment() {
+    private ArrayList<History> records;
+
+    public CoinExchangeTabContentFragment() {
     }
 
-    public static CoinLineChartTabContentFragment newInstance(CoinLineChartFragment.Kind kind, String fromSymbol, String toSymbol) {
-        CoinLineChartTabContentFragment fragment = new CoinLineChartTabContentFragment();
+    public static CoinExchangeTabContentFragment newInstance(SnapshotCoin coin, String fromSymbol, String toSymbol, int position, String exchange) {
+        CoinExchangeTabContentFragment fragment = new CoinExchangeTabContentFragment();
         Bundle args = new Bundle();
-        args.putString("kind", kind.name());
+        args.putString("coinJson", coin.toJson().toString());
         args.putString("fromSymbol", fromSymbol);
         args.putString("toSymbol", toSymbol);
+        args.putInt("position", position);
+        args.putString("exchange", exchange);
         fragment.setArguments(args);
         return fragment;
     }
@@ -47,15 +60,24 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = CoinLineChartFragment.Kind.valueOf(getArguments().getString("kind"));
+            String coinJson = getArguments().getString("coinJson");
             fromSymbol = getArguments().getString("fromSymbol");
             toSymbol = getArguments().getString("toSymbol");
+            position = getArguments().getInt("position");
+            exchange = getArguments().getString("exchange");
+            kind = "day";
+
+            try {
+                coin = SnapshotCoinImpl.buildByJSONObject(new JSONObject(coinJson));
+            } catch (JSONException e) {
+                Log.e("onCreate", e.getMessage());
+            }
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_coin_line_chart_tab_content, container, false);
+        View view = inflater.inflate(R.layout.fragment_coin_exchange_tab_content, container, false);
         startTask();
         return view;
     }
@@ -66,21 +88,27 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
         taskStarted = true;
 
-        GetHistoryTaskBase.newInstance(new ClientImpl(getActivity()), kind.name())
+        GetHistoryTaskBase.newInstance(new ClientImpl(getActivity()), kind, exchange)
                 .setFromSymbol(fromSymbol)
                 .setToSymbol(toSymbol)
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void updateView(boolean isScroll) {
+    public void updateView() {
         if (isDetached() || getView() == null) {
             return;
         }
 
         if (taskStarted) {
             if (chart != null) {
-                chart.animateX();
+
+                // TODO After calling onPause, chart.animateX() does not show anything.
+                // chart.animateX();
+                chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart));
+                chart.initialize(kind);
+                chart.setData(records);
+                chart.invalidate();
             }
             return;
         }
@@ -103,14 +131,16 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
 
         drawChart(records);
-        ((CoinLineChartFragment) getParentFragment()).updateTab(kind.ordinal(), records);
+        ((CoinExchangeFragment) getParentFragment()).updateTab(position, records);
 
         Log.d("UPDATED", kind + ", " + records.size() + ", " + new Date().toString());
     }
 
     private void drawChart(ArrayList<History> records) {
+        this.records = records;
+
         chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart));
-        chart.initialize(kind.name());
+        chart.initialize(kind);
         chart.setData(records);
         chart.invalidate();
     }

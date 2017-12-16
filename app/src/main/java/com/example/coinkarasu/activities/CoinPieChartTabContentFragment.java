@@ -8,10 +8,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.chart.CoinPieChart;
+import com.example.coinkarasu.coins.SnapshotCoin;
 import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
@@ -161,8 +161,8 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
     @Override
     public void finished(CoinSnapshot snapshot) {
-        ArrayList<Exchange> exchanges = snapshot.getExchanges();
-        if (exchanges == null) {
+        ArrayList<SnapshotCoin> coins = snapshot.getSnapshotCoins();
+        if (coins == null) {
             Log.e("finished", "null(retry), " + kind + ", " + errorCount);
             taskStarted = false;
             errorCount++;
@@ -170,7 +170,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             return;
         }
 
-        if (exchanges.isEmpty()) {
+        if (coins.isEmpty()) {
             Log.e("finished", "empty, " + kind + ", " + errorCount);
             return;
         }
@@ -179,19 +179,19 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             return;
         }
 
-        Collections.sort(exchanges, new Comparator<Exchange>() {
-            public int compare(Exchange ex1, Exchange ex2) {
-                return ex1.getVolume24Hour() > ex2.getVolume24Hour() ? -1 : 1;
+        Collections.sort(coins, new Comparator<SnapshotCoin>() {
+            public int compare(SnapshotCoin c1, SnapshotCoin c2) {
+                return c1.getVolume24Hour() > c2.getVolume24Hour() ? -1 : 1;
             }
         });
 
         ArrayList<Double> values = new ArrayList<>();
         ArrayList<String> labels = new ArrayList<>();
 
-        for (int i = 0; i < exchanges.size(); i++) {
-            Exchange exchange = exchanges.get(i);
-            values.add(exchange.getVolume24Hour());
-            labels.add(exchange.getMarket());
+        for (int i = 0; i < coins.size(); i++) {
+            SnapshotCoin coin = coins.get(i);
+            values.add(coin.getVolume24Hour());
+            labels.add(coin.getMarket());
         }
 
         groupSmallSlices(values, labels);

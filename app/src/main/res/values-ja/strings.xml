@@ -8,7 +8,7 @@
     <string name="action_pause">更新を一時停止</string>
     <string name="action_currency_switch_to_jpy">JPYで見る</string>
     <string name="action_currency_switch_to_usd">USDで見る</string>
-    <string name="action_currency_only_for_jpy">JPYのみ</string>
+    <string name="action_currency_only_for_jpy">JPY表示のみ</string>
 
     <string name="nav_main">日本で取引できるコイン</string>
     <string name="tab_main">日本</string>
