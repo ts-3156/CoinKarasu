@@ -67,7 +67,7 @@ public class CoinCardFragment extends Fragment {
 
         TextView trendView = view.findViewById(R.id.trend);
         trendView.setText(new TrendValueFormat().format(coin.getTrend()));
-        trendView.setTextColor(new TrendColorFormat().format(coin.getTrend()));
+        trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(coin.getTrend())));
 
         ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(IconHelper.getTrendIconResId(coin));
 

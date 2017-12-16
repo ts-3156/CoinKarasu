@@ -95,7 +95,7 @@ public class CoinPieChartFragment extends Fragment implements
     private View createTab(LayoutInflater inflater, ViewGroup container, String label) {
         View view = inflater.inflate(R.layout.tab_pie_chart, container, false);
 
-        ((TextView) view.findViewById(R.id.tab_label)).setText(label);
+        ((TextView) view.findViewById(R.id.label)).setText(label);
 
         return view;
     }
@@ -106,12 +106,12 @@ public class CoinPieChartFragment extends Fragment implements
     private void setSelected(int position) {
         View view = tab.getCustomView();
         view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
-        ((TextView) view.findViewById(R.id.tab_label)).setTextColor(Color.parseColor("#80000000"));
+        ((TextView) view.findViewById(R.id.label)).setTextColor(getResources().getColor(R.color.colorTabInactiveText));
 
         tab = tabs.getTabAt(position);
         view = tab.getCustomView();
         view.findViewById(R.id.tab_container).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        ((TextView) view.findViewById(R.id.tab_label)).setTextColor(Color.WHITE);
+        ((TextView) view.findViewById(R.id.label)).setTextColor(getResources().getColor(R.color.colorTabActiveText));
     }
 
     @Override

@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/tab_label"
+            android:id="@+id/label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
@@ -23,30 +23,30 @@
             tools:text="1 Hour" />
 
         <TextView
-            android:id="@+id/tab_price"
+            android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/tab_label"
+            android:layout_below="@id/label"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             tools:text="¥ 1,000"
             tools:textColor="#008000" />
 
         <ImageView
-            android:id="@+id/tab_trend_icon"
+            android:id="@+id/trend_icon"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_alignParentLeft="true"
-            android:layout_below="@id/tab_price"
+            android:layout_below="@id/price"
             android:paddingRight="4dp"
             tools:src="@drawable/ic_trending_up" />
 
         <TextView
-            android:id="@+id/tab_trend"
+            android:id="@+id/trend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tab_price"
-            android:layout_toRightOf="@id/tab_trend_icon"
+            android:layout_below="@id/price"
+            android:layout_toRightOf="@id/trend_icon"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             tools:text="10%"
             tools:textColor="#008000" />

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +28,6 @@ import java.util.ArrayList;
 public class CoinLineChartFragment extends Fragment implements
         ViewPager.OnPageChangeListener {
 
-    public static final int DEFAULT_POSITION = 0;
     private static final Kind DEFAULT_KIND = Kind.hour;
 
     public enum Kind {
@@ -118,13 +118,15 @@ public class CoinLineChartFragment extends Fragment implements
     private View createTab(LayoutInflater inflater, ViewGroup container, String label) {
         View view = inflater.inflate(R.layout.tab_line_chart, container, false);
 
-        ((TextView) view.findViewById(R.id.tab_label)).setText(label);
-        ((TextView) view.findViewById(R.id.tab_price)).setText("0.00");
-        ((TextView) view.findViewById(R.id.tab_trend)).setText("0.00%");
-        ((ImageView) view.findViewById(R.id.tab_trend_icon)).setImageResource(R.drawable.ic_trending_flat);
+        ((TextView) view.findViewById(R.id.label)).setText(label);
+        ((TextView) view.findViewById(R.id.price)).setText("0.00");
+        ((TextView) view.findViewById(R.id.trend)).setText("0.00%");
+        ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(R.drawable.ic_trending_flat);
 
         return view;
     }
+
+
 
     public void updateTab(int position, ArrayList<History> records) {
         TabLayout.Tab tab = tabs.getTabAt(position);
@@ -135,19 +137,20 @@ public class CoinLineChartFragment extends Fragment implements
         double priceDiff = curPrice - prevPrice;
 
         String priceString = new PriceFormat(records.get(0).getToSymbol()).format(priceDiff);
-        ((TextView) view.findViewById(R.id.tab_price)).setText(priceString);
+        ((TextView) view.findViewById(R.id.price)).setText(priceString);
 
         boolean isSelected = this.tab != null && this.tab.getPosition() == position;
 
         double trend = priceDiff / prevPrice;
-        TextView trendView = view.findViewById(R.id.tab_trend);
+        TextView trendView = view.findViewById(R.id.trend);
         trendView.setText(new TrendValueFormat().format(trend));
-        trendView.setTextColor(new TrendColorFormat().format(trend));
 
-        ImageView icon = view.findViewById(R.id.tab_trend_icon);
+        ImageView icon = view.findViewById(R.id.trend_icon);
         if (isSelected) {
+            trendView.setTextColor(getResources().getColor(R.color.colorTabActiveText));
             icon.setImageResource(IconHelper.getWhiteTrendIconResId(trend));
         } else {
+            trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(trend)));
             icon.setImageResource(IconHelper.getTrendIconResId(trend));
         }
 
@@ -155,27 +158,35 @@ public class CoinLineChartFragment extends Fragment implements
     }
 
     private void setSelected(int position) {
+        if (tab == null) {
+            return;
+        }
+
+        int inactiveTextColor = getResources().getColor(R.color.colorTabInactiveText);
         View view = tab.getCustomView();
         view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
-        ((TextView) view.findViewById(R.id.tab_label)).setTextColor(Color.parseColor("#80000000"));
-        ((TextView) view.findViewById(R.id.tab_price)).setTextColor(Color.parseColor("#80000000"));
+        ((TextView) view.findViewById(R.id.label)).setTextColor(inactiveTextColor);
+        ((TextView) view.findViewById(R.id.price)).setTextColor(inactiveTextColor);
 
-        ((TextView) view.findViewById(R.id.tab_trend)).setTextColor(Color.parseColor("#80000000"));
         Object tag = tab.getTag();
         double priceDiff = tag == null ? 0 : (double) tag;
-        ((ImageView) view.findViewById(R.id.tab_trend_icon))
+        ((TextView) view.findViewById(R.id.trend))
+                .setTextColor(getResources().getColor(new TrendColorFormat().format(priceDiff)));
+        ((ImageView) view.findViewById(R.id.trend_icon))
                 .setImageResource(IconHelper.getTrendIconResId(priceDiff));
 
         tab = tabs.getTabAt(position);
+
+        int activeTextColor = getResources().getColor(R.color.colorTabActiveText);
         view = tab.getCustomView();
         view.findViewById(R.id.tab_container).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        ((TextView) view.findViewById(R.id.tab_label)).setTextColor(Color.WHITE);
-        ((TextView) view.findViewById(R.id.tab_price)).setTextColor(Color.WHITE);
+        ((TextView) view.findViewById(R.id.label)).setTextColor(activeTextColor);
+        ((TextView) view.findViewById(R.id.price)).setTextColor(activeTextColor);
 
         tag = tab.getTag();
         priceDiff = tag == null ? 0 : (double) tag;
-        ((TextView) view.findViewById(R.id.tab_trend)).setTextColor(Color.WHITE);
-        ((ImageView) view.findViewById(R.id.tab_trend_icon))
+        ((TextView) view.findViewById(R.id.trend)).setTextColor(activeTextColor);
+        ((ImageView) view.findViewById(R.id.trend_icon))
                 .setImageResource(IconHelper.getWhiteTrendIconResId(priceDiff));
     }
 

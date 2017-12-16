@@ -8,4 +8,11 @@
     <color name="colorInfoBackground">#E1F5FE</color>
     <color name="colorWarnText">#E65100</color>
     <color name="colorWarnBackground">#FFFDE7</color>
+
+    <color name="colorTabActiveText">#ffffff</color>
+    <color name="colorTabInactiveText">#80000000</color>
+
+    <color name="colorTrendUp">#008000</color>
+    <color name="colorTrendFlat">#8a000000</color>
+    <color name="colorTrendDown">#ff0000</color>
 </resources>

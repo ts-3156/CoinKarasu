@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if (navigationKind != null) {
             applyKeepScreenOn();
-            pageChanged(navigationKind.ordinal()); // Return from SettingsActivity
+            pageChanged(navigationKind.ordinal()); // Return from other Activity
         }
     }
 

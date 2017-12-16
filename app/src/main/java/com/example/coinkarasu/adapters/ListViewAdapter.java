@@ -41,6 +41,12 @@ public class ListViewAdapter extends BaseAdapter {
     private boolean isDownloadIconEnabled;
     private boolean isScrolled;
 
+    private PriceFormat priceFormatter;
+    private TrendValueFormat trendFormatter;
+    private int trendUp;
+    private int trendFlat;
+    private int trendDown;
+
     public ListViewAdapter(Activity activity, List<Coin> coins) {
         symbolIconResIdMap = buildIconResIdMap(activity, coins);
         imageLoader = VolleyHelper.getInstance(activity).getImageLoader();
@@ -52,6 +58,24 @@ public class ListViewAdapter extends BaseAdapter {
         for (Coin coin : coins) {
             addItem(coin);
         }
+
+        for (Coin coin : this.coins) {
+            if (!coin.isSectionHeader()) {
+                priceFormatter = new PriceFormat(coin.getToSymbol());
+                break;
+            }
+        }
+        trendFormatter = new TrendValueFormat();
+        initializeTrendColors(activity);
+    }
+
+    private void initializeTrendColors(Activity activity) {
+        Resources resources = activity.getResources();
+        TrendColorFormat formatter = new TrendColorFormat();
+
+        trendUp = resources.getColor(formatter.format(1.0));
+        trendFlat = resources.getColor(formatter.format(0.0));
+        trendDown = resources.getColor(formatter.format(-1.0));
     }
 
     private HashMap<String, Integer> buildIconResIdMap(Activity activity, List<Coin> coins) {
@@ -83,6 +107,7 @@ public class ListViewAdapter extends BaseAdapter {
         for (Coin coin : coins) {
             coin.setToSymbol(symbol);
         }
+        priceFormatter = new PriceFormat(symbol);
     }
 
     public void setDownloadIconEnabled(boolean flag) {
@@ -190,9 +215,9 @@ public class ListViewAdapter extends BaseAdapter {
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());
 
-            holder.price.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
-            holder.trend.setText(new TrendValueFormat().format(coin.getTrend()));
-            holder.trend.setTextColor(new TrendColorFormat().format(coin.getTrend()));
+            holder.price.setText(priceFormatter.format(coin.getPrice()));
+            holder.trend.setText(trendFormatter.format(coin.getTrend()));
+            holder.trend.setTextColor(getTrendColor(coin.getTrend()));
 
             if (holder.priceAnimator != null) {
                 holder.priceAnimator.cancel();
@@ -222,6 +247,20 @@ public class ListViewAdapter extends BaseAdapter {
         }
 
         return convertView;
+    }
+
+    private int getTrendColor(double trend) {
+        int color;
+
+        if (trend > 0.0) {
+            color = trendUp;
+        } else if (trend < 0.0) {
+            color = trendDown;
+        } else {
+            color = trendFlat;
+        }
+
+        return color;
     }
 
     private class ViewHolder {

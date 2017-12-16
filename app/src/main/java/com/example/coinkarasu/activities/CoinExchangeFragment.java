@@ -161,13 +161,13 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
     private View createTab(LayoutInflater inflater, ViewGroup container, SnapshotCoin coin) {
         View view = inflater.inflate(R.layout.tab_exchange, container, false);
 
-        ((TextView) view.findViewById(R.id.tab_label)).setText(coin.getMarket());
+        ((TextView) view.findViewById(R.id.label)).setText(coin.getMarket());
 
         String priceString = new PriceFormat(coin.getToSymbol()).format(coin.getPrice());
-        ((TextView) view.findViewById(R.id.tab_price)).setText(priceString);
+        ((TextView) view.findViewById(R.id.price)).setText(priceString);
 
-        ((TextView) view.findViewById(R.id.tab_trend)).setText("0.00%");
-        ((ImageView) view.findViewById(R.id.tab_trend_icon)).setImageResource(R.drawable.ic_trending_flat);
+        ((TextView) view.findViewById(R.id.trend)).setText("0.00%");
+        ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(R.drawable.ic_trending_flat);
 
         return view;
     }
@@ -186,14 +186,15 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
         boolean isSelected = this.tab != null && this.tab.getPosition() == position;
 
         double trend = priceDiff / prevPrice;
-        TextView trendView = view.findViewById(R.id.tab_trend);
+        TextView trendView = view.findViewById(R.id.trend);
         trendView.setText(new TrendValueFormat().format(trend));
-        trendView.setTextColor(new TrendColorFormat().format(trend));
 
-        ImageView icon = view.findViewById(R.id.tab_trend_icon);
+        ImageView icon = view.findViewById(R.id.trend_icon);
         if (isSelected) {
+            trendView.setTextColor(getResources().getColor(R.color.colorTabActiveText));
             icon.setImageResource(IconHelper.getWhiteTrendIconResId(trend));
         } else {
+            trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(trend)));
             icon.setImageResource(IconHelper.getTrendIconResId(trend));
         }
 
@@ -205,27 +206,32 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
             return;
         }
 
+        int inactiveTextColor = getResources().getColor(R.color.colorTabInactiveText);
         View view = tab.getCustomView();
         view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
-        ((TextView) view.findViewById(R.id.tab_label)).setTextColor(Color.parseColor("#80000000"));
-        ((TextView) view.findViewById(R.id.tab_price)).setTextColor(Color.parseColor("#80000000"));
+        ((TextView) view.findViewById(R.id.label)).setTextColor(inactiveTextColor);
+        ((TextView) view.findViewById(R.id.price)).setTextColor(inactiveTextColor);
 
-        ((TextView) view.findViewById(R.id.tab_trend)).setTextColor(Color.parseColor("#80000000"));
+        ((TextView) view.findViewById(R.id.trend)).setTextColor(inactiveTextColor);
         Object tag = tab.getTag();
         double priceDiff = tag == null ? 0 : (double) tag;
-        ((ImageView) view.findViewById(R.id.tab_trend_icon))
+        ((TextView) view.findViewById(R.id.trend))
+                .setTextColor(getResources().getColor(new TrendColorFormat().format(priceDiff)));
+        ((ImageView) view.findViewById(R.id.trend_icon))
                 .setImageResource(IconHelper.getTrendIconResId(priceDiff));
 
         tab = tabs.getTabAt(position);
+
+        int activeTextColor = getResources().getColor(R.color.colorTabActiveText);
         view = tab.getCustomView();
         view.findViewById(R.id.tab_container).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        ((TextView) view.findViewById(R.id.tab_label)).setTextColor(Color.WHITE);
-        ((TextView) view.findViewById(R.id.tab_price)).setTextColor(Color.WHITE);
+        ((TextView) view.findViewById(R.id.label)).setTextColor(activeTextColor);
+        ((TextView) view.findViewById(R.id.price)).setTextColor(activeTextColor);
 
         tag = tab.getTag();
         priceDiff = tag == null ? 0 : (double) tag;
-        ((TextView) view.findViewById(R.id.tab_trend)).setTextColor(Color.WHITE);
-        ((ImageView) view.findViewById(R.id.tab_trend_icon))
+        ((TextView) view.findViewById(R.id.trend)).setTextColor(activeTextColor);
+        ((ImageView) view.findViewById(R.id.trend_icon))
                 .setImageResource(IconHelper.getWhiteTrendIconResId(priceDiff));
     }
 
