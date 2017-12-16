@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,6 +112,9 @@ public class CoinLineChartFragment extends Fragment implements
 
         tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
         setSelected(DEFAULT_KIND.ordinal());
+
+        Spanned text = Html.fromHtml(getString(R.string.line_chart_info, fromSymbol, toSymbol));
+        ((TextView) view.findViewById(R.id.info_text)).setText(text);
 
         return view;
     }

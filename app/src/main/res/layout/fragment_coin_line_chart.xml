@@ -94,6 +94,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -112,10 +113,11 @@
             android:src="@drawable/ic_info" />
 
         <TextView
+            android:id="@+id/info_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="The prices for this chart are aggregated from all exchanges and using a VWAP approach."
+            android:text="@string/line_chart_info"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textColor="@color/colorInfoText" />
     </LinearLayout>
