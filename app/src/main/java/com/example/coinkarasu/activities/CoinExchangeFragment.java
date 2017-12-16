@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 
 
 public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTask.Listener, ViewPager.OnPageChangeListener {
@@ -247,6 +248,14 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
 
         if (isDetached() || getView() == null) {
             return;
+        }
+
+        Iterator<SnapshotCoin> iterator = coins.iterator();
+        while (iterator.hasNext()) {
+            SnapshotCoin coin = iterator.next();
+            if (coin.getVolume24Hour() <= 0.0 || coin.getMarket().equals("LocalBitcoins")) {
+                iterator.remove();
+            }
         }
 
         Collections.sort(coins, new Comparator<SnapshotCoin>() {
