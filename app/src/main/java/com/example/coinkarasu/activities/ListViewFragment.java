@@ -26,7 +26,6 @@ import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.format.ValueAnimatorBase;
 import com.example.coinkarasu.tasks.GetPricesTask;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
-import com.example.coinkarasu.utils.ExchangeImpl;
 import com.example.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
@@ -55,14 +54,17 @@ public class ListViewFragment extends Fragment
     }
 
     private enum Exchange {
-        bitflyer(R.array.bitflyer_symbols),
-        coincheck(R.array.coincheck_symbols),
-        zaif(R.array.zaif_symbols);
+        bitflyer(R.array.bitflyer_symbols, "BitFlyer"),
+        coincheck(R.array.coincheck_symbols, "Coincheck"),
+        zaif(R.array.zaif_symbols, "Zaif"),
+        cccagg(-1, "Aggregated index");
 
         int symbolsResId;
+        String headerName;
 
-        Exchange(int symbolsResId) {
+        Exchange(int symbolsResId, String headerName) {
             this.symbolsResId = symbolsResId;
+            this.headerName = headerName;
         }
 
         public static boolean contains(String value) {
@@ -256,7 +258,7 @@ public class ListViewFragment extends Fragment
         ArrayList<Coin> sectionalCoins = new ArrayList<>();
 
         if (exchanges.length == 1) {
-            sectionalCoins.add(new SectionHeaderCoinImpl(ExchangeImpl.exchangeToDisplayName(exchanges[0]), exchanges[0]));
+            sectionalCoins.add(new SectionHeaderCoinImpl(Exchange.valueOf(exchanges[0]).headerName, exchanges[0]));
             for (Coin coin : coins) {
                 coin.setExchange(exchanges[0]);
             }
@@ -265,7 +267,7 @@ public class ListViewFragment extends Fragment
         }
 
         for (String exchange : exchanges) {
-            sectionalCoins.add(new SectionHeaderCoinImpl(ExchangeImpl.exchangeToDisplayName(exchange), exchange));
+            sectionalCoins.add(new SectionHeaderCoinImpl(Exchange.valueOf(exchange).headerName, exchange));
             List<Coin> sub;
 
             switch (exchange) {

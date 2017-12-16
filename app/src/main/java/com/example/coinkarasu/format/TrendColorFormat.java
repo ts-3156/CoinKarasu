@@ -6,6 +6,18 @@ public class TrendColorFormat {
     public TrendColorFormat() {
     }
 
+    public int format(double trend, boolean isSelected) {
+        int color;
+
+        if (isSelected) {
+            color = R.color.colorTabActiveText;
+        } else {
+            color = format(trend);
+        }
+
+        return color;
+    }
+
     public int format(double trend) {
         int color;
 

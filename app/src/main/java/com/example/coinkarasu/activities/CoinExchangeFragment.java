@@ -29,9 +29,9 @@ import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.format.PriceFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
+import com.example.coinkarasu.format.TrendIconFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
 import com.example.coinkarasu.tasks.GetCoinSnapshotTask;
-import com.example.coinkarasu.utils.IconHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -188,15 +188,10 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
         double trend = priceDiff / prevPrice;
         TextView trendView = view.findViewById(R.id.trend);
         trendView.setText(new TrendValueFormat().format(trend));
+        trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(trend, isSelected)));
 
         ImageView icon = view.findViewById(R.id.trend_icon);
-        if (isSelected) {
-            trendView.setTextColor(getResources().getColor(R.color.colorTabActiveText));
-            icon.setImageResource(IconHelper.getWhiteTrendIconResId(trend));
-        } else {
-            trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(trend)));
-            icon.setImageResource(IconHelper.getTrendIconResId(trend));
-        }
+        icon.setImageResource(new TrendIconFormat().format(trend, isSelected));
 
         tab.setTag(priceDiff);
     }
@@ -218,7 +213,7 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
         ((TextView) view.findViewById(R.id.trend))
                 .setTextColor(getResources().getColor(new TrendColorFormat().format(priceDiff)));
         ((ImageView) view.findViewById(R.id.trend_icon))
-                .setImageResource(IconHelper.getTrendIconResId(priceDiff));
+                .setImageResource(new TrendIconFormat().format(priceDiff));
 
         tab = tabs.getTabAt(position);
 
@@ -232,7 +227,7 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
         priceDiff = tag == null ? 0 : (double) tag;
         ((TextView) view.findViewById(R.id.trend)).setTextColor(activeTextColor);
         ((ImageView) view.findViewById(R.id.trend_icon))
-                .setImageResource(IconHelper.getWhiteTrendIconResId(priceDiff));
+                .setImageResource(new TrendIconFormat().format(priceDiff, true));
     }
 
     private void startTask() {

@@ -17,8 +17,8 @@ import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.format.PriceFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
+import com.example.coinkarasu.format.TrendIconFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
-import com.example.coinkarasu.utils.IconHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -65,11 +65,11 @@ public class CoinCardFragment extends Fragment {
         ((TextView) view.findViewById(R.id.price)).setText(
                 new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
 
+        double trend = coin.getTrend();
         TextView trendView = view.findViewById(R.id.trend);
-        trendView.setText(new TrendValueFormat().format(coin.getTrend()));
-        trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(coin.getTrend())));
-
-        ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(IconHelper.getTrendIconResId(coin));
+        trendView.setText(new TrendValueFormat().format(trend));
+        trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(trend)));
+        ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(new TrendIconFormat().format(trend));
 
         view.findViewById(R.id.popup_menu).setOnClickListener(new View.OnClickListener() {
             @Override

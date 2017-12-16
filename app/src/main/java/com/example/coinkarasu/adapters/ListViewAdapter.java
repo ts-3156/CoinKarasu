@@ -18,8 +18,8 @@ import com.example.coinkarasu.format.PriceAnimator;
 import com.example.coinkarasu.format.PriceFormat;
 import com.example.coinkarasu.format.TrendAnimator;
 import com.example.coinkarasu.format.TrendColorFormat;
+import com.example.coinkarasu.format.TrendIconFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
-import com.example.coinkarasu.utils.IconHelper;
 import com.example.coinkarasu.utils.PrefHelper;
 import com.example.coinkarasu.utils.VolleyHelper;
 
@@ -43,6 +43,7 @@ public class ListViewAdapter extends BaseAdapter {
 
     private PriceFormat priceFormatter;
     private TrendValueFormat trendFormatter;
+    private TrendIconFormat trendIconFormat;
     private int trendUp;
     private int trendFlat;
     private int trendDown;
@@ -66,6 +67,7 @@ public class ListViewAdapter extends BaseAdapter {
             }
         }
         trendFormatter = new TrendValueFormat();
+        trendIconFormat = new TrendIconFormat();
         initializeTrendColors(activity);
     }
 
@@ -236,7 +238,7 @@ public class ListViewAdapter extends BaseAdapter {
                 holder.trendAnimator.start();
             }
 
-            holder.trend_icon.setImageResource(IconHelper.getTrendIconResId(coin));
+            holder.trend_icon.setImageResource(trendIconFormat.format(coin.getTrend()));
         } else if (rowType == TYPE_HEADER) {
             holder.header.setText(coin.getName());
             if (position == 0) {
