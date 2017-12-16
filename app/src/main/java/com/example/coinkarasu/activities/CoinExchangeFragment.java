@@ -241,6 +241,11 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
 
     @Override
     public void finished(CoinSnapshot snapshot) {
+        if (isDetached() || getView() == null) {
+            taskStarted = false;
+            return;
+        }
+
         ArrayList<SnapshotCoin> coins = snapshot.getSnapshotCoins();
         if (coins == null) {
             Log.e("finished", "null(retry), " + kind + ", " + errorCount);
@@ -250,29 +255,23 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
             return;
         }
 
-        if (coins.isEmpty()) {
-            Log.e("finished", "empty, " + kind + ", " + errorCount);
-            if (getView() != null) {
-                View view = getView();
-                view.findViewById(R.id.pager_container).setVisibility(View.GONE);
-                view.findViewById(R.id.info).setVisibility(View.GONE);
-                Spanned text = Html.fromHtml(getString(R.string.exchange_warn, coin.getSymbol(), coin.getToSymbol()));
-                ((TextView) view.findViewById(R.id.warn_text)).setText(text);
-                view.findViewById(R.id.warn).setVisibility(View.VISIBLE);
-            }
-            return;
-        }
-
-        if (isDetached() || getView() == null) {
-            return;
-        }
-
         Iterator<SnapshotCoin> iterator = coins.iterator();
         while (iterator.hasNext()) {
             SnapshotCoin coin = iterator.next();
             if (coin.getVolume24Hour() <= 0.0 || coin.getMarket().equals("LocalBitcoins")) {
                 iterator.remove();
             }
+        }
+
+        if (coins.isEmpty()) {
+            Log.e("finished", "empty, " + kind + ", " + errorCount);
+            View view = getView();
+            view.findViewById(R.id.pager_container).setVisibility(View.GONE);
+            view.findViewById(R.id.info).setVisibility(View.GONE);
+            Spanned text = Html.fromHtml(getString(R.string.exchange_warn, coin.getSymbol(), coin.getToSymbol()));
+            ((TextView) view.findViewById(R.id.warn_text)).setText(text);
+            view.findViewById(R.id.warn).setVisibility(View.VISIBLE);
+            return;
         }
 
         Collections.sort(coins, new Comparator<SnapshotCoin>() {

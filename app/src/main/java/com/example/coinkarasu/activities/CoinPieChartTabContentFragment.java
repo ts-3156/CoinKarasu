@@ -4,10 +4,13 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.chart.CoinPieChart;
@@ -26,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 
 public class CoinPieChartTabContentFragment extends Fragment implements
         GetTopPairsTask.Listener, GetCoinSnapshotTask.Listener {
@@ -119,6 +123,11 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
     @Override
     public void finished(TopPairs topPairs) {
+        if (isDetached() || getView() == null) {
+            taskStarted = false;
+            return;
+        }
+
         ArrayList<TopPair> pairs = topPairs.getTopPairs();
         if (pairs == null) {
             Log.e("finished", "null(retry), " + kind + ", " + errorCount);
@@ -128,12 +137,12 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             return;
         }
 
+        ArrayList<Double> values = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+
         if (pairs.isEmpty()) {
             Log.e("finished", "empty, " + kind + ", " + errorCount);
-            return;
-        }
-
-        if (isDetached() || getView() == null) {
+            drawChart(values, labels);
             return;
         }
 
@@ -142,9 +151,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
                 return tp1.getVolume24h() > tp2.getVolume24h() ? -1 : 1;
             }
         });
-
-        ArrayList<Double> values = new ArrayList<>();
-        ArrayList<String> labels = new ArrayList<>();
 
         for (int i = 0; i < pairs.size(); i++) {
             TopPair pair = pairs.get(i);
@@ -161,6 +167,11 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
     @Override
     public void finished(CoinSnapshot snapshot) {
+        if (isDetached() || getView() == null) {
+            taskStarted = false;
+            return;
+        }
+
         ArrayList<SnapshotCoin> coins = snapshot.getSnapshotCoins();
         if (coins == null) {
             Log.e("finished", "null(retry), " + kind + ", " + errorCount);
@@ -170,12 +181,20 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             return;
         }
 
-        if (coins.isEmpty()) {
-            Log.e("finished", "empty, " + kind + ", " + errorCount);
-            return;
+        Iterator<SnapshotCoin> iterator = coins.iterator();
+        while (iterator.hasNext()) {
+            SnapshotCoin coin = iterator.next();
+            if (coin.getVolume24Hour() <= 0.0) {
+                iterator.remove();
+            }
         }
 
-        if (isDetached() || getView() == null) {
+        ArrayList<Double> values = new ArrayList<>();
+        ArrayList<String> labels = new ArrayList<>();
+
+        if (coins.isEmpty()) {
+            Log.e("finished", "empty, " + kind + ", " + errorCount);
+            drawChart(values, labels);
             return;
         }
 
@@ -184,9 +203,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
                 return c1.getVolume24Hour() > c2.getVolume24Hour() ? -1 : 1;
             }
         });
-
-        ArrayList<Double> values = new ArrayList<>();
-        ArrayList<String> labels = new ArrayList<>();
 
         for (int i = 0; i < coins.size(); i++) {
             SnapshotCoin coin = coins.get(i);
@@ -202,11 +218,20 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     }
 
     private void drawChart(ArrayList<Double> values, ArrayList<String> labels) {
+        if (values.isEmpty()) {
+            getView().findViewById(R.id.pie_chart).setVisibility(View.GONE);
+            Spanned text = Html.fromHtml(getString(R.string.exchange_warn, fromSymbol, toSymbol));
+            ((TextView) getView().findViewById(R.id.warn_text)).setText(text);
+            getView().findViewById(R.id.warn).setVisibility(View.VISIBLE);
+            return;
+        }
+
         chart = new CoinPieChart((PieChart) getView().findViewById(R.id.pie_chart));
         chart.initialize();
+
         if (kind == CoinPieChartFragment.Kind.currency) {
             chart.setCurrencyCenterText(getActivity(), fromSymbol);
-        }else {
+        } else {
             chart.setExchangeCenterText(getActivity(), fromSymbol, toSymbol);
         }
         chart.setData(values, labels);

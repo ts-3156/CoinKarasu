@@ -118,15 +118,16 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
 
     @Override
     public void finished(ArrayList<History> records) {
+        if (isDetached() || getView() == null) {
+            taskStarted = false;
+            return;
+        }
+
         if (records.isEmpty()) {
             Log.e("finished", "empty, " + kind + ", " + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
-            return;
-        }
-
-        if (isDetached() || getView() == null) {
             return;
         }
 
