@@ -14,8 +14,11 @@ import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.format.PriceViewFormat;
-import com.example.coinkarasu.format.TrendViewFormat;
+import com.example.coinkarasu.format.PriceAnimator;
+import com.example.coinkarasu.format.PriceFormat;
+import com.example.coinkarasu.format.TrendAnimator;
+import com.example.coinkarasu.format.TrendColorFormat;
+import com.example.coinkarasu.format.TrendValueFormat;
 import com.example.coinkarasu.utils.IconHelper;
 import com.example.coinkarasu.utils.PrefHelper;
 import com.example.coinkarasu.utils.VolleyHelper;
@@ -187,8 +190,26 @@ public class ListViewAdapter extends BaseAdapter {
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());
 
-            new PriceViewFormat(coin, (isAnimEnabled && !isScrolled)).format(holder.price);
-            new TrendViewFormat(coin, (isAnimEnabled && !isScrolled)).format(holder.trend);
+            holder.price.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+            holder.trend.setText(new TrendValueFormat().format(coin.getTrend()));
+            holder.trend.setTextColor(new TrendColorFormat().format(coin.getTrend()));
+
+            if (holder.priceAnimator != null) {
+                holder.priceAnimator.cancel();
+                holder.priceAnimator = null;
+            }
+            if (holder.trendAnimator != null) {
+                holder.trendAnimator.cancel();
+                holder.trendAnimator = null;
+            }
+
+            if (isAnimEnabled && !isScrolled) {
+                holder.priceAnimator = new PriceAnimator(coin, holder.price);
+                holder.priceAnimator.start();
+
+                holder.trendAnimator = new TrendAnimator(coin, holder.trend);
+                holder.trendAnimator.start();
+            }
 
             holder.trend_icon.setImageResource(IconHelper.getTrendIconResId(coin));
         } else if (rowType == TYPE_HEADER) {
@@ -214,5 +235,8 @@ public class ListViewAdapter extends BaseAdapter {
         TextView header;
         View divider;
         View progressbar;
+
+        PriceAnimator priceAnimator = null;
+        TrendAnimator trendAnimator = null;
     }
 }

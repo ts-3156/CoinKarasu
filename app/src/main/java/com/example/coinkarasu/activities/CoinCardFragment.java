@@ -12,11 +12,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.coinkarasu.R;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
-import com.example.coinkarasu.R;
-import com.example.coinkarasu.format.PriceViewFormat;
-import com.example.coinkarasu.format.TrendViewFormat;
+import com.example.coinkarasu.format.PriceFormat;
+import com.example.coinkarasu.format.TrendColorFormat;
+import com.example.coinkarasu.format.TrendValueFormat;
 import com.example.coinkarasu.utils.IconHelper;
 
 import org.json.JSONException;
@@ -61,8 +62,13 @@ public class CoinCardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_card, container, false);
 
-        new PriceViewFormat(coin).format((TextView) view.findViewById(R.id.price));
-        new TrendViewFormat(coin).format((TextView) view.findViewById(R.id.trend));
+        ((TextView) view.findViewById(R.id.price)).setText(
+                new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+
+        TextView trendView = view.findViewById(R.id.trend);
+        trendView.setText(new TrendValueFormat().format(coin.getTrend()));
+        trendView.setTextColor(new TrendColorFormat().format(coin.getTrend()));
+
         ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(IconHelper.getTrendIconResId(coin));
 
         view.findViewById(R.id.popup_menu).setOnClickListener(new View.OnClickListener() {

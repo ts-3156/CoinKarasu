@@ -16,8 +16,9 @@ import android.widget.TextView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.ViewPagerAdapter;
 import com.example.coinkarasu.cryptocompare.data.History;
-import com.example.coinkarasu.format.PriceTabFormat;
-import com.example.coinkarasu.format.TrendViewFormat;
+import com.example.coinkarasu.format.PriceFormat;
+import com.example.coinkarasu.format.TrendColorFormat;
+import com.example.coinkarasu.format.TrendValueFormat;
 import com.example.coinkarasu.utils.IconHelper;
 
 import java.util.ArrayList;
@@ -133,13 +134,15 @@ public class CoinLineChartFragment extends Fragment implements
         double prevPrice = records.get(0).getClose();
         double priceDiff = curPrice - prevPrice;
 
-        String priceString = new PriceTabFormat(records.get(0).getToSymbol()).format(priceDiff);
+        String priceString = new PriceFormat(records.get(0).getToSymbol()).format(priceDiff);
         ((TextView) view.findViewById(R.id.tab_price)).setText(priceString);
 
         boolean isSelected = this.tab != null && this.tab.getPosition() == position;
+
         double trend = priceDiff / prevPrice;
-        new TrendViewFormat(String.valueOf(trend))
-                .format((TextView) view.findViewById(R.id.tab_trend), !isSelected);
+        TextView trendView = view.findViewById(R.id.tab_trend);
+        trendView.setText(new TrendValueFormat().format(trend));
+        trendView.setTextColor(new TrendColorFormat().format(trend));
 
         ImageView icon = view.findViewById(R.id.tab_trend_icon);
         if (isSelected) {

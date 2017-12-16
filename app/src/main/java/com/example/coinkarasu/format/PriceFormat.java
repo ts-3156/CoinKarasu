@@ -6,18 +6,24 @@ import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 
-public class PriceTabFormat {
+public class PriceFormat {
     private String toSymbol;
+    private Currency currency;
+    private NumberFormat formatter;
 
-    public PriceTabFormat(String toSymbol) {
+    public PriceFormat(String toSymbol) {
         this.toSymbol = toSymbol;
+
+        Locale locale = symbolToLocale(toSymbol);
+        this.currency = Currency.getInstance(Currency.getInstance(locale).getCurrencyCode());
+        this.formatter = NumberFormat.getCurrencyInstance(locale);
+    }
+
+    public String format(String price) {
+        return format(Double.valueOf(price));
     }
 
     public String format(double price) {
-        Locale locale = symbolToLocale(toSymbol);
-        Currency currency = Currency.getInstance(Currency.getInstance(locale).getCurrencyCode());
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(locale);
-
         if (Math.abs(price) >= 1000) {
             formatter.setMaximumFractionDigits(0);
         } else {

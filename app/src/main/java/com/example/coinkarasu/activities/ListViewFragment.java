@@ -23,7 +23,7 @@ import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.SectionHeaderCoinImpl;
 import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.data.Prices;
-import com.example.coinkarasu.format.PriceViewFormat;
+import com.example.coinkarasu.format.ValueAnimatorBase;
 import com.example.coinkarasu.tasks.GetPricesTask;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
 import com.example.coinkarasu.utils.ExchangeImpl;
@@ -228,7 +228,7 @@ public class ListViewFragment extends Fragment
             public void run() {
                 setProgressbarVisibility(false, exchange);
             }
-        }, PriceViewFormat.DURATION);
+        }, ValueAnimatorBase.DURATION);
     }
 
     public void setProgressbarVisibility(boolean flag, String exchange) {

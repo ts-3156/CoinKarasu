@@ -27,8 +27,9 @@ import com.example.coinkarasu.coins.SnapshotCoin;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.History;
-import com.example.coinkarasu.format.PriceTabFormat;
-import com.example.coinkarasu.format.TrendViewFormat;
+import com.example.coinkarasu.format.PriceFormat;
+import com.example.coinkarasu.format.TrendColorFormat;
+import com.example.coinkarasu.format.TrendValueFormat;
 import com.example.coinkarasu.tasks.GetCoinSnapshotTask;
 import com.example.coinkarasu.utils.IconHelper;
 
@@ -162,7 +163,7 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
 
         ((TextView) view.findViewById(R.id.tab_label)).setText(coin.getMarket());
 
-        String priceString = new PriceTabFormat(coin.getToSymbol()).format(coin.getPrice());
+        String priceString = new PriceFormat(coin.getToSymbol()).format(coin.getPrice());
         ((TextView) view.findViewById(R.id.tab_price)).setText(priceString);
 
         ((TextView) view.findViewById(R.id.tab_trend)).setText("0.00%");
@@ -179,13 +180,15 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
         double prevPrice = records.get(0).getClose();
         double priceDiff = curPrice - prevPrice;
 
-//        String priceString = new PriceTabFormat(records.get(0).getToSymbol()).format(priceDiff);
+//        String priceString = new PriceFormat(records.get(0).getToSymbol()).format(priceDiff);
 //        ((TextView) view.findViewById(R.id.tab_price)).setText(priceString);
 
         boolean isSelected = this.tab != null && this.tab.getPosition() == position;
+
         double trend = priceDiff / prevPrice;
-        new TrendViewFormat(String.valueOf(trend))
-                .format((TextView) view.findViewById(R.id.tab_trend), !isSelected);
+        TextView trendView = view.findViewById(R.id.tab_trend);
+        trendView.setText(new TrendValueFormat().format(trend));
+        trendView.setTextColor(new TrendColorFormat().format(trend));
 
         ImageView icon = view.findViewById(R.id.tab_trend_icon);
         if (isSelected) {
