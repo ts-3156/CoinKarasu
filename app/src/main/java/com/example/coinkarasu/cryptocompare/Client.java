@@ -4,12 +4,15 @@ import com.example.coinkarasu.coins.PriceMultiFullCoin;
 import com.example.coinkarasu.cryptocompare.data.CoinList;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.History;
+import com.example.coinkarasu.cryptocompare.data.Price;
 import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.cryptocompare.data.TopPairs;
 
 import java.util.ArrayList;
 
 public interface Client {
+    Price getPrice(String fromSymbol, String toSymbol, String exchange);
+
     Prices getPrices(String[] fromSymbols, String toSymbol);
 
     Prices getPrices(String[] fromSymbols, String toSymbol, String exchange);

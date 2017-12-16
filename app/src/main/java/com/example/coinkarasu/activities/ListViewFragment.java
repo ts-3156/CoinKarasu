@@ -151,11 +151,12 @@ public class ListViewFragment extends Fragment
         adapter.setDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
         adapter.setToSymbol(getToSymbol(kind));
 
-        for (String exchange : kind.exchanges) {
+        for (String exchangeStr : kind.exchanges) {
+            Exchange exchange = Exchange.valueOf(exchangeStr);
             new GetPricesTask(client)
-                    .setFromSymbols(getFromSymbolsByExchange(exchange))
+                    .setFromSymbols(getFromSymbols(exchange))
                     .setToSymbol(getToSymbol(kind))
-                    .setExchange(exchange)
+                    .setExchange(exchangeStr)
                     .setListener(this)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
@@ -192,7 +193,7 @@ public class ListViewFragment extends Fragment
         if (suffix == null) {
             return null;
         }
-        return kind.name() + "-" + getToSymbol(kind);
+        return kind.name() + "-" + suffix;
     }
 
     @Override
@@ -202,12 +203,13 @@ public class ListViewFragment extends Fragment
 
     @Override
     public void finished(Prices prices) {
-        String tag = getTimerTag(kind);
-        if (autoUpdateTimer == null || tag == null || !autoUpdateTimer.getTag().equals(tag)) {
+        if (isDetached() || getActivity() == null) {
+            stopAutoUpdate();
             return;
         }
 
-        if (isDetached() || getView() == null) {
+        String tag = getTimerTag(kind);
+        if (autoUpdateTimer == null || tag == null || !autoUpdateTimer.getTag().equals(tag)) {
             return;
         }
 
@@ -298,13 +300,13 @@ public class ListViewFragment extends Fragment
         return getResources().getStringArray(kind.symbolsResId);
     }
 
-    private String[] getFromSymbolsByExchange(String exchange) {
+    private String[] getFromSymbols(Exchange exchange) {
         String[] symbols;
 
-        if (Exchange.contains(exchange)) {
-            symbols = getResources().getStringArray(Exchange.valueOf(exchange).symbolsResId);
-        } else {
+        if (exchange == Exchange.cccagg) {
             symbols = getFromSymbols(kind);
+        } else {
+            symbols = getResources().getStringArray(exchange.symbolsResId);
         }
 
         return symbols;

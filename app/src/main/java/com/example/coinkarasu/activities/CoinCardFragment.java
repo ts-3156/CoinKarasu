@@ -1,6 +1,7 @@
 package com.example.coinkarasu.activities;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.PopupMenu;
@@ -15,21 +16,32 @@ import android.widget.TextView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
-import com.example.coinkarasu.format.PriceFormat;
+import com.example.coinkarasu.coins.PriceMultiFullCoin;
+import com.example.coinkarasu.cryptocompare.ClientImpl;
+import com.example.coinkarasu.cryptocompare.data.Price;
+import com.example.coinkarasu.format.PriceAnimator;
+import com.example.coinkarasu.format.TrendAnimator;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
-import com.example.coinkarasu.format.TrendValueFormat;
+import com.example.coinkarasu.tasks.GetPriceTask;
+import com.example.coinkarasu.utils.AutoUpdateTimer;
+import com.example.coinkarasu.utils.PrefHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.TimerTask;
 
-public class CoinCardFragment extends Fragment {
+
+public class CoinCardFragment extends Fragment implements GetPriceTask.Listener {
 
     private OnFragmentInteractionListener listener;
 
     private String kind;
     private Coin coin;
+
+    private int errorCount = 0;
+    private AutoUpdateTimer autoUpdateTimer;
 
     public CoinCardFragment() {
     }
@@ -62,15 +74,6 @@ public class CoinCardFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_card, container, false);
 
-        ((TextView) view.findViewById(R.id.price)).setText(
-                new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
-
-        double trend = coin.getTrend();
-        TextView trendView = view.findViewById(R.id.trend);
-        trendView.setText(new TrendValueFormat().format(trend));
-        trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(trend)));
-        ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(new TrendIconFormat().format(trend));
-
         view.findViewById(R.id.popup_menu).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,7 +91,124 @@ public class CoinCardFragment extends Fragment {
             }
         });
 
+        updatePrice(view, coin);
+        startAutoUpdate(0, true);
+
         return view;
+    }
+
+    public void updateView() {
+        if (isDetached() || getView() == null) {
+            return;
+        }
+
+        if (autoUpdateTimer != null) {
+            return;
+        }
+
+        startAutoUpdate(0, true);
+    }
+
+    private void startTask() {
+        new GetPriceTask(new ClientImpl(getActivity()))
+                .setFromSymbol(coin.getSymbol())
+                .setToSymbol(coin.getToSymbol())
+                .setExchange("cccagg")
+                .setListener(this)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void startAutoUpdate(int delay, boolean isRepeated) {
+        if (autoUpdateTimer != null) {
+            stopAutoUpdate();
+        }
+
+        autoUpdateTimer = new AutoUpdateTimer(getTimerTag(kind));
+
+        if (isRepeated) {
+            autoUpdateTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    startTask();
+                }
+            }, delay, 10000);
+        } else {
+            startTask();
+        }
+    }
+
+    public void stopAutoUpdate() {
+        if (autoUpdateTimer != null) {
+            autoUpdateTimer.cancel();
+            autoUpdateTimer = null;
+        }
+    }
+
+    private String getTimerTag(String kind) {
+        String suffix = getToSymbol();
+        if (suffix == null) {
+            return null;
+        }
+        return kind + "-" + suffix;
+    }
+
+    @Override
+    public void finished(Price price) {
+        if (isDetached() || getActivity() == null) {
+            stopAutoUpdate();
+            return;
+        }
+
+        String tag = getTimerTag(kind);
+        if (autoUpdateTimer == null || tag == null || !autoUpdateTimer.getTag().equals(tag)) {
+            return;
+        }
+
+        PriceMultiFullCoin coin = price.getCoin();
+
+        this.coin.setPrice(coin.getPrice());
+        this.coin.setTrend(coin.getChangePct24Hour() / 100.0);
+        updatePrice(getView(), this.coin);
+
+        Log.d("UPDATED", kind);
+    }
+
+    private void updatePrice(View view, Coin coin) {
+        new PriceAnimator(coin, (TextView) view.findViewById(R.id.price)).start();
+
+        TextView trendView = view.findViewById(R.id.trend);
+        new TrendAnimator(coin, trendView).start();
+        trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(coin.getTrend())));
+        ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(new TrendIconFormat().format(coin.getTrend()));
+    }
+
+    private String getToSymbol() {
+        if (getActivity() == null) {
+            return null;
+        }
+
+        return PrefHelper.getToSymbol(getActivity());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (autoUpdateTimer == null) {
+            startAutoUpdate(0, true);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopAutoUpdate();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        stopAutoUpdate();
     }
 
     @Override

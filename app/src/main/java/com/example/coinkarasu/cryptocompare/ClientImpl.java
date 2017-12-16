@@ -9,6 +9,8 @@ import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshotImpl;
 import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.cryptocompare.data.HistoryImpl;
+import com.example.coinkarasu.cryptocompare.data.Price;
+import com.example.coinkarasu.cryptocompare.data.PriceImpl;
 import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.cryptocompare.data.TopPairs;
@@ -56,14 +58,26 @@ public class ClientImpl implements Client {
     }
 
     @Override
+    public Price getPrice(String fromSymbol, String toSymbol, String exchange) {
+        String url = "https://min-api.cryptocompare.com/data/pricemultifull?"
+                + "&fsyms=" + fromSymbol
+                + "&tsyms=" + toSymbol
+                + "&e=" + exchange;
+        Log.d("URL", url);
+
+        JSONObject response = new BlockingRequest(activity, url).perform();
+        return new PriceImpl(new PricesResponseImpl(response), exchange);
+    }
+
+    @Override
     public Prices getPrices(String[] fromSymbols, String toSymbol) {
         return getPrices(fromSymbols, toSymbol, "cccagg");
     }
 
     @Override
     public Prices getPrices(String[] fromSymbols, String toSymbol, String exchange) {
-        String url = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms="
-                + StringHelper.join(",", fromSymbols)
+        String url = "https://min-api.cryptocompare.com/data/pricemultifull?"
+                + "&fsyms=" + StringHelper.join(",", fromSymbols)
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
         Log.d("URL", url);
