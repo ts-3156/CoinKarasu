@@ -1,6 +1,6 @@
 package com.example.coinkarasu.cryptocompare.data;
 
-import com.example.coinkarasu.coins.AggregatedData;
+import com.example.coinkarasu.coins.AggregatedSnapshotCoin;
 import com.example.coinkarasu.coins.SnapshotCoin;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public interface CoinSnapshot {
 
     double getBlockReward();
 
-    AggregatedData getAggregatedData();
+    AggregatedSnapshotCoin getAggregatedSnapshotCoin();
 
     ArrayList<SnapshotCoin> getSnapshotCoins();
 

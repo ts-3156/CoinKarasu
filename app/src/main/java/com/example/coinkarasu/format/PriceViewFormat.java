@@ -5,7 +5,6 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.coins.AggregatedData;
 
 import java.text.NumberFormat;
 import java.util.Currency;

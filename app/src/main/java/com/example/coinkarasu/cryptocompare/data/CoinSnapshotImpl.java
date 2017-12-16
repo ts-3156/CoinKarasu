@@ -2,11 +2,11 @@ package com.example.coinkarasu.cryptocompare.data;
 
 import android.util.Log;
 
-import com.example.coinkarasu.coins.AggregatedDataImpl;
+import com.example.coinkarasu.coins.AggregatedSnapshotCoin;
+import com.example.coinkarasu.coins.AggregatedSnapshotCoinImpl;
 import com.example.coinkarasu.coins.SnapshotCoin;
 import com.example.coinkarasu.coins.SnapshotCoinImpl;
 import com.example.coinkarasu.cryptocompare.response.CoinSnapshotResponse;
-import com.example.coinkarasu.coins.AggregatedData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,7 +21,7 @@ public class CoinSnapshotImpl implements CoinSnapshot {
     private double netHashesPerSecond;
     private double totalCoinsMined;
     private double blockReward;
-    private AggregatedData aggregatedData;
+    private AggregatedSnapshotCoin aggregatedSnapshotCoin;
     private ArrayList<SnapshotCoin> snapshotCoins;
 
     public CoinSnapshotImpl(CoinSnapshotResponse response) {
@@ -51,7 +51,7 @@ public class CoinSnapshotImpl implements CoinSnapshot {
                 blockReward = data.getDouble("BlockReward");
 
             if (data.has("AggregatedData"))
-                aggregatedData = new AggregatedDataImpl(data.getJSONObject("AggregatedData"));
+                aggregatedSnapshotCoin = new AggregatedSnapshotCoinImpl(data.getJSONObject("AggregatedData"));
 
             if (data.has("Exchanges")) {
                 JSONArray exchanges = data.getJSONArray("Exchanges");
@@ -93,8 +93,8 @@ public class CoinSnapshotImpl implements CoinSnapshot {
     }
 
     @Override
-    public AggregatedData getAggregatedData() {
-        return aggregatedData;
+    public AggregatedSnapshotCoin getAggregatedSnapshotCoin() {
+        return aggregatedSnapshotCoin;
     }
 
     @Override

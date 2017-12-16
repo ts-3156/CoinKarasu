@@ -18,7 +18,6 @@ import com.example.coinkarasu.coins.SnapshotCoin;
 import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
-import com.example.coinkarasu.cryptocompare.data.Exchange;
 import com.example.coinkarasu.cryptocompare.data.TopPair;
 import com.example.coinkarasu.cryptocompare.data.TopPairs;
 import com.example.coinkarasu.tasks.GetCoinSnapshotTask;
