@@ -350,6 +350,9 @@ public class ListViewFragment extends Fragment
     public void onDetach() {
         super.onDetach();
         listener = null;
+        autoUpdateTimer = null;
+        client = null;
+        kind = null;
     }
 
     @Override

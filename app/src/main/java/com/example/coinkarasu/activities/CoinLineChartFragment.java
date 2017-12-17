@@ -197,6 +197,11 @@ public class CoinLineChartFragment extends Fragment implements
     public void onDetach() {
         super.onDetach();
         listener = null;
+        fromSymbol = null;
+        toSymbol = null;
+        pager = null;
+        tabs = null;
+        tab = null;
     }
 
     @Override

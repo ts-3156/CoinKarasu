@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.coinkarasu.adapters.ViewPagerAdapter;
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.adapters.ViewPagerAdapter;
 
 
 public class CoinPieChartFragment extends Fragment implements
@@ -124,6 +124,11 @@ public class CoinPieChartFragment extends Fragment implements
     public void onDetach() {
         super.onDetach();
         listener = null;
+        pager = null;
+        tabs = null;
+        tab = null;
+        fromSymbol = null;
+        toSymbol = null;
     }
 
     @Override

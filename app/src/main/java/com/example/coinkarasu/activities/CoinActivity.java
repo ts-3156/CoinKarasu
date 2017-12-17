@@ -3,6 +3,7 @@ package com.example.coinkarasu.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -64,7 +65,7 @@ public class CoinActivity extends AppCompatActivity implements
         String toSymbol = PrefHelper.getToSymbol(this);
         updateToolbarTitle(toSymbol);
 
-        Fragment card = CoinCardFragment.newInstance("overview", coin.toJson().toString());
+        Fragment card = CoinCardFragment.newInstance(coin);
         Fragment lineChart = CoinLineChartFragment.newInstance(coin.getSymbol(), toSymbol);
         Fragment exchange = CoinExchangeFragment.newInstance("overview", coin.toJson().toString());
         Fragment pieChart = CoinPieChartFragment.newInstance(coin.getSymbol(), toSymbol);

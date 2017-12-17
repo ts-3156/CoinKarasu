@@ -280,6 +280,10 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     public void onDetach() {
         super.onDetach();
         listener = null;
+        kind = null;
+        fromSymbol = null;
+        toSymbol = null;
+        chart = null;
     }
 
     public interface OnFragmentInteractionListener {

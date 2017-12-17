@@ -156,6 +156,13 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     public void onDetach() {
         super.onDetach();
         listener = null;
+        coin = null;
+        kind = null;
+        fromSymbol = null;
+        toSymbol = null;
+        exchange = null;
+        chart = null;
+        records = null;
     }
 
     public interface OnFragmentInteractionListener {

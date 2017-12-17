@@ -9,10 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.chart.CoinLineChart;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
+import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.tasks.GetHistoryTaskBase;
 import com.github.mikephil.charting.charts.LineChart;
 
@@ -125,6 +125,10 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     public void onDetach() {
         super.onDetach();
         listener = null;
+        kind = null;
+        fromSymbol = null;
+        toSymbol = null;
+        chart = null;
     }
 
     public interface OnFragmentInteractionListener {

@@ -31,7 +31,8 @@ public class PriceImpl implements Price {
 
             coin = new PriceMultiFullCoinImpl(attrs);
         } catch (JSONException e) {
-            Log.e("add", e.getMessage());
+            Log.e("PriceImpl", e.getMessage());
+            Log.e("PriceImpl", response.toString());
         }
     }
 

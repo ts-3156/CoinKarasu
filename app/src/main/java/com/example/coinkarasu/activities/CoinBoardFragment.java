@@ -13,8 +13,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.coinkarasu.bitflyer.data.Board;
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.bitflyer.data.Board;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.DecimalFormat;
@@ -199,6 +199,8 @@ public class CoinBoardFragment extends Fragment implements View.OnClickListener 
     public void onDetach() {
         super.onDetach();
         listener = null;
+        btn = null;
+        kind = null;
     }
 
     @Override

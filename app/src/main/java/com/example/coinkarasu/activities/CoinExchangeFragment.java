@@ -297,6 +297,11 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
     public void onDetach() {
         super.onDetach();
         listener = null;
+        kind = null;
+        coin = null;
+        pager = null;
+        tabs = null;
+        tab = null;
     }
 
     @Override

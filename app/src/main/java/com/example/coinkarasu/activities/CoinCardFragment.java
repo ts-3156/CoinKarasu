@@ -31,6 +31,7 @@ import com.example.coinkarasu.utils.PrefHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
 import java.util.TimerTask;
 
 
@@ -40,18 +41,15 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
 
     private String kind;
     private Coin coin;
-
-    private int errorCount = 0;
     private AutoUpdateTimer autoUpdateTimer;
 
     public CoinCardFragment() {
     }
 
-    public static CoinCardFragment newInstance(String kind, String coinJson) {
+    public static CoinCardFragment newInstance(Coin coin) {
         CoinCardFragment fragment = new CoinCardFragment();
         Bundle args = new Bundle();
-        args.putString("kind", kind);
-        args.putString("coinJson", coinJson);
+        args.putString("coinJson", coin.toJson().toString());
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,13 +58,12 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = getArguments().getString("kind");
             String coinJson = getArguments().getString("coinJson");
 
             try {
                 coin = CoinImpl.buildByJSONObject(new JSONObject(coinJson));
             } catch (JSONException e) {
-                Log.d("onCreate", e.getMessage());
+                Log.e("onCreate", e.getMessage());
             }
         }
     }
@@ -79,8 +76,9 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         ((TextView) view.findViewById(R.id.caption_left)).setTypeface(typeFace);
         ((TextView) view.findViewById(R.id.caption_right)).setTypeface(typeFace);
 
+        kind = "coin_card";
         updatePrice(view, coin);
-        startAutoUpdate(0, true);
+        startAutoUpdate(true);
 
         return view;
     }
@@ -94,24 +92,38 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
             return;
         }
 
-        startAutoUpdate(0, true);
+        startAutoUpdate(true);
     }
 
     private void startTask() {
+        if (getActivity() == null) {
+            return;
+        }
+
+        String toSymbol = getToSymbol();
+        if (toSymbol == null) {
+            return;
+        }
+        coin.setToSymbol(toSymbol);
+
         new GetPriceTask(new ClientImpl(getActivity()))
                 .setFromSymbol(coin.getSymbol())
-                .setToSymbol(coin.getToSymbol())
+                .setToSymbol(toSymbol)
                 .setExchange("cccagg")
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void startAutoUpdate(int delay, boolean isRepeated) {
+    private void startAutoUpdate(boolean isRepeated) {
         if (autoUpdateTimer != null) {
             stopAutoUpdate();
         }
 
-        autoUpdateTimer = new AutoUpdateTimer(getTimerTag(kind));
+        String tag = getTimerTag(kind);
+        if (tag == null) {
+            return;
+        }
+        autoUpdateTimer = new AutoUpdateTimer(tag);
 
         if (isRepeated) {
             autoUpdateTimer.schedule(new TimerTask() {
@@ -119,7 +131,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
                 public void run() {
                     startTask();
                 }
-            }, delay, 10000);
+            }, 0, 10000);
         } else {
             startTask();
         }
@@ -154,20 +166,30 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
 
         String tag = getTimerTag(kind);
         if (autoUpdateTimer == null || tag == null || !autoUpdateTimer.getTag().equals(tag)) {
+            stopAutoUpdate();
             return;
         }
 
         PriceMultiFullCoin coin = price.getCoin();
+        if (coin == null) {
+            stopAutoUpdate();
+            hideProgressbarDelayed();
+            return;
+        }
 
         this.coin.setPrice(coin.getPrice());
         this.coin.setTrend(coin.getChangePct24Hour() / 100.0);
         updatePrice(getView(), this.coin);
         hideProgressbarDelayed();
 
-        Log.d("UPDATED", kind);
+        Log.d("UPDATED", kind + ", " + new Date().toString());
     }
 
     private void updatePrice(View view, Coin coin) {
+        if (view == null) {
+            return;
+        }
+
         new PriceAnimator(coin, (TextView) view.findViewById(R.id.price)).start();
 
         TextView trendView = view.findViewById(R.id.trend);
@@ -207,7 +229,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         super.onResume();
 
         if (autoUpdateTimer == null) {
-            startAutoUpdate(0, true);
+            startAutoUpdate(true);
         }
     }
 
@@ -233,6 +255,9 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     public void onDetach() {
         super.onDetach();
         listener = null;
+        kind = null;
+        coin = null;
+        autoUpdateTimer = null;
     }
 
     public interface OnFragmentInteractionListener {
