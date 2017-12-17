@@ -87,25 +87,27 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     }
 
     private void startTask() {
-        if (taskStarted || errorCount >= 3) {
+        if (taskStarted || errorCount >= 3 || getActivity() == null) {
             return;
         }
         taskStarted = true;
         Client client = new ClientImpl(getActivity());
 
         if (kind == CoinPieChartFragment.Kind.currency) {
-            new GetTopPairsTask(client).setFromSymbol(fromSymbol)
+            new GetTopPairsTask(client)
+                    .setFromSymbol(fromSymbol)
                     .setListener(this)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else if (kind == CoinPieChartFragment.Kind.exchange) {
-            new GetCoinSnapshotTask(client).setFromSymbol(fromSymbol)
+            new GetCoinSnapshotTask(client)
+                    .setFromSymbol(fromSymbol)
                     .setToSymbol(toSymbol)
                     .setListener(this)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
-    public void updateView(boolean isScroll) {
+    public void updateView() {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -124,6 +126,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     public void finished(TopPairs topPairs) {
         if (isDetached() || getView() == null) {
             taskStarted = false;
+            errorCount++;
             return;
         }
 
@@ -168,6 +171,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     public void finished(CoinSnapshot snapshot) {
         if (isDetached() || getView() == null) {
             taskStarted = false;
+            errorCount++;
             return;
         }
 

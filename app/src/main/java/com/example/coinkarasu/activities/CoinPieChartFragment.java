@@ -149,7 +149,7 @@ public class CoinPieChartFragment extends Fragment implements
                 CoinPieChartTabContentFragment fragment = (CoinPieChartTabContentFragment) adapter.getItem(position);
 
                 setSelected(position);
-                fragment.updateView(true);
+                fragment.updateView();
             }
         }
     }

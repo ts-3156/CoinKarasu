@@ -122,7 +122,7 @@ public class ListViewFragment extends Fragment
         listView.setOnScrollListener(this);
         ViewCompat.setNestedScrollingEnabled(listView, true); // <= 21 http://starzero.hatenablog.com/entry/2015/09/30/114136
 
-        startAutoUpdate(0, MainActivity.DEFAULT_KIND == MainActivity.NavigationKind.valueOf(kind.name()));
+        startAutoUpdate(MainActivity.DEFAULT_KIND == MainActivity.NavigationKind.valueOf(kind.name()));
 
         return view;
     }
@@ -136,7 +136,7 @@ public class ListViewFragment extends Fragment
             return;
         }
 
-        startAutoUpdate(0, true);
+        startAutoUpdate(true);
     }
 
     private void startTask() {
@@ -162,12 +162,16 @@ public class ListViewFragment extends Fragment
         }
     }
 
-    private void startAutoUpdate(int delay, boolean isRepeated) {
+    private void startAutoUpdate(boolean isRepeated) {
         if (autoUpdateTimer != null) {
             stopAutoUpdate();
         }
 
-        autoUpdateTimer = new AutoUpdateTimer(getTimerTag(kind));
+        String tag = getTimerTag(kind);
+        if (tag == null) {
+            return;
+        }
+        autoUpdateTimer = new AutoUpdateTimer(tag);
 
         if (isRepeated) {
             autoUpdateTimer.schedule(new TimerTask() {
@@ -175,7 +179,7 @@ public class ListViewFragment extends Fragment
                 public void run() {
                     startTask();
                 }
-            }, delay, PrefHelper.getSyncInterval(getActivity()));
+            }, 0, PrefHelper.getSyncInterval(getActivity()));
         } else {
             startTask();
         }
@@ -324,7 +328,7 @@ public class ListViewFragment extends Fragment
         super.onResume();
 
         if (autoUpdateTimer == null) {
-            startAutoUpdate(0, isVisibleToUser);
+            startAutoUpdate(isVisibleToUser);
         }
     }
 

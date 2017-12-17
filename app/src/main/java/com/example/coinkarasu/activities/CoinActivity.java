@@ -67,6 +67,7 @@ public class CoinActivity extends AppCompatActivity implements
 
     private void updateView() {
         String toSymbol = PrefHelper.getToSymbol(this);
+        coin.setToSymbol(toSymbol);
         updateToolbarTitle(toSymbol);
 
         Fragment card = CoinCardFragment.newInstance(coin);

@@ -42,7 +42,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 
 
-public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTask.Listener, ViewPager.OnPageChangeListener {
+public class CoinExchangeFragment extends Fragment implements
+        GetCoinSnapshotTask.Listener, ViewPager.OnPageChangeListener {
 
     private OnFragmentInteractionListener listener;
 
@@ -87,22 +88,22 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_exchange, container, false);
 
-        view.findViewById(R.id.popup_menu).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopupMenu popup = new PopupMenu(getContext(), view);
-                popup.inflate(R.menu.coin_card);
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId() == R.id.action_settings) {
-                        }
-                        return true;
-                    }
-                });
-                popup.show();
-            }
-        });
+//        view.findViewById(R.id.popup_menu).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                PopupMenu popup = new PopupMenu(getContext(), view);
+//                popup.inflate(R.menu.coin_card);
+//                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+//                    @Override
+//                    public boolean onMenuItemClick(MenuItem item) {
+//                        if (item.getItemId() == R.id.action_settings) {
+//                        }
+//                        return true;
+//                    }
+//                });
+//                popup.show();
+//            }
+//        });
 
         Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Light.ttf");
         ((TextView) view.findViewById(R.id.caption_left)).setTypeface(typeFace);
@@ -180,9 +181,6 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
         double prevPrice = records.get(0).getClose();
         double priceDiff = curPrice - prevPrice;
 
-//        String priceString = new PriceFormat(records.get(0).getToSymbol()).format(priceDiff);
-//        ((TextView) view.findViewById(R.id.tab_price)).setText(priceString);
-
         boolean isSelected = this.tab != null && this.tab.getPosition() == position;
 
         double trend = priceDiff / prevPrice;
@@ -231,7 +229,7 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
     }
 
     private void startTask() {
-        if (taskStarted || errorCount >= 3) {
+        if (taskStarted || errorCount >= 3 || getActivity() == null) {
             return;
         }
         taskStarted = true;
@@ -247,6 +245,7 @@ public class CoinExchangeFragment extends Fragment implements GetCoinSnapshotTas
     public void finished(CoinSnapshot snapshot) {
         if (isDetached() || getView() == null) {
             taskStarted = false;
+            errorCount++;
             return;
         }
 

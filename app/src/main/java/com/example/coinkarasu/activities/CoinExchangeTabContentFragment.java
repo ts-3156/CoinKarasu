@@ -83,7 +83,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     }
 
     private void startTask() {
-        if (taskStarted || errorCount >= 3) {
+        if (taskStarted || errorCount >= 3 || getActivity() == null) {
             return;
         }
         taskStarted = true;
@@ -102,7 +102,6 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
 
         if (taskStarted) {
             if (chart != null) {
-
                 // TODO After calling onPause, chart.animateX() does not show anything.
                 // chart.animateX();
                 chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart));
@@ -120,6 +119,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     public void finished(ArrayList<History> records) {
         if (isDetached() || getView() == null) {
             taskStarted = false;
+            errorCount++;
             return;
         }
 

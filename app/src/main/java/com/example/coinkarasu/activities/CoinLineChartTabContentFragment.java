@@ -61,7 +61,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     }
 
     private void startTask() {
-        if (taskStarted || errorCount >= 3) {
+        if (taskStarted || errorCount >= 3 || getActivity() == null) {
             return;
         }
         taskStarted = true;
@@ -73,7 +73,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void updateView(boolean isScroll) {
+    public void updateView() {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -99,6 +99,8 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
 
         if (isDetached() || getView() == null) {
+            taskStarted = false;
+            errorCount++;
             return;
         }
 

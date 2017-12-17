@@ -222,7 +222,7 @@ public class CoinLineChartFragment extends Fragment implements
                 CoinLineChartTabContentFragment fragment = (CoinLineChartTabContentFragment) adapter.getItem(position);
 
                 setSelected(position);
-                fragment.updateView(true);
+                fragment.updateView();
             }
         }
     }
