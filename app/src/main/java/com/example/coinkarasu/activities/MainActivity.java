@@ -171,8 +171,8 @@ public class MainActivity extends AppCompatActivity implements
     public void onResume() {
         super.onResume();
 
+        applyKeepScreenOn();
         if (navigationKind != null) {
-            applyKeepScreenOn();
             pageChanged(navigationKind.ordinal()); // Return from other Activity
         }
     }
@@ -310,6 +310,11 @@ public class MainActivity extends AppCompatActivity implements
                 PrefHelper.setToSymbol(this, Currency.JPY.name());
             } else {
                 PrefHelper.setToSymbol(this, Currency.USD.name());
+            }
+            if (pager != null && tab != null) {
+                ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
+                ListViewFragment fragment = (ListViewFragment) adapter.getItem(tab.getPosition());
+                fragment.toSymbolChanged();
             }
             pageChanged(navigationKind.ordinal());
 

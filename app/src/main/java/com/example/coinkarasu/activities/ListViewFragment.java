@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -34,8 +36,10 @@ import java.util.List;
 import java.util.TimerTask;
 
 
-public class ListViewFragment extends Fragment
-        implements AdapterView.OnItemClickListener, ListView.OnScrollListener, GetPricesTask.Listener {
+public class ListViewFragment extends Fragment implements
+        AdapterView.OnItemClickListener,
+        ListView.OnScrollListener,
+        GetPricesTask.Listener {
 
     private enum NavigationKind {
         nav_main(R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}),
@@ -395,6 +399,13 @@ public class ListViewFragment extends Fragment
     public void setUserVisibleHint(boolean isVisibleToUser) {
         // This method may be called outside of the fragment lifecycle.
         this.isVisibleToUser = isVisibleToUser;
+    }
+
+    public void toSymbolChanged() {
+        if (getActivity() != null && getView() != null) {
+            Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.enter);
+            getView().findViewById(R.id.list_view).startAnimation(anim);
+        }
     }
 
     public interface OnFragmentInteractionListener {

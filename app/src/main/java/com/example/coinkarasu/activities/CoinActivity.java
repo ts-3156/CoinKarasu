@@ -77,19 +77,10 @@ public class CoinActivity extends AppCompatActivity implements
         Fragment board = CoinBoardFragment.newInstance(boardKind);
 
         setEnterTransition(card);
-        setExitTransition(card);
-
         setEnterTransition(lineChart);
-        setExitTransition(lineChart);
-
         setEnterTransition(exchange);
-        setExitTransition(exchange);
-
         setEnterTransition(pieChart);
-        setExitTransition(pieChart);
-
         setEnterTransition(board);
-        setExitTransition(board);
 
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.card_overview, card, Tag.card.name())
@@ -104,12 +95,11 @@ public class CoinActivity extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Slide slideToRight = new Slide();
             slideToRight.setSlideEdge(Gravity.RIGHT);
-            Slide slideToLeft = new Slide();
-            slideToLeft.setSlideEdge(Gravity.LEFT);
 
             TransitionSet transition = new TransitionSet();
             transition.addTransition(new Fade());
             transition.addTransition(slideToRight);
+            transition.setDuration(700);
 
             fragment.setEnterTransition(transition);
         }
@@ -117,14 +107,13 @@ public class CoinActivity extends AppCompatActivity implements
 
     private void setExitTransition(Fragment fragment) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Slide slideToRight = new Slide();
-            slideToRight.setSlideEdge(Gravity.RIGHT);
             Slide slideToLeft = new Slide();
             slideToLeft.setSlideEdge(Gravity.LEFT);
 
             TransitionSet transition = new TransitionSet();
             transition.addTransition(new Fade());
             transition.addTransition(slideToLeft);
+            transition.setDuration(700);
 
             fragment.setExitTransition(transition);
         }
