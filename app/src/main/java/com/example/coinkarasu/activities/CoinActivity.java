@@ -1,20 +1,24 @@
 package com.example.coinkarasu.activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.TransitionSet;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.example.coinkarasu.R;
 import com.example.coinkarasu.bitflyer.data.Board;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.cryptocompare.Client;
-import com.example.coinkarasu.R;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.tasks.GetBoardTask;
 import com.example.coinkarasu.utils.PrefHelper;
@@ -71,6 +75,21 @@ public class CoinActivity extends AppCompatActivity implements
         Fragment pieChart = CoinPieChartFragment.newInstance(coin.getSymbol(), toSymbol);
         Fragment board = CoinBoardFragment.newInstance(boardKind);
 
+        setEnterTransition(card);
+        setExitTransition(card);
+
+        setEnterTransition(lineChart);
+        setExitTransition(lineChart);
+
+        setEnterTransition(exchange);
+        setExitTransition(exchange);
+
+        setEnterTransition(pieChart);
+        setExitTransition(pieChart);
+
+        setEnterTransition(board);
+        setExitTransition(board);
+
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.card_overview, card, Tag.card.name())
                 .replace(R.id.card_line_chart, lineChart, Tag.line.name())
@@ -78,6 +97,36 @@ public class CoinActivity extends AppCompatActivity implements
                 .replace(R.id.card_pie_chart, pieChart, Tag.pie.name())
                 .replace(R.id.card_board, board, Tag.board.name())
                 .commit();
+    }
+
+    private void setEnterTransition(Fragment fragment) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Slide slideToRight = new Slide();
+            slideToRight.setSlideEdge(Gravity.RIGHT);
+            Slide slideToLeft = new Slide();
+            slideToLeft.setSlideEdge(Gravity.LEFT);
+
+            TransitionSet transition = new TransitionSet();
+            transition.addTransition(new Fade());
+            transition.addTransition(slideToRight);
+
+            fragment.setEnterTransition(transition);
+        }
+    }
+
+    private void setExitTransition(Fragment fragment) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Slide slideToRight = new Slide();
+            slideToRight.setSlideEdge(Gravity.RIGHT);
+            Slide slideToLeft = new Slide();
+            slideToLeft.setSlideEdge(Gravity.LEFT);
+
+            TransitionSet transition = new TransitionSet();
+            transition.addTransition(new Fade());
+            transition.addTransition(slideToLeft);
+
+            fragment.setExitTransition(transition);
+        }
     }
 
     @Override
