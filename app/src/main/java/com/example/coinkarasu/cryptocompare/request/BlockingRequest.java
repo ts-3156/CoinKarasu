@@ -31,9 +31,9 @@ public class BlockingRequest extends RequestBase {
         try {
             response = future.get();
         } catch (InterruptedException e) {
-            Log.e("perform", e.getMessage());
+            Log.e("perform", e.getMessage() + ", " + getUrl());
         } catch (ExecutionException e) {
-            Log.e("perform", e.getMessage());
+            Log.e("perform", e.getMessage() + ", " + getUrl());
         }
 
         return response;

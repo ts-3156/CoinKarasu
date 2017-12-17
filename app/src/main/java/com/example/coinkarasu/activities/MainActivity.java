@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements
         ListViewFragment.OnFragmentInteractionListener,
         ViewPager.OnPageChangeListener {
 
+    private static final String STATE_KIND_KEY = "navigationKind";
     public static final NavigationKind DEFAULT_KIND = NavigationKind.nav_main;
 
     public enum NavigationKind {
@@ -126,14 +127,19 @@ public class MainActivity extends AppCompatActivity implements
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        setNavChecked(NavigationKind.nav_main);
+
+        if (savedInstanceState != null) {
+            navigationKind = NavigationKind.values()[savedInstanceState.getInt(STATE_KIND_KEY)];
+        } else {
+            navigationKind = DEFAULT_KIND;
+        }
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addItem(ListViewFragment.newInstance(NavigationKind.nav_main));
-        adapter.addItem(ListViewFragment.newInstance(NavigationKind.jpy_toplist));
-        adapter.addItem(ListViewFragment.newInstance(NavigationKind.usd_toplist));
-        adapter.addItem(ListViewFragment.newInstance(NavigationKind.eur_toplist));
-        adapter.addItem(ListViewFragment.newInstance(NavigationKind.btc_toplist));
+        adapter.addItem(ListViewFragment.newInstance(NavigationKind.nav_main, navigationKind == NavigationKind.nav_main));
+        adapter.addItem(ListViewFragment.newInstance(NavigationKind.jpy_toplist, navigationKind == NavigationKind.jpy_toplist));
+        adapter.addItem(ListViewFragment.newInstance(NavigationKind.usd_toplist, navigationKind == NavigationKind.usd_toplist));
+        adapter.addItem(ListViewFragment.newInstance(NavigationKind.eur_toplist, navigationKind == NavigationKind.eur_toplist));
+        adapter.addItem(ListViewFragment.newInstance(NavigationKind.btc_toplist, navigationKind == NavigationKind.btc_toplist));
 
         pager = findViewById(R.id.view_pager);
         pager.setAdapter(adapter);
@@ -149,8 +155,6 @@ public class MainActivity extends AppCompatActivity implements
         tabs.getTabAt(NavigationKind.eur_toplist.ordinal()).setText(NavigationKind.eur_toplist.tabStrResId);
         tabs.getTabAt(NavigationKind.btc_toplist.ordinal()).setText(NavigationKind.btc_toplist.tabStrResId);
 
-        tab = tabs.getTabAt(NavigationKind.nav_main.ordinal());
-
         coinList = null;
         try {
             long start = System.currentTimeMillis();
@@ -160,11 +164,12 @@ public class MainActivity extends AppCompatActivity implements
         } catch (JSONException e) {
             Log.e("CLReader", e.getMessage());
         }
-
         client = new ClientImpl(this);
-        navigationKind = DEFAULT_KIND;
-        pager.setCurrentItem(navigationKind.ordinal());
-        pageChanged(navigationKind.ordinal()); // repeated in onResume
+
+        tab = tabs.getTabAt(navigationKind.ordinal());
+        pager.setCurrentItem(navigationKind.ordinal()); // #setCurrentItem doesn't call #onPageScrollStateChanged.
+        setNavChecked(navigationKind);
+        updateToolbarTitle(navigationKind);
     }
 
     @Override
@@ -172,9 +177,6 @@ public class MainActivity extends AppCompatActivity implements
         super.onResume();
 
         applyKeepScreenOn();
-        if (navigationKind != null) {
-            pageChanged(navigationKind.ordinal()); // Return from other Activity
-        }
     }
 
     public Client getClient() {
@@ -205,19 +207,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         Log.d("KeepScrOn", "" + value);
-    }
-
-    private void startAutoUpdate(int position) {
-        ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
-        ((ListViewFragment) adapter.getItem(position)).updateView();
-    }
-
-    private void stopAutoUpdate() {
-        ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
-        List<Fragment> fragments = adapter.getItems();
-        for (int i = 0; i < fragments.size(); i++) {
-            ((ListViewFragment) fragments.get(i)).stopAutoUpdate();
-        }
     }
 
     private void setNavChecked(NavigationKind kind) {
@@ -289,7 +278,6 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            stopAutoUpdate();
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
 
@@ -297,10 +285,10 @@ public class MainActivity extends AppCompatActivity implements
         } else if (id == R.id.action_pause) {
             item.setChecked(!item.isChecked());
             if (item.isChecked()) {
-                stopAutoUpdate();
+                // TODO Use global variable
             } else {
                 if (tab != null) {
-                    startAutoUpdate(tab.getPosition());
+                    // TODO Use global variable
                 }
             }
 
@@ -311,12 +299,6 @@ public class MainActivity extends AppCompatActivity implements
             } else {
                 PrefHelper.setToSymbol(this, Currency.USD.name());
             }
-            if (pager != null && tab != null) {
-                ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
-                ListViewFragment fragment = (ListViewFragment) adapter.getItem(tab.getPosition());
-                fragment.toSymbolChanged();
-            }
-            pageChanged(navigationKind.ordinal());
 
             return true;
         }
@@ -332,7 +314,6 @@ public class MainActivity extends AppCompatActivity implements
         if (clickedKind != null && clickedKind != navigationKind) {
             pager.setCurrentItem(clickedKind.ordinal());
         } else if (id == R.id.nav_settings) {
-            stopAutoUpdate();
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         }
@@ -362,13 +343,16 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void pageChanged(int position) {
-        stopAutoUpdate();
-        startAutoUpdate(position);
-
         navigationKind = NavigationKind.values()[position];
         tab = tabs.getTabAt(navigationKind.ordinal());
         setNavChecked(navigationKind);
         updateToolbarTitle(navigationKind);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(STATE_KIND_KEY, navigationKind.ordinal());
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override

@@ -59,7 +59,7 @@ public class PrefHelper {
         return pref.getString("pref_currency", "JPY");
     }
 
-    private static SharedPreferences getPref(Activity activity) {
+    public static SharedPreferences getPref(Activity activity) {
         if (activity == null) {
             return null;
         }

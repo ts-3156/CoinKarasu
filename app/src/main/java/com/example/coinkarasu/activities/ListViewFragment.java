@@ -3,6 +3,7 @@ package com.example.coinkarasu.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.example.coinkarasu.adapters.ListViewAdapter;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.SectionHeaderCoinImpl;
 import com.example.coinkarasu.cryptocompare.Client;
+import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.format.ValueAnimatorBase;
 import com.example.coinkarasu.tasks.GetPricesTask;
@@ -39,7 +41,8 @@ import java.util.TimerTask;
 public class ListViewFragment extends Fragment implements
         AdapterView.OnItemClickListener,
         ListView.OnScrollListener,
-        GetPricesTask.Listener {
+        GetPricesTask.Listener,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private enum NavigationKind {
         nav_main(R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}),
@@ -70,33 +73,26 @@ public class ListViewFragment extends Fragment implements
             this.symbolsResId = symbolsResId;
             this.headerName = headerName;
         }
-
-        public static boolean contains(String value) {
-            for (Exchange ex : values()) {
-                if (ex.name().equals(value)) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
+
+    private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
 
     private OnFragmentInteractionListener listener;
 
     private AutoUpdateTimer autoUpdateTimer;
-
     private Client client;
     private NavigationKind kind;
     private boolean isVisibleToUser = false;
+    private boolean isSelected;
 
     public ListViewFragment() {
     }
 
-    public static ListViewFragment newInstance(MainActivity.NavigationKind kind) {
+    public static ListViewFragment newInstance(MainActivity.NavigationKind kind, boolean isSelected) {
         ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
         args.putString("kind", kind.name());
+        args.putBoolean("isSelected", isSelected);
         fragment.setArguments(args);
         return fragment;
     }
@@ -106,6 +102,7 @@ public class ListViewFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             kind = NavigationKind.valueOf(getArguments().getString("kind"));
+            isSelected = getArguments().getBoolean("isSelected");
         }
     }
 
@@ -113,8 +110,6 @@ public class ListViewFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
         Activity activity = getActivity();
-
-        client = ((MainActivity) activity).getClient();
 
         ArrayList<Coin> coins = ((MainActivity) activity).collectCoins(getFromSymbols(kind), getToSymbol(kind));
         coins = insertSectionHeader(coins, kind.exchanges);
@@ -126,21 +121,15 @@ public class ListViewFragment extends Fragment implements
         listView.setOnScrollListener(this);
         ViewCompat.setNestedScrollingEnabled(listView, true); // <= 21 http://starzero.hatenablog.com/entry/2015/09/30/114136
 
-        startAutoUpdate(MainActivity.DEFAULT_KIND == MainActivity.NavigationKind.valueOf(kind.name()));
+        if (savedInstanceState != null) {
+            isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
+        } else {
+            isVisibleToUser = isSelected;
+        }
+
+        PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
         return view;
-    }
-
-    public void updateView() {
-        if (isDetached() || getView() == null) {
-            return;
-        }
-
-        if (autoUpdateTimer != null) {
-            return;
-        }
-
-        startAutoUpdate(true);
     }
 
     private void startTask() {
@@ -154,6 +143,8 @@ public class ListViewFragment extends Fragment implements
         adapter.setAnimEnabled(PrefHelper.isAnimEnabled(getActivity()));
         adapter.setDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
         adapter.setToSymbol(getToSymbol(kind));
+
+        client = new ClientImpl(getActivity());
 
         for (String exchangeStr : kind.exchanges) {
             Exchange exchange = Exchange.valueOf(exchangeStr);
@@ -189,7 +180,7 @@ public class ListViewFragment extends Fragment implements
         }
     }
 
-    public void stopAutoUpdate() {
+    private void stopAutoUpdate() {
         if (autoUpdateTimer != null) {
             autoUpdateTimer.cancel();
             autoUpdateTimer = null;
@@ -243,7 +234,7 @@ public class ListViewFragment extends Fragment implements
         }, ValueAnimatorBase.DURATION);
     }
 
-    public void setProgressbarVisibility(int flag, String exchange) {
+    private void setProgressbarVisibility(int flag, String exchange) {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -331,8 +322,8 @@ public class ListViewFragment extends Fragment implements
     public void onResume() {
         super.onResume();
 
-        if (autoUpdateTimer == null) {
-            startAutoUpdate(isVisibleToUser);
+        if (isVisibleToUser) {
+            startAutoUpdate(true);
         }
     }
 
@@ -358,6 +349,7 @@ public class ListViewFragment extends Fragment implements
     public void onDetach() {
         super.onDetach();
         listener = null;
+        PrefHelper.getPref(getActivity()).unregisterOnSharedPreferenceChangeListener(this);
         autoUpdateTimer = null;
         client = null;
         kind = null;
@@ -399,12 +391,27 @@ public class ListViewFragment extends Fragment implements
     public void setUserVisibleHint(boolean isVisibleToUser) {
         // This method may be called outside of the fragment lifecycle.
         this.isVisibleToUser = isVisibleToUser;
+
+        if (isVisibleToUser) {
+            startAutoUpdate(true);
+        } else {
+            stopAutoUpdate();
+        }
     }
 
-    public void toSymbolChanged() {
-        if (getActivity() != null && getView() != null) {
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putBoolean(STATE_IS_VISIBLE_TO_USER_KEY, isVisibleToUser);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
+        if (key.equals("pref_currency") && isVisibleToUser && getActivity() != null && getView() != null) {
             Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.enter);
             getView().findViewById(R.id.list_view).startAnimation(anim);
+            stopAutoUpdate();
+            startAutoUpdate(true);
         }
     }
 
