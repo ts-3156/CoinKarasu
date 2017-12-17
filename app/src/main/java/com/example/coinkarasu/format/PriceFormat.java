@@ -27,7 +27,7 @@ public class PriceFormat {
         if (Math.abs(price) >= 1000) {
             formatter.setMaximumFractionDigits(0);
         } else {
-            formatter.setMaximumFractionDigits(3);
+            formatter.setMaximumFractionDigits(2);
             formatter.setMinimumFractionDigits(2);
         }
 
