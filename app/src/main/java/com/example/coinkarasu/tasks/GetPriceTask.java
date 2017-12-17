@@ -24,8 +24,16 @@ public class GetPriceTask extends AsyncTask<Integer, Integer, Integer> {
 
     @Override
     protected Integer doInBackground(Integer... params) {
+        publishProgress(0);
         price = client.getPrice(fromSymbol, toSymbol, exchange);
         return 200;
+    }
+
+    @Override
+    protected void onProgressUpdate(Integer... progress) {
+        if (listener != null) {
+            listener.started(exchange, fromSymbol, toSymbol);
+        }
     }
 
     @Override
@@ -56,6 +64,8 @@ public class GetPriceTask extends AsyncTask<Integer, Integer, Integer> {
     }
 
     public interface Listener {
+        void started(String exchange, String fromSymbol, String toSymbol);
+
         void finished(Price price);
     }
 }

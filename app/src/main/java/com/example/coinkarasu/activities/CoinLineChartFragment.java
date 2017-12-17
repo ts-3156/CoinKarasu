@@ -130,8 +130,6 @@ public class CoinLineChartFragment extends Fragment implements
         return view;
     }
 
-
-
     public void updateTab(int position, ArrayList<History> records) {
         TabLayout.Tab tab = tabs.getTabAt(position);
         View view = tab.getCustomView();

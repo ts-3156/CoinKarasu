@@ -1,13 +1,13 @@
 package com.example.coinkarasu.activities;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -23,6 +23,7 @@ import com.example.coinkarasu.format.PriceAnimator;
 import com.example.coinkarasu.format.TrendAnimator;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
+import com.example.coinkarasu.format.ValueAnimatorBase;
 import com.example.coinkarasu.tasks.GetPriceTask;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
 import com.example.coinkarasu.utils.PrefHelper;
@@ -74,22 +75,9 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_card, container, false);
 
-        view.findViewById(R.id.popup_menu).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                PopupMenu popup = new PopupMenu(getContext(), view);
-                popup.inflate(R.menu.coin_card);
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getItemId() == R.id.action_settings) {
-                        }
-                        return true;
-                    }
-                });
-                popup.show();
-            }
-        });
+        Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Light.ttf");
+        ((TextView) view.findViewById(R.id.caption_left)).setTypeface(typeFace);
+        ((TextView) view.findViewById(R.id.caption_right)).setTypeface(typeFace);
 
         updatePrice(view, coin);
         startAutoUpdate(0, true);
@@ -153,6 +141,11 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     }
 
     @Override
+    public void started(String exchange, String fromSymbol, String toSymbol) {
+        setProgressbarVisibility(View.VISIBLE);
+    }
+
+    @Override
     public void finished(Price price) {
         if (isDetached() || getActivity() == null) {
             stopAutoUpdate();
@@ -169,6 +162,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         this.coin.setPrice(coin.getPrice());
         this.coin.setTrend(coin.getChangePct24Hour() / 100.0);
         updatePrice(getView(), this.coin);
+        hideProgressbarDelayed();
 
         Log.d("UPDATED", kind);
     }
@@ -180,6 +174,24 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         new TrendAnimator(coin, trendView).start();
         trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(coin.getTrend())));
         ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(new TrendIconFormat().format(coin.getTrend()));
+    }
+
+    private void hideProgressbarDelayed() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setProgressbarVisibility(View.GONE);
+            }
+        }, ValueAnimatorBase.DURATION);
+    }
+
+    public void setProgressbarVisibility(int flag) {
+        if (isDetached() || getView() == null) {
+            return;
+        }
+
+        View progressbar = getView().findViewById(R.id.progressbar);
+        progressbar.setVisibility(flag);
     }
 
     private String getToSymbol() {

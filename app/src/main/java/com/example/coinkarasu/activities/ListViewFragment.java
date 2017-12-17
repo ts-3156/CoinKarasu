@@ -198,7 +198,7 @@ public class ListViewFragment extends Fragment
 
     @Override
     public void started(String exchange, String[] fromSymbols, String toSymbol) {
-        setProgressbarVisibility(true, exchange);
+        setProgressbarVisibility(View.VISIBLE, exchange);
     }
 
     @Override
@@ -230,12 +230,12 @@ public class ListViewFragment extends Fragment
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                setProgressbarVisibility(false, exchange);
+                setProgressbarVisibility(View.GONE, exchange);
             }
         }, ValueAnimatorBase.DURATION);
     }
 
-    public void setProgressbarVisibility(boolean flag, String exchange) {
+    public void setProgressbarVisibility(int flag, String exchange) {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -245,15 +245,7 @@ public class ListViewFragment extends Fragment
             return;
         }
 
-        if (flag) {
-            if (progressbar.getVisibility() != View.VISIBLE) {
-                progressbar.setVisibility(View.VISIBLE);
-            }
-        } else {
-            if (progressbar.getVisibility() != View.GONE) {
-                progressbar.setVisibility(View.GONE);
-            }
-        }
+        progressbar.setVisibility(flag);
     }
 
     private ArrayList<Coin> insertSectionHeader(ArrayList<Coin> coins, String[] exchanges) {

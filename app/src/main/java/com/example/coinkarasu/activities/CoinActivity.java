@@ -112,7 +112,8 @@ public class CoinActivity extends AppCompatActivity implements
     private void updateToolbarTitle(String symbol) {
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
-            bar.setTitle(coin.getSymbol() + " - " + symbol);
+            bar.setTitle(coin.getFullName());
+            bar.setSubtitle(symbol);
         }
     }
 
