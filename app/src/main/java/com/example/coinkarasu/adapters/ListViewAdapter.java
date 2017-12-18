@@ -3,6 +3,7 @@ package com.example.coinkarasu.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +48,8 @@ public class ListViewAdapter extends BaseAdapter {
     private int trendUp;
     private int trendFlat;
     private int trendDown;
+    private Typeface typeFace;
+    private Typeface typeFaceItalic;
 
     public ListViewAdapter(Activity activity, List<Coin> coins) {
         symbolIconResIdMap = buildIconResIdMap(activity, coins);
@@ -69,6 +72,8 @@ public class ListViewAdapter extends BaseAdapter {
         trendFormatter = new TrendValueFormat();
         trendIconFormat = new TrendIconFormat();
         initializeTrendColors(activity);
+        typeFace = Typeface.createFromAsset(activity.getAssets(), "OpenSans-Light.ttf");
+        typeFaceItalic = Typeface.createFromAsset(activity.getAssets(), "OpenSans-LightItalic.ttf");
     }
 
     private void initializeTrendColors(Activity activity) {
@@ -193,10 +198,15 @@ public class ListViewAdapter extends BaseAdapter {
                 holder.price = convertView.findViewById(R.id.coin_price);
                 holder.trend = convertView.findViewById(R.id.coin_trend);
                 holder.trend_icon = convertView.findViewById(R.id.coin_trend_icon);
+
+                holder.name.setTypeface(typeFace);
+                holder.symbol.setTypeface(typeFace);
             } else if (rowType == TYPE_HEADER) {
                 convertView = inflater.inflate(R.layout.list_header_item, parent, false);
                 holder.header = convertView.findViewById(R.id.text_separator);
                 holder.divider = convertView.findViewById(R.id.divider);
+
+                holder.header.setTypeface(typeFaceItalic);
 
                 holder.progressbar = convertView.findViewById(R.id.progressbar);
                 holder.progressbar.setTag(coin.getExchange() + "-progressbar");

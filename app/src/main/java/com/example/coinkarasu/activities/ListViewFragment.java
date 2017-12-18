@@ -235,7 +235,7 @@ public class ListViewFragment extends Fragment implements
             public void run() {
                 updateRelativeTimeSpan();
             }
-        }, 0, 10000);
+        }, 0, 5000);
     }
 
     private void stopRelativeTimeSpanTimer() {
