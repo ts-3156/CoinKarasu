@@ -95,8 +95,11 @@ public class CoinPieChart {
 //        for (int c : ColorTemplate.VORDIPLOM_COLORS)
 //            colors.add(c);
 //
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
+        for (int i = 0; i < ColorTemplate.JOYFUL_COLORS.length; i++) {
+            if (i != 2) {
+                colors.add(ColorTemplate.JOYFUL_COLORS[i]);
+            }
+        }
 
         for (int c : ColorTemplate.COLORFUL_COLORS)
             colors.add(c);
