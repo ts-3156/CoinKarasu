@@ -8,7 +8,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -25,10 +24,8 @@ import android.view.WindowManager;
 import com.crashlytics.android.Crashlytics;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.settings.SettingsActivity;
-import com.example.coinkarasu.adapters.ViewPagerAdapter;
+import com.example.coinkarasu.adapters.MainPagerAdapter;
 import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.cryptocompare.Client;
-import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.CoinListReader;
 import com.example.coinkarasu.cryptocompare.data.CoinList;
 import com.example.coinkarasu.cryptocompare.data.CoinListImpl;
@@ -38,7 +35,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -95,11 +91,8 @@ public class MainActivity extends AppCompatActivity implements
     private static final String FRAGMENT_TAG = "fragment";
 
     private CoinList coinList;
-    private Client client;
     private NavigationKind navigationKind;
 
-    private ViewPager pager;
-    private TabLayout tabs;
     private TabLayout.Tab tab;
 
     @Override
@@ -134,26 +127,23 @@ public class MainActivity extends AppCompatActivity implements
             navigationKind = DEFAULT_KIND;
         }
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addItem(ListViewFragment.newInstance(NavigationKind.nav_main, navigationKind == NavigationKind.nav_main));
-        adapter.addItem(ListViewFragment.newInstance(NavigationKind.jpy_toplist, navigationKind == NavigationKind.jpy_toplist));
-        adapter.addItem(ListViewFragment.newInstance(NavigationKind.usd_toplist, navigationKind == NavigationKind.usd_toplist));
-        adapter.addItem(ListViewFragment.newInstance(NavigationKind.eur_toplist, navigationKind == NavigationKind.eur_toplist));
-        adapter.addItem(ListViewFragment.newInstance(NavigationKind.btc_toplist, navigationKind == NavigationKind.btc_toplist));
-
-        pager = findViewById(R.id.view_pager);
-        pager.setAdapter(adapter);
+        ViewPager pager = findViewById(R.id.view_pager);
+        pager.setAdapter(new MainPagerAdapter(getSupportFragmentManager(), navigationKind));
         pager.addOnPageChangeListener(this);
         pager.setOffscreenPageLimit(NavigationKind.values().length);
 
-        tabs = findViewById(R.id.tab_layout);
+        TabLayout tabs = findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
-
         tabs.getTabAt(NavigationKind.nav_main.ordinal()).setText(NavigationKind.nav_main.tabStrResId);
         tabs.getTabAt(NavigationKind.jpy_toplist.ordinal()).setText(NavigationKind.jpy_toplist.tabStrResId);
         tabs.getTabAt(NavigationKind.usd_toplist.ordinal()).setText(NavigationKind.usd_toplist.tabStrResId);
         tabs.getTabAt(NavigationKind.eur_toplist.ordinal()).setText(NavigationKind.eur_toplist.tabStrResId);
         tabs.getTabAt(NavigationKind.btc_toplist.ordinal()).setText(NavigationKind.btc_toplist.tabStrResId);
+
+        tab = tabs.getTabAt(navigationKind.ordinal());
+        pager.setCurrentItem(navigationKind.ordinal()); // #setCurrentItem doesn't call #onPageScrollStateChanged.
+        setNavChecked(navigationKind);
+        updateToolbarTitle(navigationKind);
 
         coinList = null;
         try {
@@ -164,12 +154,6 @@ public class MainActivity extends AppCompatActivity implements
         } catch (JSONException e) {
             Log.e("CLReader", e.getMessage());
         }
-        client = new ClientImpl(this);
-
-        tab = tabs.getTabAt(navigationKind.ordinal());
-        pager.setCurrentItem(navigationKind.ordinal()); // #setCurrentItem doesn't call #onPageScrollStateChanged.
-        setNavChecked(navigationKind);
-        updateToolbarTitle(navigationKind);
     }
 
     @Override
@@ -177,10 +161,6 @@ public class MainActivity extends AppCompatActivity implements
         super.onResume();
 
         applyKeepScreenOn();
-    }
-
-    public Client getClient() {
-        return client;
     }
 
     public ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol) {
@@ -255,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else if (navigationKind != NavigationKind.nav_main) {
-            pager.setCurrentItem(NavigationKind.nav_main.ordinal());
+            ((ViewPager) findViewById(R.id.view_pager)).setCurrentItem(NavigationKind.nav_main.ordinal());
         } else {
             super.onBackPressed();
         }
@@ -287,9 +267,6 @@ public class MainActivity extends AppCompatActivity implements
             if (item.isChecked()) {
                 // TODO Use global variable
             } else {
-                if (tab != null) {
-                    // TODO Use global variable
-                }
             }
 
             return true;
@@ -312,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements
         NavigationKind clickedKind = NavigationKind.valueByNavResId(id);
 
         if (clickedKind != null && clickedKind != navigationKind) {
-            pager.setCurrentItem(clickedKind.ordinal());
+            ((ViewPager) findViewById(R.id.view_pager)).setCurrentItem(clickedKind.ordinal());
         } else if (id == R.id.nav_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
@@ -334,19 +311,15 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onPageScrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_SETTLING) {
-            int position = pager.getCurrentItem();
+            int position = ((ViewPager) findViewById(R.id.view_pager)).getCurrentItem();
 
             if (position != tab.getPosition()) {
-                pageChanged(position);
+                navigationKind = NavigationKind.values()[position];
+                tab = ((TabLayout) findViewById(R.id.tab_layout)).getTabAt(navigationKind.ordinal());
+                setNavChecked(navigationKind);
+                updateToolbarTitle(navigationKind);
             }
         }
-    }
-
-    private void pageChanged(int position) {
-        navigationKind = NavigationKind.values()[position];
-        tab = tabs.getTabAt(navigationKind.ordinal());
-        setNavChecked(navigationKind);
-        updateToolbarTitle(navigationKind);
     }
 
     @Override
