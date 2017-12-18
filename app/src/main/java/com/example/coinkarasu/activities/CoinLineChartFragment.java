@@ -218,11 +218,7 @@ public class CoinLineChartFragment extends Fragment implements
             int position = pager.getCurrentItem();
 
             if (position != tab.getPosition()) {
-                ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
-                CoinLineChartTabContentFragment fragment = (CoinLineChartTabContentFragment) adapter.getItem(position);
-
                 setSelected(position);
-                fragment.updateView();
             }
         }
     }

@@ -42,6 +42,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     private boolean taskStarted;
     private CoinPieChart chart = null;
     private int errorCount = 0;
+    private boolean isVisibleToUser = false;
 
     public CoinPieChartTabContentFragment() {
     }
@@ -107,7 +108,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         }
     }
 
-    public void updateView() {
+    private void updateView() {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -288,6 +289,16 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         fromSymbol = null;
         toSymbol = null;
         chart = null;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        // This method may be called outside of the fragment lifecycle.
+        this.isVisibleToUser = isVisibleToUser;
+
+        if (isVisibleToUser) {
+            updateView();
+        }
     }
 
     public interface OnFragmentInteractionListener {

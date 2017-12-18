@@ -29,6 +29,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     private boolean taskStarted;
     private CoinLineChart chart = null;
     private int errorCount = 0;
+    private boolean isVisibleToUser = false;
 
     public CoinLineChartTabContentFragment() {
     }
@@ -73,7 +74,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void updateView() {
+    private void updateView() {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -131,6 +132,16 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         fromSymbol = null;
         toSymbol = null;
         chart = null;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        // This method may be called outside of the fragment lifecycle.
+        this.isVisibleToUser = isVisibleToUser;
+
+        if (isVisibleToUser) {
+            updateView();
+        }
     }
 
     public interface OnFragmentInteractionListener {

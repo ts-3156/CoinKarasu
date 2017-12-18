@@ -40,6 +40,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     private int errorCount = 0;
 
     private ArrayList<History> records;
+    private boolean isVisibleToUser = false;
 
     public CoinExchangeTabContentFragment() {
     }
@@ -95,7 +96,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public void updateView() {
+    private void updateView() {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -163,6 +164,16 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         exchange = null;
         chart = null;
         records = null;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        // This method may be called outside of the fragment lifecycle.
+        this.isVisibleToUser = isVisibleToUser;
+
+        if (isVisibleToUser) {
+            updateView();
+        }
     }
 
     public interface OnFragmentInteractionListener {

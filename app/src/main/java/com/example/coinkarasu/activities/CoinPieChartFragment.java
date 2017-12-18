@@ -145,11 +145,7 @@ public class CoinPieChartFragment extends Fragment implements
             int position = pager.getCurrentItem();
 
             if (position != tab.getPosition()) {
-                ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
-                CoinPieChartTabContentFragment fragment = (CoinPieChartTabContentFragment) adapter.getItem(position);
-
                 setSelected(position);
-                fragment.updateView();
             }
         }
     }

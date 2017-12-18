@@ -317,11 +317,7 @@ public class CoinExchangeFragment extends Fragment implements
             int position = pager.getCurrentItem();
 
             if (position != tab.getPosition()) {
-                ViewPagerAdapter adapter = (ViewPagerAdapter) pager.getAdapter();
-                CoinExchangeTabContentFragment fragment = (CoinExchangeTabContentFragment) adapter.getItem(position);
-
                 setSelected(position);
-                fragment.updateView();
             }
         }
     }
