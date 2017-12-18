@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.adapters.ViewPagerAdapter;
+import com.example.coinkarasu.adapters.CoinLineChartPagerAdapter;
 import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.format.PriceFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
@@ -50,8 +49,6 @@ public class CoinLineChartFragment extends Fragment implements
 
     private String fromSymbol;
     private String toSymbol;
-    private ViewPager pager;
-    private TabLayout tabs;
     private TabLayout.Tab tab;
 
     public CoinLineChartFragment() {
@@ -89,20 +86,13 @@ public class CoinLineChartFragment extends Fragment implements
 
         ((TextView) view.findViewById(R.id.caption_left)).setText(getString(R.string.caption_left, fromSymbol, toSymbol));
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.hour, fromSymbol, toSymbol));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.day, fromSymbol, toSymbol));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.week, fromSymbol, toSymbol));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.month, fromSymbol, toSymbol));
-        adapter.addItem(CoinLineChartTabContentFragment.newInstance(Kind.year, fromSymbol, toSymbol));
-
-        pager = view.findViewById(R.id.view_pager);
-        pager.setAdapter(adapter);
+        ViewPager pager = view.findViewById(R.id.view_pager);
+        pager.setAdapter(new CoinLineChartPagerAdapter(getChildFragmentManager(), fromSymbol, toSymbol));
         pager.setCurrentItem(DEFAULT_KIND.ordinal());
         pager.addOnPageChangeListener(this);
         pager.setOffscreenPageLimit(Kind.values().length);
 
-        tabs = view.findViewById(R.id.tab_layout);
+        TabLayout tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
         tabs.getTabAt(Kind.hour.ordinal()).setCustomView(createTab(inflater, container, Kind.hour.label));
@@ -112,7 +102,7 @@ public class CoinLineChartFragment extends Fragment implements
         tabs.getTabAt(Kind.year.ordinal()).setCustomView(createTab(inflater, container, Kind.year.label));
 
         tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
-        setSelected(DEFAULT_KIND.ordinal());
+        setSelected(DEFAULT_KIND.ordinal(), view);
 
         Spanned text = Html.fromHtml(getString(R.string.line_chart_info, fromSymbol, toSymbol));
         ((TextView) view.findViewById(R.id.info_text)).setText(text);
@@ -132,6 +122,16 @@ public class CoinLineChartFragment extends Fragment implements
     }
 
     public void updateTab(int position, ArrayList<History> records) {
+        View container = getView();
+        if (container == null) {
+            return;
+        }
+
+        TabLayout tabs = getView().findViewById(R.id.tab_layout);
+        if (tabs == null) {
+            return;
+        }
+
         TabLayout.Tab tab = tabs.getTabAt(position);
         View view = tab.getCustomView();
 
@@ -155,8 +155,8 @@ public class CoinLineChartFragment extends Fragment implements
         tab.setTag(priceDiff);
     }
 
-    private void setSelected(int position) {
-        if (tab == null) {
+    private void setSelected(int position, View container) {
+        if (tab == null || container == null) {
             return;
         }
 
@@ -173,7 +173,7 @@ public class CoinLineChartFragment extends Fragment implements
         ((ImageView) view.findViewById(R.id.trend_icon))
                 .setImageResource(new TrendIconFormat().format(priceDiff));
 
-        tab = tabs.getTabAt(position);
+        tab = ((TabLayout) container.findViewById(R.id.tab_layout)).getTabAt(position);
 
         int activeTextColor = getResources().getColor(R.color.colorTabActiveText);
         view = tab.getCustomView();
@@ -200,8 +200,6 @@ public class CoinLineChartFragment extends Fragment implements
         listener = null;
         fromSymbol = null;
         toSymbol = null;
-        pager = null;
-        tabs = null;
         tab = null;
     }
 
@@ -216,10 +214,14 @@ public class CoinLineChartFragment extends Fragment implements
     @Override
     public void onPageScrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_SETTLING) {
-            int position = pager.getCurrentItem();
+            if (getView() == null) {
+                return;
+            }
+
+            int position = ((ViewPager) getView().findViewById(R.id.view_pager)).getCurrentItem();
 
             if (position != tab.getPosition()) {
-                setSelected(position);
+                setSelected(position, getView());
             }
         }
     }

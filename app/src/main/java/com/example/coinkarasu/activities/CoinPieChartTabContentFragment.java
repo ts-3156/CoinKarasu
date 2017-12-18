@@ -119,7 +119,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
         if (taskStarted) {
             if (chart != null) {
-                chart.animateY();
+//                chart.animateY();
             }
             return;
         }
@@ -167,7 +167,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
         groupSmallSlices(values, labels);
         drawChart(values, labels);
-        ((CoinPieChartFragment) getParentFragment()).updateTab(position);
 
         Log.d("UPDATED", kind + ", " + new Date().toString());
     }
@@ -220,7 +219,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
         groupSmallSlices(values, labels);
         drawChart(values, labels);
-        ((CoinPieChartFragment) getParentFragment()).updateTab(position);
 
         Log.d("UPDATED", kind + ", " + new Date().toString());
     }

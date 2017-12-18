@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.adapters.ViewPagerAdapter;
+import com.example.coinkarasu.adapters.CoinPieChartPagerAdapter;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.TopPair;
 import com.example.coinkarasu.cryptocompare.data.TopPairs;
@@ -48,8 +48,6 @@ public class CoinPieChartFragment extends Fragment implements
     private boolean taskStarted;
     private int errorCount = 0;
     private boolean tabsCreated = false;
-    private ViewPager pager;
-    private TabLayout tabs;
     private TabLayout.Tab tab;
     private String fromSymbol;
     private String toSymbol;
@@ -100,20 +98,14 @@ public class CoinPieChartFragment extends Fragment implements
         }
         tabsCreated = true;
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.currency, fromSymbol, toSymbol));
-        for (TopPair pair : pairs) {
-            adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.exchange, fromSymbol, pair.getToSymbol()));
-        }
-
         View view = getView();
-        pager = view.findViewById(R.id.view_pager);
-        pager.setAdapter(adapter);
+        ViewPager pager = view.findViewById(R.id.view_pager);
+        pager.setAdapter(new CoinPieChartPagerAdapter(getChildFragmentManager(), fromSymbol, toSymbol, pairs));
         pager.setCurrentItem(DEFAULT_KIND.ordinal());
         pager.addOnPageChangeListener(this);
         pager.setOffscreenPageLimit(Math.min(pairs.size() + 1, 5));
 
-        tabs = view.findViewById(R.id.tab_layout);
+        TabLayout tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -124,7 +116,7 @@ public class CoinPieChartFragment extends Fragment implements
         }
 
         tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
-        setSelected(DEFAULT_KIND.ordinal());
+        setSelected(DEFAULT_KIND.ordinal(), view);
     }
 
     private View createTab(LayoutInflater inflater, ViewGroup container, String label, String symbol) {
@@ -136,17 +128,18 @@ public class CoinPieChartFragment extends Fragment implements
         return view;
     }
 
-    public void updateTab(int position) {
-    }
+    private void setSelected(int position, View container) {
+        if (container == null) {
+            return;
+        }
 
-    private void setSelected(int position) {
         int inactiveColor = getResources().getColor(R.color.colorTabInactiveText);
         View view = tab.getCustomView();
         view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
         ((TextView) view.findViewById(R.id.label)).setTextColor(inactiveColor);
         ((TextView) view.findViewById(R.id.symbol)).setTextColor(inactiveColor);
 
-        tab = tabs.getTabAt(position);
+        tab = ((TabLayout) container.findViewById(R.id.tab_layout)).getTabAt(position);
 
         int activeColor = getResources().getColor(R.color.colorTabActiveText);
         view = tab.getCustomView();
@@ -217,8 +210,6 @@ public class CoinPieChartFragment extends Fragment implements
     public void onDetach() {
         super.onDetach();
         listener = null;
-        pager = null;
-        tabs = null;
         tab = null;
         fromSymbol = null;
         toSymbol = null;
@@ -235,10 +226,14 @@ public class CoinPieChartFragment extends Fragment implements
     @Override
     public void onPageScrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_SETTLING) {
-            int position = pager.getCurrentItem();
+            if (getView() == null) {
+                return;
+            }
+
+            int position = ((ViewPager) getView().findViewById(R.id.view_pager)).getCurrentItem();
 
             if (position != tab.getPosition()) {
-                setSelected(position);
+                setSelected(position, getView());
             }
         }
     }

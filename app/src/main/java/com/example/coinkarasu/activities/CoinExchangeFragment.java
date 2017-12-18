@@ -18,7 +18,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.adapters.ViewPagerAdapter;
+import com.example.coinkarasu.adapters.CoinExchangePagerAdapter;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.coins.SnapshotCoin;
@@ -51,8 +51,6 @@ public class CoinExchangeFragment extends Fragment implements
     private int errorCount = 0;
 
     private boolean tabsCreated = false;
-    private ViewPager pager;
-    private TabLayout tabs;
     private TabLayout.Tab tab;
 
     public CoinExchangeFragment() {
@@ -127,23 +125,14 @@ public class CoinExchangeFragment extends Fragment implements
         }
         tabsCreated = true;
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        String fromSymbol = coin.getSymbol();
-        String toSymbol = coin.getToSymbol();
-
-        for (int i = 0; i < coins.size(); i++) {
-            SnapshotCoin coin = coins.get(i);
-            adapter.addItem(CoinExchangeTabContentFragment.newInstance(coin, fromSymbol, toSymbol, i, coin.getMarket().toLowerCase()));
-        }
-
         View view = getView();
-        pager = view.findViewById(R.id.view_pager);
-        pager.setAdapter(adapter);
+        ViewPager pager = view.findViewById(R.id.view_pager);
+        pager.setAdapter(new CoinExchangePagerAdapter(getChildFragmentManager(), coin.getSymbol(), coin.getToSymbol(), coins));
         pager.setCurrentItem(0);
         pager.addOnPageChangeListener(this);
         pager.setOffscreenPageLimit(Math.min(coins.size(), 5));
 
-        tabs = view.findViewById(R.id.tab_layout);
+        TabLayout tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -154,7 +143,7 @@ public class CoinExchangeFragment extends Fragment implements
         }
 
         tab = tabs.getTabAt(0);
-        setSelected(0);
+        setSelected(0, view);
     }
 
     private View createTab(LayoutInflater inflater, ViewGroup container, SnapshotCoin coin) {
@@ -172,6 +161,16 @@ public class CoinExchangeFragment extends Fragment implements
     }
 
     public void updateTab(int position, ArrayList<History> records) {
+        View container = getView();
+        if (container == null) {
+            return;
+        }
+
+        TabLayout tabs = container.findViewById(R.id.tab_layout);
+        if (tabs == null) {
+            return;
+        }
+
         TabLayout.Tab tab = tabs.getTabAt(position);
         View view = tab.getCustomView();
 
@@ -192,8 +191,8 @@ public class CoinExchangeFragment extends Fragment implements
         tab.setTag(priceDiff);
     }
 
-    private void setSelected(int position) {
-        if (tab == null) {
+    private void setSelected(int position, View container) {
+        if (tab == null || container == null) {
             return;
         }
 
@@ -211,7 +210,7 @@ public class CoinExchangeFragment extends Fragment implements
         ((ImageView) view.findViewById(R.id.trend_icon))
                 .setImageResource(new TrendIconFormat().format(priceDiff));
 
-        tab = tabs.getTabAt(position);
+        tab = ((TabLayout) container.findViewById(R.id.tab_layout)).getTabAt(position);
 
         int activeTextColor = getResources().getColor(R.color.colorTabActiveText);
         view = tab.getCustomView();
@@ -296,8 +295,6 @@ public class CoinExchangeFragment extends Fragment implements
         listener = null;
         kind = null;
         coin = null;
-        pager = null;
-        tabs = null;
         tab = null;
     }
 
@@ -312,10 +309,14 @@ public class CoinExchangeFragment extends Fragment implements
     @Override
     public void onPageScrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_SETTLING) {
-            int position = pager.getCurrentItem();
+            if (getView() == null) {
+                return;
+            }
+
+            int position = ((ViewPager) getView().findViewById(R.id.view_pager)).getCurrentItem();
 
             if (position != tab.getPosition()) {
-                setSelected(position);
+                setSelected(position, getView());
             }
         }
     }
