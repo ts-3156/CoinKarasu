@@ -127,23 +127,34 @@ public class CoinExchangeFragment extends Fragment implements
 
         View view = getView();
         ViewPager pager = view.findViewById(R.id.view_pager);
-        pager.setAdapter(new CoinExchangePagerAdapter(getChildFragmentManager(), coin.getSymbol(), coin.getToSymbol(), coins));
-        pager.setCurrentItem(0);
+        pager.setAdapter(new CoinExchangePagerAdapter(getChildFragmentManager(), coins));
+
+        int offset = pager.getAdapter().getCount() - coins.size();
+        pager.setCurrentItem(offset);
         pager.addOnPageChangeListener(this);
-        pager.setOffscreenPageLimit(Math.min(coins.size(), 5));
+        pager.setOffscreenPageLimit(Math.min(coins.size() + offset, 5));
 
         TabLayout tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        for (int i = 0; i < offset; i++) {
+            tabs.getTabAt(i).setCustomView(createTab(inflater, null, "All"));
+        }
         for (int i = 0; i < coins.size(); i++) {
             SnapshotCoin coin = coins.get(i);
-            tabs.getTabAt(i).setCustomView(createTab(inflater, null, coin));
+            tabs.getTabAt(i + offset).setCustomView(createTab(inflater, null, coin));
         }
 
-        tab = tabs.getTabAt(0);
-        setSelected(0, view);
+        tab = tabs.getTabAt(offset);
+        setSelected(offset, view);
+    }
+
+    private View createTab(LayoutInflater inflater, ViewGroup container, String label) {
+        View view = inflater.inflate(R.layout.tab_exchanges, container, false);
+        ((TextView) view.findViewById(R.id.label)).setText(label);
+        return view;
     }
 
     private View createTab(LayoutInflater inflater, ViewGroup container, SnapshotCoin coin) {
@@ -258,7 +269,8 @@ public class CoinExchangeFragment extends Fragment implements
         Iterator<SnapshotCoin> iterator = coins.iterator();
         while (iterator.hasNext()) {
             SnapshotCoin coin = iterator.next();
-            if (coin.getVolume24Hour() <= 0.0 || coin.getMarket().equals("LocalBitcoins")) {
+            if (coin.getVolume24Hour() <= 0.0 || coin.getMarket().equals("LocalBitcoins") ||
+                    (coin.getMarket().equals("Tidex") && coin.getFromSymbol().equals("BTC") && coin.getToSymbol().equals("WUSD"))) {
                 iterator.remove();
             }
         }

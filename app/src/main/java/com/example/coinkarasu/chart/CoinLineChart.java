@@ -16,6 +16,7 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 public class CoinLineChart {
     private LineChart chart;
@@ -97,6 +98,46 @@ public class CoinLineChart {
         data.setValueTextSize(9f);
 
 //        chart.setRenderer(new StackedLineChartRenderer(chart, chart.getAnimator(), chart.getViewPortHandler()));
+
+        chart.setData(data);
+    }
+
+    public void setData(HashMap<String, ArrayList<History>> map) {
+        LineData data = new LineData();
+        data.setValueTextColor(Color.WHITE);
+        data.setValueTextSize(9f);
+
+        for (String exchange : map.keySet()) {
+            ArrayList<History> records = map.get(exchange);
+            if (records.isEmpty()) {
+                continue;
+            }
+
+            ArrayList<Entry> values = new ArrayList<>(records.size());
+
+            offsetSeconds = records.get(0).getTime();
+
+            for (int i = 0; i < records.size(); i++) {
+                History history = records.get(i);
+                long x = history.getTime() - offsetSeconds;
+                values.add(new Entry(x, (float) history.getClose()));
+            }
+
+            LineDataSet set = new LineDataSet(values, "DataSet 1");
+            set.setAxisDependency(YAxis.AxisDependency.LEFT);
+            set.setColor(ColorTemplate.JOYFUL_COLORS[0]);
+            set.setLineWidth(1.5f);
+            set.setDrawCircles(false);
+            set.setDrawValues(false);
+//        set.setFillAlpha(255);
+//        set.setFillColor(ColorTemplate.JOYFUL_COLORS[1]);
+            set.setDrawCircleHole(false);
+//        set.setDrawFilled(true);
+
+            data.addDataSet(set);
+
+//        chart.setRenderer(new StackedLineChartRenderer(chart, chart.getAnimator(), chart.getViewPortHandler()));
+        }
 
         chart.setData(data);
     }

@@ -35,6 +35,7 @@ public class CoinActivity extends AppCompatActivity implements
         CoinPieChartFragment.OnFragmentInteractionListener,
         CoinBoardFragment.OnFragmentInteractionListener,
         CoinExchangeTabContentFragment.OnFragmentInteractionListener,
+        CoinExchangesTabContentFragment.OnFragmentInteractionListener,
         CoinLineChartTabContentFragment.OnFragmentInteractionListener,
         CoinPieChartTabContentFragment.OnFragmentInteractionListener {
 

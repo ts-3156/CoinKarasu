@@ -205,7 +205,8 @@ public class ListViewFragment extends Fragment implements
             return;
         }
 
-        final TextView timeSpan = getView().findViewWithTag(exchange + "-time_span");
+        final String tag = exchange + "-time_span";
+        TextView timeSpan = getView().findViewWithTag(tag);
         if (timeSpan == null) {
             return;
         }
@@ -218,7 +219,10 @@ public class ListViewFragment extends Fragment implements
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                timeSpan.setText(DateHelper.getRelativeTimeSpanString(time, System.currentTimeMillis()));
+                if (!isDetached() && getView() != null) {
+                    ((TextView) getView().findViewWithTag(tag)).setText(
+                            DateHelper.getRelativeTimeSpanString(time, System.currentTimeMillis()));
+                }
             }
         });
     }

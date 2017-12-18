@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
     private Listener listener;
     private Client client;
-    ArrayList<GetPricesThread> threads;
+    private ArrayList<GetPricesThread> threads;
     private String[] fromSymbols;
     private String toSymbol;
     private String exchange;
@@ -59,6 +59,8 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
             latch.await();
         } catch (InterruptedException e) {
         }
+
+        executor.shutdown();
 
         return 200;
     }

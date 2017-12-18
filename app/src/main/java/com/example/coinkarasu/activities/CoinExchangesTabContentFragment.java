@@ -14,43 +14,40 @@ import android.widget.TextView;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.chart.CoinLineChart;
-import com.example.coinkarasu.coins.SnapshotCoin;
-import com.example.coinkarasu.coins.SnapshotCoinImpl;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.History;
-import com.example.coinkarasu.tasks.GetHistoryHourTask;
-import com.example.coinkarasu.tasks.GetHistoryTaskBase;
+import com.example.coinkarasu.tasks.GetMultipleHistoryDayTask;
 import com.github.mikephil.charting.charts.LineChart;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
-public class CoinExchangeTabContentFragment extends Fragment implements GetHistoryHourTask.Listener {
+public class CoinExchangesTabContentFragment extends Fragment implements GetMultipleHistoryDayTask.Listener {
 
     private OnFragmentInteractionListener listener;
 
-    private SnapshotCoin coin;
     private String kind;
+    private String fromSymbol;
+    private String toSymbol;
     private int position;
-    private String exchange;
+    private String[] exchanges;
     private boolean taskStarted;
     private CoinLineChart chart;
     private int errorCount = 0;
 
     private boolean isVisibleToUser = false;
 
-    public CoinExchangeTabContentFragment() {
+    public CoinExchangesTabContentFragment() {
     }
 
-    public static CoinExchangeTabContentFragment newInstance(SnapshotCoin coin, int position, String exchange) {
-        CoinExchangeTabContentFragment fragment = new CoinExchangeTabContentFragment();
+    public static CoinExchangesTabContentFragment newInstance(String fromSymbol, String toSymbol, int position, String[] exchanges) {
+        CoinExchangesTabContentFragment fragment = new CoinExchangesTabContentFragment();
         Bundle args = new Bundle();
-        args.putString("coinJson", coin.toJson().toString());
+        args.putString("fromSymbol", fromSymbol);
+        args.putString("toSymbol", toSymbol);
         args.putInt("position", position);
-        args.putString("exchange", exchange);
+        args.putStringArray("exchanges", exchanges);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,16 +56,11 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            String coinJson = getArguments().getString("coinJson");
+            fromSymbol = getArguments().getString("fromSymbol");
+            toSymbol = getArguments().getString("toSymbol");
             position = getArguments().getInt("position");
-            exchange = getArguments().getString("exchange");
+            exchanges = getArguments().getStringArray("exchanges");
             kind = "day";
-
-            try {
-                coin = SnapshotCoinImpl.buildByJSONObject(new JSONObject(coinJson));
-            } catch (JSONException e) {
-                Log.e("onCreate", e.getMessage());
-            }
         }
     }
 
@@ -87,9 +79,10 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         }
         taskStarted = true;
 
-        GetHistoryTaskBase.newInstance(new ClientImpl(getActivity()), kind, exchange)
-                .setFromSymbol(coin.getFromSymbol())
-                .setToSymbol(coin.getToSymbol())
+        new GetMultipleHistoryDayTask(new ClientImpl(getActivity()))
+                .setFromSymbol(fromSymbol)
+                .setToSymbol(toSymbol)
+                .setExchanges(exchanges)
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -100,14 +93,6 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         }
 
         if (taskStarted) {
-            if (chart != null) {
-                // TODO After calling onPause, chart.animateX() does not show anything.
-                // chart.animateX();
-//                chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart));
-//                chart.initialize(kind);
-//                chart.setData(records);
-//                chart.invalidate();
-            }
             return;
         }
 
@@ -115,37 +100,37 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     }
 
     @Override
-    public void finished(ArrayList<History> records) {
+    public void finished(HashMap<String, ArrayList<History>> map) {
         if (isDetached() || getView() == null) {
             taskStarted = false;
             errorCount++;
             return;
         }
 
-        if (records == null) {
-            Log.e("finished", "null(retry), " + exchange + ", " + errorCount);
+        if (map == null) {
+            Log.e("finished", "null(retry), " + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
             return;
         }
 
-        if (records.isEmpty()) {
-            Log.e("finished", "empty, " + exchange + ", " + errorCount);
-            drawChart(new ArrayList<History>());
+        if (map.isEmpty()) {
+            Log.e("finished", "empty, " + errorCount);
+            drawChart(new HashMap<String, ArrayList<History>>());
             return;
         }
 
-        drawChart(records);
-        ((CoinExchangeFragment) getParentFragment()).updateTab(position, records);
+        drawChart(map);
+//        ((CoinExchangeFragment) getParentFragment()).updateTab(position, records);
 
-        Log.d("UPDATED", exchange + ", " + records.size() + ", " + new Date().toString());
+        Log.d("UPDATED", map.size() + ", " + new Date().toString());
     }
 
-    private void drawChart(ArrayList<History> records) {
-        if (records.isEmpty()) {
+    private void drawChart(HashMap<String, ArrayList<History>> map) {
+        if (map.isEmpty()) {
             getView().findViewById(R.id.line_chart).setVisibility(View.GONE);
-            Spanned text = Html.fromHtml(getString(R.string.exchange_warn_each_exchange, coin.getFromSymbol(), coin.getToSymbol(), exchange));
+            Spanned text = Html.fromHtml(getString(R.string.exchange_warn_each_exchange, fromSymbol, toSymbol, "")); // TODO
             ((TextView) getView().findViewById(R.id.warn_text)).setText(text);
             getView().findViewById(R.id.warn).setVisibility(View.VISIBLE);
             return;
@@ -153,7 +138,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
 
         chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart));
         chart.initialize(kind);
-        chart.setData(records);
+        chart.setData(map);
         chart.invalidate();
     }
 
@@ -167,10 +152,11 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     public void onDetach() {
         super.onDetach();
         listener = null;
-        coin = null;
         kind = null;
-        exchange = null;
         chart = null;
+        fromSymbol = null;
+        toSymbol = null;
+        exchanges = null;
     }
 
     @Override
