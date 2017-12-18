@@ -201,7 +201,7 @@ public class ListViewFragment extends Fragment implements
     }
 
     private void updateRelativeTimeSpan(String exchange) {
-        if (getView() == null || getActivity() == null) {
+        if (isDetached() || getView() == null || getActivity() == null) {
             return;
         }
 

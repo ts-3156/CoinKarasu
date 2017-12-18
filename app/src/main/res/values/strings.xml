@@ -50,7 +50,8 @@
     <string name="line_chart_info">The <![CDATA[<b>%1$s - %2$s</b>]]> prices for this chart are aggregated from all exchanges and using a VWAP approach.</string>
     <string name="exchange_info">Only showing exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
     <string name="exchange_warn">There are no exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
-
+    <string name="exchange_warn_each_exchange">%3$s have not traded <![CDATA[<b>%1$s - %2$s</b>]]> in the last 24 hours.</string>
+    <string name="pie_chart_exchange_warn">There are no exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
 
     <!-- Strings related to Settings -->
 

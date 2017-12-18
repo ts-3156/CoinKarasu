@@ -27,7 +27,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     private String fromSymbol;
     private String toSymbol;
     private boolean taskStarted;
-    private CoinLineChart chart = null;
+    private CoinLineChart chart;
     private int errorCount = 0;
     private boolean isVisibleToUser = false;
 
@@ -57,6 +57,8 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_line_chart_tab_content, container, false);
+        taskStarted = false;
+        chart = null;
         startTask();
         return view;
     }
@@ -80,9 +82,9 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
 
         if (taskStarted) {
-            if (chart != null) {
-                chart.animateX();
-            }
+//            if (chart != null) {
+//                chart.animateX();
+//            }
             return;
         }
 

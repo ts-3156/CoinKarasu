@@ -42,7 +42,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     private String toSymbol;
     private int position;
     private boolean taskStarted;
-    private CoinPieChart chart = null;
+    private CoinPieChart chart;
     private int errorCount = 0;
     private boolean isVisibleToUser = false;
 
@@ -85,6 +85,8 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_pie_chart_tab_content, container, false);
+        taskStarted = false;
+        chart = null;
         startTask();
         return view;
     }
@@ -226,7 +228,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     private void drawChart(ArrayList<Double> values, ArrayList<String> labels) {
         if (values.isEmpty()) {
             getView().findViewById(R.id.pie_chart).setVisibility(View.GONE);
-            Spanned text = Html.fromHtml(getString(R.string.exchange_warn, fromSymbol, toSymbol));
+            Spanned text = Html.fromHtml(getString(R.string.pie_chart_exchange_warn, fromSymbol, toSymbol));
             ((TextView) getView().findViewById(R.id.warn_text)).setText(text);
             getView().findViewById(R.id.warn).setVisibility(View.VISIBLE);
             return;

@@ -97,7 +97,7 @@ public class ClientImpl implements Client {
         JSONArray histories = historyResponse.getData();
         if (histories == null) {
             Log.d("getHistoryXxx", "empty, " + kind);
-            new ArrayList<>();
+            return null;
         }
 
         ArrayList<History> result = new ArrayList<>();
@@ -107,7 +107,8 @@ public class ClientImpl implements Client {
                 result.add(new HistoryImpl(histories.getJSONObject(i), fromSymbol, toSymbol));
             }
         } catch (JSONException e) {
-            Log.d("getHistoryMinute", e.getMessage());
+            Log.e("getHistoryMinute", e.getMessage());
+            result = null;
         }
 
         return result;

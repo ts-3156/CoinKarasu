@@ -4,10 +4,13 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.chart.CoinLineChart;
@@ -36,7 +39,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     private int position;
     private String exchange;
     private boolean taskStarted;
-    private CoinLineChart chart = null;
+    private CoinLineChart chart;
     private int errorCount = 0;
 
     private ArrayList<History> records;
@@ -79,6 +82,8 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_exchange_tab_content, container, false);
+        taskStarted = false;
+        chart = null;
         startTask();
         return view;
     }
@@ -105,10 +110,10 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
             if (chart != null) {
                 // TODO After calling onPause, chart.animateX() does not show anything.
                 // chart.animateX();
-                chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart));
-                chart.initialize(kind);
-                chart.setData(records);
-                chart.invalidate();
+//                chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart));
+//                chart.initialize(kind);
+//                chart.setData(records);
+//                chart.invalidate();
             }
             return;
         }
@@ -124,22 +129,36 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
             return;
         }
 
-        if (records.isEmpty()) {
-            Log.e("finished", "empty, " + kind + ", " + errorCount);
+        if (records == null) {
+            Log.e("finished", "null(retry), " + exchange + ", " + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
             return;
         }
 
+        if (records.isEmpty()) {
+            Log.e("finished", "empty, " + exchange + ", " + errorCount);
+            drawChart(new ArrayList<History>());
+            return;
+        }
+
         drawChart(records);
         ((CoinExchangeFragment) getParentFragment()).updateTab(position, records);
 
-        Log.d("UPDATED", kind + ", " + records.size() + ", " + new Date().toString());
+        Log.d("UPDATED", exchange + ", " + records.size() + ", " + new Date().toString());
     }
 
     private void drawChart(ArrayList<History> records) {
         this.records = records;
+
+        if (records.isEmpty()) {
+            getView().findViewById(R.id.line_chart).setVisibility(View.GONE);
+            Spanned text = Html.fromHtml(getString(R.string.exchange_warn_each_exchange, fromSymbol, toSymbol, exchange));
+            ((TextView) getView().findViewById(R.id.warn_text)).setText(text);
+            getView().findViewById(R.id.warn).setVisibility(View.VISIBLE);
+            return;
+        }
 
         chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart));
         chart.initialize(kind);
