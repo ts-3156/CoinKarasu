@@ -425,6 +425,7 @@ public class ListViewFragment extends Fragment implements
         autoUpdateTimer = null;
         client = null;
         kind = null;
+        updatedTimes = null;
     }
 
     @Override

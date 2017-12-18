@@ -130,7 +130,6 @@ public class CoinExchangeFragment extends Fragment implements
         tabsCreated = true;
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        View view = getView();
         String fromSymbol = coin.getSymbol();
         String toSymbol = coin.getToSymbol();
 
@@ -139,6 +138,7 @@ public class CoinExchangeFragment extends Fragment implements
             adapter.addItem(CoinExchangeTabContentFragment.newInstance(coin, fromSymbol, toSymbol, i, coin.getMarket().toLowerCase()));
         }
 
+        View view = getView();
         pager = view.findViewById(R.id.view_pager);
         pager.setAdapter(adapter);
         pager.setCurrentItem(0);

@@ -33,6 +33,8 @@ import java.util.Iterator;
 public class CoinPieChartTabContentFragment extends Fragment implements
         GetTopPairsTask.Listener, GetCoinSnapshotTask.Listener {
 
+    public static final double GROUP_SMALL_SLICES_PCT = 0.05;
+
     private OnFragmentInteractionListener listener;
 
     private CoinPieChartFragment.Kind kind;
@@ -247,7 +249,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         for (double value : values) {
             sum += value;
         }
-        double threshold = sum * 0.05;
+        double threshold = sum * GROUP_SMALL_SLICES_PCT;
 
         double others = 0.0;
         ArrayList<Double> newValues = new ArrayList<>();

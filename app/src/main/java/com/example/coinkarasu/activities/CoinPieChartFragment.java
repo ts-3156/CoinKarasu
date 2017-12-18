@@ -3,10 +3,12 @@ package com.example.coinkarasu.activities;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +16,19 @@ import android.widget.TextView;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.ViewPagerAdapter;
+import com.example.coinkarasu.cryptocompare.ClientImpl;
+import com.example.coinkarasu.cryptocompare.data.TopPair;
+import com.example.coinkarasu.cryptocompare.data.TopPairs;
+import com.example.coinkarasu.tasks.GetTopPairsTask;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
 
 
 public class CoinPieChartFragment extends Fragment implements
-        ViewPager.OnPageChangeListener {
+        ViewPager.OnPageChangeListener, GetTopPairsTask.Listener {
 
     private static final Kind DEFAULT_KIND = Kind.currency;
 
@@ -34,6 +45,9 @@ public class CoinPieChartFragment extends Fragment implements
 
     private OnFragmentInteractionListener listener;
 
+    private boolean taskStarted;
+    private int errorCount = 0;
+    private boolean tabsCreated = false;
     private ViewPager pager;
     private TabLayout tabs;
     private TabLayout.Tab tab;
@@ -68,34 +82,56 @@ public class CoinPieChartFragment extends Fragment implements
         Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Light.ttf");
         ((TextView) view.findViewById(R.id.caption_left)).setTypeface(typeFace);
         ((TextView) view.findViewById(R.id.caption_right)).setTypeface(typeFace);
-        ((TextView) view.findViewById(R.id.caption_left)).setText(getString(R.string.caption_left, fromSymbol, toSymbol));
+        ((TextView) view.findViewById(R.id.caption_desc_left)).setTypeface(typeFace);
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
-        adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.currency, fromSymbol, toSymbol));
-        adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.exchange, fromSymbol, toSymbol));
+        typeFace = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-LightItalic.ttf");
+        ((TextView) view.findViewById(R.id.caption_desc_right)).setTypeface(typeFace);
 
-        pager = view.findViewById(R.id.view_pager);
-        pager.setAdapter(adapter);
-        pager.setCurrentItem(DEFAULT_KIND.ordinal());
-        pager.addOnPageChangeListener(this);
-        pager.setOffscreenPageLimit(Kind.values().length);
+        ((TextView) view.findViewById(R.id.caption_left)).setText(fromSymbol);
 
-        tabs = view.findViewById(R.id.tab_layout);
-        tabs.setupWithViewPager(pager);
-
-        tabs.getTabAt(Kind.currency.ordinal()).setCustomView(createTab(inflater, container, Kind.currency.label));
-        tabs.getTabAt(Kind.exchange.ordinal()).setCustomView(createTab(inflater, container, Kind.exchange.label));
-
-        tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
-        setSelected(DEFAULT_KIND.ordinal());
+        startTask();
 
         return view;
     }
 
-    private View createTab(LayoutInflater inflater, ViewGroup container, String label) {
+    private void createTabs(ArrayList<TopPair> pairs) {
+        if (tabsCreated || getView() == null || getActivity() == null) {
+            return;
+        }
+        tabsCreated = true;
+
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager());
+        adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.currency, fromSymbol, toSymbol));
+        for (TopPair pair : pairs) {
+            adapter.addItem(CoinPieChartTabContentFragment.newInstance(Kind.exchange, fromSymbol, pair.getToSymbol()));
+        }
+
+        View view = getView();
+        pager = view.findViewById(R.id.view_pager);
+        pager.setAdapter(adapter);
+        pager.setCurrentItem(DEFAULT_KIND.ordinal());
+        pager.addOnPageChangeListener(this);
+        pager.setOffscreenPageLimit(Math.min(pairs.size() + 1, 5));
+
+        tabs = view.findViewById(R.id.tab_layout);
+        tabs.setupWithViewPager(pager);
+
+        LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        tabs.getTabAt(Kind.currency.ordinal()).setCustomView(createTab(inflater, null, Kind.currency.label, fromSymbol));
+        for (int i = 0; i < pairs.size(); i++) {
+            tabs.getTabAt(i + 1).setCustomView(createTab(inflater, null, Kind.exchange.label, pairs.get(i).getToSymbol()));
+        }
+
+        tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
+        setSelected(DEFAULT_KIND.ordinal());
+    }
+
+    private View createTab(LayoutInflater inflater, ViewGroup container, String label, String symbol) {
         View view = inflater.inflate(R.layout.tab_pie_chart, container, false);
 
         ((TextView) view.findViewById(R.id.label)).setText(label);
+        ((TextView) view.findViewById(R.id.symbol)).setText(symbol);
 
         return view;
     }
@@ -104,14 +140,71 @@ public class CoinPieChartFragment extends Fragment implements
     }
 
     private void setSelected(int position) {
+        int inactiveColor = getResources().getColor(R.color.colorTabInactiveText);
         View view = tab.getCustomView();
         view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
-        ((TextView) view.findViewById(R.id.label)).setTextColor(getResources().getColor(R.color.colorTabInactiveText));
+        ((TextView) view.findViewById(R.id.label)).setTextColor(inactiveColor);
+        ((TextView) view.findViewById(R.id.symbol)).setTextColor(inactiveColor);
 
         tab = tabs.getTabAt(position);
+
+        int activeColor = getResources().getColor(R.color.colorTabActiveText);
         view = tab.getCustomView();
         view.findViewById(R.id.tab_container).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        ((TextView) view.findViewById(R.id.label)).setTextColor(getResources().getColor(R.color.colorTabActiveText));
+        ((TextView) view.findViewById(R.id.label)).setTextColor(activeColor);
+        ((TextView) view.findViewById(R.id.symbol)).setTextColor(activeColor);
+    }
+
+    private void startTask() {
+        if (taskStarted || errorCount >= 3 || getActivity() == null) {
+            return;
+        }
+        taskStarted = true;
+
+        new GetTopPairsTask(new ClientImpl(getActivity()))
+                .setFromSymbol(fromSymbol)
+                .setListener(this)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    @Override
+    public void finished(TopPairs topPairs) {
+        if (isDetached() || getView() == null) {
+            taskStarted = false;
+            errorCount++;
+            return;
+        }
+
+        ArrayList<TopPair> pairs = topPairs.getTopPairs();
+        if (pairs == null) {
+            Log.e("finished", "null(retry), " + errorCount);
+            taskStarted = false;
+            errorCount++;
+            startTask();
+            return;
+        }
+
+        double sum = 0.0;
+        for (TopPair pair : pairs) {
+            sum += pair.getVolume24h();
+        }
+        double threshold = sum * CoinPieChartTabContentFragment.GROUP_SMALL_SLICES_PCT;
+
+        Iterator<TopPair> iterator = pairs.iterator();
+        while (iterator.hasNext()) {
+            TopPair pair = iterator.next();
+            if (pair.getVolume24h() < threshold) {
+                iterator.remove();
+            }
+        }
+
+        Collections.sort(pairs, new Comparator<TopPair>() {
+            public int compare(TopPair tp1, TopPair tp2) {
+                return tp1.getVolume24h() > tp2.getVolume24h() ? -1 : 1;
+            }
+        });
+
+        createTabs(pairs);
     }
 
     @Override
