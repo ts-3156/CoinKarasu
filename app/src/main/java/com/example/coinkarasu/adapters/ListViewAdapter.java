@@ -197,9 +197,11 @@ public class ListViewAdapter extends BaseAdapter {
                 convertView = inflater.inflate(R.layout.list_header_item, parent, false);
                 holder.header = convertView.findViewById(R.id.text_separator);
                 holder.divider = convertView.findViewById(R.id.divider);
-                holder.progressbar = convertView.findViewById(R.id.progressbar);
 
-                holder.progressbar.setTag(coin.getExchange());
+                holder.progressbar = convertView.findViewById(R.id.progressbar);
+                holder.progressbar.setTag(coin.getExchange() + "-progressbar");
+                holder.time_span = convertView.findViewById(R.id.time_span);
+                holder.time_span.setTag(coin.getExchange() + "-time_span");
             }
             convertView.setTag(holder);
         } else {
@@ -276,6 +278,7 @@ public class ListViewAdapter extends BaseAdapter {
         TextView header;
         View divider;
         View progressbar;
+        View time_span;
 
         PriceAnimator priceAnimator = null;
         TrendAnimator trendAnimator = null;

@@ -18,7 +18,9 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.ListViewAdapter;
@@ -30,11 +32,14 @@ import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.format.ValueAnimatorBase;
 import com.example.coinkarasu.tasks.GetPricesTask;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
+import com.example.coinkarasu.utils.DateHelper;
 import com.example.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
 import java.util.TimerTask;
 
 
@@ -80,10 +85,12 @@ public class ListViewFragment extends Fragment implements
     private OnFragmentInteractionListener listener;
 
     private AutoUpdateTimer autoUpdateTimer;
+    private Timer relativeTimeSpanTimer;
     private Client client;
     private NavigationKind kind;
     private boolean isVisibleToUser = false;
     private boolean isSelected;
+    private HashMap<String, Long> updatedTimes = new HashMap<>();
 
     public ListViewFragment() {
     }
@@ -187,6 +194,57 @@ public class ListViewFragment extends Fragment implements
         }
     }
 
+    private void updateRelativeTimeSpan() {
+        for (String exchange : kind.exchanges) {
+            updateRelativeTimeSpan(exchange);
+        }
+    }
+
+    private void updateRelativeTimeSpan(String exchange) {
+        if (getView() == null || getActivity() == null) {
+            return;
+        }
+
+        final TextView timeSpan = getView().findViewWithTag(exchange + "-time_span");
+        if (timeSpan == null) {
+            return;
+        }
+
+        if (!updatedTimes.containsKey(exchange)) {
+            return;
+        }
+        final long time = updatedTimes.get(exchange);
+
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                timeSpan.setText(DateHelper.getRelativeTimeSpanString(time, System.currentTimeMillis()));
+            }
+        });
+    }
+
+    private void startRelativeTimeSpanTimer() {
+        if (relativeTimeSpanTimer != null) {
+            stopRelativeTimeSpanTimer();
+        }
+
+        relativeTimeSpanTimer = new Timer();
+
+        relativeTimeSpanTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                updateRelativeTimeSpan();
+            }
+        }, 0, 10000);
+    }
+
+    private void stopRelativeTimeSpanTimer() {
+        if (relativeTimeSpanTimer != null) {
+            relativeTimeSpanTimer.cancel();
+            relativeTimeSpanTimer = null;
+        }
+    }
+
     private String getTimerTag(NavigationKind kind) {
         String suffix = getToSymbol(kind);
         if (suffix == null) {
@@ -204,6 +262,7 @@ public class ListViewFragment extends Fragment implements
     public void finished(Prices prices) {
         if (isDetached() || getActivity() == null) {
             stopAutoUpdate();
+            stopRelativeTimeSpanTimer();
             return;
         }
 
@@ -239,12 +298,22 @@ public class ListViewFragment extends Fragment implements
             return;
         }
 
-        View progressbar = getView().findViewWithTag(exchange);
+        ImageView progressbar = getView().findViewWithTag(exchange + "-progressbar");
         if (progressbar == null) {
             return;
         }
 
-        progressbar.setVisibility(flag);
+        if (flag == View.GONE) {
+            progressbar.clearAnimation();
+            progressbar.setImageResource(R.drawable.ic_refresh_stop);
+
+            updatedTimes.put(exchange, System.currentTimeMillis());
+            startRelativeTimeSpanTimer();
+        } else if (flag == View.VISIBLE) {
+            progressbar.setImageResource(R.drawable.ic_refresh_rotate);
+            Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
+            progressbar.startAnimation(anim);
+        }
     }
 
     private ArrayList<Coin> insertSectionHeader(ArrayList<Coin> coins, String[] exchanges) {
@@ -324,6 +393,7 @@ public class ListViewFragment extends Fragment implements
 
         if (isVisibleToUser) {
             startAutoUpdate(true);
+            updateRelativeTimeSpan();
         }
     }
 
@@ -331,12 +401,14 @@ public class ListViewFragment extends Fragment implements
     public void onPause() {
         super.onPause();
         stopAutoUpdate();
+        stopRelativeTimeSpanTimer();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         stopAutoUpdate();
+        stopRelativeTimeSpanTimer();
     }
 
     @Override
@@ -363,6 +435,7 @@ public class ListViewFragment extends Fragment implements
         }
 
         stopAutoUpdate();
+        stopRelativeTimeSpanTimer();
         Intent intent = new Intent(view.getContext(), CoinActivity.class);
         intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.toJson().toString());
         intent.putExtra(CoinActivity.COIN_SYMBOL_KEY, coin.getSymbol());
@@ -396,6 +469,7 @@ public class ListViewFragment extends Fragment implements
             startAutoUpdate(true);
         } else {
             stopAutoUpdate();
+            stopRelativeTimeSpanTimer();
         }
     }
 
