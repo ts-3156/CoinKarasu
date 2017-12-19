@@ -25,15 +25,13 @@
         android:textColor="#999999"
         tools:text="Aggregated index" />
 
-    <TextView
-        android:id="@+id/time_span"
+    <FrameLayout
+        android:id="@+id/time_span_container"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/text_separator"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="40dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-        android:textColor="#999999" />
+        android:layout_marginRight="40dp" />
 
     <ImageView
         android:id="@+id/progressbar"

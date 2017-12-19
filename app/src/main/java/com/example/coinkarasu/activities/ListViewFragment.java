@@ -20,7 +20,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.ListViewAdapter;
@@ -32,7 +31,6 @@ import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.format.ValueAnimatorBase;
 import com.example.coinkarasu.tasks.GetPricesTask;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
-import com.example.coinkarasu.utils.DateHelper;
 import com.example.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
@@ -85,12 +83,10 @@ public class ListViewFragment extends Fragment implements
     private OnFragmentInteractionListener listener;
 
     private AutoUpdateTimer autoUpdateTimer;
-    private Timer relativeTimeSpanTimer;
     private Client client;
     private NavigationKind kind;
     private boolean isVisibleToUser = false;
     private boolean isSelected;
-    private HashMap<String, Long> updatedTimes = new HashMap<>();
 
     public ListViewFragment() {
     }
@@ -121,7 +117,7 @@ public class ListViewFragment extends Fragment implements
         ArrayList<Coin> coins = ((MainFragment) getParentFragment()).collectCoins(getFromSymbols(kind), getToSymbol(kind));
         coins = insertSectionHeader(coins, kind.exchanges);
 
-        ListViewAdapter adapter = new ListViewAdapter(activity, coins);
+        ListViewAdapter adapter = new ListViewAdapter(activity, coins, getChildFragmentManager());
         ListView listView = view.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
@@ -194,61 +190,6 @@ public class ListViewFragment extends Fragment implements
         }
     }
 
-    private void updateRelativeTimeSpan() {
-        for (String exchange : kind.exchanges) {
-            updateRelativeTimeSpan(exchange);
-        }
-    }
-
-    private void updateRelativeTimeSpan(String exchange) {
-        if (isDetached() || getView() == null || getActivity() == null) {
-            return;
-        }
-
-        final String tag = exchange + "-time_span";
-        TextView timeSpan = getView().findViewWithTag(tag);
-        if (timeSpan == null) {
-            return;
-        }
-
-        if (!updatedTimes.containsKey(exchange)) {
-            return;
-        }
-        final long time = updatedTimes.get(exchange);
-
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (!isDetached() && getView() != null) {
-                    ((TextView) getView().findViewWithTag(tag)).setText(
-                            DateHelper.getRelativeTimeSpanString(time, System.currentTimeMillis()));
-                }
-            }
-        });
-    }
-
-    private void startRelativeTimeSpanTimer() {
-        if (relativeTimeSpanTimer != null) {
-            stopRelativeTimeSpanTimer();
-        }
-
-        relativeTimeSpanTimer = new Timer();
-
-        relativeTimeSpanTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                updateRelativeTimeSpan();
-            }
-        }, 0, 5000);
-    }
-
-    private void stopRelativeTimeSpanTimer() {
-        if (relativeTimeSpanTimer != null) {
-            relativeTimeSpanTimer.cancel();
-            relativeTimeSpanTimer = null;
-        }
-    }
-
     private String getTimerTag(NavigationKind kind) {
         String suffix = getToSymbol(kind);
         if (suffix == null) {
@@ -266,7 +207,6 @@ public class ListViewFragment extends Fragment implements
     public void finished(Prices prices) {
         if (isDetached() || getActivity() == null) {
             stopAutoUpdate();
-            stopRelativeTimeSpanTimer();
             return;
         }
 
@@ -310,13 +250,18 @@ public class ListViewFragment extends Fragment implements
         if (flag == View.GONE) {
             progressbar.clearAnimation();
             progressbar.setImageResource(R.drawable.ic_refresh_stop);
-
-            updatedTimes.put(exchange, System.currentTimeMillis());
-            startRelativeTimeSpanTimer();
+            updateRelativeTimeSpanText(exchange);
         } else if (flag == View.VISIBLE) {
             progressbar.setImageResource(R.drawable.ic_refresh_rotate);
             Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
             progressbar.startAnimation(anim);
+        }
+    }
+
+    private void updateRelativeTimeSpanText(String exchange) {
+        Fragment fragment = getChildFragmentManager().findFragmentByTag(exchange + "-time_span");
+        if (fragment != null) {
+            ((RelativeTimeSpanFragment) fragment).setTime(System.currentTimeMillis());
         }
     }
 
@@ -397,7 +342,6 @@ public class ListViewFragment extends Fragment implements
 
         if (isVisibleToUser) {
             startAutoUpdate(true);
-            updateRelativeTimeSpan();
         }
     }
 
@@ -405,14 +349,12 @@ public class ListViewFragment extends Fragment implements
     public void onPause() {
         super.onPause();
         stopAutoUpdate();
-        stopRelativeTimeSpanTimer();
     }
 
     @Override
     public void onStop() {
         super.onStop();
         stopAutoUpdate();
-        stopRelativeTimeSpanTimer();
     }
 
     @Override
@@ -429,7 +371,6 @@ public class ListViewFragment extends Fragment implements
         autoUpdateTimer = null;
         client = null;
         kind = null;
-        updatedTimes = null;
     }
 
     @Override
@@ -440,7 +381,6 @@ public class ListViewFragment extends Fragment implements
         }
 
         stopAutoUpdate();
-        stopRelativeTimeSpanTimer();
         Intent intent = new Intent(view.getContext(), CoinActivity.class);
         intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.toJson().toString());
         intent.putExtra(CoinActivity.COIN_SYMBOL_KEY, coin.getSymbol());
@@ -474,7 +414,6 @@ public class ListViewFragment extends Fragment implements
             startAutoUpdate(true);
         } else {
             stopAutoUpdate();
-            stopRelativeTimeSpanTimer();
         }
     }
 

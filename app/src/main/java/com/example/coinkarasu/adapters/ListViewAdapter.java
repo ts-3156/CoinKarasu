@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Typeface;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.activities.RelativeTimeSpanFragment;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.format.PriceAnimator;
 import com.example.coinkarasu.format.PriceFormat;
@@ -51,7 +54,9 @@ public class ListViewAdapter extends BaseAdapter {
     private Typeface typeFace;
     private Typeface typeFaceItalic;
 
-    public ListViewAdapter(Activity activity, List<Coin> coins) {
+    private FragmentManager fragmentManager;
+
+    public ListViewAdapter(Activity activity, List<Coin> coins, FragmentManager fragmentManager) {
         symbolIconResIdMap = buildIconResIdMap(activity, coins);
         imageLoader = VolleyHelper.getInstance(activity).getImageLoader();
         isAnimEnabled = PrefHelper.isAnimEnabled(activity);
@@ -74,6 +79,8 @@ public class ListViewAdapter extends BaseAdapter {
         initializeTrendColors(activity);
         typeFace = Typeface.createFromAsset(activity.getAssets(), "OpenSans-Light.ttf");
         typeFaceItalic = Typeface.createFromAsset(activity.getAssets(), "OpenSans-LightItalic.ttf");
+
+        this.fragmentManager = fragmentManager;
     }
 
     private void initializeTrendColors(Activity activity) {
@@ -210,8 +217,12 @@ public class ListViewAdapter extends BaseAdapter {
 
                 holder.progressbar = convertView.findViewById(R.id.progressbar);
                 holder.progressbar.setTag(coin.getExchange() + "-progressbar");
-                holder.time_span = convertView.findViewById(R.id.time_span);
-                holder.time_span.setTag(coin.getExchange() + "-time_span");
+
+                View time_span = convertView.findViewById(R.id.time_span_container);
+                time_span.setId(Math.abs(coin.getExchange().hashCode()));
+                fragmentManager.beginTransaction()
+                        .replace(time_span.getId(), RelativeTimeSpanFragment.newInstance(), coin.getExchange() + "-time_span")
+                        .commit();
             }
             convertView.setTag(holder);
         } else {
@@ -288,7 +299,6 @@ public class ListViewAdapter extends BaseAdapter {
         TextView header;
         View divider;
         View progressbar;
-        View time_span;
 
         PriceAnimator priceAnimator = null;
         TrendAnimator trendAnimator = null;
