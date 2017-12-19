@@ -5,23 +5,23 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.coins.PriceMultiFullCoin;
+import com.example.coinkarasu.coins.PriceMultiFullCoinImpl;
 import com.example.coinkarasu.cryptocompare.response.PricesResponse;
 import com.example.coinkarasu.cryptocompare.response.PricesResponseImpl;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 public class PricesImpl implements Prices {
     private PricesResponse response;
     private String exchange;
 
-    private HashMap<String, Double> prices = new HashMap<>();
-    private HashMap<String, Double> trends = new HashMap<>();
+    private ArrayList<PriceMultiFullCoin> coins = new ArrayList<>();
 
     public PricesImpl() {
     }
@@ -29,19 +29,19 @@ public class PricesImpl implements Prices {
     public PricesImpl(PricesResponse response) {
         this.response = response;
         this.exchange = null;
-        add(response);
+        extract(response);
     }
 
     public PricesImpl(PricesResponse response, String exchange) {
         this.response = response;
         this.exchange = exchange;
-        add(response);
+        extract(response);
     }
 
-    private void add(PricesResponse response) {
+    private void extract(PricesResponse response) {
         JSONObject raw = response.getRaw();
         if (raw == null) {
-            Log.e("add", response.toString());
+            Log.e("extract", response.toString());
             return;
         }
 
@@ -53,25 +53,16 @@ public class PricesImpl implements Prices {
                 String toSymbol = values.keys().next();
                 JSONObject attrs = raw.getJSONObject(fromSymbol).getJSONObject(toSymbol);
 
-                prices.put(fromSymbol, attrs.getDouble("PRICE"));
-                trends.put(fromSymbol, attrs.getDouble("CHANGEPCT24HOUR") / 100.0);
+                coins.add(new PriceMultiFullCoinImpl(attrs));
             }
         } catch (JSONException e) {
-            Log.e("add", e.getMessage());
+            Log.e("extract", e.getMessage());
         }
     }
 
     @Override
     public void merge(Prices prices) {
-        Set<String> keySet = prices.getPrices().keySet();
-        for (String s : keySet) {
-            this.prices.put(s, prices.getPrices().get(s));
-            this.trends.put(s, prices.getTrends().get(s));
-        }
-    }
-
-    public static PricesImpl buildByResponse(JSONObject response) {
-        return new PricesImpl(new PricesResponseImpl(response));
+        coins.addAll(prices.getCoins());
     }
 
     @Override
@@ -94,41 +85,35 @@ public class PricesImpl implements Prices {
     }
 
     @Override
-    public void setAttrsToCoin(Coin coin) {
+    public void copyAttrsToCoin(Coin coin) {
         if (coin.isSectionHeader()) {
             return;
         }
 
-        Double price = prices.get(coin.getSymbol());
-        if (price != null) {
-            coin.setPrice(price);
-        }
+        for (PriceMultiFullCoin c : coins) {
+            if (coin.getSymbol().equals(c.getFromSymbol())) {
+                coin.setPrice(c.getPrice());
+                coin.setTrend(c.getChangePct24Hour() / 100.0);
 
-        Double trend = trends.get(coin.getSymbol());
-        if (trend != null) {
-            coin.setTrend(trend);
-        }
+                if (exchange != null) {
+                    coin.setExchange(exchange);
+                }
 
-        if (exchange != null) {
-            coin.setExchange(exchange);
+                break;
+            }
         }
     }
 
     @Override
-    public HashMap<String, Double> getPrices() {
-        return prices;
-    }
-
-    @Override
-    public HashMap<String, Double> getTrends() {
-        return trends;
-    }
-
-    @Override
-    public void setAttrsToCoins(List<Coin> coins) {
+    public void copyAttrsToCoins(List<Coin> coins) {
         for (Coin coin : coins) {
-            setAttrsToCoin(coin);
+            copyAttrsToCoin(coin);
         }
+    }
+
+    @Override
+    public ArrayList<PriceMultiFullCoin> getCoins() {
+        return coins;
     }
 
     @Override

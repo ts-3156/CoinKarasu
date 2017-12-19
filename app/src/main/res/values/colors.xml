@@ -15,4 +15,7 @@
     <color name="colorTrendUp">#008000</color>
     <color name="colorTrendFlat">#8a000000</color>
     <color name="colorTrendDown">#ff0000</color>
+
+    <color name="colorPriceBgUp">#E8F5E9</color>
+    <color name="colorPriceBgDown">#FFEBEE</color>
 </resources>

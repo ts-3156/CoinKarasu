@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity implements
             drawer.closeDrawer(GravityCompat.START);
         } else {
             NavigationKind kind = getCurrentKind();
-            if (kind != null && kind == NavigationKind.nav_main) {
+            if (kind != null && kind != NavigationKind.nav_main) {
                 setCurrentKind(NavigationKind.nav_main);
             } else {
                 super.onBackPressed();

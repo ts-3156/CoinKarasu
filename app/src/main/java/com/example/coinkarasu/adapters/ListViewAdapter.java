@@ -3,9 +3,9 @@ package com.example.coinkarasu.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +19,7 @@ import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.RelativeTimeSpanFragment;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.format.PriceAnimator;
+import com.example.coinkarasu.format.PriceBgColorAnimator;
 import com.example.coinkarasu.format.PriceFormat;
 import com.example.coinkarasu.format.TrendAnimator;
 import com.example.coinkarasu.format.TrendColorFormat;
@@ -51,6 +52,9 @@ public class ListViewAdapter extends BaseAdapter {
     private int trendUp;
     private int trendFlat;
     private int trendDown;
+    private int priceUpFromColor;
+    private int priceDownFromColor;
+    private int priceToColor;
     private Typeface typeFace;
     private Typeface typeFaceItalic;
 
@@ -76,20 +80,24 @@ public class ListViewAdapter extends BaseAdapter {
         }
         trendFormatter = new TrendValueFormat();
         trendIconFormat = new TrendIconFormat();
-        initializeTrendColors(activity);
+        initializeColors(activity);
         typeFace = Typeface.createFromAsset(activity.getAssets(), "OpenSans-Light.ttf");
         typeFaceItalic = Typeface.createFromAsset(activity.getAssets(), "OpenSans-LightItalic.ttf");
 
         this.fragmentManager = fragmentManager;
     }
 
-    private void initializeTrendColors(Activity activity) {
+    private void initializeColors(Activity activity) {
         Resources resources = activity.getResources();
         TrendColorFormat formatter = new TrendColorFormat();
 
         trendUp = resources.getColor(formatter.format(1.0));
         trendFlat = resources.getColor(formatter.format(0.0));
         trendDown = resources.getColor(formatter.format(-1.0));
+
+        priceUpFromColor = resources.getColor(R.color.colorPriceBgUp);
+        priceDownFromColor = resources.getColor(R.color.colorPriceBgDown);
+        priceToColor = Color.WHITE;
     }
 
     private HashMap<String, Integer> buildIconResIdMap(Activity activity, List<Coin> coins) {
@@ -239,14 +247,15 @@ public class ListViewAdapter extends BaseAdapter {
 
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());
-
-            holder.price.setText(priceFormatter.format(coin.getPrice()));
-            holder.trend.setText(trendFormatter.format(coin.getTrend()));
             holder.trend.setTextColor(getTrendColor(coin.getTrend()));
 
             if (holder.priceAnimator != null) {
                 holder.priceAnimator.cancel();
                 holder.priceAnimator = null;
+            }
+            if (holder.priceBgColorAnimator != null) {
+                holder.priceBgColorAnimator.cancel();
+                holder.priceBgColorAnimator = null;
             }
             if (holder.trendAnimator != null) {
                 holder.trendAnimator.cancel();
@@ -254,11 +263,31 @@ public class ListViewAdapter extends BaseAdapter {
             }
 
             if (isAnimEnabled && !isScrolled) {
-                holder.priceAnimator = new PriceAnimator(coin, holder.price);
-                holder.priceAnimator.start();
+                if (coin.getPrice() != coin.getPrevPrice()) {
+                    holder.priceAnimator = new PriceAnimator(coin, holder.price);
+                    holder.priceAnimator.start();
 
-                holder.trendAnimator = new TrendAnimator(coin, holder.trend);
-                holder.trendAnimator.start();
+                    if (coin.getPrice() > coin.getPrevPrice()) {
+                        holder.priceBgColorAnimator = new PriceBgColorAnimator(priceUpFromColor, priceToColor, convertView);
+                    } else {
+                        holder.priceBgColorAnimator = new PriceBgColorAnimator(priceDownFromColor, priceToColor, convertView);
+                    }
+                    holder.priceBgColorAnimator.start();
+                } else {
+                    holder.price.setText(priceFormatter.format(coin.getPrice()));
+                    convertView.setBackgroundColor(priceToColor);
+                }
+
+                if (coin.getTrend() != coin.getPrevTrend()) {
+                    holder.trendAnimator = new TrendAnimator(coin, holder.trend);
+                    holder.trendAnimator.start();
+                } else {
+                    holder.trend.setText(trendFormatter.format(coin.getTrend()));
+                }
+            } else {
+                holder.price.setText(priceFormatter.format(coin.getPrice()));
+                holder.trend.setText(trendFormatter.format(coin.getTrend()));
+                convertView.setBackgroundColor(priceToColor);
             }
 
             holder.trend_icon.setImageResource(trendIconFormat.format(coin.getTrend()));
@@ -301,6 +330,7 @@ public class ListViewAdapter extends BaseAdapter {
         View progressbar;
 
         PriceAnimator priceAnimator = null;
+        PriceBgColorAnimator priceBgColorAnimator = null;
         TrendAnimator trendAnimator = null;
     }
 }

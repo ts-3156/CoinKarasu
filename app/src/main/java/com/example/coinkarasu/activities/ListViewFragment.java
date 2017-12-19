@@ -35,9 +35,7 @@ import com.example.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Timer;
 import java.util.TimerTask;
 
 
@@ -220,7 +218,7 @@ public class ListViewFragment extends Fragment implements
 
         String exchange = prices.getExchange();
         ArrayList<Coin> filtered = adapter.getItems(exchange);
-        prices.setAttrsToCoins(filtered);
+        prices.copyAttrsToCoins(filtered);
 
         adapter.notifyDataSetChanged();
         hideProgressbarDelayed(exchange);

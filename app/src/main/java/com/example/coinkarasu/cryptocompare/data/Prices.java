@@ -1,21 +1,21 @@
 package com.example.coinkarasu.cryptocompare.data;
 
 import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.coins.PriceMultiFullCoin;
 import com.example.coinkarasu.cryptocompare.response.Cacheable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public interface Prices extends Cacheable {
     void merge(Prices prices);
 
-    void setAttrsToCoin(Coin coin);
+    void copyAttrsToCoin(Coin coin);
 
-    HashMap<String, Double> getPrices();
+    ArrayList<PriceMultiFullCoin> getCoins();
 
-    HashMap<String, Double> getTrends();
-
-    void setAttrsToCoins(List<Coin> coins);
+    void copyAttrsToCoins(List<Coin> coins);
 
     void setExchange(String exchange);
 
