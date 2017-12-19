@@ -27,21 +27,25 @@ public class MainFragment extends Fragment implements
         ViewPager.OnPageChangeListener {
 
     public enum NavigationKind {
-        nav_main(R.string.nav_main, R.string.tab_main, R.id.nav_main, 0),
-        jpy_toplist(R.string.nav_jpy_toplist, R.string.tab_jpy_toplist, R.id.nav_jpy_toplist, 2),
-        usd_toplist(R.string.nav_usd_toplist, R.string.tab_usd_toplist, R.id.nav_usd_toplist, 3),
-        eur_toplist(R.string.nav_eur_toplist, R.string.tab_eur_toplist, R.id.nav_eur_toplist, 4),
-        btc_toplist(R.string.nav_btc_toplist, R.string.tab_btc_toplist, R.id.nav_btc_toplist, 5);
+        nav_main(R.string.nav_main, R.string.tab_main, R.id.nav_main, R.color.colorNavMain, R.color.colorNavMainDark, 0),
+        jpy_toplist(R.string.nav_jpy_toplist, R.string.tab_jpy_toplist, R.id.nav_jpy_toplist, R.color.colorJpyToplist, R.color.colorJpyToplistDark, 2),
+        usd_toplist(R.string.nav_usd_toplist, R.string.tab_usd_toplist, R.id.nav_usd_toplist, R.color.colorUsdToplist, R.color.colorUsdToplistDark, 3),
+        eur_toplist(R.string.nav_eur_toplist, R.string.tab_eur_toplist, R.id.nav_eur_toplist, R.color.colorEurToplist, R.color.colorEurToplistDark, 4),
+        btc_toplist(R.string.nav_btc_toplist, R.string.tab_btc_toplist, R.id.nav_btc_toplist, R.color.colorBtcToplist, R.color.colorBtcToplistDark, 5);
 
         int navStrResId;
         int tabStrResId;
         int navResId;
+        int colorResId;
+        int colorDarkResId;
         int navPos;
 
-        NavigationKind(int navStrResId, int tabStrResId, int navResId, int navPos) {
+        NavigationKind(int navStrResId, int tabStrResId, int navResId, int colorResId, int colorDarkResId, int navPos) {
             this.navStrResId = navStrResId;
             this.tabStrResId = tabStrResId;
             this.navResId = navResId;
+            this.colorResId = colorResId;
+            this.colorDarkResId = colorDarkResId;
             this.navPos = navPos;
         }
 

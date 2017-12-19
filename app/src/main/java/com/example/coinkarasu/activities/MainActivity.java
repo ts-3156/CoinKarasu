@@ -2,12 +2,14 @@ package com.example.coinkarasu.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -18,6 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 
 import com.crashlytics.android.Crashlytics;
@@ -124,6 +127,18 @@ public class MainActivity extends AppCompatActivity implements
             bar.setSubtitle(Currency.JPY.disabledTitleStrResId);
         } else {
             bar.setSubtitle(null);
+        }
+    }
+
+    private void updateTabColor(NavigationKind kind) {
+        findViewById(R.id.tab_layout).setBackgroundColor(getResources().getColor(kind.colorResId));
+        findViewById(R.id.toolbar).setBackgroundColor(getResources().getColor(kind.colorResId));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, kind.colorDarkResId));
         }
     }
 
@@ -250,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements
     public void onPageChanged(NavigationKind kind) {
         setNavChecked(kind);
         updateToolbarTitle(kind);
+        updateTabColor(kind);
     }
 
     @Override

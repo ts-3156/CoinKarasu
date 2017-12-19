@@ -18,4 +18,15 @@
 
     <color name="colorPriceBgUp">#E8F5E9</color>
     <color name="colorPriceBgDown">#FFEBEE</color>
+
+    <color name="colorNavMain">#4CAF50</color>
+    <color name="colorNavMainDark">#388E3C</color>
+    <color name="colorJpyToplist">#F44336</color>
+    <color name="colorJpyToplistDark">#D32F2F</color>
+    <color name="colorUsdToplist">#03A9F4</color>
+    <color name="colorUsdToplistDark">#0288D1</color>
+    <color name="colorEurToplist">#FF9800</color>
+    <color name="colorEurToplistDark">#F57C00</color>
+    <color name="colorBtcToplist">#9C27B0</color>
+    <color name="colorBtcToplistDark">#7B1FA2</color>
 </resources>
