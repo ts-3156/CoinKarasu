@@ -95,7 +95,7 @@ public class ListViewFragment extends Fragment implements
     public ListViewFragment() {
     }
 
-    public static ListViewFragment newInstance(MainActivity.NavigationKind kind, boolean isSelected) {
+    public static ListViewFragment newInstance(MainFragment.NavigationKind kind, boolean isSelected) {
         ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
         args.putString("kind", kind.name());
@@ -118,7 +118,7 @@ public class ListViewFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
         Activity activity = getActivity();
 
-        ArrayList<Coin> coins = ((MainActivity) activity).collectCoins(getFromSymbols(kind), getToSymbol(kind));
+        ArrayList<Coin> coins = ((MainFragment) getParentFragment()).collectCoins(getFromSymbols(kind), getToSymbol(kind));
         coins = insertSectionHeader(coins, kind.exchanges);
 
         ListViewAdapter adapter = new ListViewAdapter(activity, coins);
