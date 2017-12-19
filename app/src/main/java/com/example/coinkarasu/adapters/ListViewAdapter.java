@@ -317,7 +317,7 @@ public class ListViewAdapter extends BaseAdapter {
         return color;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         NetworkImageView icon;
         TextView name;
         TextView symbol;

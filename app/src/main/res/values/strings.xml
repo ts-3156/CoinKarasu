@@ -10,6 +10,9 @@
     <string name="action_currency_switch_to_usd">Switch to USD</string>
     <string name="action_currency_only_for_jpy">Only for JPY</string>
 
+    <string name="nav_home">Home</string>
+    <string name="tab_home">Home</string>
+
     <string name="nav_main">Main</string>
     <string name="tab_main">Main</string>
     <string name="nav_custom">Custom</string>

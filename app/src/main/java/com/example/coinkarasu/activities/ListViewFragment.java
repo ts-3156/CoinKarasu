@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.activities.MainFragment.NavigationKind;
 import com.example.coinkarasu.adapters.ListViewAdapter;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.SectionHeaderCoinImpl;
@@ -40,26 +41,10 @@ import java.util.TimerTask;
 
 
 public class ListViewFragment extends Fragment implements
-        AdapterView.OnItemClickListener,
+        ListView.OnItemClickListener,
         ListView.OnScrollListener,
         GetPricesTask.Listener,
         SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private enum NavigationKind {
-        nav_main(R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}),
-        jpy_toplist(R.array.jpy_toplist_symbols, new String[]{"cccagg"}),
-        usd_toplist(R.array.usd_toplist_symbols, new String[]{"cccagg"}),
-        eur_toplist(R.array.eur_toplist_symbols, new String[]{"cccagg"}),
-        btc_toplist(R.array.btc_toplist_symbols, new String[]{"cccagg"});
-
-        int symbolsResId;
-        String[] exchanges;
-
-        NavigationKind(int symbolsResId, String[] exchanges) {
-            this.symbolsResId = symbolsResId;
-            this.exchanges = exchanges;
-        }
-    }
 
     private enum Exchange {
         bitflyer(R.array.bitflyer_symbols, "BitFlyer"),
@@ -89,7 +74,7 @@ public class ListViewFragment extends Fragment implements
     public ListViewFragment() {
     }
 
-    public static ListViewFragment newInstance(MainFragment.NavigationKind kind, boolean isSelected) {
+    public static ListViewFragment newInstance(NavigationKind kind, boolean isSelected) {
         ListViewFragment fragment = new ListViewFragment();
         Bundle args = new Bundle();
         args.putString("kind", kind.name());

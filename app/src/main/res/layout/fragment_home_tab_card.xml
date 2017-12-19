@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.coinkarasu.activities.CoinActivity">
+
+    <TextView
+        android:id="@+id/caption_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text=""
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#000000"
+        tools:text="@string/caption_day" />
+
+    <TextView
+        android:id="@+id/caption_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/caption_left"
+        android:layout_toRightOf="@id/caption_left"
+        android:text="\u0020Trending"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#000000"
+        tools:text="@string/caption_day" />
+
+    <TextView
+        android:id="@+id/caption_desc_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/caption_left"
+        android:layout_marginLeft="16dp"
+        android:text="in"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="#ff888888"
+        tools:text="@string/caption_desc_day" />
+
+    <TextView
+        android:id="@+id/caption_desc_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/caption_desc_left"
+        android:layout_toRightOf="@id/caption_desc_left"
+        android:text="\u0020last 1 hour"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        android:textColor="#33b5e5"
+        tools:text="@string/caption_desc_day" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/caption_desc_left"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
+
+</RelativeLayout>

@@ -21,6 +21,8 @@
 
     <color name="colorNavMain">#4CAF50</color>
     <color name="colorNavMainDark">#388E3C</color>
+    <color name="colorNavHome">#4CAF50</color>
+    <color name="colorNavHomeDark">#388E3C</color>
     <color name="colorJpyToplist">#F44336</color>
     <color name="colorJpyToplistDark">#D32F2F</color>
     <color name="colorUsdToplist">#03A9F4</color>
