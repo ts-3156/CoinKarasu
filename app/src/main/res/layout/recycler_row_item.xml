@@ -10,6 +10,7 @@
         android:layout_height="96dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_marginBottom="8dp"
         tools:src="@raw/ic_coin_btc" />
 
     <TextView
@@ -20,11 +21,20 @@
         android:layout_centerHorizontal="true"
         android:text="BTC" />
 
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/symbol"
+        android:layout_centerHorizontal="true"
+        android:text="1,000,000" />
+
     <TextView
         android:id="@+id/trend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/symbol"
+        android:layout_below="@id/price"
         android:layout_centerHorizontal="true"
         android:text="10.0%" />
 

@@ -9,6 +9,7 @@
     <string name="action_currency_switch_to_jpy">JPYで見る</string>
     <string name="action_currency_switch_to_usd">USDで見る</string>
     <string name="action_currency_only_for_jpy">JPY表示のみ</string>
+    <string name="action_filter_available_in_japan">日本で取引できるコインのみ</string>
 
     <string name="nav_home">ホーム</string>
     <string name="nav_main">メイン</string>
@@ -57,4 +58,5 @@
     <string name="pref_title_currency">表示する通貨</string>
     <string name="pref_title_sync_frequency">同期間隔</string>
 
+    <string name="dic_filter">フィルター</string>
 </resources>

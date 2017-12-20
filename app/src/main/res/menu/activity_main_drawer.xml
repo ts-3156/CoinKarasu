@@ -14,10 +14,6 @@
             android:id="@+id/nav_japan"
             android:icon="@drawable/ic_nav_japan"
             android:title="@string/nav_japan" />
-        <item
-            android:id="@+id/nav_skyrocket"
-            android:icon="@drawable/ic_nav_rocket"
-            android:title="@string/nav_skyrocket" />
     </group>
 
     <group

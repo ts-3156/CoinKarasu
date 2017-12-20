@@ -37,6 +37,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         holder.symbol.setText("SYM");
+        holder.price.setText("1,000,000");
+        holder.trend.setText("10%");
         holder.icon.setDefaultImageResId(R.drawable.ic_btc_test_192);
 
         holder.symbol.setOnClickListener(new View.OnClickListener() {
@@ -56,12 +58,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         NetworkImageView icon;
         TextView symbol;
+        TextView price;
         TextView trend;
 
         ViewHolder(View view) {
             super(view);
             icon = view.findViewById(R.id.icon);
             symbol = view.findViewById(R.id.symbol);
+            price = view.findViewById(R.id.price);
             trend = view.findViewById(R.id.trend);
         }
     }

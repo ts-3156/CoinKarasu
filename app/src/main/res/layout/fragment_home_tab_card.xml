@@ -3,28 +3,27 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.coinkarasu.activities.CoinActivity">
+    tools:context="com.example.coinkarasu.activities.HomeTabCardFragment">
+
+    <!--<TextView-->
+    <!--android:id="@+id/caption_left"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:layout_alignParentTop="true"-->
+    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
+    <!--android:textColor="#000000"-->
+    <!--tools:text="@string/caption_day" />-->
 
     <TextView
-        android:id="@+id/caption_left"
+        android:id="@+id/caption_right"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text=""
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="#000000"
-        tools:text="@string/caption_day" />
-
-    <TextView
-        android:id="@+id/caption_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/caption_left"
-        android:layout_toRightOf="@id/caption_left"
-        android:text="\u0020Trending"
+        android:text="Trending"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="#000000"
         tools:text="@string/caption_day" />
@@ -33,9 +32,9 @@
         android:id="@+id/caption_desc_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@id/caption_left"
+        android:layout_alignBaseline="@id/caption_right"
         android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@id/caption_right"
         android:text="in"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="#ff888888"
@@ -47,7 +46,6 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/caption_desc_left"
         android:layout_toRightOf="@id/caption_desc_left"
-        android:text="\u0020last 1 hour"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         android:textColor="#33b5e5"
         tools:text="@string/caption_desc_day" />
@@ -61,4 +59,25 @@
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp" />
 
+    <ImageButton
+        android:id="@+id/popup_menu"
+        android:layout_width="20dp"
+        android:layout_height="16dp"
+        android:layout_alignTop="@id/filter"
+        android:layout_marginRight="8dp"
+        android:layout_toLeftOf="@id/filter"
+        android:background="#ffffff"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_filter_list" />
+
+    <TextView
+        android:id="@+id/filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:paddingRight="16dp"
+        android:paddingTop="16dp"
+        android:text="@string/dic_filter"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 </RelativeLayout>

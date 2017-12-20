@@ -15,6 +15,22 @@ import com.example.coinkarasu.cryptocompare.data.CoinList;
 
 public class HomeTabFragment extends Fragment {
 
+    public enum Kind {
+        one_hour(R.string.caption_desc_1_hour, "frag_1_hour"),
+        six_hours(R.string.caption_desc_6_hours, "frag_6_hours"),
+        twelve_hours(R.string.caption_desc_12_hours, "frag_12_hours"),
+        twenty_four_hours(R.string.caption_desc_24_hours, "frag_24_hours"),
+        three_days(R.string.caption_desc_3_days, "frag_3_days");
+
+        int labelResId;
+        String tag;
+
+        Kind(int labelResId, String tag) {
+            this.labelResId = labelResId;
+            this.tag = tag;
+        }
+    }
+
     private static final String STATE_SELECTED_KIND_KEY = "kind";
 
     private CoinList coinList;
@@ -45,11 +61,11 @@ public class HomeTabFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home_tab, container, false);
 
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.trending_1_hour, HomeTabCardFragment.newInstance(kind), "TAG")
-                .replace(R.id.trending_6_hours, HomeTabCardFragment.newInstance(kind), "TAG")
-                .replace(R.id.trending_12_hours, HomeTabCardFragment.newInstance(kind), "TAG")
-                .replace(R.id.trending_24_hours, HomeTabCardFragment.newInstance(kind), "TAG")
-                .replace(R.id.trending_3_days, HomeTabCardFragment.newInstance(kind), "TAG")
+                .replace(R.id.trending_1_hour, HomeTabCardFragment.newInstance(Kind.one_hour), Kind.one_hour.tag)
+                .replace(R.id.trending_6_hours, HomeTabCardFragment.newInstance(Kind.six_hours), Kind.six_hours.tag)
+                .replace(R.id.trending_12_hours, HomeTabCardFragment.newInstance(Kind.twelve_hours), Kind.twelve_hours.tag)
+                .replace(R.id.trending_24_hours, HomeTabCardFragment.newInstance(Kind.twenty_four_hours), Kind.twenty_four_hours.tag)
+                .replace(R.id.trending_3_days, HomeTabCardFragment.newInstance(Kind.three_days), Kind.three_days.tag)
                 .commit();
 
         return view;

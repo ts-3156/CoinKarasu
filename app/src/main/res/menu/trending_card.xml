@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_sync_in_realtime"
+        android:id="@+id/action_filter"
         android:checkable="true"
         android:orderInCategory="100"
-        android:title="Sync in realtime"
+        android:title="@string/action_filter_available_in_japan"
         app:showAsAction="never" />
 
 </menu>

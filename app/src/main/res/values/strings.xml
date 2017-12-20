@@ -9,6 +9,7 @@
     <string name="action_currency_switch_to_jpy">Switch to JPY</string>
     <string name="action_currency_switch_to_usd">Switch to USD</string>
     <string name="action_currency_only_for_jpy">Only for JPY</string>
+    <string name="action_filter_available_in_japan">Coins available in Japan</string>
 
     <string name="nav_home">Home</string>
     <string name="nav_main">Main</string>
@@ -47,6 +48,13 @@
     <string name="caption_day">Today</string>
     <string name="caption_desc_day">so far</string>
 
+    <string name="caption_desc_1_hour">\u0020last 1 hour</string>
+    <string name="caption_desc_6_hours">\u0020last 6 hours</string>
+    <string name="caption_desc_12_hours">\u0020last 12 hours</string>
+    <string name="caption_desc_24_hours">\u0020last 24 hours</string>
+    <string name="caption_desc_3_days">\u0020last 3 days</string>
+
+    <string name="dic_filter">Filter</string>
 
     <string name="line_chart_info">The <![CDATA[<b>%1$s - %2$s</b>]]> prices for this chart are aggregated from all exchanges and using a VWAP approach.</string>
     <string name="exchange_info">Only showing exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
