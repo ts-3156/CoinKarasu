@@ -27,6 +27,7 @@ public class BlockingRequest extends RequestBase {
         VolleyHelper.getInstance(getContext()).addToRequestQueue(request);
 
         JSONObject response = null;
+        Log.d("URL", getUrl());
 
         try {
             response = future.get();

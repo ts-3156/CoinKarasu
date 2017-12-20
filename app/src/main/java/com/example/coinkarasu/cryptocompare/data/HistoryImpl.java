@@ -13,6 +13,7 @@ public class HistoryImpl implements History {
     private double open;
     private double volumeFrom;
     private double volumeTo;
+
     private String fromSymbol;
     private String toSymbol;
 

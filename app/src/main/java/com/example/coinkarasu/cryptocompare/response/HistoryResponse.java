@@ -1,10 +1,15 @@
 package com.example.coinkarasu.cryptocompare.response;
 
+import com.example.coinkarasu.cryptocompare.data.History;
+
 import org.json.JSONArray;
 
-public interface HistoryResponse {
+import java.util.ArrayList;
+
+public interface HistoryResponse extends Cacheable {
     JSONArray getData();
 
-    String getFromSymbol();
-    String getToSymbol();
+    ArrayList<History> getHistories();
+
+    boolean isCache();
 }

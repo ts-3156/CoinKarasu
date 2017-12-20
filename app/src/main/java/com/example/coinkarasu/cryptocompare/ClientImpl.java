@@ -8,7 +8,6 @@ import com.example.coinkarasu.cryptocompare.data.CoinList;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshotImpl;
 import com.example.coinkarasu.cryptocompare.data.History;
-import com.example.coinkarasu.cryptocompare.data.HistoryImpl;
 import com.example.coinkarasu.cryptocompare.data.Price;
 import com.example.coinkarasu.cryptocompare.data.PriceImpl;
 import com.example.coinkarasu.cryptocompare.data.Prices;
@@ -16,7 +15,6 @@ import com.example.coinkarasu.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.cryptocompare.data.TopPairs;
 import com.example.coinkarasu.cryptocompare.data.TopPairsImpl;
 import com.example.coinkarasu.cryptocompare.request.BlockingRequest;
-import com.example.coinkarasu.cryptocompare.response.CoinListResponseImpl;
 import com.example.coinkarasu.cryptocompare.response.CoinSnapshotResponse;
 import com.example.coinkarasu.cryptocompare.response.CoinSnapshotResponseImpl;
 import com.example.coinkarasu.cryptocompare.response.HistoryResponse;
@@ -26,8 +24,6 @@ import com.example.coinkarasu.cryptocompare.response.TopPairsResponse;
 import com.example.coinkarasu.cryptocompare.response.TopPairsResponseImpl;
 import com.example.coinkarasu.utils.StringHelper;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -39,31 +35,12 @@ public class ClientImpl implements Client {
         this.activity = activity;
     }
 
-    private void initializeCoinList() {
-        if (CoinListResponseImpl.cacheExists(activity)) {
-//            long start = System.currentTimeMillis();
-//            coinList = CoinListImpl.restoreFromCache(activity);
-//            Log.d("RestoreCoinList", (System.currentTimeMillis() - start) + " ms");
-        } else {
-//            latch = new CountDownLatch(1);
-//            new FetchCoinListThread(activity)
-//                    .setLatch(latch)
-//                    .setListener(new FetchCoinListThread.Listener() {
-//                        @Override
-//                        public void finished(JSONObject response) {
-//                            coinList = CoinListImpl.buildByResponse(response);
-//                        }
-//                    }).start();
-        }
-    }
-
     @Override
     public Price getPrice(String fromSymbol, String toSymbol, String exchange) {
         String url = "https://min-api.cryptocompare.com/data/pricemultifull?"
                 + "&fsyms=" + fromSymbol
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
-        Log.d("URL", url);
 
         JSONObject response = new BlockingRequest(activity, url).perform();
         return new PriceImpl(new PricesResponseImpl(response), exchange);
@@ -80,7 +57,6 @@ public class ClientImpl implements Client {
                 + "&fsyms=" + StringHelper.join(",", fromSymbols)
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
-        Log.d("URL", url);
         JSONObject response = new BlockingRequest(activity, url).perform();
         return new PricesImpl(new PricesResponseImpl(response), exchange);
     }
@@ -89,29 +65,18 @@ public class ClientImpl implements Client {
         String url = "https://min-api.cryptocompare.com/data/histo" + kind +
                 "?fsym=" + fromSymbol + "&tsym=" + toSymbol + "&e=" + exchange +
                 "&limit=" + limit + "&aggregate=" + aggregate;
-        Log.d("URL", url);
 
-        JSONObject response = new BlockingRequest(activity, url).perform();
-        HistoryResponse historyResponse = new HistoryResponseImpl(response, fromSymbol, toSymbol);
+        HistoryResponse historyResponse;
 
-        JSONArray histories = historyResponse.getData();
-        if (histories == null) {
-            Log.d("getHistoryXxx", "empty, " + kind);
-            return null;
+        if (HistoryResponseImpl.isCacheExist(activity, fromSymbol, toSymbol, kind, limit, exchange)) {
+            historyResponse = HistoryResponseImpl.restoreFromCache(activity, fromSymbol, toSymbol, kind, limit, exchange);
+        } else {
+            JSONObject response = new BlockingRequest(activity, url).perform();
+            historyResponse = new HistoryResponseImpl(response, fromSymbol, toSymbol, kind, limit, exchange);
+            historyResponse.saveToCache(activity);
         }
 
-        ArrayList<History> result = new ArrayList<>();
-
-        try {
-            for (int i = 0; i < histories.length(); i++) {
-                result.add(new HistoryImpl(histories.getJSONObject(i), fromSymbol, toSymbol));
-            }
-        } catch (JSONException e) {
-            Log.e("getHistoryMinute", e.getMessage());
-            result = null;
-        }
-
-        return result;
+        return historyResponse.getHistories();
     }
 
     @Override
@@ -162,7 +127,6 @@ public class ClientImpl implements Client {
     @Override
     public CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol) {
         String url = "https://www.cryptocompare.com/api/data/coinsnapshot/?fsym=" + fromSymbol + "&tsym=" + toSymbol;
-        Log.d("URL", url);
 
         JSONObject response = new BlockingRequest(activity, url).perform();
         CoinSnapshotResponse snapshotResponse = new CoinSnapshotResponseImpl(response, fromSymbol, toSymbol);
@@ -172,7 +136,6 @@ public class ClientImpl implements Client {
     @Override
     public TopPairs getTopPairs(String fromSymbol) {
         String url = "https://min-api.cryptocompare.com/data/top/pairs?fsym=" + fromSymbol + "&limit=100";
-        Log.d("URL", url);
 
         JSONObject response = new BlockingRequest(activity, url).perform();
         TopPairsResponse topPairsResponse = new TopPairsResponseImpl(response, fromSymbol);
@@ -206,7 +169,6 @@ public class ClientImpl implements Client {
 //        String url = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC"
 //                + "&tsyms=" + builder.substring(0, builder.length() - 1);
 //
-//        Log.d("URL", url);
 //        new NonBlockingRequest(activity, url).perform(new Request.Listener() {
 //            @Override
 //            public void finished(JSONObject response) {
