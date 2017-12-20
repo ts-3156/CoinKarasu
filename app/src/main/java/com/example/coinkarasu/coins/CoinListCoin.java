@@ -5,7 +5,11 @@ public interface CoinListCoin {
 
     String getUrl();
 
+    String getImageUrl();
+
     String getFullImageUrl();
+
+    String getLargeImageUrl();
 
     String getName();
 

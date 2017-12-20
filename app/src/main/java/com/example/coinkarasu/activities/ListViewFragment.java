@@ -47,7 +47,7 @@ public class ListViewFragment extends Fragment implements
         SharedPreferences.OnSharedPreferenceChangeListener,
         CollectCoinsTask.Listener {
 
-    private enum Exchange {
+    public enum Exchange {
         bitflyer(R.array.bitflyer_symbols, "BitFlyer"),
         coincheck(R.array.coincheck_symbols, "Coincheck"),
         zaif(R.array.zaif_symbols, "Zaif"),

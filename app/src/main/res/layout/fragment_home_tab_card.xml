@@ -65,9 +65,9 @@
         android:layout_height="16dp"
         android:layout_alignTop="@id/filter"
         android:layout_marginRight="8dp"
+        android:layout_marginTop="16dp"
         android:layout_toLeftOf="@id/filter"
         android:background="#ffffff"
-        android:layout_marginTop="16dp"
         android:src="@drawable/ic_filter_list" />
 
     <TextView

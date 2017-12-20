@@ -1,6 +1,6 @@
 package com.example.coinkarasu.cryptocompare;
 
-import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.example.coinkarasu.coins.PriceMultiFullCoin;
@@ -29,10 +29,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class ClientImpl implements Client {
-    private Activity activity;
 
-    public ClientImpl(Activity activity) {
-        this.activity = activity;
+    private static final String DEFAULT_EXCHANGE = "cccagg";
+
+    private Context context;
+
+    public ClientImpl(Context context) {
+        this.context = context;
     }
 
     @Override
@@ -42,13 +45,8 @@ public class ClientImpl implements Client {
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
 
-        JSONObject response = new BlockingRequest(activity, url).perform();
+        JSONObject response = new BlockingRequest(context, url).perform();
         return new PriceImpl(new PricesResponseImpl(response, new String[]{fromSymbol}, toSymbol, exchange));
-    }
-
-    @Override
-    public Prices getPrices(String[] fromSymbols, String toSymbol) {
-        return getPrices(fromSymbols, toSymbol, "cccagg");
     }
 
     @Override
@@ -57,7 +55,7 @@ public class ClientImpl implements Client {
                 + "&fsyms=" + StringHelper.join(",", fromSymbols)
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
-        JSONObject response = new BlockingRequest(activity, url).perform();
+        JSONObject response = new BlockingRequest(context, url).perform();
         return new PricesImpl(new PricesResponseImpl(response, fromSymbols, toSymbol, exchange));
     }
 
@@ -68,12 +66,12 @@ public class ClientImpl implements Client {
 
         HistoryResponse historyResponse;
 
-        if (HistoryResponseImpl.isCacheExist(activity, fromSymbol, toSymbol, kind, limit, exchange)) {
-            historyResponse = HistoryResponseImpl.restoreFromCache(activity, fromSymbol, toSymbol, kind, limit, exchange);
+        if (HistoryResponseImpl.isCacheExist(context, fromSymbol, toSymbol, kind, limit, exchange)) {
+            historyResponse = HistoryResponseImpl.restoreFromCache(context, fromSymbol, toSymbol, kind, limit, exchange);
         } else {
-            JSONObject response = new BlockingRequest(activity, url).perform();
+            JSONObject response = new BlockingRequest(context, url).perform();
             historyResponse = new HistoryResponseImpl(response, fromSymbol, toSymbol, kind, limit, exchange);
-            historyResponse.saveToCache(activity);
+            historyResponse.saveToCache(context);
         }
 
         return historyResponse.getHistories();
@@ -91,22 +89,27 @@ public class ClientImpl implements Client {
 
     @Override
     public ArrayList<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit) {
-        return getHistoryMinute(fromSymbol, toSymbol, limit, 1, "cccagg");
+        return getHistoryMinute(fromSymbol, toSymbol, limit, 1, DEFAULT_EXCHANGE);
     }
 
     @Override
     public ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate) {
-        ArrayList<History> records = getHistoryXxx(HistoryResponseImpl.Kind.hour, fromSymbol, toSymbol, limit, 1, "cccagg");
-        if (aggregate == 1) {
-            return records;
-        } else {
-            return sampling(records, aggregate);
-        }
+        return getHistoryHour(fromSymbol, toSymbol, limit, aggregate, DEFAULT_EXCHANGE);
     }
 
     @Override
     public ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit) {
         return getHistoryHour(fromSymbol, toSymbol, limit, 1);
+    }
+
+    @Override
+    public ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+        ArrayList<History> records = getHistoryXxx(HistoryResponseImpl.Kind.hour, fromSymbol, toSymbol, limit, 1, exchange);
+        if (aggregate == 1) {
+            return records;
+        } else {
+            return sampling(records, aggregate);
+        }
     }
 
     @Override
@@ -116,7 +119,12 @@ public class ClientImpl implements Client {
 
     @Override
     public ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate) {
-        ArrayList<History> records = getHistoryXxx(HistoryResponseImpl.Kind.day, fromSymbol, toSymbol, limit, 1, "cccagg");
+        return getHistoryDay(fromSymbol, toSymbol, limit, aggregate, DEFAULT_EXCHANGE);
+    }
+
+    @Override
+    public ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+        ArrayList<History> records = getHistoryXxx(HistoryResponseImpl.Kind.day, fromSymbol, toSymbol, limit, 1, exchange);
         if (aggregate == 1) {
             return records;
         } else {
@@ -128,7 +136,7 @@ public class ClientImpl implements Client {
     public CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol) {
         String url = "https://www.cryptocompare.com/api/data/coinsnapshot/?fsym=" + fromSymbol + "&tsym=" + toSymbol;
 
-        JSONObject response = new BlockingRequest(activity, url).perform();
+        JSONObject response = new BlockingRequest(context, url).perform();
         CoinSnapshotResponse snapshotResponse = new CoinSnapshotResponseImpl(response, fromSymbol, toSymbol);
         return new CoinSnapshotImpl(snapshotResponse);
     }
@@ -137,7 +145,7 @@ public class ClientImpl implements Client {
     public TopPairs getTopPairs(String fromSymbol) {
         String url = "https://min-api.cryptocompare.com/data/top/pairs?fsym=" + fromSymbol + "&limit=100";
 
-        JSONObject response = new BlockingRequest(activity, url).perform();
+        JSONObject response = new BlockingRequest(context, url).perform();
         TopPairsResponse topPairsResponse = new TopPairsResponseImpl(response, fromSymbol);
         return new TopPairsImpl(topPairsResponse);
     }
@@ -169,7 +177,7 @@ public class ClientImpl implements Client {
 //        String url = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC"
 //                + "&tsyms=" + builder.substring(0, builder.length() - 1);
 //
-//        new NonBlockingRequest(activity, url).perform(new Request.Listener() {
+//        new NonBlockingRequest(context, url).perform(new Request.Listener() {
 //            @Override
 //            public void finished(JSONObject response) {
 //                ArrayList<PriceMultiFullCoin> coins = new ToplistImpl(response).getCoins();

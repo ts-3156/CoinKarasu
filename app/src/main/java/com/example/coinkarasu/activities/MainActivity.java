@@ -26,6 +26,7 @@ import android.view.WindowManager;
 import com.crashlytics.android.Crashlytics;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.settings.SettingsActivity;
+import com.example.coinkarasu.services.UpdateTrendingIntentService;
 import com.example.coinkarasu.utils.PrefHelper;
 
 import io.fabric.sdk.android.Fabric;
@@ -87,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements
                     .replace(R.id.fragment_container, MainFragment.newInstance(DEFAULT_KIND), FRAGMENT_TAG)
                     .commit();
         }
+
+        UpdateTrendingIntentService.start(this);
     }
 
     @Override

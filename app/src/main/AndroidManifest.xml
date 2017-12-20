@@ -48,8 +48,11 @@
 
         <service
             android:name=".services.UpdateCoinListIntentService"
-            android:exported="false">
-        </service>
+            android:exported="false" />
+
+        <service
+            android:name=".services.UpdateTrendingIntentService"
+            android:exported="false" />
 
         <meta-data
             android:name="io.fabric.ApiKey"

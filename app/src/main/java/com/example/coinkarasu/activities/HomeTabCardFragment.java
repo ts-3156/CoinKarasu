@@ -17,6 +17,7 @@ import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.HorizontalSpaceItemDecoration;
 import com.example.coinkarasu.adapters.RecyclerViewAdapter;
 import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.data.Trending;
 
 import java.util.ArrayList;
 
@@ -71,6 +72,10 @@ public class HomeTabCardFragment extends Fragment implements
         recyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(getActivity(), 16));
 
         ArrayList<Coin> coins = new ArrayList<>();
+        Trending trending = Trending.restoreFromCache(getActivity(), kind);
+        if (trending != null) {
+            coins = trending.getCoins();
+        }
         RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity(), coins);
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);

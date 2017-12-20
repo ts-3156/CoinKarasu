@@ -8,6 +8,7 @@ import org.json.JSONObject;
 public class CoinImpl implements Coin {
 
     private static final int ICON_SIZE = 96;
+    private static final int ICON_LARGE_SIZE = 192;
 
     private static final String BASE_URL = "https://www.cryptocompare.com";
 
@@ -94,6 +95,18 @@ public class CoinImpl implements Coin {
         return new CoinImpl(attrs);
     }
 
+    public static Coin buildByAttrs(String symbol, String imageUrl) {
+        JSONObject attrs = new JSONObject();
+
+        try {
+            attrs.put("Symbol", symbol);
+            attrs.put("ImageUrl", imageUrl);
+        } catch (JSONException e) {
+        }
+
+        return new CoinImpl(attrs);
+    }
+
     public static Coin buildByCoinListCoin(com.example.coinkarasu.database.CoinListCoin coin) {
         return new CoinImpl(coin.toJson());
     }
@@ -116,6 +129,11 @@ public class CoinImpl implements Coin {
     @Override
     public String getFullImageUrl() {
         return BASE_URL + imageUrl + "?width=" + ICON_SIZE;
+    }
+
+    @Override
+    public String getLargeImageUrl() {
+        return BASE_URL + imageUrl + "?width=" + ICON_LARGE_SIZE;
     }
 
     @Override

@@ -13,8 +13,6 @@ import java.util.ArrayList;
 public interface Client {
     Price getPrice(String fromSymbol, String toSymbol, String exchange);
 
-    Prices getPrices(String[] fromSymbols, String toSymbol);
-
     Prices getPrices(String[] fromSymbols, String toSymbol, String exchange);
 
     ArrayList<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit);
@@ -25,9 +23,13 @@ public interface Client {
 
     ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate);
 
+    ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange);
+
     ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit);
 
     ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate);
+
+    ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange);
 
     CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol);
 
