@@ -61,7 +61,7 @@ public class ClientImpl implements Client {
         return new PricesImpl(new PricesResponseImpl(response), exchange);
     }
 
-    private ArrayList<History> getHistoryXxx(String kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+    private ArrayList<History> getHistoryXxx(HistoryResponseImpl.Kind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
         String url = "https://min-api.cryptocompare.com/data/histo" + kind +
                 "?fsym=" + fromSymbol + "&tsym=" + toSymbol + "&e=" + exchange +
                 "&limit=" + limit + "&aggregate=" + aggregate;
@@ -81,7 +81,7 @@ public class ClientImpl implements Client {
 
     @Override
     public ArrayList<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        ArrayList<History> records = getHistoryXxx("minute", fromSymbol, toSymbol, limit, 1, exchange);
+        ArrayList<History> records = getHistoryXxx(HistoryResponseImpl.Kind.minute, fromSymbol, toSymbol, limit, 1, exchange);
         if (aggregate == 1) {
             return records;
         } else {
@@ -96,7 +96,7 @@ public class ClientImpl implements Client {
 
     @Override
     public ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate) {
-        ArrayList<History> records = getHistoryXxx("hour", fromSymbol, toSymbol, limit, 1, "cccagg");
+        ArrayList<History> records = getHistoryXxx(HistoryResponseImpl.Kind.hour, fromSymbol, toSymbol, limit, 1, "cccagg");
         if (aggregate == 1) {
             return records;
         } else {
@@ -116,7 +116,7 @@ public class ClientImpl implements Client {
 
     @Override
     public ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate) {
-        ArrayList<History> records = getHistoryXxx("day", fromSymbol, toSymbol, limit, 1, "cccagg");
+        ArrayList<History> records = getHistoryXxx(HistoryResponseImpl.Kind.day, fromSymbol, toSymbol, limit, 1, "cccagg");
         if (aggregate == 1) {
             return records;
         } else {

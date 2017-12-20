@@ -16,20 +16,32 @@ import java.util.Date;
 
 public class HistoryResponseImpl implements HistoryResponse {
 
+    public enum Kind {
+        minute(60 * 1000),
+        hour(60 * 60 * 1000),
+        day(24 * 60 * 60 * 1000);
+
+        long expires;
+
+        Kind(long expires) {
+            this.expires = expires;
+        }
+    }
+
     private JSONObject response;
 
     private boolean isCache;
     private String fromSymbol;
     private String toSymbol;
-    private String kind;
+    private Kind kind;
     private int limit;
     private String exchange;
 
-    public HistoryResponseImpl(JSONObject response, String fromSymbol, String toSymbol, String kind, int limit, String exchange) {
+    public HistoryResponseImpl(JSONObject response, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
         this(response, fromSymbol, toSymbol, kind, limit, exchange, false);
     }
 
-    private HistoryResponseImpl(JSONObject response, String fromSymbol, String toSymbol, String kind, int limit, String exchange, boolean isCache) {
+    private HistoryResponseImpl(JSONObject response, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange, boolean isCache) {
         this.response = response;
 
         this.isCache = isCache;
@@ -80,7 +92,7 @@ public class HistoryResponseImpl implements HistoryResponse {
         return histories;
     }
 
-    private static String getCacheName(String fromSymbol, String toSymbol, String kind, int limit, String exchange) {
+    private static String getCacheName(String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
         return "history_response_" + fromSymbol + "_" + toSymbol + "_" + kind + "_" + limit + "_" + exchange + ".json";
     }
 
@@ -94,7 +106,7 @@ public class HistoryResponseImpl implements HistoryResponse {
         return true;
     }
 
-    public static HistoryResponse restoreFromCache(Context context, String fromSymbol, String toSymbol, String kind, int limit, String exchange) {
+    public static HistoryResponse restoreFromCache(Context context, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
         String text = CacheHelper.read(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
         JSONObject response = null;
 
@@ -111,7 +123,7 @@ public class HistoryResponseImpl implements HistoryResponse {
         return new HistoryResponseImpl(response, fromSymbol, toSymbol, kind, limit, exchange, true);
     }
 
-    public static boolean isCacheExist(Context context, String fromSymbol, String toSymbol, String kind, int limit, String exchange) {
+    public static boolean isCacheExist(Context context, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
         boolean exists = CacheHelper.exists(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
         if (!exists) {
             return false;
@@ -119,7 +131,8 @@ public class HistoryResponseImpl implements HistoryResponse {
 
         Date lastModified = CacheHelper.lastModified(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
 
-        return new Date(System.currentTimeMillis() - 60 * 5 * 1000).compareTo(lastModified) <= 0;
+
+        return new Date(System.currentTimeMillis() - kind.expires).compareTo(lastModified) <= 0;
     }
 
     @Override
