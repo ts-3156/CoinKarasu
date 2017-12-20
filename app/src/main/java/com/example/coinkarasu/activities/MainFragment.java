@@ -11,15 +11,14 @@ import android.view.ViewGroup;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.MainPagerAdapter;
-import com.example.coinkarasu.cryptocompare.data.CoinList;
 
 
 public class MainFragment extends Fragment implements
         ViewPager.OnPageChangeListener {
 
     public enum NavigationKind {
-        nav_main(R.string.nav_main, R.string.tab_main, R.id.nav_main, R.color.colorNavMain, R.color.colorNavMainDark, R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}, 0),
-        home(R.string.nav_home, R.string.tab_home, R.id.nav_home, R.color.colorNavHome, R.color.colorNavHomeDark, -1, new String[]{}, 1),
+        home(R.string.nav_home, R.string.tab_home, R.id.nav_home, R.color.colorNavHome, R.color.colorNavHomeDark, -1, new String[]{}, 0),
+        japan(R.string.nav_japan, R.string.tab_japan, R.id.nav_japan, R.color.colorNavJapan, R.color.colorNavJapanDark, R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}, 1),
         jpy_toplist(R.string.nav_jpy_toplist, R.string.tab_jpy_toplist, R.id.nav_jpy_toplist, R.color.colorJpyToplist, R.color.colorJpyToplistDark, R.array.jpy_toplist_symbols, new String[]{"cccagg"}, 3),
         usd_toplist(R.string.nav_usd_toplist, R.string.tab_usd_toplist, R.id.nav_usd_toplist, R.color.colorUsdToplist, R.color.colorUsdToplistDark, R.array.usd_toplist_symbols, new String[]{"cccagg"}, 4),
         eur_toplist(R.string.nav_eur_toplist, R.string.tab_eur_toplist, R.id.nav_eur_toplist, R.color.colorEurToplist, R.color.colorEurToplistDark, R.array.eur_toplist_symbols, new String[]{"cccagg"}, 5),
@@ -96,7 +95,7 @@ public class MainFragment extends Fragment implements
 
         TabLayout tabs = getActivity().findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
-        tabs.getTabAt(NavigationKind.nav_main.ordinal()).setText(NavigationKind.nav_main.tabStrResId);
+        tabs.getTabAt(NavigationKind.japan.ordinal()).setText(NavigationKind.japan.tabStrResId);
         tabs.getTabAt(NavigationKind.home.ordinal()).setText(NavigationKind.home.tabStrResId);
         tabs.getTabAt(NavigationKind.jpy_toplist.ordinal()).setText(NavigationKind.jpy_toplist.tabStrResId);
         tabs.getTabAt(NavigationKind.usd_toplist.ordinal()).setText(NavigationKind.usd_toplist.tabStrResId);

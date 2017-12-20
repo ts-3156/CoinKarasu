@@ -332,7 +332,7 @@ public class ListViewFragment extends Fragment implements
     private String getToSymbol(NavigationKind kind) {
         String symbol;
 
-        if (kind == NavigationKind.nav_main) {
+        if (kind == NavigationKind.japan) {
             symbol = MainActivity.Currency.JPY.name();
         } else {
             if (getActivity() == null) {

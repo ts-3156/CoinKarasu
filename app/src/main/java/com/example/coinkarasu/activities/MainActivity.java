@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements
         MainFragment.OnFragmentInteractionListener {
 
     private static final String STATE_SELECTED_KIND = "kind";
-    public static final NavigationKind DEFAULT_KIND = NavigationKind.nav_main;
+    public static final NavigationKind DEFAULT_KIND = NavigationKind.home;
 
     public enum Currency {
         JPY(R.string.action_currency_switch_to_usd, R.string.action_currency_only_for_jpy),
@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements
         bar.setTitle(kind.navStrResId);
 
         NavigationKind currentKind = getCurrentKind();
-        if (currentKind != null && currentKind == NavigationKind.nav_main) {
+        if (currentKind != null && currentKind == NavigationKind.japan) {
             bar.setSubtitle(Currency.JPY.disabledTitleStrResId);
         } else {
             bar.setSubtitle(null);
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         NavigationKind kind = getCurrentKind();
-        if (kind != null && kind == NavigationKind.nav_main) {
+        if (kind != null && kind == NavigationKind.japan) {
             item.setEnabled(false);
             item.setTitle(Currency.JPY.disabledTitleStrResId);
         } else {
@@ -186,8 +186,8 @@ public class MainActivity extends AppCompatActivity implements
             drawer.closeDrawer(GravityCompat.START);
         } else {
             NavigationKind kind = getCurrentKind();
-            if (kind != null && kind != NavigationKind.nav_main) {
-                setCurrentKind(NavigationKind.nav_main);
+            if (kind != null && kind != DEFAULT_KIND) {
+                setCurrentKind(DEFAULT_KIND);
             } else {
                 super.onBackPressed();
             }

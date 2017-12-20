@@ -11,14 +11,15 @@
     <string name="action_currency_only_for_jpy">JPY表示のみ</string>
 
     <string name="nav_home">ホーム</string>
-    <string name="tab_home">ホーム</string>
-
-    <string name="nav_main">日本で取引できるコイン</string>
-    <string name="tab_main">日本</string>
+    <string name="nav_main">メイン</string>
     <string name="nav_custom">カスタム</string>
     <string name="nav_skyrocket">急上昇</string>
     <string name="nav_settings">設定</string>
-
+    <string name="nav_japan">日本で取引できるコイン</string>
+    <string name="nav_japan_all">日本で取引できるコイン</string>
+    <string name="nav_bitflyer">BitFlyer</string>
+    <string name="nav_coincheck">Coincheck</string>
+    <string name="nav_zaif">Zaif</string>
     <string name="nav_fiat">法定通貨</string>
     <string name="nav_jpy_toplist">円で人気のコイン</string>
     <string name="nav_usd_toplist">ドルで人気のコイン</string>
@@ -27,6 +28,12 @@
     <string name="nav_gbp_toplist">ポンドで人気のコイン</string>
     <string name="nav_krw_toplist">ウォンで人気のコイン</string>
     <string name="nav_inr_toplist">ルピーで人気のコイン</string>
+    <string name="nav_crypto">暗号通貨</string>
+    <string name="nav_btc_toplist">BTCで人気のコイン</string>
+
+    <string name="tab_home">ホーム</string>
+    <string name="tab_main">メイン</string>
+    <string name="tab_japan">日本</string>
     <string name="tab_jpy_toplist">円で人気</string>
     <string name="tab_usd_toplist">ドルで人気</string>
     <string name="tab_cny_toplist">人民元で人気</string>
@@ -34,16 +41,8 @@
     <string name="tab_gbp_toplist">ポンドで人気</string>
     <string name="tab_krw_toplist">ウォンで人気</string>
     <string name="tab_inr_toplist">ルピーで人気</string>
-
-    <string name="nav_crypto">暗号通貨</string>
-    <string name="nav_btc_toplist">BTCで人気のコイン</string>
     <string name="tab_btc_toplist">BTCで人気</string>
 
-    <string name="nav_japan">日本</string>
-    <string name="nav_japan_all">日本で取引できるコイン</string>
-    <string name="nav_bitflyer">BitFlyer</string>
-    <string name="nav_coincheck">Coincheck</string>
-    <string name="nav_zaif">Zaif</string>
 
     <string name="caption_day">本日</string>
     <string name="caption_desc_day">(現時点)</string>
