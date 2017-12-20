@@ -1,6 +1,6 @@
 package com.example.coinkarasu.cryptocompare;
 
-import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.example.coinkarasu.R;
@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class CoinListReader {
-    public static String read(Activity activity) {
+    public static String read(Context context) {
         StringBuilder builder = new StringBuilder();
         BufferedReader reader = null;
 
         try {
             reader = new BufferedReader(new InputStreamReader(
-                    activity.getResources().openRawResource(R.raw.coin_list)));
+                    context.getResources().openRawResource(R.raw.coin_list)));
 
             String buf;
             while ((buf = reader.readLine()) != null) {

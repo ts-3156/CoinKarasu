@@ -3,6 +3,7 @@
     package="com.example.coinkarasu">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -35,6 +36,21 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.coinkarasu.activities.MainActivity" />
         </activity>
+
+        <service
+            android:name=".services.UpdateCoinListGcmService"
+            android:exported="true"
+            android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
+            <intent-filter>
+                <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".services.UpdateCoinListIntentService"
+            android:exported="false">
+        </service>
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabricApiKey}" />

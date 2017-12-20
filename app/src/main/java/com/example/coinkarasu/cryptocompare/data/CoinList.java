@@ -18,7 +18,9 @@ public interface CoinList extends Cacheable {
 
     ArrayList<Coin> collectCoins(String[] fromSymbols);
 
-    ArrayList<String> getAllSymbols(int limit);
+    ArrayList<String> getAllSymbols();
 
     ArrayList<String> getAllSymbols(int offset, int limit);
+
+    void removeBySymbols(ArrayList<String> symbols);
 }

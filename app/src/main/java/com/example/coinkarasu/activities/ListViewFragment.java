@@ -1,6 +1,5 @@
 package com.example.coinkarasu.activities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -30,6 +29,7 @@ import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.format.ValueAnimatorBase;
+import com.example.coinkarasu.tasks.CollectCoinsTask;
 import com.example.coinkarasu.tasks.GetPricesTask;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
 import com.example.coinkarasu.utils.PrefHelper;
@@ -44,7 +44,8 @@ public class ListViewFragment extends Fragment implements
         ListView.OnItemClickListener,
         ListView.OnScrollListener,
         GetPricesTask.Listener,
-        SharedPreferences.OnSharedPreferenceChangeListener {
+        SharedPreferences.OnSharedPreferenceChangeListener,
+        CollectCoinsTask.Listener {
 
     private enum Exchange {
         bitflyer(R.array.bitflyer_symbols, "BitFlyer"),
@@ -70,6 +71,7 @@ public class ListViewFragment extends Fragment implements
     private NavigationKind kind;
     private boolean isVisibleToUser = false;
     private boolean isSelected;
+    private boolean isStartTaskRequested;
 
     public ListViewFragment() {
     }
@@ -95,17 +97,11 @@ public class ListViewFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
-        Activity activity = getActivity();
 
-        ArrayList<Coin> coins = ((MainFragment) getParentFragment()).collectCoins(getFromSymbols(kind), getToSymbol(kind));
-        coins = insertSectionHeader(coins, kind.exchanges);
-
-        ListViewAdapter adapter = new ListViewAdapter(activity, coins, getChildFragmentManager());
-        ListView listView = view.findViewById(R.id.list_view);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(this);
-        listView.setOnScrollListener(this);
-        ViewCompat.setNestedScrollingEnabled(listView, true); // <= 21 http://starzero.hatenablog.com/entry/2015/09/30/114136
+        new CollectCoinsTask(getActivity())
+                .setFromSymbols(getFromSymbols(kind))
+                .setListener(this)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         if (savedInstanceState != null) {
             isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
@@ -113,9 +109,33 @@ public class ListViewFragment extends Fragment implements
             isVisibleToUser = isSelected;
         }
 
-        PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
+        isStartTaskRequested = false;
 
         return view;
+    }
+
+    @Override
+    public void collected(ArrayList<Coin> coins) {
+        if (coins != null) {
+            for (Coin coin : coins) {
+                coin.setToSymbol(getToSymbol(kind));
+            }
+        }
+
+        coins = insertSectionHeader(coins, kind.exchanges);
+
+        ListViewAdapter adapter = new ListViewAdapter(getActivity(), coins, getChildFragmentManager());
+        ListView listView = getView().findViewById(R.id.list_view);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
+        listView.setOnScrollListener(this);
+        ViewCompat.setNestedScrollingEnabled(listView, true); // <= 21 http://starzero.hatenablog.com/entry/2015/09/30/114136
+
+        PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
+
+        if (isStartTaskRequested) {
+            startTask();
+        }
     }
 
     private void startTask() {
@@ -125,6 +145,11 @@ public class ListViewFragment extends Fragment implements
 
         ListView listView = getView().findViewById(R.id.list_view);
         ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
+
+        if (adapter == null) {
+            isStartTaskRequested = true;
+            return;
+        }
 
         adapter.setAnimEnabled(PrefHelper.isAnimEnabled(getActivity()));
         adapter.setDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));

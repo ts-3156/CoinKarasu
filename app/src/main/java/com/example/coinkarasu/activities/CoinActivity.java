@@ -55,7 +55,7 @@ public class CoinActivity extends AppCompatActivity implements
 
         Intent intent = getIntent();
         try {
-            coin = CoinImpl.buildByJSONObject(new JSONObject(intent.getStringExtra(COIN_NAME_KEY)));
+            coin = CoinImpl.buildByAttrs(new JSONObject(intent.getStringExtra(COIN_NAME_KEY)));
         } catch (JSONException e) {
             Log.d("onCreate", e.getMessage());
         }

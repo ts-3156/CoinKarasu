@@ -5,22 +5,13 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.MainPagerAdapter;
-import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.cryptocompare.CoinListReader;
 import com.example.coinkarasu.cryptocompare.data.CoinList;
-import com.example.coinkarasu.cryptocompare.data.CoinListImpl;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 
 public class MainFragment extends Fragment implements
@@ -39,7 +30,7 @@ public class MainFragment extends Fragment implements
         int navResId;
         int colorResId;
         int colorDarkResId;
-        int symbolsResId;
+        public int symbolsResId;
         String[] exchanges;
         int navPos;
 
@@ -68,7 +59,6 @@ public class MainFragment extends Fragment implements
 
     private OnFragmentInteractionListener listener;
 
-    private CoinList coinList;
     private NavigationKind kind;
     private TabLayout.Tab tab;
 
@@ -117,8 +107,6 @@ public class MainFragment extends Fragment implements
         pager.setCurrentItem(kind.ordinal()); // #setCurrentItem doesn't call #onPageScrollStateChanged.
         listener.onPageChanged(kind);
 
-        coinList = null;
-
         return view;
     }
 
@@ -133,29 +121,6 @@ public class MainFragment extends Fragment implements
         this.kind = kind;
         ((ViewPager) getView().findViewById(R.id.view_pager)).setCurrentItem(kind.ordinal());
         listener.onPageChanged(kind);
-    }
-
-    public ArrayList<Coin> collectCoins(String[] fromSymbols, String toSymbol) {
-        if (coinList == null) {
-            if (getActivity() == null) {
-                return null;
-            }
-            try {
-                long start = System.currentTimeMillis();
-                coinList = CoinListImpl.buildByResponse(
-                        new JSONObject(CoinListReader.read(getActivity())));
-                Log.d("LOAD", (System.currentTimeMillis() - start) + " ms");
-            } catch (JSONException e) {
-                Log.e("CLReader", e.getMessage());
-            }
-        }
-
-        ArrayList<Coin> coins = coinList.collectCoins(fromSymbols);
-        for (Coin coin : coins) {
-            coin.setToSymbol(toSymbol);
-        }
-
-        return coins;
     }
 
     @Override

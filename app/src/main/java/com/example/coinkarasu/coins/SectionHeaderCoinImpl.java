@@ -32,6 +32,11 @@ public class SectionHeaderCoinImpl implements Coin {
     }
 
     @Override
+    public String getFullImageUrl() {
+        return null;
+    }
+
+    @Override
     public String getName() {
         return name;
     }

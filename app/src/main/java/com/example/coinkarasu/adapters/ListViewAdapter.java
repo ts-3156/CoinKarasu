@@ -240,7 +240,7 @@ public class ListViewAdapter extends BaseAdapter {
         if (rowType == TYPE_ITEM) {
             holder.icon.setDefaultImageResId(symbolIconResIdMap.get(coin.getSymbol()));
             if (isDownloadIconEnabled) {
-                holder.icon.setImageUrl(coin.getImageUrl(), imageLoader);
+                holder.icon.setImageUrl(coin.getFullImageUrl(), imageLoader);
             } else {
                 holder.icon.setImageUrl(null, imageLoader);
             }

@@ -41,6 +41,6 @@ public class NonBlockingRequest extends RequestBase {
 
         request.setShouldCache(true);
         request.setRetryPolicy(getRetryPolicy());
-        VolleyHelper.getInstance(getActivity()).addToRequestQueue(request);
+        VolleyHelper.getInstance(getContext()).addToRequestQueue(request);
     }
 }

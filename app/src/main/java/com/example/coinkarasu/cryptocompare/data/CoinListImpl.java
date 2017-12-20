@@ -1,25 +1,47 @@
 package com.example.coinkarasu.cryptocompare.data;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
+import com.example.coinkarasu.cryptocompare.CoinListReader;
 import com.example.coinkarasu.cryptocompare.response.CoinListResponse;
 import com.example.coinkarasu.cryptocompare.response.CoinListResponseImpl;
+import com.example.coinkarasu.database.AppDatabase;
+import com.example.coinkarasu.database.CoinListCoin;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class CoinListImpl implements CoinList {
+
+    private static CoinList instance;
     private CoinListResponse response;
 
-    public CoinListImpl(CoinListResponse response) {
+    private CoinListImpl(CoinListResponse response) {
         this.response = response;
+    }
+
+    public static synchronized CoinList getInstance(Context context) {
+        if (instance == null) {
+            try {
+                instance = CoinListImpl.restoreFromCache(context);
+            } catch (Exception e) {
+                Log.e("getInstance", e.getMessage());
+                try {
+                    instance = CoinListImpl.buildByResponse(new JSONObject(CoinListReader.read(context)));
+                } catch (JSONException ee) {
+                    Log.e("getInstance", ee.getMessage());
+                }
+            }
+        }
+
+        return instance;
     }
 
     // @Override
@@ -37,9 +59,9 @@ public class CoinListImpl implements CoinList {
 
         try {
             JSONObject attrs = response.getData().getJSONObject(symbol);
-            coin = CoinImpl.buildByJSONObject(attrs);
+            coin = CoinImpl.buildByAttrs(attrs);
         } catch (JSONException e) {
-            Log.d("getCoinBySymbol", e.getMessage());
+            Log.e("getCoinBySymbol", e.getMessage());
         }
 
         return coin;
@@ -61,7 +83,7 @@ public class CoinListImpl implements CoinList {
                 String key = keys.next();
                 JSONObject attrs = data.getJSONObject(key);
                 if (attrs.getString("Id").equals(id)) {
-                    coin = CoinImpl.buildByJSONObject(attrs);
+                    coin = CoinImpl.buildByAttrs(attrs);
                     break;
                 }
             }
@@ -74,6 +96,7 @@ public class CoinListImpl implements CoinList {
 
     @Override
     public ArrayList<Coin> collectCoins(String[] fromSymbols) {
+        long start = System.currentTimeMillis();
         final ArrayList<Coin> coins = new ArrayList<>(fromSymbols.length);
 
         for (String coinSymbol : fromSymbols) {
@@ -85,12 +108,34 @@ public class CoinListImpl implements CoinList {
             coins.add(coin);
         }
 
+        Log.d("collectCoins", "Load from FILE, records " + fromSymbols.length + ", " + (System.currentTimeMillis() - start) + " ms");
+
+        return coins;
+    }
+
+    public static ArrayList<Coin> collectCoins(Context context, String[] fromSymbols) {
+        long start = System.currentTimeMillis();
+        ArrayList<Coin> coins = new ArrayList<>();
+        AppDatabase db = AppDatabase.getAppDatabase(context);
+
+        List<CoinListCoin> coinListCoins = db.coinListCoinDao().findBySymbols(fromSymbols);
+
+        for (String symbol : fromSymbols) {
+            for (CoinListCoin coinListCoin : coinListCoins) {
+                if (coinListCoin.getSymbol().equals(symbol)) {
+                    coins.add(CoinImpl.buildByCoinListCoin(coinListCoin));
+                }
+            }
+        }
+
+        Log.d("collectCoins", "Load from DB, records " + fromSymbols.length + ", " + (System.currentTimeMillis() - start) + " ms");
+
         return coins;
     }
 
     @Override
-    public ArrayList<String> getAllSymbols(int limit) {
-        return getAllSymbols(0, limit);
+    public ArrayList<String> getAllSymbols() {
+        return getAllSymbols(0, 3000);
     }
 
     @Override
@@ -124,13 +169,33 @@ public class CoinListImpl implements CoinList {
     }
 
     @Override
+    public void removeBySymbols(ArrayList<String> symbols) {
+        JSONObject data = response.getData();
+        if (data == null) {
+            return;
+        }
+
+        for (String symbol : symbols) {
+            data.remove(symbol);
+        }
+
+        Iterator<String> iterator = data.keys();
+        while (iterator.hasNext()) {
+            String symbol = iterator.next();
+            if (symbol.contains("*")) {
+                iterator.remove();
+            }
+        }
+    }
+
+    @Override
     public boolean saveToCache(Context context) {
         return response != null && response.saveToCache(context);
     }
 
     // @Override
-    public static CoinList restoreFromCache(Activity activity) {
-        CoinListResponse coinListResponse = CoinListResponseImpl.restoreFromCache(activity);
+    private static CoinList restoreFromCache(Context context) {
+        CoinListResponse coinListResponse = CoinListResponseImpl.restoreFromCache(context);
         if (coinListResponse == null || !coinListResponse.isSuccess()) {
             return null;
         }

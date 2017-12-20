@@ -4,6 +4,8 @@ import org.json.JSONObject;
 
 public interface Coin extends CoinListCoin, PriceMultiFullCoin, SectionHeaderCoin, UpdatableCoin {
 
+    String getImageUrl();
+
     String getExchange();
 
     String toString();

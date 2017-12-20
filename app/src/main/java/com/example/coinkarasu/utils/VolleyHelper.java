@@ -35,9 +35,9 @@ public class VolleyHelper {
         });
     }
 
-    public static synchronized VolleyHelper getInstance(Activity activity) {
+    public static synchronized VolleyHelper getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new VolleyHelper(activity.getApplicationContext());
+            mInstance = new VolleyHelper(context.getApplicationContext());
         }
         return mInstance;
     }

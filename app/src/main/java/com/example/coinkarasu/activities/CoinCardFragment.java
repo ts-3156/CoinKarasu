@@ -61,7 +61,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
             String coinJson = getArguments().getString("coinJson");
 
             try {
-                coin = CoinImpl.buildByJSONObject(new JSONObject(coinJson));
+                coin = CoinImpl.buildByAttrs(new JSONObject(coinJson));
             } catch (JSONException e) {
                 Log.e("onCreate", e.getMessage());
             }

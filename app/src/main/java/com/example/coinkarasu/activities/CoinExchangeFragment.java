@@ -73,7 +73,7 @@ public class CoinExchangeFragment extends Fragment implements
             String coinJson = getArguments().getString("coinJson");
 
             try {
-                coin = CoinImpl.buildByJSONObject(new JSONObject(coinJson));
+                coin = CoinImpl.buildByAttrs(new JSONObject(coinJson));
             } catch (JSONException e) {
                 Log.e("onCreate", e.getMessage());
             }

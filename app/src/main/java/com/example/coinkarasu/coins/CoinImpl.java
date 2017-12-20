@@ -36,32 +36,40 @@ public class CoinImpl implements Coin {
 
     private CoinImpl(JSONObject attrs) {
         try {
-            this.id = attrs.getInt("Id");
-            this.url = attrs.getString("Url");
-            this.imageUrl = attrs.getString("ImageUrl");
-            this.name = attrs.getString("Name"); // BTC
-            this.symbol = attrs.getString("Symbol"); // BTC
-            this.coinName = attrs.getString("CoinName"); // Bitcoin
-            this.fullName = attrs.getString("FullName"); // Bitcoin (BTC)
-            this.algorithm = attrs.getString("Algorithm"); // SHA256
-            this.proofType = attrs.getString("ProofType"); // PoW
+            if (attrs.has("Id"))
+                id = attrs.getInt("Id");
+            if (attrs.has("Url"))
+                url = attrs.getString("Url");
+            if (attrs.has("ImageUrl"))
+                imageUrl = attrs.getString("ImageUrl");
+            if (attrs.has("Name"))
+                name = attrs.getString("Name"); // BTC
+            if (attrs.has("Symbol"))
+                symbol = attrs.getString("Symbol"); // BTC
+            if (attrs.has("CoinName"))
+                coinName = attrs.getString("CoinName"); // Bitcoin
+            if (attrs.has("FullName"))
+                fullName = attrs.getString("FullName"); // Bitcoin (BTC)
+            if (attrs.has("Algorithm"))
+                algorithm = attrs.getString("Algorithm"); // SHA256
+            if (attrs.has("ProofType"))
+                proofType = attrs.getString("ProofType"); // PoW
 
-            try {
-                this.fullyPremined = attrs.getInt("FullyPremined"); // 0
-                this.totalCoinSupply = attrs.getString("TotalCoinSupply"); // N/A or 21000000
+            if (attrs.has("FullyPremined"))
+                fullyPremined = attrs.getInt("FullyPremined"); // 0
+            if (attrs.has("TotalCoinSupply"))
+                totalCoinSupply = attrs.getString("TotalCoinSupply"); // N/A or 21000000
 
-                if (attrs.has("PreminedValue")) {
-                    this.preminedValue = attrs.getString("PreminedValue"); // N/A
-                } else if (attrs.has("PremMinedValue")) {
-                    this.preminedValue = attrs.getString("PreMinedValue");
-                }
-
-                this.totalCoinsFreeFloat = attrs.getString("TotalCoinsFreeFloat"); // N/A
-                this.sortOrder = attrs.getInt("SortOrder"); // 1
-            } catch (JSONException e) {
-                Log.e("CoinImpl", e.getMessage());
-                Log.e("CoinImpl", attrs.toString());
+            if (attrs.has("PreminedValue")) {
+                preminedValue = attrs.getString("PreminedValue"); // N/A
+            } else if (attrs.has("PremMinedValue")) {
+                preminedValue = attrs.getString("PreMinedValue");
             }
+
+            if (attrs.has("TotalCoinsFreeFloat"))
+                totalCoinsFreeFloat = attrs.getString("TotalCoinsFreeFloat"); // N/A
+            if (attrs.has("SortOrder"))
+                sortOrder = attrs.getInt("SortOrder"); // 1
 
             toSymbol = null;
             price = 0.0;
@@ -77,14 +85,17 @@ public class CoinImpl implements Coin {
             if (attrs.has("prevPrice")) prevPrice = attrs.getDouble("prevPrice");
             if (attrs.has("prevTrend")) prevTrend = attrs.getDouble("prevTrend");
         } catch (JSONException e) {
-            Log.e("CoinImpl", e.getMessage());
-            Log.e("CoinImpl", attrs.toString());
+            Log.e("CoinImpl", e.getMessage() + ", " + attrs.toString());
         }
 
     }
 
-    public static Coin buildByJSONObject(JSONObject attrs) {
+    public static Coin buildByAttrs(JSONObject attrs) {
         return new CoinImpl(attrs);
+    }
+
+    public static Coin buildByCoinListCoin(com.example.coinkarasu.database.CoinListCoin coin) {
+        return new CoinImpl(coin.toJson());
     }
 
     @Override
@@ -99,6 +110,11 @@ public class CoinImpl implements Coin {
 
     @Override
     public String getImageUrl() {
+        return imageUrl;
+    }
+
+    @Override
+    public String getFullImageUrl() {
         return BASE_URL + imageUrl + "?width=" + ICON_SIZE;
     }
 

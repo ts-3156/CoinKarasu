@@ -1,17 +1,17 @@
 package com.example.coinkarasu.cryptocompare.request;
 
-import android.app.Activity;
+import android.content.Context;
 
 import com.android.volley.DefaultRetryPolicy;
 
 import org.json.JSONObject;
 
 public class RequestBase implements Request {
-    private Activity activity;
+    private Context context;
     private String url;
 
-    RequestBase(Activity activity, String url) {
-        this.activity = activity;
+    RequestBase(Context context, String url) {
+        this.context = context;
         this.url = url;
     }
 
@@ -30,8 +30,8 @@ public class RequestBase implements Request {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
     }
 
-    Activity getActivity() {
-        return activity;
+    Context getContext() {
+        return context;
     }
 
     String getUrl() {

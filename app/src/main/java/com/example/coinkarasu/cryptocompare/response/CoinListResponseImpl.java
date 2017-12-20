@@ -70,7 +70,7 @@ public class CoinListResponseImpl implements CoinListResponse {
         try {
             response = new JSONObject(text);
         } catch (JSONException e) {
-            Log.d("restoreFromCache", e.getMessage());
+            Log.e("restoreFromCache", e.getMessage());
         }
 
         if (response == null) {

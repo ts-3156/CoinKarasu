@@ -42,17 +42,17 @@ public class PriceMultiFullCoinImpl implements PriceMultiFullCoin {
             lastUpdate = attrs.getLong("LASTUPDATE");
             lastVolume = attrs.getDouble("LASTVOLUME");
             lastVolumeTo = attrs.getDouble("LASTVOLUMETO");
-            volumeDay = attrs.getDouble("VOLUMEDAY");
-            volumeDayTo = attrs.getDouble("VOLUMEDAYTO");
+//            volumeDay = attrs.getDouble("VOLUMEDAY");
+//            volumeDayTo = attrs.getDouble("VOLUMEDAYTO");
             volume24Hour = attrs.getDouble("VOLUME24HOUR");
             volume24HourTo = attrs.getDouble("VOLUME24HOURTO");
-            openDay = attrs.getDouble("OPENDAY");
-            highDay = attrs.getDouble("HIGHDAY");
-            lowDay = attrs.getDouble("LOWDAY");
+//            openDay = attrs.getDouble("OPENDAY");
+//            highDay = attrs.getDouble("HIGHDAY");
+//            lowDay = attrs.getDouble("LOWDAY");
             open24Hour = attrs.getDouble("OPEN24HOUR");
             high24Hour = attrs.getDouble("HIGH24HOUR");
             low24Hour = attrs.getDouble("LOW24HOUR");
-            lastMarket = attrs.getString("LASTMARKET");
+//            lastMarket = attrs.getString("LASTMARKET");
             change24Hour = attrs.getDouble("CHANGE24HOUR");
             changePct24Hour = attrs.getDouble("CHANGEPCT24HOUR");
             changeDay = attrs.getDouble("CHANGEDAY");
@@ -63,7 +63,8 @@ public class PriceMultiFullCoinImpl implements PriceMultiFullCoin {
             totalVolume24hTo = attrs.getDouble("TOTALVOLUME24HTO");
 
         } catch (JSONException e) {
-            Log.d("PriceMultiFullCoinImpl", e.getMessage());
+            Log.e("PriceMultiFullCoinImpl", e.getMessage());
+            Log.e("PriceMultiFullCoinImpl", attrs.toString());
         }
     }
 

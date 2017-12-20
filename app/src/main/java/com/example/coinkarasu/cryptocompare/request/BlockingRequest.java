@@ -1,6 +1,6 @@
 package com.example.coinkarasu.cryptocompare.request;
 
-import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -13,8 +13,8 @@ import java.util.concurrent.ExecutionException;
 
 public class BlockingRequest extends RequestBase {
 
-    public BlockingRequest(Activity activity, String url) {
-        super(activity, url);
+    public BlockingRequest(Context context, String url) {
+        super(context, url);
     }
 
     @Override
@@ -24,7 +24,7 @@ public class BlockingRequest extends RequestBase {
 
         request.setShouldCache(true);
         request.setRetryPolicy(getRetryPolicy());
-        VolleyHelper.getInstance(getActivity()).addToRequestQueue(request);
+        VolleyHelper.getInstance(getContext()).addToRequestQueue(request);
 
         JSONObject response = null;
 
