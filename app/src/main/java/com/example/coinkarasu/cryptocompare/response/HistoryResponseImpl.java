@@ -106,6 +106,11 @@ public class HistoryResponseImpl implements HistoryResponse {
         return true;
     }
 
+    @Override
+    public boolean saveToCache(Context context, String tag) {
+        return saveToCache(context);
+    }
+
     public static HistoryResponse restoreFromCache(Context context, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
         String text = CacheHelper.read(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
         JSONObject response = null;

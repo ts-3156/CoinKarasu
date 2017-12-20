@@ -10,6 +10,4 @@ public interface HistoryResponse extends Cacheable {
     JSONArray getData();
 
     ArrayList<History> getHistories();
-
-    boolean isCache();
 }

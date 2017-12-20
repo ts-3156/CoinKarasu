@@ -25,9 +25,9 @@ import com.example.coinkarasu.activities.MainFragment.NavigationKind;
 import com.example.coinkarasu.adapters.ListViewAdapter;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.SectionHeaderCoinImpl;
-import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.Prices;
+import com.example.coinkarasu.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.format.ValueAnimatorBase;
 import com.example.coinkarasu.tasks.CollectCoinsTask;
 import com.example.coinkarasu.tasks.GetPricesTask;
@@ -67,7 +67,6 @@ public class ListViewFragment extends Fragment implements
     private OnFragmentInteractionListener listener;
 
     private AutoUpdateTimer autoUpdateTimer;
-    private Client client;
     private NavigationKind kind;
     private boolean isVisibleToUser = false;
     private boolean isSelected;
@@ -133,6 +132,27 @@ public class ListViewFragment extends Fragment implements
 
         PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
+        if (!isDetached() && getView() != null) {
+            adapter.pauseAnimation();
+
+            for (String exchangeStr : kind.exchanges) {
+                String tag = kind.name() + "-" + exchangeStr;
+                boolean isCacheExists = PricesImpl.isCacheExist(getActivity(), tag);
+                if (!isCacheExists) {
+                    continue;
+                }
+
+                Prices prices = PricesImpl.restoreFromCache(getActivity(), tag);
+                String exchange = prices.getExchange();
+                ArrayList<Coin> filtered = adapter.getItems(exchange);
+                prices.copyAttrsToCoins(filtered);
+
+                adapter.notifyDataSetChanged();
+            }
+
+            adapter.restartAnimation();
+        }
+
         if (isStartTaskRequested) {
             startTask();
         }
@@ -155,11 +175,9 @@ public class ListViewFragment extends Fragment implements
         adapter.setDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
         adapter.setToSymbol(getToSymbol(kind));
 
-        client = new ClientImpl(getActivity());
-
         for (String exchangeStr : kind.exchanges) {
             Exchange exchange = Exchange.valueOf(exchangeStr);
-            new GetPricesTask(client)
+            new GetPricesTask(new ClientImpl(getActivity()))
                     .setFromSymbols(getFromSymbols(exchange))
                     .setToSymbol(getToSymbol(kind))
                     .setExchange(exchangeStr)
@@ -222,6 +240,8 @@ public class ListViewFragment extends Fragment implements
         if (autoUpdateTimer == null || tag == null || !autoUpdateTimer.getTag().equals(tag)) {
             return;
         }
+
+        prices.saveToCache(getActivity(), kind.name() + "-" + prices.getExchange());
 
         ListView listView = getView().findViewById(R.id.list_view);
         ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
@@ -377,7 +397,6 @@ public class ListViewFragment extends Fragment implements
         listener = null;
         PrefHelper.getPref(getActivity()).unregisterOnSharedPreferenceChangeListener(this);
         autoUpdateTimer = null;
-        client = null;
         kind = null;
     }
 

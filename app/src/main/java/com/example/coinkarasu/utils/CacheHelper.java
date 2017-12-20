@@ -1,6 +1,7 @@
 package com.example.coinkarasu.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -50,14 +51,18 @@ public class CacheHelper {
                 }
 
                 text = builder.toString();
+            } else {
+                Log.e("read", "the cache does not exist.");
             }
         } catch (IOException e) {
+            Log.e("read1", e.getMessage());
         } finally {
             try {
                 if (reader != null) {
                     reader.close();
                 }
             } catch (IOException e) {
+                Log.e("read2", e.getMessage());
             }
         }
 

@@ -43,7 +43,7 @@ public class ClientImpl implements Client {
                 + "&e=" + exchange;
 
         JSONObject response = new BlockingRequest(activity, url).perform();
-        return new PriceImpl(new PricesResponseImpl(response), exchange);
+        return new PriceImpl(new PricesResponseImpl(response, new String[]{fromSymbol}, toSymbol, exchange));
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ClientImpl implements Client {
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
         JSONObject response = new BlockingRequest(activity, url).perform();
-        return new PricesImpl(new PricesResponseImpl(response), exchange);
+        return new PricesImpl(new PricesResponseImpl(response, fromSymbols, toSymbol, exchange));
     }
 
     private ArrayList<History> getHistoryXxx(HistoryResponseImpl.Kind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {

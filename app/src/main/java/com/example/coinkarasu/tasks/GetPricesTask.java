@@ -75,8 +75,7 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer integer) {
         if (listener != null) {
-            Prices prices = new PricesImpl();
-            prices.setExchange(threads.get(0).getExchange());
+            Prices prices = new PricesImpl(threads.get(0).getExchange());
 
             for (GetPricesThread thread : threads) {
                 prices.merge(thread.getPrices());

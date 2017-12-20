@@ -63,9 +63,40 @@ public class PriceMultiFullCoinImpl implements PriceMultiFullCoin {
             totalVolume24hTo = attrs.getDouble("TOTALVOLUME24HTO");
 
         } catch (JSONException e) {
-            Log.e("PriceMultiFullCoinImpl", e.getMessage());
-            Log.e("PriceMultiFullCoinImpl", attrs.toString());
+            Log.e("PriceMultiFullCoinImpl", e.getMessage() + ", " + attrs.toString());
         }
+    }
+
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+
+        try {
+            json.put("MARKET", market);
+            json.put("FROMSYMBOL", fromSymbol);
+            json.put("TOSYMBOL", toSymbol);
+            json.put("PRICE", price);
+            json.put("LASTUPDATE", lastUpdate);
+            json.put("LASTVOLUME", lastVolume);
+            json.put("LASTVOLUMETO", lastVolumeTo);
+            json.put("VOLUME24HOUR", volume24Hour);
+            json.put("VOLUME24HOURTO", volume24HourTo);
+            json.put("OPEN24HOUR", open24Hour);
+            json.put("HIGH24HOUR", high24Hour);
+            json.put("LOW24HOUR", low24Hour);
+            json.put("CHANGE24HOUR", change24Hour);
+            json.put("CHANGEPCT24HOUR", changePct24Hour);
+            json.put("CHANGEDAY", changeDay);
+            json.put("CHANGEPCTDAY", changePctDay);
+            json.put("SUPPLY", supply);
+            json.put("MKTCAP", mktCap);
+            json.put("TOTALVOLUME24H", totalVolume24h);
+            json.put("TOTALVOLUME24HTO", totalVolume24hTo);
+        } catch (JSONException e) {
+            Log.e("toJson", e.getMessage());
+        }
+
+        return json;
     }
 
     @Override

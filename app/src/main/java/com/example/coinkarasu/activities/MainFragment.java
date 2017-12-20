@@ -85,7 +85,7 @@ public class MainFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         if (savedInstanceState != null) {
-            kind = NavigationKind.values()[savedInstanceState.getInt(STATE_SELECTED_KIND_KEY)];
+            kind = NavigationKind.valueOf(savedInstanceState.getString(STATE_SELECTED_KIND_KEY));
         }
 
         ViewPager pager = view.findViewById(R.id.view_pager);

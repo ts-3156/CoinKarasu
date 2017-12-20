@@ -13,8 +13,8 @@ public class PriceImpl implements Price {
     private PriceMultiFullCoin coin;
     private String exchange;
 
-    public PriceImpl(PricesResponse response, String exchange) {
-        this.exchange = exchange;
+    public PriceImpl(PricesResponse response) {
+        exchange = response.getExchange();
 
         JSONObject raw = response.getRaw();
         if (raw == null) {

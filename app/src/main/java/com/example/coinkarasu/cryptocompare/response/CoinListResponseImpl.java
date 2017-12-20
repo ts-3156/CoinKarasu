@@ -15,9 +15,15 @@ public class CoinListResponseImpl implements CoinListResponse {
     private static final String CACHE_NAME = "coin_list_response.json";
 
     private JSONObject response;
+    private boolean isCache;
 
     public CoinListResponseImpl(JSONObject response) {
+        this(response, false);
+    }
+
+    private CoinListResponseImpl(JSONObject response, boolean isCache) {
         this.response = null;
+        this.isCache = isCache;
 
         try {
             if (response.getString("Response").equals("Success")) {
@@ -62,9 +68,23 @@ public class CoinListResponseImpl implements CoinListResponse {
         return true;
     }
 
+    @Override
+    public boolean saveToCache(Context context, String tag) {
+        return saveToCache(context);
+    }
+
+    @Override
+    public boolean isCache() {
+        return isCache;
+    }
+
     // @Override
     public static CoinListResponse restoreFromCache(Context context) {
         String text = CacheHelper.read(context, CACHE_NAME);
+        if (text == null) {
+            Log.e("restoreFromCache", "the text is null.");
+            return null;
+        }
         JSONObject response = null;
 
         try {
@@ -76,7 +96,7 @@ public class CoinListResponseImpl implements CoinListResponse {
         if (response == null) {
             return null;
         } else {
-            return new CoinListResponseImpl(response);
+            return new CoinListResponseImpl(response, true);
         }
     }
 

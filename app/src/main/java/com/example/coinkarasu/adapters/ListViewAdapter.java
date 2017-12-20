@@ -45,6 +45,7 @@ public class ListViewAdapter extends BaseAdapter {
     private boolean isAnimEnabled;
     private boolean isDownloadIconEnabled;
     private boolean isScrolled;
+    private boolean isAnimPaused;
 
     private PriceFormat priceFormatter;
     private TrendValueFormat trendFormatter;
@@ -66,6 +67,7 @@ public class ListViewAdapter extends BaseAdapter {
         isAnimEnabled = PrefHelper.isAnimEnabled(activity);
         isDownloadIconEnabled = PrefHelper.isDownloadIconEnabled(activity);
         isScrolled = false;
+        isAnimPaused = false;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         for (Coin coin : coins) {
@@ -134,6 +136,14 @@ public class ListViewAdapter extends BaseAdapter {
 
     public void setDownloadIconEnabled(boolean flag) {
         this.isDownloadIconEnabled = flag;
+    }
+
+    public void pauseAnimation() {
+        isAnimPaused = true;
+    }
+
+    public void restartAnimation() {
+        isAnimPaused = false;
     }
 
     public void addItem(Coin coin) {
@@ -262,7 +272,7 @@ public class ListViewAdapter extends BaseAdapter {
                 holder.trendAnimator = null;
             }
 
-            if (isAnimEnabled && !isScrolled) {
+            if (!isAnimPaused && isAnimEnabled && !isScrolled) {
                 if (coin.getPrice() != coin.getPrevPrice()) {
                     holder.priceAnimator = new PriceAnimator(coin, holder.price);
                     holder.priceAnimator.start();

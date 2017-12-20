@@ -10,6 +10,7 @@ import com.example.coinkarasu.cryptocompare.response.CoinListResponse;
 import com.example.coinkarasu.cryptocompare.response.CoinListResponseImpl;
 import com.example.coinkarasu.database.AppDatabase;
 import com.example.coinkarasu.database.CoinListCoin;
+import com.example.coinkarasu.services.UpdateCoinListIntentService;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,9 +23,15 @@ public class CoinListImpl implements CoinList {
 
     private static CoinList instance;
     private CoinListResponse response;
+    private boolean isCache;
 
     private CoinListImpl(CoinListResponse response) {
+        this(response, false);
+    }
+
+    private CoinListImpl(CoinListResponse response, boolean isCache) {
         this.response = response;
+        this.isCache = isCache;
     }
 
     public static synchronized CoinList getInstance(Context context) {
@@ -32,11 +39,15 @@ public class CoinListImpl implements CoinList {
             try {
                 instance = CoinListImpl.restoreFromCache(context);
             } catch (Exception e) {
-                Log.e("getInstance", e.getMessage());
+                Log.e("getInstance1", e.getMessage());
+            }
+
+            if (instance == null) {
                 try {
                     instance = CoinListImpl.buildByResponse(new JSONObject(CoinListReader.read(context)));
-                } catch (JSONException ee) {
-                    Log.e("getInstance", ee.getMessage());
+                    UpdateCoinListIntentService.start(context);
+                } catch (JSONException e) {
+                    Log.e("getInstance2", e.getMessage());
                 }
             }
         }
@@ -191,6 +202,16 @@ public class CoinListImpl implements CoinList {
     @Override
     public boolean saveToCache(Context context) {
         return response != null && response.saveToCache(context);
+    }
+
+    @Override
+    public boolean saveToCache(Context context, String tag) {
+        return saveToCache(context);
+    }
+
+    @Override
+    public boolean isCache() {
+        return isCache;
     }
 
     // @Override

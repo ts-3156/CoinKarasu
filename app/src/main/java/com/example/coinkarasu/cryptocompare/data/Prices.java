@@ -17,7 +17,5 @@ public interface Prices extends Cacheable {
 
     void copyAttrsToCoins(List<Coin> coins);
 
-    void setExchange(String exchange);
-
     String getExchange();
 }

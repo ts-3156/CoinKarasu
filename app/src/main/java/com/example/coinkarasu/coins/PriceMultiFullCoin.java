@@ -1,5 +1,7 @@
 package com.example.coinkarasu.coins;
 
+import org.json.JSONObject;
+
 public interface PriceMultiFullCoin {
     String getMarket();
 
@@ -52,4 +54,6 @@ public interface PriceMultiFullCoin {
     double getTotalVolume24h();
 
     double getTotalVolume24hTo();
+
+    JSONObject toJson();
 }
