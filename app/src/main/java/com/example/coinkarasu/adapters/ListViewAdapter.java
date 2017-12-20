@@ -212,7 +212,7 @@ public class ListViewAdapter extends BaseAdapter {
                 holder.symbol = convertView.findViewById(R.id.coin_symbol);
                 holder.price = convertView.findViewById(R.id.coin_price);
                 holder.trend = convertView.findViewById(R.id.coin_trend);
-                holder.trend_icon = convertView.findViewById(R.id.coin_trend_icon);
+                holder.trendIcon = convertView.findViewById(R.id.coin_trend_icon);
 
                 holder.name.setTypeface(typeFace);
                 holder.symbol.setTypeface(typeFace);
@@ -226,10 +226,10 @@ public class ListViewAdapter extends BaseAdapter {
                 holder.progressbar = convertView.findViewById(R.id.progressbar);
                 holder.progressbar.setTag(coin.getExchange() + "-progressbar");
 
-                View time_span = convertView.findViewById(R.id.time_span_container);
-                time_span.setId(Math.abs(coin.getExchange().hashCode()));
+                View timeSpan = convertView.findViewById(R.id.time_span_container);
+                timeSpan.setId(Math.abs(coin.getExchange().hashCode()));
                 fragmentManager.beginTransaction()
-                        .replace(time_span.getId(), RelativeTimeSpanFragment.newInstance(), coin.getExchange() + "-time_span")
+                        .replace(timeSpan.getId(), RelativeTimeSpanFragment.newInstance(), coin.getSymbol() + "-time_span")
                         .commit();
             }
             convertView.setTag(holder);
@@ -290,7 +290,7 @@ public class ListViewAdapter extends BaseAdapter {
                 convertView.setBackgroundColor(priceToColor);
             }
 
-            holder.trend_icon.setImageResource(trendIconFormat.format(coin.getTrend()));
+            holder.trendIcon.setImageResource(trendIconFormat.format(coin.getTrend()));
         } else if (rowType == TYPE_HEADER) {
             holder.header.setText(coin.getName());
             if (position == 0) {
@@ -323,7 +323,7 @@ public class ListViewAdapter extends BaseAdapter {
         TextView symbol;
         TextView price;
         TextView trend;
-        ImageView trend_icon;
+        ImageView trendIcon;
 
         TextView header;
         View divider;

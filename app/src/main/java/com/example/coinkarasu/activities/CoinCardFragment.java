@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -76,23 +78,15 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         ((TextView) view.findViewById(R.id.caption_left)).setTypeface(typeFace);
         ((TextView) view.findViewById(R.id.caption_right)).setTypeface(typeFace);
 
+        getChildFragmentManager().beginTransaction()
+                .replace(R.id.time_span_container, RelativeTimeSpanFragment.newInstance(), coin.getSymbol())
+                .commit();
+
         kind = "coin_card";
         updatePrice(view, coin);
         startAutoUpdate(true);
 
         return view;
-    }
-
-    public void updateView() {
-        if (isDetached() || getView() == null) {
-            return;
-        }
-
-        if (autoUpdateTimer != null) {
-            return;
-        }
-
-        startAutoUpdate(true);
     }
 
     private void startTask() {
@@ -212,8 +206,27 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
             return;
         }
 
-        View progressbar = getView().findViewById(R.id.progressbar);
-        progressbar.setVisibility(flag);
+        ImageView progressbar = getView().findViewById(R.id.progressbar);
+        if (progressbar == null) {
+            return;
+        }
+
+        if (flag == View.GONE) {
+            progressbar.clearAnimation();
+            progressbar.setImageResource(R.drawable.ic_refresh_stop);
+            updateRelativeTimeSpanText();
+        } else if (flag == View.VISIBLE) {
+            progressbar.setImageResource(R.drawable.ic_refresh_rotate);
+            Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
+            progressbar.startAnimation(anim);
+        }
+    }
+
+    private void updateRelativeTimeSpanText() {
+        Fragment fragment = getChildFragmentManager().findFragmentByTag(coin.getSymbol());
+        if (fragment != null) {
+            ((RelativeTimeSpanFragment) fragment).setTime(System.currentTimeMillis());
+        }
     }
 
     private String getToSymbol() {
