@@ -13,7 +13,8 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.OnItemClickListener;
 import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.format.PriceFormat;
+import com.example.coinkarasu.format.SignedPriceFormat;
+import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
 import com.example.coinkarasu.utils.VolleyHelper;
 
@@ -28,6 +29,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private OnItemClickListener listener;
     private ArrayList<Coin> coins;
 
+    private int trendUp;
+    private int trendFlat;
+    private int trendDown;
+
     private HashMap<String, Integer> symbolIconResIdMap;
     private ImageLoader imageLoader;
 
@@ -36,6 +41,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.context = context;
         this.coins = coins;
 
+        initializeColors(context);
         symbolIconResIdMap = buildIconResIdMap(context, coins);
         imageLoader = VolleyHelper.getInstance(context).getImageLoader();
     }
@@ -57,6 +63,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return map;
     }
 
+    private void initializeColors(Context context) {
+        Resources resources = context.getResources();
+        TrendColorFormat formatter = new TrendColorFormat();
+
+        trendUp = resources.getColor(formatter.format(1.0));
+        trendFlat = resources.getColor(formatter.format(0.0));
+        trendDown = resources.getColor(formatter.format(-1.0));
+    }
+
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
     }
@@ -71,8 +86,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         final Coin coin = coins.get(position);
 
         holder.symbol.setText(coin.getSymbol());
-        holder.price.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice() - coin.getPrevPrice()));
+        holder.price.setText(new SignedPriceFormat(coin.getToSymbol()).format(coin.getPrice() - coin.getPrevPrice()));
         holder.trend.setText(new TrendValueFormat().format(coin.getTrend()));
+        holder.trend.setTextColor(getTrendColor(coin.getTrend()));
 
         holder.icon.setDefaultImageResId(symbolIconResIdMap.get(coin.getSymbol()));
         holder.icon.setImageUrl(coin.getLargeImageUrl(), imageLoader);
@@ -88,6 +104,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public int getItemCount() {
         return coins.size();
+    }
+
+    private int getTrendColor(double trend) {
+        int color;
+
+        if (trend > 0.0) {
+            color = trendUp;
+        } else if (trend < 0.0) {
+            color = trendDown;
+        } else {
+            color = trendFlat;
+        }
+
+        return color;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

@@ -7,9 +7,9 @@ import java.util.Currency;
 import java.util.Locale;
 
 public class PriceFormat {
-    private String toSymbol;
-    private Currency currency;
-    private NumberFormat formatter;
+    protected String toSymbol;
+    protected Currency currency;
+    protected NumberFormat formatter;
 
     public PriceFormat(String toSymbol) {
         this.toSymbol = toSymbol;

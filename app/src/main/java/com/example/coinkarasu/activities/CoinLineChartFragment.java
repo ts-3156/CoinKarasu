@@ -18,7 +18,7 @@ import android.widget.TextView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.CoinLineChartPagerAdapter;
 import com.example.coinkarasu.cryptocompare.data.History;
-import com.example.coinkarasu.format.PriceFormat;
+import com.example.coinkarasu.format.SignedPriceFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
@@ -137,7 +137,7 @@ public class CoinLineChartFragment extends Fragment implements
         double prevPrice = records.get(0).getClose();
         double priceDiff = curPrice - prevPrice;
 
-        String priceString = new PriceFormat(records.get(0).getToSymbol()).format(priceDiff);
+        String priceString = new SignedPriceFormat(records.get(0).getToSymbol()).format(priceDiff);
         ((TextView) view.findViewById(R.id.price)).setText(priceString);
 
         boolean isSelected = this.tab != null && this.tab.getPosition() == position;
