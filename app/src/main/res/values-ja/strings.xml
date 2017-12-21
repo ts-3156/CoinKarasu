@@ -48,11 +48,19 @@
     <string name="caption_day">本日</string>
     <string name="caption_desc_day">(現時点)</string>
 
-    <string name="pref_header_general">一般</string>
-    <string name="pref_header_data_sync">データの同期</string>
-
     <string name="dic_filter">フィルター</string>
 
+
+    <string name="pref_header_general">全般</string>
+    <string name="pref_header_speeding_up">高速化</string>
+    <string name="pref_header_about">概要</string>
+    <string name="pref_header_data_sync">データの同期</string>
+
+    <string name="pref_open_source_licenses_title">オープンソースライセンス</string>
+    <string name="pref_open_source_licenses_summary">オープンソースソフトウェアに関するライセンスの詳細</string>
+    <string name="pref_app_version_title">バージョン</string>
+    <string name="pref_app_version_summary">バージョン 1.0.0</string>
+    <string name="pref_app_version_up_to_date">このアプリは、最新バージョンです。</string>
 
     <string name="pref_title">設定</string>
     <string name="pref_title_currency">表示する通貨</string>

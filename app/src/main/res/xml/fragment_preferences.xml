@@ -1,39 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListPreference
-        android:defaultValue="10000"
-        android:entries="@array/pref_sync_frequency_titles"
-        android:entryValues="@array/pref_sync_frequency_values"
-        android:key="pref_sync_frequency"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_sync_frequency" />
+    <PreferenceCategory android:title="@string/pref_header_general">
+        <ListPreference
+            android:defaultValue="10000"
+            android:entries="@array/pref_sync_frequency_titles"
+            android:entryValues="@array/pref_sync_frequency_values"
+            android:key="pref_sync_frequency"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_sync_frequency" />
 
-    <ListPreference
-        android:defaultValue="JPY"
-        android:entries="@array/pref_currency_titles"
-        android:entryValues="@array/pref_currency_values"
-        android:key="pref_currency"
-        android:negativeButtonText="@null"
-        android:positiveButtonText="@null"
-        android:title="@string/pref_title_currency" />
+        <ListPreference
+            android:defaultValue="JPY"
+            android:entries="@array/pref_currency_titles"
+            android:entryValues="@array/pref_currency_values"
+            android:key="pref_currency"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_title_currency" />
 
-    <SwitchPreference
-        android:defaultValue="false"
-        android:key="pref_keep_screen_on"
-        android:summary="@string/pref_description_keep_screen_on"
-        android:title="@string/pref_title_keep_screen_on" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="pref_keep_screen_on"
+            android:summary="@string/pref_description_keep_screen_on"
+            android:title="@string/pref_title_keep_screen_on" />
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="pref_enable_price_anim"
-        android:summary="@string/pref_description_enable_price_anim"
-        android:title="@string/pref_title_enable_price_anim" />
+    </PreferenceCategory>
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="pref_enable_download_icon"
-        android:summary="@string/pref_description_enable_download_icon"
-        android:title="@string/pref_title_enable_download_icon" />
+    <PreferenceCategory android:title="@string/pref_header_speeding_up">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_enable_price_anim"
+            android:summary="@string/pref_description_enable_price_anim"
+            android:title="@string/pref_title_enable_price_anim" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_enable_download_icon"
+            android:summary="@string/pref_description_enable_download_icon"
+            android:title="@string/pref_title_enable_download_icon" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/pref_header_about">
+        <Preference
+            android:key="pref_open_source_licenses"
+            android:summary="@string/pref_open_source_licenses_summary"
+            android:title="@string/pref_open_source_licenses_title" />
+
+        <Preference
+            android:key="pref_app_version"
+            android:summary="@string/pref_app_version_summary"
+            android:title="@string/pref_app_version_title" />
+    </PreferenceCategory>
 
 </PreferenceScreen>

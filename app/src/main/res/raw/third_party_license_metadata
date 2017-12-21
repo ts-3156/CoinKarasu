@@ -1,0 +1,47 @@
+0:46 cardview-v7
+47:53 crashlytics
+101:47 play-services-gcm
+718:46 runtime
+196:47 play-services-oss-licenses
+56895:46 common
+291:46 db-framework
+338:46 db
+432:47 play-services-iid
+480:47 play-services-base
+528:47 play-services-tasks
+576:47 play-services-basement
+624:46 support-core-utils
+671:46 support-compat
+812:46 support-annotations
+859:53 crashlytics-core
+913:53 beta
+967:24 answers
+992:23 fabric
+1016:1732 Protobuf Nano
+2749:11358 safeparcel
+14108:3182 PCRE
+17291:2500 zlib
+19792:19442 ICU4C
+39235:1602 JSR 305
+40838:1558 RE2
+42397:1481 darts_clone
+43879:243 tz database
+44123:731 UTF
+44855:11358 CCTZ
+56214:680 STL
+56942:46 compiler
+56989:46 migration
+57036:46 kotlin-stdlib
+57083:46 javapoet
+57130:46 sqlite-jdbc
+57177:46 annotations
+57224:46 design
+57271:46 appcompat-v7
+57318:46 transition
+57365:46 support-v4
+57412:46 animated-vector-drawable
+57459:46 support-vector-drawable
+57506:46 recyclerview-v7
+57553:46 support-fragment
+57600:46 support-core-ui
+57647:46 support-media-compat

@@ -10,6 +10,7 @@ buildscript {
 }
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.gms.oss.licenses.plugin'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
@@ -62,4 +63,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-gcm:11.6.2'
     compile "android.arch.persistence.room:runtime:1.0.0"
     annotationProcessor "android.arch.persistence.room:compiler:1.0.0"
+    implementation 'com.google.android.gms:play-services-oss-licenses:11.6.2'
 }

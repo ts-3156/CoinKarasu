@@ -41,6 +41,12 @@
         <activity
             android:name="com.example.coinkarasu.activities.settings.PreferencesActivity"
             android:parentActivityName="com.example.coinkarasu.activities.MainActivity">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.coinkarasu.activities.MainActivity" />

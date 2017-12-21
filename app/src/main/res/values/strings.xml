@@ -63,12 +63,21 @@
     <string name="pie_chart_exchange_warn">There are no exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
 
 
+    <string name="pref_header_general">General</string>
+    <string name="pref_header_speeding_up">Speeding up</string>
+    <string name="pref_header_about">About</string>
+
+    <string name="pref_open_source_licenses_title">Open source licenses</string>
+    <string name="pref_open_source_licenses_summary">License details for open source software</string>
+    <string name="pref_app_version_title">App version</string>
+    <string name="pref_app_version_summary">Version 1.0.0</string>
+    <string name="pref_app_version_up_to_date">This app is up to date.</string>
+
     <string name="pref_title">Settings</string>
 
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
-    <string name="pref_header_general">General</string>
 
     <string name="pref_title_social_recommendations">Enable social recommendations</string>
     <string name="pref_description_social_recommendations">Recommendations for people to contact
