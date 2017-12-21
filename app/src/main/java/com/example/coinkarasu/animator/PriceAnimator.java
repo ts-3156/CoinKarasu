@@ -6,9 +6,9 @@ import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.format.PriceFormat;
 
 public class PriceAnimator extends ValueAnimatorBase {
-    private Coin coin;
-    private TextView view;
-    private PriceFormat formatter;
+    protected Coin coin;
+    protected TextView view;
+    protected PriceFormat formatter;
 
     public PriceAnimator(Coin coin, TextView view) {
         super();

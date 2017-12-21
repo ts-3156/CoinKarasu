@@ -15,6 +15,7 @@ import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.RelativeTimeSpanFragment;
 import com.example.coinkarasu.animator.PriceAnimator;
 import com.example.coinkarasu.animator.PriceBgColorAnimator;
+import com.example.coinkarasu.animator.PriceDiffAnimator;
 import com.example.coinkarasu.animator.TrendAnimator;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.utils.PrefHelper;
@@ -201,6 +202,10 @@ public class ListViewAdapter extends BaseAdapter {
                 holder.priceAnimator.cancel();
                 holder.priceAnimator = null;
             }
+            if (holder.priceDiffAnimator != null) {
+                holder.priceDiffAnimator.cancel();
+                holder.priceDiffAnimator = null;
+            }
             if (holder.priceBgColorAnimator != null) {
                 holder.priceBgColorAnimator.cancel();
                 holder.priceBgColorAnimator = null;
@@ -224,6 +229,13 @@ public class ListViewAdapter extends BaseAdapter {
                 } else {
                     holder.price.setText(resources.priceFormatter.format(coin.getPrice()));
                     convertView.setBackgroundColor(resources.priceToColor);
+                }
+
+                if (coin.getPriceDiff() != coin.getPrevPriceDiff()) {
+                    holder.priceDiffAnimator = new PriceDiffAnimator(coin, holder.price_diff);
+                    holder.priceDiffAnimator.start();
+                } else {
+                    holder.price_diff.setText(resources.signedPriceFormatter.format(coin.getPriceDiff()));
                 }
 
                 if (coin.getTrend() != coin.getPrevTrend()) {
@@ -266,6 +278,7 @@ public class ListViewAdapter extends BaseAdapter {
         View progressbar;
 
         PriceAnimator priceAnimator = null;
+        PriceDiffAnimator priceDiffAnimator = null;
         PriceBgColorAnimator priceBgColorAnimator = null;
         TrendAnimator trendAnimator = null;
     }
