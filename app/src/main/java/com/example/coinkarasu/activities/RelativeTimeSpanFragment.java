@@ -118,4 +118,8 @@ public class RelativeTimeSpanFragment extends Fragment {
         savedInstanceState.putLong(STATE_TIME_KEY, time);
         super.onSaveInstanceState(savedInstanceState);
     }
+
+    public static String getTag(String value) {
+        return value + "-time_span";
+    }
 }

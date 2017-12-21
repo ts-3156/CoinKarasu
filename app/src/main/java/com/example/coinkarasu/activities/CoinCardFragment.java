@@ -77,7 +77,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         ((TextView) view.findViewById(R.id.caption_right)).setTypeface(typeFace);
 
         getChildFragmentManager().beginTransaction()
-                .replace(R.id.time_span_container, RelativeTimeSpanFragment.newInstance(), coin.getSymbol())
+                .replace(R.id.time_span_container, RelativeTimeSpanFragment.newInstance(), RelativeTimeSpanFragment.getTag(coin.getSymbol()))
                 .commit();
 
         kind = "coin_card";
@@ -221,7 +221,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     }
 
     private void updateRelativeTimeSpanText() {
-        Fragment fragment = getChildFragmentManager().findFragmentByTag(coin.getSymbol());
+        Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(coin.getSymbol()));
         if (fragment != null) {
             ((RelativeTimeSpanFragment) fragment).setTime(System.currentTimeMillis());
         }

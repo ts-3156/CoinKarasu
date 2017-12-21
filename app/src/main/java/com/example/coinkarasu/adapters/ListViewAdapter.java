@@ -177,7 +177,7 @@ public class ListViewAdapter extends BaseAdapter {
                 View timeSpan = convertView.findViewById(R.id.time_span_container);
                 timeSpan.setId(Math.abs(coin.getExchange().hashCode()));
                 fragmentManager.beginTransaction()
-                        .replace(timeSpan.getId(), RelativeTimeSpanFragment.newInstance(), coin.getSymbol() + "-time_span")
+                        .replace(timeSpan.getId(), RelativeTimeSpanFragment.newInstance(), RelativeTimeSpanFragment.getTag(coin.getExchange()))
                         .commit();
             }
             convertView.setTag(holder);

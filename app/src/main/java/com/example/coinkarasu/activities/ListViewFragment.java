@@ -284,7 +284,7 @@ public class ListViewFragment extends Fragment implements
     }
 
     private void updateRelativeTimeSpanText(String exchange) {
-        Fragment fragment = getChildFragmentManager().findFragmentByTag(exchange + "-time_span");
+        Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange));
         if (fragment != null) {
             ((RelativeTimeSpanFragment) fragment).setTime(System.currentTimeMillis());
         }
