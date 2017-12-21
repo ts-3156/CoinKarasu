@@ -16,7 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.adapters.CoinLineChartPagerAdapter;
+import com.example.coinkarasu.adapters.pagers.CoinLineChartPagerAdapter;
 import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.format.SignedPriceFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
