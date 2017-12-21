@@ -8,7 +8,7 @@ import org.json.JSONObject;
 public class CoinImpl implements Coin {
 
     private static final int ICON_SIZE = 96;
-    private static final int ICON_LARGE_SIZE = 192;
+    private static final int ICON_LARGE_SIZE = 75; // 48 * 1.5
 
     private static final String BASE_URL = "https://www.cryptocompare.com";
 
