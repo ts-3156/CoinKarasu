@@ -47,7 +47,7 @@ public class ListViewFragment extends Fragment implements
         SharedPreferences.OnSharedPreferenceChangeListener,
         CollectCoinsTask.Listener {
 
-    public enum Exchange {
+    private enum Exchange {
         bitflyer(R.array.bitflyer_symbols, "BitFlyer"),
         coincheck(R.array.coincheck_symbols, "Coincheck"),
         zaif(R.array.zaif_symbols, "Zaif"),
@@ -63,8 +63,6 @@ public class ListViewFragment extends Fragment implements
     }
 
     private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
-
-    private OnFragmentInteractionListener listener;
 
     private AutoUpdateTimer autoUpdateTimer;
     private NavigationKind kind;
@@ -149,8 +147,6 @@ public class ListViewFragment extends Fragment implements
 
                 adapter.notifyDataSetChanged();
             }
-
-            adapter.restartAnimation();
         }
 
         if (isStartTaskRequested) {
@@ -388,13 +384,11 @@ public class ListViewFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (OnFragmentInteractionListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
         PrefHelper.getPref(getActivity()).unregisterOnSharedPreferenceChangeListener(this);
         autoUpdateTimer = null;
         kind = null;
@@ -458,9 +452,5 @@ public class ListViewFragment extends Fragment implements
             stopAutoUpdate();
             startAutoUpdate(true);
         }
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(Uri uri);
     }
 }

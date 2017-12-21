@@ -28,16 +28,7 @@ import org.json.JSONObject;
 
 import java.util.Date;
 
-public class CoinActivity extends AppCompatActivity implements
-        CoinCardFragment.OnFragmentInteractionListener,
-        CoinExchangeFragment.OnFragmentInteractionListener,
-        CoinLineChartFragment.OnFragmentInteractionListener,
-        CoinPieChartFragment.OnFragmentInteractionListener,
-        CoinBoardFragment.OnFragmentInteractionListener,
-        CoinExchangeTabContentFragment.OnFragmentInteractionListener,
-        CoinExchangesTabContentFragment.OnFragmentInteractionListener,
-        CoinLineChartTabContentFragment.OnFragmentInteractionListener,
-        CoinPieChartTabContentFragment.OnFragmentInteractionListener {
+public class CoinActivity extends AppCompatActivity {
 
     public enum Tag {card, line, exchange, pie, board}
 
@@ -184,18 +175,5 @@ public class CoinActivity extends AppCompatActivity implements
                 }
             }
         }).execute();
-    }
-
-    @Override
-    public void onLineChartKindChanged(String kind) {
-    }
-
-    @Override
-    public void onPieChartKindChanged(String kind) {
-    }
-
-    @Override
-    public void onBoardKindChanged(String kind) {
-        boardKind = kind;
     }
 }

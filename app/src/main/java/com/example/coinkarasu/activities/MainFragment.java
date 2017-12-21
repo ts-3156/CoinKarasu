@@ -19,10 +19,10 @@ public class MainFragment extends Fragment implements
     public enum NavigationKind {
         home(R.string.nav_home, R.string.tab_home, R.id.nav_home, R.color.colorNavHome, R.color.colorNavHomeDark, -1, new String[]{}, 0),
         japan(R.string.nav_japan, R.string.tab_japan, R.id.nav_japan, R.color.colorNavJapan, R.color.colorNavJapanDark, R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}, 1),
-        jpy_toplist(R.string.nav_jpy_toplist, R.string.tab_jpy_toplist, R.id.nav_jpy_toplist, R.color.colorJpyToplist, R.color.colorJpyToplistDark, R.array.jpy_toplist_symbols, new String[]{"cccagg"}, 3),
-        usd_toplist(R.string.nav_usd_toplist, R.string.tab_usd_toplist, R.id.nav_usd_toplist, R.color.colorUsdToplist, R.color.colorUsdToplistDark, R.array.usd_toplist_symbols, new String[]{"cccagg"}, 4),
-        eur_toplist(R.string.nav_eur_toplist, R.string.tab_eur_toplist, R.id.nav_eur_toplist, R.color.colorEurToplist, R.color.colorEurToplistDark, R.array.eur_toplist_symbols, new String[]{"cccagg"}, 5),
-        btc_toplist(R.string.nav_btc_toplist, R.string.tab_btc_toplist, R.id.nav_btc_toplist, R.color.colorBtcToplist, R.color.colorBtcToplistDark, R.array.btc_toplist_symbols, new String[]{"cccagg"}, 6);
+        jpy_toplist(R.string.nav_jpy_toplist, R.string.tab_jpy_toplist, R.id.nav_jpy_toplist, R.color.colorJpyToplist, R.color.colorJpyToplistDark, R.array.jpy_toplist_symbols, new String[]{"cccagg"}, 2),
+        usd_toplist(R.string.nav_usd_toplist, R.string.tab_usd_toplist, R.id.nav_usd_toplist, R.color.colorUsdToplist, R.color.colorUsdToplistDark, R.array.usd_toplist_symbols, new String[]{"cccagg"}, 3),
+        eur_toplist(R.string.nav_eur_toplist, R.string.tab_eur_toplist, R.id.nav_eur_toplist, R.color.colorEurToplist, R.color.colorEurToplistDark, R.array.eur_toplist_symbols, new String[]{"cccagg"}, 4),
+        btc_toplist(R.string.nav_btc_toplist, R.string.tab_btc_toplist, R.id.nav_btc_toplist, R.color.colorBtcToplist, R.color.colorBtcToplistDark, R.array.btc_toplist_symbols, new String[]{"cccagg"}, 5);
 
         int navStrResId;
         int tabStrResId;
@@ -119,6 +119,12 @@ public class MainFragment extends Fragment implements
         }
         this.kind = kind;
         ((ViewPager) getView().findViewById(R.id.view_pager)).setCurrentItem(kind.ordinal());
+        listener.onPageChanged(kind);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         listener.onPageChanged(kind);
     }
 

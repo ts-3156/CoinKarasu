@@ -43,8 +43,6 @@ import java.util.Iterator;
 public class CoinExchangeFragment extends Fragment implements
         GetCoinSnapshotTask.Listener, ViewPager.OnPageChangeListener {
 
-    private OnFragmentInteractionListener listener;
-
     private String kind;
     private Coin coin;
     private boolean taskStarted;
@@ -281,13 +279,11 @@ public class CoinExchangeFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (OnFragmentInteractionListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
         kind = null;
         coin = null;
         tab = null;
@@ -314,9 +310,5 @@ public class CoinExchangeFragment extends Fragment implements
                 setSelected(position, getView());
             }
         }
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onLineChartKindChanged(String kind);
     }
 }

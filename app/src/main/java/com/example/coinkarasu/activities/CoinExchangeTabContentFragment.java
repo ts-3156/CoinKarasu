@@ -30,8 +30,6 @@ import java.util.Date;
 
 public class CoinExchangeTabContentFragment extends Fragment implements GetHistoryHourTask.Listener {
 
-    private OnFragmentInteractionListener listener;
-
     private SnapshotCoin coin;
     private String kind;
     private int position;
@@ -160,13 +158,11 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (OnFragmentInteractionListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
         coin = null;
         kind = null;
         exchange = null;
@@ -182,9 +178,4 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
             updateView();
         }
     }
-
-    public interface OnFragmentInteractionListener {
-        void onLineChartKindChanged(String kind);
-    }
-
 }

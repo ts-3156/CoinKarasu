@@ -43,8 +43,6 @@ public class CoinPieChartFragment extends Fragment implements
         }
     }
 
-    private OnFragmentInteractionListener listener;
-
     private boolean taskStarted;
     private int errorCount = 0;
     private boolean tabsCreated = false;
@@ -203,13 +201,11 @@ public class CoinPieChartFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (OnFragmentInteractionListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
         tab = null;
         fromSymbol = null;
         toSymbol = null;
@@ -236,9 +232,5 @@ public class CoinPieChartFragment extends Fragment implements
                 setSelected(position, getView());
             }
         }
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onPieChartKindChanged(String kind);
     }
 }

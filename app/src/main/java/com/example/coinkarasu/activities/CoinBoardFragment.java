@@ -23,8 +23,6 @@ import java.util.ArrayList;
 
 public class CoinBoardFragment extends Fragment implements View.OnClickListener {
 
-    private OnFragmentInteractionListener listener;
-
     Button btn;
     String kind;
 
@@ -192,13 +190,11 @@ public class CoinBoardFragment extends Fragment implements View.OnClickListener 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (OnFragmentInteractionListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
         btn = null;
         kind = null;
     }
@@ -225,15 +221,7 @@ public class CoinBoardFragment extends Fragment implements View.OnClickListener 
             btn = nextBtn;
 
             kind = next;
-
-            if (listener != null) {
-                listener.onBoardKindChanged(kind);
-            }
         }
 
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onBoardKindChanged(String kind);
     }
 }

@@ -35,8 +35,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
     public static final double GROUP_SMALL_SLICES_PCT = 0.05;
 
-    private OnFragmentInteractionListener listener;
-
     private CoinPieChartFragment.Kind kind;
     private String fromSymbol;
     private String toSymbol;
@@ -280,13 +278,11 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (OnFragmentInteractionListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
         kind = null;
         fromSymbol = null;
         toSymbol = null;
@@ -302,9 +298,4 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             updateView();
         }
     }
-
-    public interface OnFragmentInteractionListener {
-        void onLineChartKindChanged(String kind);
-    }
-
 }

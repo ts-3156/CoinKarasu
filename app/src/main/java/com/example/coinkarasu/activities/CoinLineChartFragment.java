@@ -45,8 +45,6 @@ public class CoinLineChartFragment extends Fragment implements
         }
     }
 
-    private OnFragmentInteractionListener listener;
-
     private String fromSymbol;
     private String toSymbol;
     private TabLayout.Tab tab;
@@ -191,13 +189,11 @@ public class CoinLineChartFragment extends Fragment implements
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (OnFragmentInteractionListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
         fromSymbol = null;
         toSymbol = null;
         tab = null;
@@ -224,9 +220,5 @@ public class CoinLineChartFragment extends Fragment implements
                 setSelected(position, getView());
             }
         }
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onLineChartKindChanged(String kind);
     }
 }

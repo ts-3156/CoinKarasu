@@ -25,8 +25,6 @@ import java.util.HashMap;
 
 public class CoinExchangesTabContentFragment extends Fragment implements GetMultipleHistoryDayTask.Listener {
 
-    private OnFragmentInteractionListener listener;
-
     private String kind;
     private String fromSymbol;
     private String toSymbol;
@@ -145,13 +143,11 @@ public class CoinExchangesTabContentFragment extends Fragment implements GetMult
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (OnFragmentInteractionListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
         kind = null;
         chart = null;
         fromSymbol = null;
@@ -168,9 +164,4 @@ public class CoinExchangesTabContentFragment extends Fragment implements GetMult
             updateView();
         }
     }
-
-    public interface OnFragmentInteractionListener {
-        void onLineChartKindChanged(String kind);
-    }
-
 }

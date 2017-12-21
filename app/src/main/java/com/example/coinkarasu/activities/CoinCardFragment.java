@@ -39,8 +39,6 @@ import java.util.TimerTask;
 
 public class CoinCardFragment extends Fragment implements GetPriceTask.Listener {
 
-    private OnFragmentInteractionListener listener;
-
     private String kind;
     private Coin coin;
     private AutoUpdateTimer autoUpdateTimer;
@@ -261,19 +259,13 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (OnFragmentInteractionListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
         kind = null;
         coin = null;
         autoUpdateTimer = null;
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onLineChartKindChanged(String kind);
     }
 }

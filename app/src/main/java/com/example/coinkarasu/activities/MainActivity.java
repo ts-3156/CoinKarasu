@@ -35,7 +35,6 @@ import static com.example.coinkarasu.activities.MainFragment.NavigationKind;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        ListViewFragment.OnFragmentInteractionListener,
         MainFragment.OnFragmentInteractionListener {
 
     private static final String STATE_SELECTED_KIND = "kind";
@@ -266,10 +265,5 @@ public class MainActivity extends AppCompatActivity implements
         setNavChecked(kind);
         updateToolbarTitle(kind);
         updateTabColor(kind);
-    }
-
-    @Override
-    public void onFragmentInteraction(Uri uri) {
-
     }
 }

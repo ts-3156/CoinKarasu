@@ -21,8 +21,6 @@ import java.util.Date;
 
 public class CoinLineChartTabContentFragment extends Fragment implements GetHistoryTaskBase.Listener {
 
-    private OnFragmentInteractionListener listener;
-
     private CoinLineChartFragment.Kind kind;
     private String fromSymbol;
     private String toSymbol;
@@ -123,13 +121,11 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (OnFragmentInteractionListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        listener = null;
         kind = null;
         fromSymbol = null;
         toSymbol = null;
@@ -145,9 +141,4 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
             updateView();
         }
     }
-
-    public interface OnFragmentInteractionListener {
-        void onLineChartKindChanged(String kind);
-    }
-
 }
