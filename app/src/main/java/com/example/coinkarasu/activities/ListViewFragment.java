@@ -22,12 +22,12 @@ import android.widget.ListView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.MainFragment.NavigationKind;
 import com.example.coinkarasu.adapters.ListViewAdapter;
+import com.example.coinkarasu.animator.ValueAnimatorBase;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.SectionHeaderCoinImpl;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.cryptocompare.data.PricesImpl;
-import com.example.coinkarasu.animator.ValueAnimatorBase;
 import com.example.coinkarasu.tasks.CollectCoinsTask;
 import com.example.coinkarasu.tasks.GetPricesTask;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
@@ -146,6 +146,8 @@ public class ListViewFragment extends Fragment implements
 
                 adapter.notifyDataSetChanged();
             }
+
+            adapter.restartAnimation();
         }
 
         if (isStartTaskRequested) {

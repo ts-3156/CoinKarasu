@@ -2,9 +2,6 @@ package com.example.coinkarasu.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,23 +10,16 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.RelativeTimeSpanFragment;
-import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.animator.PriceAnimator;
 import com.example.coinkarasu.animator.PriceBgColorAnimator;
-import com.example.coinkarasu.format.PriceFormat;
 import com.example.coinkarasu.animator.TrendAnimator;
-import com.example.coinkarasu.format.TrendColorFormat;
-import com.example.coinkarasu.format.TrendIconFormat;
-import com.example.coinkarasu.format.TrendValueFormat;
+import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.utils.PrefHelper;
-import com.example.coinkarasu.utils.VolleyHelper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -37,8 +27,6 @@ public class ListViewAdapter extends BaseAdapter {
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_HEADER = 1;
 
-    private HashMap<String, Integer> symbolIconResIdMap;
-    private ImageLoader imageLoader;
     private LayoutInflater inflater;
     private ArrayList<Coin> coins = new ArrayList<>();
     private TreeSet<Integer> sectionHeader = new TreeSet<>();
@@ -47,23 +35,11 @@ public class ListViewAdapter extends BaseAdapter {
     private boolean isScrolled;
     private boolean isAnimPaused;
 
-    private PriceFormat priceFormatter;
-    private TrendValueFormat trendFormatter;
-    private TrendIconFormat trendIconFormat;
-    private int trendUp;
-    private int trendFlat;
-    private int trendDown;
-    private int priceUpFromColor;
-    private int priceDownFromColor;
-    private int priceToColor;
-    private Typeface typeFace;
-    private Typeface typeFaceItalic;
+    private ResourceUtils resources;
 
     private FragmentManager fragmentManager;
 
     public ListViewAdapter(Activity activity, List<Coin> coins, FragmentManager fragmentManager) {
-        symbolIconResIdMap = buildIconResIdMap(activity, coins);
-        imageLoader = VolleyHelper.getInstance(activity).getImageLoader();
         isAnimEnabled = PrefHelper.isAnimEnabled(activity);
         isDownloadIconEnabled = PrefHelper.isDownloadIconEnabled(activity);
         isScrolled = false;
@@ -74,49 +50,9 @@ public class ListViewAdapter extends BaseAdapter {
             addItem(coin);
         }
 
-        for (Coin coin : this.coins) {
-            if (!coin.isSectionHeader()) {
-                priceFormatter = new PriceFormat(coin.getToSymbol());
-                break;
-            }
-        }
-        trendFormatter = new TrendValueFormat();
-        trendIconFormat = new TrendIconFormat();
-        initializeColors(activity);
-        typeFace = Typeface.createFromAsset(activity.getAssets(), "OpenSans-Light.ttf");
-        typeFaceItalic = Typeface.createFromAsset(activity.getAssets(), "OpenSans-LightItalic.ttf");
+        resources = new ResourceUtils(activity, coins);
 
         this.fragmentManager = fragmentManager;
-    }
-
-    private void initializeColors(Activity activity) {
-        Resources resources = activity.getResources();
-        TrendColorFormat formatter = new TrendColorFormat();
-
-        trendUp = resources.getColor(formatter.format(1.0));
-        trendFlat = resources.getColor(formatter.format(0.0));
-        trendDown = resources.getColor(formatter.format(-1.0));
-
-        priceUpFromColor = resources.getColor(R.color.colorPriceBgUp);
-        priceDownFromColor = resources.getColor(R.color.colorPriceBgDown);
-        priceToColor = Color.WHITE;
-    }
-
-    private HashMap<String, Integer> buildIconResIdMap(Activity activity, List<Coin> coins) {
-        HashMap<String, Integer> map = new HashMap<>();
-        Resources resources = activity.getResources();
-        String packageName = activity.getPackageName();
-
-        for (Coin coin : coins) {
-            if (coin.isSectionHeader()) {
-                continue;
-            }
-            String name = "ic_coin_" + coin.getSymbol().toLowerCase();
-            int resId = resources.getIdentifier(name, "raw", packageName);
-            map.put(coin.getSymbol(), resId);
-        }
-
-        return map;
     }
 
     public void setIsScrolled(boolean flag) {
@@ -131,7 +67,7 @@ public class ListViewAdapter extends BaseAdapter {
         for (Coin coin : coins) {
             coin.setToSymbol(symbol);
         }
-        priceFormatter = new PriceFormat(symbol);
+        resources.toSymbolChanged(symbol);
     }
 
     public void setDownloadIconEnabled(boolean flag) {
@@ -224,14 +160,14 @@ public class ListViewAdapter extends BaseAdapter {
                 holder.trend = convertView.findViewById(R.id.coin_trend);
                 holder.trendIcon = convertView.findViewById(R.id.coin_trend_icon);
 
-                holder.name.setTypeface(typeFace);
-                holder.symbol.setTypeface(typeFace);
+                holder.name.setTypeface(resources.typeFace);
+                holder.symbol.setTypeface(resources.typeFace);
             } else if (rowType == TYPE_HEADER) {
                 convertView = inflater.inflate(R.layout.list_header_item, parent, false);
                 holder.header = convertView.findViewById(R.id.text_separator);
                 holder.divider = convertView.findViewById(R.id.divider);
 
-                holder.header.setTypeface(typeFaceItalic);
+                holder.header.setTypeface(resources.typeFaceItalic);
 
                 holder.progressbar = convertView.findViewById(R.id.progressbar);
                 holder.progressbar.setTag(coin.getExchange() + "-progressbar");
@@ -248,16 +184,16 @@ public class ListViewAdapter extends BaseAdapter {
         }
 
         if (rowType == TYPE_ITEM) {
-            holder.icon.setDefaultImageResId(symbolIconResIdMap.get(coin.getSymbol()));
+            holder.icon.setDefaultImageResId(resources.symbolIconResIdMap.get(coin.getSymbol()));
             if (isDownloadIconEnabled) {
-                holder.icon.setImageUrl(coin.getFullImageUrl(), imageLoader);
+                holder.icon.setImageUrl(coin.getFullImageUrl(), resources.imageLoader);
             } else {
-                holder.icon.setImageUrl(null, imageLoader);
+                holder.icon.setImageUrl(null, resources.imageLoader);
             }
 
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());
-            holder.trend.setTextColor(getTrendColor(coin.getTrend()));
+            holder.trend.setTextColor(resources.getTrendColor(coin.getTrend()));
 
             if (holder.priceAnimator != null) {
                 holder.priceAnimator.cancel();
@@ -278,29 +214,29 @@ public class ListViewAdapter extends BaseAdapter {
                     holder.priceAnimator.start();
 
                     if (coin.getPrice() > coin.getPrevPrice()) {
-                        holder.priceBgColorAnimator = new PriceBgColorAnimator(priceUpFromColor, priceToColor, convertView);
+                        holder.priceBgColorAnimator = new PriceBgColorAnimator(resources.priceUpFromColor, resources.priceToColor, convertView);
                     } else {
-                        holder.priceBgColorAnimator = new PriceBgColorAnimator(priceDownFromColor, priceToColor, convertView);
+                        holder.priceBgColorAnimator = new PriceBgColorAnimator(resources.priceDownFromColor, resources.priceToColor, convertView);
                     }
                     holder.priceBgColorAnimator.start();
                 } else {
-                    holder.price.setText(priceFormatter.format(coin.getPrice()));
-                    convertView.setBackgroundColor(priceToColor);
+                    holder.price.setText(resources.priceFormatter.format(coin.getPrice()));
+                    convertView.setBackgroundColor(resources.priceToColor);
                 }
 
                 if (coin.getTrend() != coin.getPrevTrend()) {
                     holder.trendAnimator = new TrendAnimator(coin, holder.trend);
                     holder.trendAnimator.start();
                 } else {
-                    holder.trend.setText(trendFormatter.format(coin.getTrend()));
+                    holder.trend.setText(resources.trendFormatter.format(coin.getTrend()));
                 }
             } else {
-                holder.price.setText(priceFormatter.format(coin.getPrice()));
-                holder.trend.setText(trendFormatter.format(coin.getTrend()));
-                convertView.setBackgroundColor(priceToColor);
+                holder.price.setText(resources.priceFormatter.format(coin.getPrice()));
+                holder.trend.setText(resources.trendFormatter.format(coin.getTrend()));
+                convertView.setBackgroundColor(resources.priceToColor);
             }
 
-            holder.trendIcon.setImageResource(trendIconFormat.format(coin.getTrend()));
+            holder.trendIcon.setImageResource(resources.trendIconFormat.format(coin.getTrend()));
         } else if (rowType == TYPE_HEADER) {
             holder.header.setText(coin.getName());
             if (position == 0) {
@@ -311,20 +247,6 @@ public class ListViewAdapter extends BaseAdapter {
         }
 
         return convertView;
-    }
-
-    private int getTrendColor(double trend) {
-        int color;
-
-        if (trend > 0.0) {
-            color = trendUp;
-        } else if (trend < 0.0) {
-            color = trendDown;
-        } else {
-            color = trendFlat;
-        }
-
-        return color;
     }
 
     private static class ViewHolder {

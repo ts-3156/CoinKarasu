@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.adapters.MainPagerAdapter;
+import com.example.coinkarasu.adapters.pagers.MainPagerAdapter;
 
 
 public class MainFragment extends Fragment implements

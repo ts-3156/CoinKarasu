@@ -1,7 +1,6 @@
 package com.example.coinkarasu.adapters;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,62 +13,24 @@ import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.OnItemClickListener;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.format.SignedPriceFormat;
-import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
-import com.example.coinkarasu.utils.VolleyHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-    private Context context;
     private LayoutInflater inflater;
     private OnItemClickListener listener;
     private ArrayList<Coin> coins;
 
-    private int trendUp;
-    private int trendFlat;
-    private int trendDown;
-
-    private HashMap<String, Integer> symbolIconResIdMap;
-    private ImageLoader imageLoader;
+    private ResourceUtils resources;
 
     public RecyclerViewAdapter(Context context, ArrayList<Coin> coins) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.context = context;
         this.coins = coins;
 
-        initializeColors(context);
-        symbolIconResIdMap = buildIconResIdMap(context, coins);
-        imageLoader = VolleyHelper.getInstance(context).getImageLoader();
-    }
-
-    private HashMap<String, Integer> buildIconResIdMap(Context context, List<Coin> coins) {
-        HashMap<String, Integer> map = new HashMap<>();
-        Resources resources = context.getResources();
-        String packageName = context.getPackageName();
-
-        for (Coin coin : coins) {
-            if (coin.isSectionHeader()) {
-                continue;
-            }
-            String name = "ic_coin_" + coin.getSymbol().toLowerCase();
-            int resId = resources.getIdentifier(name, "raw", packageName);
-            map.put(coin.getSymbol(), resId);
-        }
-
-        return map;
-    }
-
-    private void initializeColors(Context context) {
-        Resources resources = context.getResources();
-        TrendColorFormat formatter = new TrendColorFormat();
-
-        trendUp = resources.getColor(formatter.format(1.0));
-        trendFlat = resources.getColor(formatter.format(0.0));
-        trendDown = resources.getColor(formatter.format(-1.0));
+        resources = new ResourceUtils(context, coins);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -88,10 +49,10 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         holder.symbol.setText(coin.getSymbol());
         holder.price.setText(new SignedPriceFormat(coin.getToSymbol()).format(coin.getPrice() - coin.getPrevPrice()));
         holder.trend.setText(new TrendValueFormat().format(coin.getTrend()));
-        holder.trend.setTextColor(getTrendColor(coin.getTrend()));
+        holder.trend.setTextColor(resources.getTrendColor(coin.getTrend()));
 
-        holder.icon.setDefaultImageResId(symbolIconResIdMap.get(coin.getSymbol()));
-        holder.icon.setImageUrl(coin.getLargeImageUrl(), imageLoader);
+        holder.icon.setDefaultImageResId(resources.symbolIconResIdMap.get(coin.getSymbol()));
+        holder.icon.setImageUrl(coin.getLargeImageUrl(), resources.imageLoader);
 
         holder.symbol.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,20 +65,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public int getItemCount() {
         return coins.size();
-    }
-
-    private int getTrendColor(double trend) {
-        int color;
-
-        if (trend > 0.0) {
-            color = trendUp;
-        } else if (trend < 0.0) {
-            color = trendDown;
-        } else {
-            color = trendFlat;
-        }
-
-        return color;
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
