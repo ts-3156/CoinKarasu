@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="75dp"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/icon"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
-        android:layout_alignParentLeft="true"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
         android:layout_marginBottom="8dp"
         tools:src="@raw/ic_coin_btc" />
@@ -19,7 +19,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/icon"
         android:layout_centerHorizontal="true"
-        android:text="BTC" />
+        android:text="BTC"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
 
     <TextView
@@ -28,14 +29,29 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/symbol"
         android:layout_centerHorizontal="true"
-        android:text="1,000,000" />
+        android:text="1,000,000"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-    <TextView
-        android:id="@+id/trend"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/price"
         android:layout_centerHorizontal="true"
-        android:text="10.0%" />
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/trend_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:paddingRight="4dp" />
+
+        <TextView
+            android:id="@+id/trend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10.0%"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+    </LinearLayout>
 
 </RelativeLayout>

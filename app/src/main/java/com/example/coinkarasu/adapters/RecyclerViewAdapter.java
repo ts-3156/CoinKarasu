@@ -5,18 +5,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.OnItemClickListener;
 import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.format.SignedPriceFormat;
+import com.example.coinkarasu.format.PriceFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
@@ -47,12 +46,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         final Coin coin = coins.get(position);
 
         holder.symbol.setText(coin.getSymbol());
-        holder.price.setText(new SignedPriceFormat(coin.getToSymbol()).format(coin.getPrice() - coin.getPrevPrice()));
+        holder.price.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
         holder.trend.setText(new TrendValueFormat().format(coin.getTrend()));
         holder.trend.setTextColor(resources.getTrendColor(coin.getTrend()));
 
         holder.icon.setDefaultImageResId(resources.symbolIconResIdMap.get(coin.getSymbol()));
         holder.icon.setImageUrl(coin.getLargeImageUrl(), resources.imageLoader);
+
+        holder.trendIcon.setImageResource(resources.trendIconFormat.format(coin.getTrend()));
 
         holder.symbol.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -73,6 +74,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView symbol;
         TextView price;
         TextView trend;
+        ImageView trendIcon;
 
         ViewHolder(View view) {
             super(view);
@@ -80,6 +82,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             symbol = view.findViewById(R.id.symbol);
             price = view.findViewById(R.id.price);
             trend = view.findViewById(R.id.trend);
+            trendIcon = view.findViewById(R.id.trend_icon);
         }
     }
 }
