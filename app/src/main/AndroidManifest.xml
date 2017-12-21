@@ -29,8 +29,17 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.coinkarasu.activities.MainActivity" />
         </activity>
+
         <activity
             android:name="com.example.coinkarasu.activities.settings.SettingsActivity"
+            android:parentActivityName="com.example.coinkarasu.activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.coinkarasu.activities.MainActivity" />
+        </activity>
+
+        <activity
+            android:name="com.example.coinkarasu.activities.settings.PreferencesActivity"
             android:parentActivityName="com.example.coinkarasu.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -25,7 +25,7 @@ import android.view.WindowManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.activities.settings.SettingsActivity;
+import com.example.coinkarasu.activities.settings.PreferencesActivity;
 import com.example.coinkarasu.services.UpdateTrendingIntentService;
 import com.example.coinkarasu.utils.PrefHelper;
 
@@ -214,8 +214,7 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, PreferencesActivity.class));
 
             return true;
         } else if (id == R.id.action_pause) {
@@ -248,8 +247,7 @@ public class MainActivity extends AppCompatActivity implements
         if (clickedKind != null && kind != null && clickedKind != kind) {
             setCurrentKind(clickedKind);
         } else if (id == R.id.nav_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, PreferencesActivity.class));
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

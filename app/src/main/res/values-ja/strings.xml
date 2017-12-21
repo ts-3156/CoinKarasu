@@ -47,16 +47,34 @@
 
     <string name="caption_day">本日</string>
     <string name="caption_desc_day">(現時点)</string>
+
     <string name="pref_header_general">一般</string>
+    <string name="pref_header_data_sync">データの同期</string>
+
+    <string name="dic_filter">フィルター</string>
+
+
+    <string name="pref_title">設定</string>
+    <string name="pref_title_currency">表示する通貨</string>
+    <string-array name="pref_currency_titles">
+        <item>日本円</item>
+        <item>米ドル</item>
+    </string-array>
+    <string-array name="pref_currency_values">
+        <item>JPY</item>
+        <item>USD</item>
+    </string-array>
+    <string name="pref_title_sync_frequency">同期間隔</string>
+    <string-array name="pref_sync_frequency_titles">
+        <item>5 秒</item>
+        <item>10 秒</item>
+        <item>30 秒</item>
+        <item>同期しない</item>
+    </string-array>
     <string name="pref_title_keep_screen_on">スリープモードにしない</string>
     <string name="pref_description_keep_screen_on">価格一覧を見ている時は画面をスリープにしない</string>
     <string name="pref_title_enable_price_anim">価格のアニメーションを有効化する</string>
     <string name="pref_description_enable_price_anim">この設定をオフにすると表示が高速化されます</string>
     <string name="pref_title_enable_download_icon">高解像度のアイコンをダウンロードする</string>
     <string name="pref_description_enable_download_icon">この設定をオフにすると表示が高速化されます</string>
-    <string name="pref_header_data_sync">データの同期</string>
-    <string name="pref_title_currency">表示する通貨</string>
-    <string name="pref_title_sync_frequency">同期間隔</string>
-
-    <string name="dic_filter">フィルター</string>
 </resources>
