@@ -1,4 +1,4 @@
-package com.example.coinkarasu.adapters.pagers;
+package com.example.coinkarasu.pagers;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
