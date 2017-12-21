@@ -56,7 +56,16 @@ public class SectionHeaderCoinImpl implements Coin {
     }
 
     @Override
+    public void setPriceDiff(double trend) {
+    }
+
+    @Override
     public double getPrice() {
+        return 0.0;
+    }
+
+    @Override
+    public double getPriceDiff() {
         return 0.0;
     }
 
@@ -260,6 +269,11 @@ public class SectionHeaderCoinImpl implements Coin {
     @Override
     public double getPrevPrice() {
         return 0.0;
+    }
+
+    @Override
+    public double getPrevPriceDiff() {
+        return 0;
     }
 
     @Override

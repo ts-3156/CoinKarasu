@@ -55,7 +55,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         holder.trendIcon.setImageResource(resources.trendIconFormat.format(coin.getTrend()));
 
-        holder.symbol.setOnClickListener(new View.OnClickListener() {
+        holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.onItemClick(coin, view, holder.getAdapterPosition());
@@ -70,6 +70,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 
+        View container;
         NetworkImageView icon;
         TextView symbol;
         TextView price;
@@ -78,6 +79,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         ViewHolder(View view) {
             super(view);
+            container = view.findViewById(R.id.container);
             icon = view.findViewById(R.id.icon);
             symbol = view.findViewById(R.id.symbol);
             price = view.findViewById(R.id.price);

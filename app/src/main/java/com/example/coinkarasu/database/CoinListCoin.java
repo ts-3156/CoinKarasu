@@ -23,7 +23,7 @@ public class CoinListCoin {
         imageUrl = coin.getImageUrl();
         name = coin.getName();
         symbol = coin.getSymbol();
-        coinName = coin.getName();
+        coinName = coin.getCoinName();
         fullName = coin.getFullName();
         algorithm = coin.getAlgorithm();
         proofType = coin.getProofType();

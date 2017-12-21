@@ -143,6 +143,7 @@ public class PricesImpl implements Prices {
         for (PriceMultiFullCoin c : coins) {
             if (coin.getSymbol().equals(c.getFromSymbol())) {
                 coin.setPrice(c.getPrice());
+                coin.setPriceDiff(c.getChange24Hour());
                 coin.setTrend(c.getChangePct24Hour() / 100.0);
 
                 if (exchange != null) {

@@ -1,6 +1,7 @@
 package com.example.coinkarasu.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -107,7 +108,10 @@ public class HomeTabCardFragment extends Fragment implements
 
     @Override
     public void onItemClick(Coin coin, View view, int position) {
-
+        Intent intent = new Intent(view.getContext(), CoinActivity.class);
+        intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.toJson().toString());
+        intent.putExtra(CoinActivity.COIN_SYMBOL_KEY, coin.getSymbol());
+        startActivity(intent);
     }
 
     @Override

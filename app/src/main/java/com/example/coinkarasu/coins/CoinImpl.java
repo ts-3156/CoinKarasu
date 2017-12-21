@@ -29,10 +29,12 @@ public class CoinImpl implements Coin {
 
     private String toSymbol;
     private double price;
+    private double priceDiff;
     private double trend;
     private String exchange;
 
     private double prevPrice;
+    private double prevPriceDiff;
     private double prevTrend;
 
     private CoinImpl(JSONObject attrs) {
@@ -74,16 +76,20 @@ public class CoinImpl implements Coin {
 
             toSymbol = null;
             price = 0.0;
+            priceDiff = 0.0;
             trend = 0.0;
             exchange = null;
             prevPrice = 0.0;
+            prevPriceDiff = 0.0;
             prevTrend = 0.0;
 
             if (attrs.has("toSymbol")) toSymbol = attrs.getString("toSymbol");
             if (attrs.has("price")) price = attrs.getDouble("price");
+            if (attrs.has("priceDiff")) priceDiff = attrs.getDouble("priceDiff");
             if (attrs.has("trend")) trend = attrs.getDouble("trend");
             if (attrs.has("exchange")) exchange = attrs.getString("exchange");
             if (attrs.has("prevPrice")) prevPrice = attrs.getDouble("prevPrice");
+            if (attrs.has("prevPriceDiff")) prevPriceDiff = attrs.getDouble("prevPriceDiff");
             if (attrs.has("prevTrend")) prevTrend = attrs.getDouble("prevTrend");
         } catch (JSONException e) {
             Log.e("CoinImpl", e.getMessage() + ", " + attrs.toString());
@@ -153,8 +159,19 @@ public class CoinImpl implements Coin {
     }
 
     @Override
+    public void setPriceDiff(double priceDiff) {
+        prevPriceDiff = this.priceDiff;
+        this.priceDiff = priceDiff;
+    }
+
+    @Override
     public double getPrice() {
         return price;
+    }
+
+    @Override
+    public double getPriceDiff() {
+        return priceDiff;
     }
 
     @Override
@@ -364,6 +381,11 @@ public class CoinImpl implements Coin {
     }
 
     @Override
+    public double getPrevPriceDiff() {
+        return prevPriceDiff;
+    }
+
+    @Override
     public double getPrevTrend() {
         return prevTrend;
     }
@@ -390,9 +412,11 @@ public class CoinImpl implements Coin {
 
             json.put("toSymbol", toSymbol);
             json.put("price", price);
+            json.put("priceDiff", priceDiff);
             json.put("trend", trend);
             json.put("exchange", exchange);
             json.put("prevPrice", prevPrice);
+            json.put("prevPriceDiff", prevPriceDiff);
             json.put("prevTrend", prevTrend);
         } catch (JSONException e) {
             Log.e("toJson", e.getMessage());

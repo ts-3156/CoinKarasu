@@ -153,12 +153,13 @@ public class ListViewAdapter extends BaseAdapter {
 
             if (rowType == TYPE_ITEM) {
                 convertView = inflater.inflate(R.layout.list_row_item, parent, false);
-                holder.icon = convertView.findViewById(R.id.coin_icon);
-                holder.name = convertView.findViewById(R.id.coin_name);
-                holder.symbol = convertView.findViewById(R.id.coin_symbol);
-                holder.price = convertView.findViewById(R.id.coin_price);
-                holder.trend = convertView.findViewById(R.id.coin_trend);
-                holder.trendIcon = convertView.findViewById(R.id.coin_trend_icon);
+                holder.icon = convertView.findViewById(R.id.icon);
+                holder.name = convertView.findViewById(R.id.name);
+                holder.symbol = convertView.findViewById(R.id.symbol);
+                holder.price = convertView.findViewById(R.id.price);
+                holder.price_diff = convertView.findViewById(R.id.price_diff);
+                holder.trend = convertView.findViewById(R.id.trend);
+                holder.trendIcon = convertView.findViewById(R.id.trend_icon);
 
                 holder.name.setTypeface(resources.typeFace);
                 holder.symbol.setTypeface(resources.typeFace);
@@ -193,6 +194,7 @@ public class ListViewAdapter extends BaseAdapter {
 
             holder.name.setText(coin.getCoinName());
             holder.symbol.setText(coin.getSymbol());
+            holder.price_diff.setTextColor(resources.getPriceColor(coin.getPriceDiff()));
             holder.trend.setTextColor(resources.getTrendColor(coin.getTrend()));
 
             if (holder.priceAnimator != null) {
@@ -232,7 +234,8 @@ public class ListViewAdapter extends BaseAdapter {
                 }
             } else {
                 holder.price.setText(resources.priceFormatter.format(coin.getPrice()));
-                holder.trend.setText(resources.trendFormatter.format(coin.getTrend()));
+                holder.price_diff.setText(resources.signedPriceFormatter.format(coin.getPriceDiff()));
+                holder.trend.setText(resources.surroundedTrendFormatter.format(coin.getTrend()));
                 convertView.setBackgroundColor(resources.priceToColor);
             }
 
@@ -254,6 +257,7 @@ public class ListViewAdapter extends BaseAdapter {
         TextView name;
         TextView symbol;
         TextView price;
+        TextView price_diff;
         TextView trend;
         ImageView trendIcon;
 

@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.pagers.CoinLineChartPagerAdapter;
 import com.example.coinkarasu.cryptocompare.data.History;
+import com.example.coinkarasu.format.PriceColorFormat;
 import com.example.coinkarasu.format.SignedPriceFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
@@ -136,11 +137,11 @@ public class CoinLineChartFragment extends Fragment implements
         double curPrice = records.get(records.size() - 1).getClose();
         double prevPrice = records.get(0).getClose();
         double priceDiff = curPrice - prevPrice;
-
-        String priceString = new SignedPriceFormat(records.get(0).getToSymbol()).format(priceDiff);
-        ((TextView) view.findViewById(R.id.price)).setText(priceString);
-
         boolean isSelected = this.tab != null && this.tab.getPosition() == position;
+
+        TextView priceView = view.findViewById(R.id.price);
+        priceView.setText(new SignedPriceFormat(records.get(0).getToSymbol()).format(priceDiff));
+        priceView.setTextColor(getResources().getColor(new PriceColorFormat().format(priceDiff, isSelected)));
 
         double trend = priceDiff / prevPrice;
         TextView trendView = view.findViewById(R.id.trend);
@@ -166,6 +167,8 @@ public class CoinLineChartFragment extends Fragment implements
 
         Object tag = tab.getTag();
         double priceDiff = tag == null ? 0 : (double) tag;
+        ((TextView) view.findViewById(R.id.price))
+                .setTextColor(getResources().getColor(new PriceColorFormat().format(priceDiff)));
         ((TextView) view.findViewById(R.id.trend))
                 .setTextColor(getResources().getColor(new TrendColorFormat().format(priceDiff)));
         ((ImageView) view.findViewById(R.id.trend_icon))

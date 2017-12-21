@@ -7,6 +7,8 @@ import android.graphics.Typeface;
 import com.android.volley.toolbox.ImageLoader;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.format.PriceFormat;
+import com.example.coinkarasu.format.SignedPriceFormat;
+import com.example.coinkarasu.format.SurroundedTrendValueFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
@@ -29,7 +31,9 @@ class ResourceUtils {
     Typeface typeFaceItalic;
 
     PriceFormat priceFormatter;
+    SignedPriceFormat signedPriceFormatter;
     TrendValueFormat trendFormatter;
+    SurroundedTrendValueFormat surroundedTrendFormatter;
     TrendIconFormat trendIconFormat;
 
     ResourceUtils(Context context, List<Coin> coins) {
@@ -43,10 +47,12 @@ class ResourceUtils {
         for (Coin coin : coins) {
             if (!coin.isSectionHeader()) {
                 priceFormatter = new PriceFormat(coin.getToSymbol());
+                signedPriceFormatter = new SignedPriceFormat(coin.getToSymbol());
                 break;
             }
         }
         trendFormatter = new TrendValueFormat();
+        surroundedTrendFormatter = new SurroundedTrendValueFormat();
         trendIconFormat = new TrendIconFormat();
     }
 
@@ -78,6 +84,7 @@ class ResourceUtils {
 
     void toSymbolChanged(String symbol) {
         priceFormatter = new PriceFormat(symbol);
+        signedPriceFormatter = new SignedPriceFormat(symbol);
     }
 
     int getTrendColor(double trend) {
@@ -94,5 +101,7 @@ class ResourceUtils {
         return color;
     }
 
-
+    int getPriceColor(double price) {
+        return getTrendColor(price);
+    }
 }
