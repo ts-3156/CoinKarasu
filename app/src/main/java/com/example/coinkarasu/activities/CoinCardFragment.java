@@ -16,16 +16,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.animator.PriceAnimator;
+import com.example.coinkarasu.animator.PriceDiffAnimator;
+import com.example.coinkarasu.animator.TrendAnimator;
+import com.example.coinkarasu.animator.ValueAnimatorBase;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.coins.PriceMultiFullCoin;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.Price;
-import com.example.coinkarasu.animator.PriceAnimator;
-import com.example.coinkarasu.animator.TrendAnimator;
+import com.example.coinkarasu.format.PriceColorFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
-import com.example.coinkarasu.animator.ValueAnimatorBase;
 import com.example.coinkarasu.tasks.GetPriceTask;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
 import com.example.coinkarasu.utils.PrefHelper;
@@ -170,6 +172,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         }
 
         this.coin.setPrice(coin.getPrice());
+        this.coin.setPriceDiff(coin.getChange24Hour());
         this.coin.setTrend(coin.getChangePct24Hour() / 100.0);
         updatePrice(getView(), this.coin);
         hideProgressbarDelayed();
@@ -182,12 +185,23 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
             return;
         }
 
-        new PriceAnimator(coin, (TextView) view.findViewById(R.id.price)).start();
+        TextView priceDiffView = view.findViewById(R.id.price_diff);
+        priceDiffView.setTextColor(getResources().getColor(new PriceColorFormat().format(coin.getPriceDiff())));
 
         TextView trendView = view.findViewById(R.id.trend);
-        new TrendAnimator(coin, trendView).start();
         trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(coin.getTrend())));
+
         ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(new TrendIconFormat().format(coin.getTrend()));
+
+        if (coin.getPrevPrice() != coin.getPrice()) {
+            new PriceAnimator(coin, (TextView) view.findViewById(R.id.price)).start();
+        }
+        if (coin.getPrevPriceDiff() != coin.getPriceDiff()) {
+            new PriceDiffAnimator(coin, priceDiffView).start();
+        }
+        if (coin.getPrevTrend() != coin.getTrend()) {
+            new TrendAnimator(coin, trendView).start();
+        }
     }
 
     private void hideProgressbarDelayed() {

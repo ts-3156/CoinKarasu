@@ -48,11 +48,22 @@
         tools:src="@drawable/ic_trending_down" />
 
     <TextView
-        android:id="@+id/trend"
+        android:id="@+id/price_diff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/price"
         android:layout_toRightOf="@id/trend_icon"
+        android:paddingRight="4dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        tools:text="¥ 162 (29%)"
+        tools:textColor="#ff0000" />
+
+    <TextView
+        android:id="@+id/trend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/price"
+        android:layout_toRightOf="@id/price_diff"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         tools:text="¥ 162 (29%)"
         tools:textColor="#ff0000" />

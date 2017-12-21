@@ -242,7 +242,7 @@ public class ListViewAdapter extends BaseAdapter {
                     holder.trendAnimator = new TrendAnimator(coin, holder.trend);
                     holder.trendAnimator.start();
                 } else {
-                    holder.trend.setText(resources.trendFormatter.format(coin.getTrend()));
+                    holder.trend.setText(resources.surroundedTrendFormatter.format(coin.getTrend()));
                 }
             } else {
                 holder.price.setText(resources.priceFormatter.format(coin.getPrice()));

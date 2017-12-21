@@ -3,6 +3,7 @@ package com.example.coinkarasu.animator;
 import android.widget.TextView;
 
 import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.format.SurroundedTrendValueFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
 
 public class TrendAnimator extends ValueAnimatorBase {
@@ -14,7 +15,7 @@ public class TrendAnimator extends ValueAnimatorBase {
         super();
         this.coin = coin;
         this.view = view;
-        this.formatter = new TrendValueFormat();
+        this.formatter = new SurroundedTrendValueFormat();
     }
 
     @Override
