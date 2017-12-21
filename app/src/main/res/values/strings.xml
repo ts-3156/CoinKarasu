@@ -31,6 +31,7 @@
     <string name="nav_inr_toplist">INR Toplist</string>
     <string name="nav_crypto">Crypto</string>
     <string name="nav_btc_toplist">BTC Toplist</string>
+    <string name="nav_edit_tabs">Edit tabs</string>
 
     <string name="tab_home">Home</string>
     <string name="tab_main">Main</string>
@@ -43,6 +44,7 @@
     <string name="tab_krw_toplist">KRW Toplist</string>
     <string name="tab_inr_toplist">INR Toplist</string>
     <string name="tab_btc_toplist">BTC Toplist</string>
+    <string name="tab_edit_tabs">Edit tabs</string>
 
     <string name="caption_left">%1$s - %2$s</string>
     <string name="caption_day">Today</string>
@@ -61,6 +63,9 @@
     <string name="exchange_warn">There are no exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
     <string name="exchange_warn_each_exchange">%3$s have not traded <![CDATA[<b>%1$s - %2$s</b>]]> in the last 24 hours.</string>
     <string name="pie_chart_exchange_warn">There are no exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
+
+
+    <string name="edit_tabs_note">Show or Hide the tabs</string>
 
 
     <string name="pref_header_general">General</string>

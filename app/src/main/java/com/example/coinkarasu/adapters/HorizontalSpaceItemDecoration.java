@@ -11,10 +11,8 @@ public class HorizontalSpaceItemDecoration extends RecyclerView.ItemDecoration {
     private final int spaceWidth;
 
     public HorizontalSpaceItemDecoration(Context context, int spaceWidth) {
-        int margin = (int) TypedValue.applyDimension(
+        this.spaceWidth = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, spaceWidth, context.getResources().getDisplayMetrics());
-
-        this.spaceWidth = margin;
     }
 
     @Override

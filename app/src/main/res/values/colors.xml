@@ -33,4 +33,6 @@
     <color name="colorEurToplistDark">#F57C00</color>
     <color name="colorBtcToplist">#9C27B0</color>
     <color name="colorBtcToplistDark">#7B1FA2</color>
+    <color name="colorEditTabs">#607D8B</color>
+    <color name="colorEditTabsDark">#455A64</color>
 </resources>

@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.example.coinkarasu.activities.EditTabsFragment;
 import com.example.coinkarasu.activities.HomeTabFragment;
 import com.example.coinkarasu.activities.ListViewFragment;
 
@@ -26,6 +27,8 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
         NavigationKind selectedKind = NavigationKind.values()[position];
         if (selectedKind == NavigationKind.home) {
             return HomeTabFragment.newInstance(selectedKind);
+        } else if (selectedKind == NavigationKind.edit_tabs) {
+            return EditTabsFragment.newInstance();
         } else {
             return ListViewFragment.newInstance(selectedKind, defaultKind == selectedKind);
         }

@@ -1,9 +1,12 @@
 package com.example.coinkarasu.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.example.coinkarasu.activities.MainFragment.NavigationKind;
 
 public class PrefHelper {
 
@@ -59,10 +62,31 @@ public class PrefHelper {
         return pref.getString("pref_currency", "JPY");
     }
 
-    public static SharedPreferences getPref(Activity activity) {
-        if (activity == null) {
+    public static boolean isVisibleTab(Context context, NavigationKind kind) {
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return false;
+        }
+        return pref.getBoolean("pref_is_visible_tab_" + kind.name(), kind.defaultVisibility());
+    }
+
+    public static void setTabVisibility(Context context, NavigationKind kind, boolean flag) {
+        if (!kind.isHideable()) {
+            return;
+        }
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return;
+        }
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putBoolean("pref_is_visible_tab_" + kind.name(), flag);
+        edit.apply();
+    }
+
+    public static SharedPreferences getPref(Context context) {
+        if (context == null) {
             return null;
         }
-        return PreferenceManager.getDefaultSharedPreferences(activity.getApplicationContext());
+        return PreferenceManager.getDefaultSharedPreferences(context.getApplicationContext());
     }
 }

@@ -22,10 +22,11 @@ public class MainFragment extends Fragment implements
         jpy_toplist(R.string.nav_jpy_toplist, R.string.tab_jpy_toplist, R.id.nav_jpy_toplist, R.color.colorJpyToplist, R.color.colorJpyToplistDark, R.array.jpy_toplist_symbols, new String[]{"cccagg"}, 2),
         usd_toplist(R.string.nav_usd_toplist, R.string.tab_usd_toplist, R.id.nav_usd_toplist, R.color.colorUsdToplist, R.color.colorUsdToplistDark, R.array.usd_toplist_symbols, new String[]{"cccagg"}, 3),
         eur_toplist(R.string.nav_eur_toplist, R.string.tab_eur_toplist, R.id.nav_eur_toplist, R.color.colorEurToplist, R.color.colorEurToplistDark, R.array.eur_toplist_symbols, new String[]{"cccagg"}, 4),
-        btc_toplist(R.string.nav_btc_toplist, R.string.tab_btc_toplist, R.id.nav_btc_toplist, R.color.colorBtcToplist, R.color.colorBtcToplistDark, R.array.btc_toplist_symbols, new String[]{"cccagg"}, 5);
+        btc_toplist(R.string.nav_btc_toplist, R.string.tab_btc_toplist, R.id.nav_btc_toplist, R.color.colorBtcToplist, R.color.colorBtcToplistDark, R.array.btc_toplist_symbols, new String[]{"cccagg"}, 5),
+        edit_tabs(R.string.nav_edit_tabs, R.string.tab_edit_tabs, -1, R.color.colorEditTabs, R.color.colorEditTabsDark, -1, new String[]{}, 6);
 
         int navStrResId;
-        int tabStrResId;
+        public int tabStrResId;
         int navResId;
         int colorResId;
         int colorDarkResId;
@@ -42,6 +43,14 @@ public class MainFragment extends Fragment implements
             this.symbolsResId = symbolsResId;
             this.exchanges = exchanges;
             this.navPos = navPos;
+        }
+
+        public boolean isHideable() {
+            return this != home && this != edit_tabs;
+        }
+
+        public boolean defaultVisibility() {
+            return this != eur_toplist && this != btc_toplist;
         }
 
         static NavigationKind valueByNavResId(int navResId) {
@@ -101,6 +110,7 @@ public class MainFragment extends Fragment implements
         tabs.getTabAt(NavigationKind.usd_toplist.ordinal()).setText(NavigationKind.usd_toplist.tabStrResId);
         tabs.getTabAt(NavigationKind.eur_toplist.ordinal()).setText(NavigationKind.eur_toplist.tabStrResId);
         tabs.getTabAt(NavigationKind.btc_toplist.ordinal()).setText(NavigationKind.btc_toplist.tabStrResId);
+        tabs.getTabAt(NavigationKind.edit_tabs.ordinal()).setIcon(R.drawable.ic_playlist_add_white);
 
         tab = tabs.getTabAt(kind.ordinal());
         pager.setCurrentItem(kind.ordinal()); // #setCurrentItem doesn't call #onPageScrollStateChanged.
@@ -170,6 +180,9 @@ public class MainFragment extends Fragment implements
                 listener.onPageChanged(kind);
             }
         }
+    }
+
+    public void updateTabVisibility(NavigationKind kind) {
     }
 
     public interface OnFragmentInteractionListener {

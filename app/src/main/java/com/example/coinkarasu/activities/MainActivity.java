@@ -1,12 +1,14 @@
 package com.example.coinkarasu.activities;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -264,5 +266,21 @@ public class MainActivity extends AppCompatActivity implements
         setNavChecked(kind);
         updateToolbarTitle(kind);
         updateTabColor(kind);
+        updateTabIconAlpha(kind);
+    }
+
+    private void updateTabIconAlpha(NavigationKind kind) {
+        TabLayout tabs = findViewById(R.id.tab_layout);
+        TabLayout.Tab tab = tabs.getTabAt(NavigationKind.edit_tabs.ordinal());
+        if (tab == null) {
+            return;
+        }
+
+        Drawable icon = tab.getIcon();
+        if (kind == NavigationKind.edit_tabs) {
+            icon.setAlpha(255);
+        } else {
+            icon.setAlpha(204); // 80%
+        }
     }
 }
