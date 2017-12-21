@@ -1,4 +1,4 @@
-package com.example.coinkarasu.format;
+package com.example.coinkarasu.animator;
 
 import android.animation.ValueAnimator;
 

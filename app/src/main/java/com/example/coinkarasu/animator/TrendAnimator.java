@@ -1,8 +1,9 @@
-package com.example.coinkarasu.format;
+package com.example.coinkarasu.animator;
 
 import android.widget.TextView;
 
 import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.format.TrendValueFormat;
 
 public class TrendAnimator extends ValueAnimatorBase {
     private Coin coin;
