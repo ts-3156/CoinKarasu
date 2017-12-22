@@ -2,9 +2,11 @@ package com.example.coinkarasu.adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Color;
 import android.graphics.Typeface;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.example.coinkarasu.R;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.format.PriceFormat;
 import com.example.coinkarasu.format.SignedPriceFormat;
@@ -81,6 +83,10 @@ class ResourceUtils {
         trendUp = resources.getColor(formatter.format(1.0));
         trendFlat = resources.getColor(formatter.format(0.0));
         trendDown = resources.getColor(formatter.format(-1.0));
+
+        priceUpFromColor = resources.getColor(R.color.colorPriceBgUp);
+        priceDownFromColor = resources.getColor(R.color.colorPriceBgDown);
+        priceToColor = Color.WHITE;
     }
 
     void toSymbolChanged(String symbol) {
