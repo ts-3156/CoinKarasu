@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.api.cryptocompare.ClientImpl;
+import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.TopPair;
 import com.example.coinkarasu.pagers.CoinPieChartPagerAdapter;
 import com.example.coinkarasu.tasks.GetTopPairsTask;
@@ -152,7 +152,7 @@ public class CoinPieChartFragment extends Fragment implements
         }
         taskStarted = true;
 
-        new GetTopPairsTask(new ClientImpl(getActivity()))
+        new GetTopPairsTask(ClientFactory.getInstance(getActivity()))
                 .setFromSymbol(fromSymbol)
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

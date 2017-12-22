@@ -18,17 +18,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.pagers.CoinExchangePagerAdapter;
+import com.example.coinkarasu.api.cryptocompare.ClientFactory;
+import com.example.coinkarasu.api.cryptocompare.data.CoinSnapshot;
+import com.example.coinkarasu.api.cryptocompare.data.History;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.coins.SnapshotCoin;
-import com.example.coinkarasu.api.cryptocompare.ClientImpl;
-import com.example.coinkarasu.api.cryptocompare.data.CoinSnapshot;
-import com.example.coinkarasu.api.cryptocompare.data.History;
 import com.example.coinkarasu.format.PriceFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
+import com.example.coinkarasu.pagers.CoinExchangePagerAdapter;
 import com.example.coinkarasu.tasks.GetCoinSnapshotTask;
 import com.example.coinkarasu.utils.AssetsHelper;
 
@@ -224,7 +224,7 @@ public class CoinExchangeFragment extends Fragment implements
         }
         taskStarted = true;
 
-        new GetCoinSnapshotTask(new ClientImpl(getActivity()))
+        new GetCoinSnapshotTask(ClientFactory.getInstance(getActivity()))
                 .setFromSymbol(coin.getSymbol())
                 .setToSymbol(coin.getToSymbol())
                 .setListener(this)

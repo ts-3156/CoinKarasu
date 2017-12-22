@@ -25,11 +25,11 @@ import android.widget.ListView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.ListViewAdapter;
 import com.example.coinkarasu.animator.ValueAnimatorBase;
-import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.coins.SectionHeaderCoinImpl;
-import com.example.coinkarasu.api.cryptocompare.ClientImpl;
+import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.Prices;
 import com.example.coinkarasu.api.cryptocompare.data.PricesImpl;
+import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.coins.SectionHeaderCoinImpl;
 import com.example.coinkarasu.pagers.MainPagerAdapter;
 import com.example.coinkarasu.tasks.CollectCoinsTask;
 import com.example.coinkarasu.tasks.GetPricesTask;
@@ -224,7 +224,7 @@ public class ListViewFragment extends Fragment implements
 
         for (String exchangeStr : kind.exchanges) {
             Exchange exchange = Exchange.valueOf(exchangeStr);
-            new GetPricesTask(new ClientImpl(getActivity()))
+            new GetPricesTask(ClientFactory.getInstance(getActivity()))
                     .setFromSymbols(Utils.getFromSymbols(getResources(), kind, exchange))
                     .setToSymbol(Utils.getToSymbol(getActivity(), kind))
                     .setExchange(exchangeStr)

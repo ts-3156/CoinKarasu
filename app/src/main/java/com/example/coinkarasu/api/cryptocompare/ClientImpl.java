@@ -28,13 +28,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class ClientImpl implements Client {
+class ClientImpl implements Client {
 
     private static final String DEFAULT_EXCHANGE = "cccagg";
 
     private Context context;
 
-    public ClientImpl(Context context) {
+    ClientImpl(Context context) {
         this.context = context;
     }
 

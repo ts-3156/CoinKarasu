@@ -5,14 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.example.coinkarasu.activities.NavigationKind;
-import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.coins.CoinImpl;
-import com.example.coinkarasu.coins.PriceMultiFullCoin;
 import com.example.coinkarasu.api.cryptocompare.Client;
-import com.example.coinkarasu.api.cryptocompare.ClientImpl;
+import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.CoinListImpl;
 import com.example.coinkarasu.api.cryptocompare.data.History;
 import com.example.coinkarasu.api.cryptocompare.data.Prices;
+import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.coins.CoinImpl;
+import com.example.coinkarasu.coins.PriceMultiFullCoin;
 import com.example.coinkarasu.data.Trending;
 
 import java.util.ArrayList;
@@ -52,7 +52,7 @@ public class UpdateTrendingIntentService extends IntentService {
         String[] array = getResources().getStringArray(NavigationKind.japan.symbolsResId);
         Collections.addAll(uniqueSymbols, array);
 
-        Prices prices = new ClientImpl(this).getPrices(uniqueSymbols.toArray(new String[uniqueSymbols.size()]), toSymbol, exchange);
+        Prices prices = ClientFactory.getInstance(this).getPrices(uniqueSymbols.toArray(new String[uniqueSymbols.size()]), toSymbol, exchange);
         ArrayList<PriceMultiFullCoin> baseCoins = prices.getCoins();
         ArrayList<Coin> coins = new ArrayList<>();
 
@@ -88,7 +88,7 @@ public class UpdateTrendingIntentService extends IntentService {
     }
 
     private ArrayList<History> getHistories(Kind kind, String fromSymbol, String toSymbol, String exchange) {
-        Client client = new ClientImpl(this);
+        Client client = ClientFactory.getInstance(this);
         ArrayList<History> records = new ArrayList<>();
 
         switch (kind) {

@@ -16,10 +16,10 @@ import android.view.MenuItem;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.api.bitflyer.data.Board;
+import com.example.coinkarasu.api.cryptocompare.Client;
+import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
-import com.example.coinkarasu.api.cryptocompare.Client;
-import com.example.coinkarasu.api.cryptocompare.ClientImpl;
 import com.example.coinkarasu.tasks.GetBoardTask;
 import com.example.coinkarasu.utils.PrefHelper;
 
@@ -51,7 +51,7 @@ public class CoinActivity extends AppCompatActivity {
             Log.d("onCreate", e.getMessage());
         }
 
-        client = new ClientImpl(this);
+        client = ClientFactory.getInstance(this);
         boardKind = "order_book";
         updateView();
         drawBoardChart();

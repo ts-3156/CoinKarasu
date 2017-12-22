@@ -12,9 +12,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.chart.CoinLineChart;
-import com.example.coinkarasu.api.cryptocompare.ClientImpl;
+import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.History;
+import com.example.coinkarasu.chart.CoinLineChart;
 import com.example.coinkarasu.tasks.GetMultipleHistoryDayTask;
 import com.github.mikephil.charting.charts.LineChart;
 
@@ -76,7 +76,7 @@ public class CoinExchangesTabContentFragment extends Fragment implements GetMult
         }
         taskStarted = true;
 
-        new GetMultipleHistoryDayTask(new ClientImpl(getActivity()))
+        new GetMultipleHistoryDayTask(ClientFactory.getInstance(getActivity()))
                 .setFromSymbol(fromSymbol)
                 .setToSymbol(toSymbol)
                 .setExchanges(exchanges)

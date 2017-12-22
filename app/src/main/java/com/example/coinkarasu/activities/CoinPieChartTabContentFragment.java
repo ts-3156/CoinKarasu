@@ -12,12 +12,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.chart.CoinPieChart;
-import com.example.coinkarasu.coins.SnapshotCoin;
 import com.example.coinkarasu.api.cryptocompare.Client;
-import com.example.coinkarasu.api.cryptocompare.ClientImpl;
+import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.api.cryptocompare.data.TopPair;
+import com.example.coinkarasu.chart.CoinPieChart;
+import com.example.coinkarasu.coins.SnapshotCoin;
 import com.example.coinkarasu.tasks.GetCoinSnapshotTask;
 import com.example.coinkarasu.tasks.GetTopPairsTask;
 import com.github.mikephil.charting.charts.PieChart;
@@ -78,7 +78,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             return;
         }
         taskStarted = true;
-        Client client = new ClientImpl(getActivity());
+        Client client = ClientFactory.getInstance(getActivity());
 
         if (kind == CoinPieChartFragment.Kind.currency) {
             new GetTopPairsTask(client)

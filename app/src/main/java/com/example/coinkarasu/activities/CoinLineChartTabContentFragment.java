@@ -9,9 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.chart.CoinLineChart;
-import com.example.coinkarasu.api.cryptocompare.ClientImpl;
+import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.History;
+import com.example.coinkarasu.chart.CoinLineChart;
 import com.example.coinkarasu.tasks.GetHistoryTaskBase;
 import com.github.mikephil.charting.charts.LineChart;
 
@@ -66,7 +66,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
         taskStarted = true;
 
-        GetHistoryTaskBase.newInstance(new ClientImpl(getActivity()), kind.name())
+        GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getActivity()), kind.name())
                 .setFromSymbol(fromSymbol)
                 .setToSymbol(toSymbol)
                 .setListener(this)

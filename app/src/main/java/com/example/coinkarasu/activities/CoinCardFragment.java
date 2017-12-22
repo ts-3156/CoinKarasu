@@ -19,11 +19,11 @@ import com.example.coinkarasu.animator.PriceAnimator;
 import com.example.coinkarasu.animator.PriceDiffAnimator;
 import com.example.coinkarasu.animator.TrendAnimator;
 import com.example.coinkarasu.animator.ValueAnimatorBase;
+import com.example.coinkarasu.api.cryptocompare.ClientFactory;
+import com.example.coinkarasu.api.cryptocompare.data.Price;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.coins.PriceMultiFullCoin;
-import com.example.coinkarasu.api.cryptocompare.ClientImpl;
-import com.example.coinkarasu.api.cryptocompare.data.Price;
 import com.example.coinkarasu.format.PriceColorFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
@@ -100,7 +100,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         }
         coin.setToSymbol(toSymbol);
 
-        new GetPriceTask(new ClientImpl(getActivity()))
+        new GetPriceTask(ClientFactory.getInstance(getActivity()))
                 .setFromSymbol(coin.getSymbol())
                 .setToSymbol(toSymbol)
                 .setExchange("cccagg")

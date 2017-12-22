@@ -12,11 +12,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.api.cryptocompare.ClientFactory;
+import com.example.coinkarasu.api.cryptocompare.data.History;
 import com.example.coinkarasu.chart.CoinLineChart;
 import com.example.coinkarasu.coins.SnapshotCoin;
 import com.example.coinkarasu.coins.SnapshotCoinImpl;
-import com.example.coinkarasu.api.cryptocompare.ClientImpl;
-import com.example.coinkarasu.api.cryptocompare.data.History;
 import com.example.coinkarasu.tasks.GetHistoryHourTask;
 import com.example.coinkarasu.tasks.GetHistoryTaskBase;
 import com.github.mikephil.charting.charts.LineChart;
@@ -84,7 +84,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         }
         taskStarted = true;
 
-        GetHistoryTaskBase.newInstance(new ClientImpl(getActivity()), kind, exchange)
+        GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getActivity()), kind, exchange)
                 .setFromSymbol(coin.getFromSymbol())
                 .setToSymbol(coin.getToSymbol())
                 .setListener(this)
