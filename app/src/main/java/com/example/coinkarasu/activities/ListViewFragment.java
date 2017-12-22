@@ -1,8 +1,9 @@
 package com.example.coinkarasu.activities;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -99,7 +100,7 @@ public class ListViewFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
 
         new CollectCoinsTask(getActivity())
-                .setFromSymbols(getFromSymbols(kind))
+                .setFromSymbols(Utils.getFromSymbols(getResources(), kind))
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
@@ -117,12 +118,13 @@ public class ListViewFragment extends Fragment implements
     @Override
     public void collected(ArrayList<Coin> coins) {
         if (coins != null) {
+            String toSymbol = Utils.getToSymbol(getActivity(), kind);
             for (Coin coin : coins) {
-                coin.setToSymbol(getToSymbol(kind));
+                coin.setToSymbol(toSymbol);
             }
         }
 
-        coins = insertSectionHeader(coins, kind.exchanges);
+        coins = Utils.insertSectionHeader(coins, kind.exchanges);
 
         ListViewAdapter adapter = new ListViewAdapter(getActivity(), coins, getChildFragmentManager());
         ListView listView = getView().findViewById(R.id.list_view); // TODO getView() == null
@@ -174,13 +176,13 @@ public class ListViewFragment extends Fragment implements
 
         adapter.setAnimEnabled(PrefHelper.isAnimEnabled(getActivity()));
         adapter.setDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
-        adapter.setToSymbol(getToSymbol(kind));
+        adapter.setToSymbol(Utils.getToSymbol(getActivity(), kind));
 
         for (String exchangeStr : kind.exchanges) {
             Exchange exchange = Exchange.valueOf(exchangeStr);
             new GetPricesTask(new ClientImpl(getActivity()))
-                    .setFromSymbols(getFromSymbols(exchange))
-                    .setToSymbol(getToSymbol(kind))
+                    .setFromSymbols(Utils.getFromSymbols(getResources(), kind, exchange))
+                    .setToSymbol(Utils.getToSymbol(getActivity(), kind))
                     .setExchange(exchangeStr)
                     .setListener(this)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -218,7 +220,7 @@ public class ListViewFragment extends Fragment implements
     }
 
     private String getTimerTag(NavigationKind kind) {
-        String suffix = getToSymbol(kind);
+        String suffix = Utils.getToSymbol(getActivity(), kind);
         if (suffix == null) {
             return null;
         }
@@ -294,77 +296,6 @@ public class ListViewFragment extends Fragment implements
         }
     }
 
-    private ArrayList<Coin> insertSectionHeader(ArrayList<Coin> coins, String[] exchanges) {
-        ArrayList<Coin> sectionalCoins = new ArrayList<>();
-
-        if (exchanges.length == 1) {
-            sectionalCoins.add(new SectionHeaderCoinImpl(Exchange.valueOf(exchanges[0]).headerName, exchanges[0]));
-            for (Coin coin : coins) {
-                coin.setExchange(exchanges[0]);
-            }
-            sectionalCoins.addAll(coins);
-            return sectionalCoins;
-        }
-
-        for (String exchange : exchanges) {
-            sectionalCoins.add(new SectionHeaderCoinImpl(Exchange.valueOf(exchange).headerName, exchange));
-            List<Coin> sub;
-
-            switch (exchange) {
-                case "bitflyer":
-                    sub = coins.subList(0, 1);
-                    break;
-                case "coincheck":
-                    sub = coins.subList(1, 2);
-                    break;
-                case "zaif":
-                    sub = coins.subList(2, coins.size());
-                    break;
-                default:
-                    throw new RuntimeException("Invalid exchange " + exchange);
-            }
-
-            for (Coin coin : sub) {
-                coin.setExchange(exchange);
-            }
-
-            sectionalCoins.addAll(sub);
-        }
-
-        return sectionalCoins;
-    }
-
-    private String[] getFromSymbols(NavigationKind kind) {
-        return getResources().getStringArray(kind.symbolsResId);
-    }
-
-    private String[] getFromSymbols(Exchange exchange) {
-        String[] symbols;
-
-        if (exchange == Exchange.cccagg) {
-            symbols = getFromSymbols(kind);
-        } else {
-            symbols = getResources().getStringArray(exchange.symbolsResId);
-        }
-
-        return symbols;
-    }
-
-    private String getToSymbol(NavigationKind kind) {
-        String symbol;
-
-        if (kind == NavigationKind.japan) {
-            symbol = MainActivity.Currency.JPY.name();
-        } else {
-            if (getActivity() == null) {
-                return null;
-            }
-            symbol = PrefHelper.getToSymbol(getActivity());
-        }
-
-        return symbol;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -384,11 +315,6 @@ public class ListViewFragment extends Fragment implements
     public void onStop() {
         super.onStop();
         stopAutoUpdate();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
     }
 
     @Override
@@ -476,5 +402,79 @@ public class ListViewFragment extends Fragment implements
         }
 
         transaction.commitNowAllowingStateLoss();
+    }
+
+    private static class Utils {
+
+        static String[] getFromSymbols(Resources resources, NavigationKind kind) {
+            return resources.getStringArray(kind.symbolsResId);
+        }
+
+        static String[] getFromSymbols(Resources resources, NavigationKind kind, Exchange exchange) {
+            String[] symbols;
+
+            if (exchange == Exchange.cccagg) {
+                symbols = getFromSymbols(resources, kind);
+            } else {
+                symbols = resources.getStringArray(exchange.symbolsResId);
+            }
+
+            return symbols;
+        }
+
+        static String getToSymbol(Activity activity, NavigationKind kind) {
+            String symbol;
+
+            if (kind == NavigationKind.japan) {
+                symbol = MainActivity.Currency.JPY.name();
+            } else {
+                if (activity == null) {
+                    return null;
+                }
+                symbol = PrefHelper.getToSymbol(activity);
+            }
+
+            return symbol;
+        }
+
+        static ArrayList<Coin> insertSectionHeader(ArrayList<Coin> coins, String[] exchanges) {
+            ArrayList<Coin> sectionalCoins = new ArrayList<>();
+
+            if (exchanges.length == 1) {
+                sectionalCoins.add(new SectionHeaderCoinImpl(Exchange.valueOf(exchanges[0]).headerName, exchanges[0]));
+                for (Coin coin : coins) {
+                    coin.setExchange(exchanges[0]);
+                }
+                sectionalCoins.addAll(coins);
+                return sectionalCoins;
+            }
+
+            for (String exchange : exchanges) {
+                sectionalCoins.add(new SectionHeaderCoinImpl(Exchange.valueOf(exchange).headerName, exchange));
+                List<Coin> sub;
+
+                switch (exchange) {
+                    case "bitflyer":
+                        sub = coins.subList(0, 1);
+                        break;
+                    case "coincheck":
+                        sub = coins.subList(1, 2);
+                        break;
+                    case "zaif":
+                        sub = coins.subList(2, coins.size());
+                        break;
+                    default:
+                        throw new RuntimeException("Invalid exchange " + exchange);
+                }
+
+                for (Coin coin : sub) {
+                    coin.setExchange(exchange);
+                }
+
+                sectionalCoins.addAll(sub);
+            }
+
+            return sectionalCoins;
+        }
     }
 }
