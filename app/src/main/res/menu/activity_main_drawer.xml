@@ -20,6 +20,10 @@
             android:icon="@drawable/ic_nav_japan"
             android:title="@string/nav_japan" />
         <item
+            android:id="@+id/nav_coincheck"
+            android:icon="@drawable/ic_coincheck"
+            android:title="@string/nav_coincheck" />
+        <item
             android:id="@+id/nav_jpy_toplist"
             android:icon="@drawable/ic_nav_jpy"
             android:title="@string/nav_jpy_toplist" />
@@ -52,14 +56,14 @@
     </group>
 
     <!--<item-->
-        <!--android:title="@string/nav_japan"-->
-        <!--android:visible="false">-->
-        <!--<menu>-->
-            <!--<item-->
-                <!--android:id="@+id/nav_settings"-->
-                <!--android:icon="@drawable/ic_nav_settings"-->
-                <!--android:title="@string/nav_settings" />-->
-        <!--</menu>-->
+    <!--android:title="@string/nav_japan"-->
+    <!--android:visible="false">-->
+    <!--<menu>-->
+    <!--<item-->
+    <!--android:id="@+id/nav_settings"-->
+    <!--android:icon="@drawable/ic_nav_settings"-->
+    <!--android:title="@string/nav_settings" />-->
+    <!--</menu>-->
     <!--</item>-->
 
 </menu>

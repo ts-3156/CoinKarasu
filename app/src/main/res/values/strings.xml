@@ -36,6 +36,7 @@
     <string name="tab_home">Home</string>
     <string name="tab_main">Main</string>
     <string name="tab_japan">Japan</string>
+    <string name="tab_coincheck">Coincheck</string>
     <string name="tab_jpy_toplist">JPY Toplist</string>
     <string name="tab_usd_toplist">USD Toplist</string>
     <string name="tab_cny_toplist">CNY Toplist</string>
@@ -49,6 +50,7 @@
     <string name="summary_home">Latest summary</string>
     <string name="summary_main">Main</string>
     <string name="summary_japan">Available in Japan</string>
+    <string name="summary_coincheck">Available on Coincheck</string>
     <string name="summary_jpy_toplist">Popular in JPY</string>
     <string name="summary_usd_toplist">Popular in USD</string>
     <string name="summary_cny_toplist">Popular in CNY</string>

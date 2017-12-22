@@ -2,7 +2,6 @@ http://www.apache.org/licenses/LICENSE-2.0.txt
 http://try.crashlytics.com/terms/terms-of-service.pdf
 https://developer.android.com/studio/terms.html
 http://www.apache.org/licenses/LICENSE-2.0.txt
-https://developer.android.com/studio/terms.html
 http://www.apache.org/licenses/LICENSE-2.0.txt
 http://www.apache.org/licenses/LICENSE-2.0.txt
 http://www.apache.org/licenses/LICENSE-2.0.txt
@@ -1096,6 +1095,9 @@ under the GPL, with the following exception:
 # the GNU General Public License.
 
 
+../LICENSE.txt
+http://www.apache.org/licenses/LICENSE-2.0.html
+/LICENSE.txt
 http://www.apache.org/licenses/LICENSE-2.0.txt
 http://www.apache.org/licenses/LICENSE-2.0.txt
 http://www.apache.org/licenses/LICENSE-2.0.txt
@@ -1105,6 +1107,7 @@ http://www.apache.org/licenses/LICENSE-2.0.txt
 http://www.apache.org/licenses/LICENSE-2.0.txt
 http://www.apache.org/licenses/LICENSE-2.0.txt
 http://www.apache.org/licenses/LICENSE-2.0.txt
+https://developer.android.com/studio/terms.html
 http://www.apache.org/licenses/LICENSE-2.0.txt
 http://www.apache.org/licenses/LICENSE-2.0.txt
 http://www.apache.org/licenses/LICENSE-2.0.txt

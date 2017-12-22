@@ -50,17 +50,19 @@ public class ListViewFragment extends Fragment implements
         CollectCoinsTask.Listener,
         MainPagerAdapter.Listener {
 
-    private enum Exchange {
-        bitflyer(R.array.bitflyer_symbols, "BitFlyer"),
-        coincheck(R.array.coincheck_symbols, "Coincheck"),
-        zaif(R.array.zaif_symbols, "Zaif"),
-        cccagg(-1, "Aggregated index");
+    public enum Exchange {
+        bitflyer(R.array.bitflyer_trading_symbols, R.array.bitflyer_sales_symbols, "BitFlyer"),
+        coincheck(R.array.coincheck_trading_symbols, R.array.coincheck_sales_symbols, "Coincheck"),
+        zaif(R.array.zaif_trading_symbols, R.array.zaif_sales_symbols, "Zaif"),
+        cccagg(-1, -1, "Aggregated index");
 
-        int symbolsResId;
+        public int tradingSymbolsResId;
+        public int salesSymbolsResId;
         String headerName;
 
-        Exchange(int symbolsResId, String headerName) {
-            this.symbolsResId = symbolsResId;
+        Exchange(int tradingSymbolsResId, int salesSymbolsResId, String headerName) {
+            this.tradingSymbolsResId = tradingSymbolsResId;
+            this.salesSymbolsResId = salesSymbolsResId;
             this.headerName = headerName;
         }
     }
@@ -461,7 +463,7 @@ public class ListViewFragment extends Fragment implements
             if (exchange == Exchange.cccagg) {
                 symbols = getFromSymbols(resources, kind);
             } else {
-                symbols = resources.getStringArray(exchange.symbolsResId);
+                symbols = resources.getStringArray(exchange.tradingSymbolsResId);
             }
 
             return symbols;

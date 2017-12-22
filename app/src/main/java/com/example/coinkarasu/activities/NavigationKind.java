@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public enum NavigationKind {
     home(R.string.nav_home, R.string.tab_home, R.string.summary_home, R.id.nav_home, R.color.colorNavHome, R.color.colorNavHomeDark, R.color.state_nav_home, -1, new String[]{}),
     japan(R.string.nav_japan, R.string.tab_japan, R.string.summary_japan, R.id.nav_japan, R.color.colorNavJapan, R.color.colorNavJapanDark, R.color.state_nav_japan, R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}),
+    coincheck(R.string.nav_coincheck, R.string.tab_coincheck, R.string.summary_coincheck, R.id.nav_coincheck, R.color.colorCoincheck, R.color.colorCoincheckDark, R.color.state_nav_coincheck, R.array.coincheck_trading_symbols, new String[]{}),
     jpy_toplist(R.string.nav_jpy_toplist, R.string.tab_jpy_toplist, R.string.summary_jpy_toplist, R.id.nav_jpy_toplist, R.color.colorJpyToplist, R.color.colorJpyToplistDark, R.color.state_nav_jpy_toplist, R.array.jpy_toplist_symbols, new String[]{"cccagg"}),
     usd_toplist(R.string.nav_usd_toplist, R.string.tab_usd_toplist, R.string.summary_usd_toplist, R.id.nav_usd_toplist, R.color.colorUsdToplist, R.color.colorUsdToplistDark, R.color.state_nav_usd_toplist, R.array.usd_toplist_symbols, new String[]{"cccagg"}),
     eur_toplist(R.string.nav_eur_toplist, R.string.tab_eur_toplist, R.string.summary_eur_toplist, R.id.nav_eur_toplist, R.color.colorEurToplist, R.color.colorEurToplistDark, R.color.state_nav_eur_toplist, R.array.eur_toplist_symbols, new String[]{"cccagg"}),
