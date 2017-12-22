@@ -68,7 +68,7 @@
         android:layout_marginTop="16dp"
         android:layout_toLeftOf="@id/filter"
         android:background="#ffffff"
-        android:src="@drawable/ic_filter_list" />
+        android:src="@drawable/ic_trending_card_filter_list" />
 
     <TextView
         android:id="@+id/filter"

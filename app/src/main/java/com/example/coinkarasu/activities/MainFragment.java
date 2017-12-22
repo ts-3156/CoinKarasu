@@ -154,7 +154,7 @@ public class MainFragment extends Fragment implements
             NavigationKind kind = values.get(i);
 
             if (kind == NavigationKind.edit_tabs) {
-                tab.setIcon(R.drawable.ic_playlist_add_white);
+                tab.setIcon(R.drawable.ic_tab_playlist_add);
             } else {
                 tab.setText(kind.tabStrResId);
             }

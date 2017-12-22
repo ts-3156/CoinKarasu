@@ -55,14 +55,14 @@ public class EditTabsRecyclerViewAdapter extends RecyclerView.Adapter<EditTabsRe
         holder.summary.setText(item.summary);
 
         if (position == 0) {
-            holder.checkIcon.setImageResource(R.drawable.ic_push_pin);
+            holder.checkIcon.setImageResource(R.drawable.ic_edit_tabs_push_pin);
         } else {
             boolean isVisible = PrefHelper.isVisibleTab(context, item.kind);
 
             if (isVisible) {
-                holder.checkIcon.setImageResource(R.drawable.ic_check_green);
+                holder.checkIcon.setImageResource(R.drawable.ic_edit_tabs_check_green);
             } else {
-                holder.checkIcon.setImageResource(R.drawable.ic_check_white);
+                holder.checkIcon.setImageResource(R.drawable.ic_edit_tabs_check_white);
             }
         }
 
