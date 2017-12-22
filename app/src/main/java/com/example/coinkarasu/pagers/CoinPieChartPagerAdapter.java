@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.coinkarasu.activities.CoinPieChartFragment;
 import com.example.coinkarasu.activities.CoinPieChartTabContentFragment;
-import com.example.coinkarasu.cryptocompare.data.TopPair;
+import com.example.coinkarasu.api.cryptocompare.data.TopPair;
 
 import java.util.ArrayList;
 

@@ -1,6 +1,5 @@
 package com.example.coinkarasu.activities;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.bitflyer.data.Board;
+import com.example.coinkarasu.api.bitflyer.data.Board;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.DecimalFormat;

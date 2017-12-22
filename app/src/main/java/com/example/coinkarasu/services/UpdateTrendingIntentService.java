@@ -8,11 +8,11 @@ import com.example.coinkarasu.activities.NavigationKind;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.coins.PriceMultiFullCoin;
-import com.example.coinkarasu.cryptocompare.Client;
-import com.example.coinkarasu.cryptocompare.ClientImpl;
-import com.example.coinkarasu.cryptocompare.data.CoinListImpl;
-import com.example.coinkarasu.cryptocompare.data.History;
-import com.example.coinkarasu.cryptocompare.data.Prices;
+import com.example.coinkarasu.api.cryptocompare.Client;
+import com.example.coinkarasu.api.cryptocompare.ClientImpl;
+import com.example.coinkarasu.api.cryptocompare.data.CoinListImpl;
+import com.example.coinkarasu.api.cryptocompare.data.History;
+import com.example.coinkarasu.api.cryptocompare.data.Prices;
 import com.example.coinkarasu.data.Trending;
 
 import java.util.ArrayList;

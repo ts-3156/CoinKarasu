@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 
 import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.cryptocompare.data.CoinListImpl;
+import com.example.coinkarasu.api.cryptocompare.data.CoinListImpl;
 import com.example.coinkarasu.services.UpdateCoinListIntentService;
 
 import java.util.ArrayList;

@@ -2,13 +2,10 @@ package com.example.coinkarasu.tasks;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.util.Log;
 
-import com.example.coinkarasu.cryptocompare.request.BlockingRequest;
+import com.example.coinkarasu.api.cryptocompare.request.BlockingRequest;
 
 import org.json.JSONObject;
-
-import java.util.concurrent.CountDownLatch;
 
 public class FetchCoinListTask extends AsyncTask<Integer, Integer, Integer> {
     private Listener listener;

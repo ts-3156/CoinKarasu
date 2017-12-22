@@ -1,6 +1,5 @@
 package com.example.coinkarasu.activities;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,8 +13,8 @@ import android.widget.TextView;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.chart.CoinLineChart;
-import com.example.coinkarasu.cryptocompare.ClientImpl;
-import com.example.coinkarasu.cryptocompare.data.History;
+import com.example.coinkarasu.api.cryptocompare.ClientImpl;
+import com.example.coinkarasu.api.cryptocompare.data.History;
 import com.example.coinkarasu.tasks.GetMultipleHistoryDayTask;
 import com.github.mikephil.charting.charts.LineChart;
 

@@ -7,9 +7,9 @@ import android.util.Log;
 
 import com.example.coinkarasu.activities.NavigationKind;
 import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.cryptocompare.data.CoinList;
-import com.example.coinkarasu.cryptocompare.data.CoinListImpl;
-import com.example.coinkarasu.cryptocompare.request.BlockingRequest;
+import com.example.coinkarasu.api.cryptocompare.data.CoinList;
+import com.example.coinkarasu.api.cryptocompare.data.CoinListImpl;
+import com.example.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.example.coinkarasu.database.AppDatabase;
 import com.example.coinkarasu.database.CoinListCoin;
 

@@ -1,6 +1,5 @@
 package com.example.coinkarasu.activities;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,8 +22,8 @@ import com.example.coinkarasu.animator.ValueAnimatorBase;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.coins.PriceMultiFullCoin;
-import com.example.coinkarasu.cryptocompare.ClientImpl;
-import com.example.coinkarasu.cryptocompare.data.Price;
+import com.example.coinkarasu.api.cryptocompare.ClientImpl;
+import com.example.coinkarasu.api.cryptocompare.data.Price;
 import com.example.coinkarasu.format.PriceColorFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;

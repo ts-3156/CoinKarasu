@@ -15,11 +15,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.bitflyer.data.Board;
+import com.example.coinkarasu.api.bitflyer.data.Board;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
-import com.example.coinkarasu.cryptocompare.Client;
-import com.example.coinkarasu.cryptocompare.ClientImpl;
+import com.example.coinkarasu.api.cryptocompare.Client;
+import com.example.coinkarasu.api.cryptocompare.ClientImpl;
 import com.example.coinkarasu.tasks.GetBoardTask;
 import com.example.coinkarasu.utils.PrefHelper;
 

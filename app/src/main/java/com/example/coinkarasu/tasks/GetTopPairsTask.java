@@ -2,8 +2,8 @@ package com.example.coinkarasu.tasks;
 
 import android.os.AsyncTask;
 
-import com.example.coinkarasu.cryptocompare.Client;
-import com.example.coinkarasu.cryptocompare.data.TopPair;
+import com.example.coinkarasu.api.cryptocompare.Client;
+import com.example.coinkarasu.api.cryptocompare.data.TopPair;
 
 import java.util.ArrayList;
 

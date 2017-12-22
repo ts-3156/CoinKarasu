@@ -2,8 +2,8 @@ package com.example.coinkarasu.tasks;
 
 import android.os.AsyncTask;
 
-import com.example.coinkarasu.cryptocompare.Client;
-import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
+import com.example.coinkarasu.api.cryptocompare.Client;
+import com.example.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 
 public class GetCoinSnapshotTask extends AsyncTask<Integer, Integer, Integer> {
     private Listener listener;

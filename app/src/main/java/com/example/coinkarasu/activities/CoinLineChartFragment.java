@@ -1,6 +1,5 @@
 package com.example.coinkarasu.activities;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -17,7 +16,7 @@ import android.widget.TextView;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.pagers.CoinLineChartPagerAdapter;
-import com.example.coinkarasu.cryptocompare.data.History;
+import com.example.coinkarasu.api.cryptocompare.data.History;
 import com.example.coinkarasu.format.PriceColorFormat;
 import com.example.coinkarasu.format.SignedPriceFormat;
 import com.example.coinkarasu.format.TrendColorFormat;

@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import com.example.coinkarasu.cryptocompare.data.CoinList;
-import com.example.coinkarasu.cryptocompare.data.CoinListImpl;
-import com.example.coinkarasu.cryptocompare.request.BlockingRequest;
+import com.example.coinkarasu.api.cryptocompare.data.CoinList;
+import com.example.coinkarasu.api.cryptocompare.data.CoinListImpl;
+import com.example.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
 import com.google.android.gms.gcm.PeriodicTask;

@@ -2,7 +2,7 @@ package com.example.coinkarasu.chart;
 
 import android.graphics.Color;
 
-import com.example.coinkarasu.cryptocompare.data.History;
+import com.example.coinkarasu.api.cryptocompare.data.History;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;

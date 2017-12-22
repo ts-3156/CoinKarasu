@@ -15,8 +15,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.cryptocompare.ClientImpl;
-import com.example.coinkarasu.cryptocompare.data.TopPair;
+import com.example.coinkarasu.api.cryptocompare.ClientImpl;
+import com.example.coinkarasu.api.cryptocompare.data.TopPair;
 import com.example.coinkarasu.pagers.CoinPieChartPagerAdapter;
 import com.example.coinkarasu.tasks.GetTopPairsTask;
 import com.example.coinkarasu.utils.AssetsHelper;

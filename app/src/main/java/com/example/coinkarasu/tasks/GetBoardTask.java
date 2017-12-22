@@ -3,8 +3,8 @@ package com.example.coinkarasu.tasks;
 import android.app.Activity;
 import android.os.AsyncTask;
 
-import com.example.coinkarasu.bitflyer.data.Board;
-import com.example.coinkarasu.bitflyer.Client;
+import com.example.coinkarasu.api.bitflyer.data.Board;
+import com.example.coinkarasu.api.bitflyer.Client;
 
 public class GetBoardTask extends AsyncTask<Integer, Integer, Integer> {
     Client client;

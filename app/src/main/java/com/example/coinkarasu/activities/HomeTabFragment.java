@@ -1,6 +1,5 @@
 package com.example.coinkarasu.activities;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.cryptocompare.data.CoinList;
+import com.example.coinkarasu.api.cryptocompare.data.CoinList;
 import com.example.coinkarasu.pagers.MainPagerAdapter;
 
 

@@ -1,6 +1,6 @@
 package com.example.coinkarasu.tasks;
 
-import com.example.coinkarasu.cryptocompare.Client;
+import com.example.coinkarasu.api.cryptocompare.Client;
 
 public class GetHistoryMonthTask extends GetHistoryTaskBase {
 

@@ -2,8 +2,8 @@ package com.example.coinkarasu.tasks;
 
 import android.app.Activity;
 
-import com.example.coinkarasu.cryptocompare.request.NonBlockingRequest;
-import com.example.coinkarasu.cryptocompare.request.Request;
+import com.example.coinkarasu.api.cryptocompare.request.NonBlockingRequest;
+import com.example.coinkarasu.api.cryptocompare.request.Request;
 
 import org.json.JSONObject;
 
