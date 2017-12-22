@@ -33,8 +33,6 @@ import com.example.coinkarasu.utils.PrefHelper;
 
 import io.fabric.sdk.android.Fabric;
 
-import static com.example.coinkarasu.activities.MainFragment.NavigationKind;
-
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         MainFragment.OnFragmentInteractionListener {

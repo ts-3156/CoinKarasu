@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.example.coinkarasu.activities.MainFragment;
+import com.example.coinkarasu.activities.NavigationKind;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.cryptocompare.data.CoinList;
 import com.example.coinkarasu.cryptocompare.data.CoinListImpl;
@@ -39,7 +39,7 @@ public class UpdateCoinListIntentService extends IntentService {
 
         LinkedHashSet<String> uniqueSymbols = new LinkedHashSet<>();
 
-        for (MainFragment.NavigationKind kind : MainFragment.NavigationKind.values()) {
+        for (NavigationKind kind : NavigationKind.values()) {
             if (kind.symbolsResId == -1) {
                 continue;
             }

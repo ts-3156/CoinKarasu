@@ -23,7 +23,6 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.activities.MainFragment.NavigationKind;
 import com.example.coinkarasu.adapters.ListViewAdapter;
 import com.example.coinkarasu.animator.ValueAnimatorBase;
 import com.example.coinkarasu.coins.Coin;

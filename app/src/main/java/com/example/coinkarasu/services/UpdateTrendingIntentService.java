@@ -4,7 +4,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.coinkarasu.activities.MainFragment;
+import com.example.coinkarasu.activities.NavigationKind;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.coins.PriceMultiFullCoin;
@@ -49,7 +49,7 @@ public class UpdateTrendingIntentService extends IntentService {
 
     private void update(Kind kind, String toSymbol, String exchange) {
         LinkedHashSet<String> uniqueSymbols = new LinkedHashSet<>();
-        String[] array = getResources().getStringArray(MainFragment.NavigationKind.japan.symbolsResId);
+        String[] array = getResources().getStringArray(NavigationKind.japan.symbolsResId);
         Collections.addAll(uniqueSymbols, array);
 
         Prices prices = new ClientImpl(this).getPrices(uniqueSymbols.toArray(new String[uniqueSymbols.size()]), toSymbol, exchange);

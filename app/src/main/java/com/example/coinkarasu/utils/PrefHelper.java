@@ -6,7 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.example.coinkarasu.activities.MainFragment.NavigationKind;
+import com.example.coinkarasu.activities.NavigationKind;
 
 public class PrefHelper {
 

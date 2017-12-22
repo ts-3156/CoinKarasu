@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.activities.MainFragment.NavigationKind;
 import com.example.coinkarasu.cryptocompare.data.CoinList;
 import com.example.coinkarasu.pagers.MainPagerAdapter;
 

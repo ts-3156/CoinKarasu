@@ -11,7 +11,7 @@ import com.example.coinkarasu.activities.ListViewFragment;
 
 import java.util.ArrayList;
 
-import static com.example.coinkarasu.activities.MainFragment.NavigationKind;
+import com.example.coinkarasu.activities.NavigationKind;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
     private Context context;
