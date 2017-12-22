@@ -174,8 +174,10 @@ public class ListViewAdapter extends BaseAdapter {
                 holder.progressbar = convertView.findViewById(R.id.progressbar);
                 holder.progressbar.setTag(coin.getExchange() + "-progressbar");
 
+                View timeSpan = convertView.findViewById(R.id.time_span_container);
+                timeSpan.setId(coin.getExchange().hashCode());
                 fragmentManager.beginTransaction()
-                        .replace(R.id.time_span_container, RelativeTimeSpanFragment.newInstance(), RelativeTimeSpanFragment.getTag(coin.getExchange()))
+                        .replace(timeSpan.getId(), RelativeTimeSpanFragment.newInstance(), RelativeTimeSpanFragment.getTag(coin.getExchange()))
                         .commit();
             }
             convertView.setTag(holder);

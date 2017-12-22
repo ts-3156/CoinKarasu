@@ -70,9 +70,11 @@ public class ListViewFragment extends Fragment implements
 
     private AutoUpdateTimer autoUpdateTimer;
     private NavigationKind kind;
-    private boolean isVisibleToUser = false;
+    private boolean isVisibleToUser;
     private boolean isSelected;
     private boolean isStartTaskRequested;
+    private boolean isListViewInitialized;
+    private ListViewAdapter adapter;
 
     public ListViewFragment() {
     }
@@ -111,8 +113,76 @@ public class ListViewFragment extends Fragment implements
         }
 
         isStartTaskRequested = false;
+        isListViewInitialized = false;
+        adapter = null;
+        PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (isListViewInitialized) {
+            if (isStartTaskRequested) {
+                startTask();
+            }
+        } else {
+            if (adapter != null) {
+                initializeListView(adapter);
+            }
+        }
+    }
+
+    private void initializeListView(ListViewAdapter adapter) {
+        if (isListViewInitialized) {
+            return;
+        }
+        if (adapter == null || getActivity() == null || getView() == null) {
+            return;
+        }
+
+        isListViewInitialized = true;
+
+        ListView listView = getView().findViewById(R.id.list_view);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
+        listView.setOnScrollListener(this);
+        ViewCompat.setNestedScrollingEnabled(listView, true); // <= 21 http://starzero.hatenablog.com/entry/2015/09/30/114136
+
+        updateViewIfCacheExist(adapter);
+
+        if (isStartTaskRequested) {
+            startTask();
+        }
+
+        this.adapter = null;
+    }
+
+    private void updateViewIfCacheExist(ListViewAdapter adapter) {
+        if (isDetached() || getView() == null) {
+            return;
+        }
+
+        adapter.pauseAnimation();
+
+        for (String exchangeStr : kind.exchanges) {
+            String tag = kind.name() + "-" + exchangeStr;
+            boolean isCacheExists = PricesImpl.isCacheExist(getActivity(), tag);
+            if (!isCacheExists) {
+                continue;
+            }
+
+            Prices prices = PricesImpl.restoreFromCache(getActivity(), tag);
+            String exchange = prices.getExchange();
+            ArrayList<Coin> filtered = adapter.getItems(exchange);
+            prices.copyAttrsToCoins(filtered);
+
+            adapter.notifyDataSetChanged();
+        }
+
+        adapter.restartAnimation();
     }
 
     @Override
@@ -125,39 +195,14 @@ public class ListViewFragment extends Fragment implements
         }
 
         coins = Utils.insertSectionHeader(coins, kind.exchanges);
+        adapter = new ListViewAdapter(getActivity(), coins, getChildFragmentManager());
 
-        ListViewAdapter adapter = new ListViewAdapter(getActivity(), coins, getChildFragmentManager());
-        ListView listView = getView().findViewById(R.id.list_view); // TODO getView() == null
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(this);
-        listView.setOnScrollListener(this);
-        ViewCompat.setNestedScrollingEnabled(listView, true); // <= 21 http://starzero.hatenablog.com/entry/2015/09/30/114136
-
-        PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
-
-        if (!isDetached() && getView() != null) {
-            adapter.pauseAnimation();
-
-            for (String exchangeStr : kind.exchanges) {
-                String tag = kind.name() + "-" + exchangeStr;
-                boolean isCacheExists = PricesImpl.isCacheExist(getActivity(), tag);
-                if (!isCacheExists) {
-                    continue;
-                }
-
-                Prices prices = PricesImpl.restoreFromCache(getActivity(), tag);
-                String exchange = prices.getExchange();
-                ArrayList<Coin> filtered = adapter.getItems(exchange);
-                prices.copyAttrsToCoins(filtered);
-
-                adapter.notifyDataSetChanged();
+        if (isListViewInitialized) {
+            if (isStartTaskRequested) {
+                startTask();
             }
-
-            adapter.restartAnimation();
-        }
-
-        if (isStartTaskRequested) {
-            startTask();
+        } else {
+            initializeListView(adapter);
         }
     }
 
@@ -323,6 +368,7 @@ public class ListViewFragment extends Fragment implements
         PrefHelper.getPref(getActivity()).unregisterOnSharedPreferenceChangeListener(this);
         autoUpdateTimer = null;
         kind = null;
+        adapter = null;
     }
 
     @Override
