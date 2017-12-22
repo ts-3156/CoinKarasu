@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.pagers.MainPagerAdapter;
+import com.example.coinkarasu.utils.PrefHelper;
+
+import java.util.ArrayList;
 
 
 public class MainFragment extends Fragment implements
@@ -47,6 +50,20 @@ public class MainFragment extends Fragment implements
 
         public boolean isHideable() {
             return this != home && this != edit_tabs;
+        }
+
+        public boolean isVisible(Context context) {
+            return !isHideable() || PrefHelper.isVisibleTab(context, this);
+        }
+
+        public static ArrayList<NavigationKind> visibleValues(Context context) {
+            ArrayList<NavigationKind> values = new ArrayList<>();
+            for (NavigationKind kind : values()) {
+                if (kind.isVisible(context)) {
+                    values.add(kind);
+                }
+            }
+            return values;
         }
 
         public boolean defaultVisibility() {
@@ -95,28 +112,49 @@ public class MainFragment extends Fragment implements
 
         if (savedInstanceState != null) {
             kind = NavigationKind.valueOf(savedInstanceState.getString(STATE_SELECTED_KIND_KEY));
+            if (!kind.isVisible(getActivity())) {
+                kind = NavigationKind.home;
+            }
         }
 
         ViewPager pager = view.findViewById(R.id.view_pager);
-        pager.setAdapter(new MainPagerAdapter(getChildFragmentManager(), kind));
+        pager.setAdapter(new MainPagerAdapter(getChildFragmentManager(), getActivity(), kind));
         pager.addOnPageChangeListener(this);
-        pager.setOffscreenPageLimit(NavigationKind.values().length);
+        pager.setOffscreenPageLimit(NavigationKind.visibleValues(getActivity()).size());
 
         TabLayout tabs = getActivity().findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
-        tabs.getTabAt(NavigationKind.japan.ordinal()).setText(NavigationKind.japan.tabStrResId);
-        tabs.getTabAt(NavigationKind.home.ordinal()).setText(NavigationKind.home.tabStrResId);
-        tabs.getTabAt(NavigationKind.jpy_toplist.ordinal()).setText(NavigationKind.jpy_toplist.tabStrResId);
-        tabs.getTabAt(NavigationKind.usd_toplist.ordinal()).setText(NavigationKind.usd_toplist.tabStrResId);
-        tabs.getTabAt(NavigationKind.eur_toplist.ordinal()).setText(NavigationKind.eur_toplist.tabStrResId);
-        tabs.getTabAt(NavigationKind.btc_toplist.ordinal()).setText(NavigationKind.btc_toplist.tabStrResId);
-        tabs.getTabAt(NavigationKind.edit_tabs.ordinal()).setIcon(R.drawable.ic_playlist_add_white);
+        updateTabTitles(tabs);
 
-        tab = tabs.getTabAt(kind.ordinal());
-        pager.setCurrentItem(kind.ordinal()); // #setCurrentItem doesn't call #onPageScrollStateChanged.
+        int position = NavigationKind.visibleValues(getActivity()).indexOf(kind);
+        tab = tabs.getTabAt(position);
+        pager.setCurrentItem(position); // #setCurrentItem doesn't call #onPageScrollStateChanged.
         listener.onPageChanged(kind);
 
         return view;
+    }
+
+    public void updateTabTitles(TabLayout tabs) {
+        if (tabs == null) {
+            return;
+        }
+
+        ArrayList<NavigationKind> values = NavigationKind.visibleValues(getActivity());
+        for (int i = 0; i < values.size(); i++) {
+            TabLayout.Tab tab = tabs.getTabAt(i);
+
+            if (tab == null) {
+                continue;
+            }
+
+            NavigationKind kind = values.get(i);
+
+            if (kind == NavigationKind.edit_tabs) {
+                tab.setIcon(R.drawable.ic_playlist_add_white);
+            } else {
+                tab.setText(kind.tabStrResId);
+            }
+        }
     }
 
     public NavigationKind getCurrentKind() {
@@ -175,14 +213,24 @@ public class MainFragment extends Fragment implements
             int position = ((ViewPager) getView().findViewById(R.id.view_pager)).getCurrentItem();
 
             if (position != tab.getPosition()) {
-                kind = NavigationKind.values()[position];
-                tab = ((TabLayout) getActivity().findViewById(R.id.tab_layout)).getTabAt(kind.ordinal());
+                kind = NavigationKind.visibleValues(getActivity()).get(position);
+                tab = ((TabLayout) getActivity().findViewById(R.id.tab_layout)).getTabAt(position);
                 listener.onPageChanged(kind);
             }
         }
     }
 
-    public void updateTabVisibility(NavigationKind kind) {
+    public void updateTabVisibility() {
+        ViewPager pager = getView().findViewById(R.id.view_pager);
+        pager.getAdapter().notifyDataSetChanged();
+
+        TabLayout tabs = getActivity().findViewById(R.id.tab_layout);
+        updateTabTitles(tabs);
+
+        int position = NavigationKind.visibleValues(getActivity()).indexOf(kind);
+        pager.setCurrentItem(position, false);
+        tabs.getTabAt(position).select();
+        listener.onPageChanged(kind);
     }
 
     public interface OnFragmentInteractionListener {

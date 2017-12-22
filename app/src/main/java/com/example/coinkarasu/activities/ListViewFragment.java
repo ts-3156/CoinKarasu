@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +30,7 @@ import com.example.coinkarasu.coins.SectionHeaderCoinImpl;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.cryptocompare.data.PricesImpl;
+import com.example.coinkarasu.pagers.MainPagerAdapter;
 import com.example.coinkarasu.tasks.CollectCoinsTask;
 import com.example.coinkarasu.tasks.GetPricesTask;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
@@ -44,7 +47,8 @@ public class ListViewFragment extends Fragment implements
         ListView.OnScrollListener,
         GetPricesTask.Listener,
         SharedPreferences.OnSharedPreferenceChangeListener,
-        CollectCoinsTask.Listener {
+        CollectCoinsTask.Listener,
+        MainPagerAdapter.Listener {
 
     private enum Exchange {
         bitflyer(R.array.bitflyer_symbols, "BitFlyer"),
@@ -121,7 +125,7 @@ public class ListViewFragment extends Fragment implements
         coins = insertSectionHeader(coins, kind.exchanges);
 
         ListViewAdapter adapter = new ListViewAdapter(getActivity(), coins, getChildFragmentManager());
-        ListView listView = getView().findViewById(R.id.list_view);
+        ListView listView = getView().findViewById(R.id.list_view); // TODO getView() == null
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
         listView.setOnScrollListener(this);
@@ -453,5 +457,24 @@ public class ListViewFragment extends Fragment implements
             stopAutoUpdate();
             startAutoUpdate(true);
         }
+    }
+
+    @Override
+    public void removeAllNestedFragments() {
+        if (!isAdded() || isDetached()) {
+            return;
+        }
+
+        FragmentManager manager = getChildFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        for (String exchange : kind.exchanges) {
+            Fragment fragment = manager.findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange));
+            if (fragment != null) {
+                transaction.remove(fragment);
+            }
+        }
+
+        transaction.commitNowAllowingStateLoss();
     }
 }

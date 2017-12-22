@@ -277,6 +277,10 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         Drawable icon = tab.getIcon();
+        if (icon == null) {
+            return;
+        }
+
         if (kind == NavigationKind.edit_tabs) {
             icon.setAlpha(255);
         } else {

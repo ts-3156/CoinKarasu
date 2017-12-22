@@ -11,10 +11,13 @@ import android.view.ViewGroup;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.EditTabsItemDecoration;
 import com.example.coinkarasu.adapters.EditTabsRecyclerViewAdapter;
+import com.example.coinkarasu.pagers.MainPagerAdapter;
 import com.example.coinkarasu.utils.PrefHelper;
 
 
-public class EditTabsFragment extends Fragment implements EditTabsRecyclerViewAdapter.OnItemClickListener {
+public class EditTabsFragment extends Fragment implements
+        EditTabsRecyclerViewAdapter.OnItemClickListener,
+        MainPagerAdapter.Listener {
 
     public EditTabsFragment() {
     }
@@ -47,6 +50,10 @@ public class EditTabsFragment extends Fragment implements EditTabsRecyclerViewAd
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         adapter.notifyItemChanged(position);
 
-        ((MainFragment) getParentFragment()).updateTabVisibility(item.kind);
+        ((MainFragment) getParentFragment()).updateTabVisibility();
+    }
+
+    @Override
+    public void removeAllNestedFragments() {
     }
 }

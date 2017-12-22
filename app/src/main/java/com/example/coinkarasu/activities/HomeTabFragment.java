@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,9 +13,10 @@ import android.view.ViewGroup;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.MainFragment.NavigationKind;
 import com.example.coinkarasu.cryptocompare.data.CoinList;
+import com.example.coinkarasu.pagers.MainPagerAdapter;
 
 
-public class HomeTabFragment extends Fragment {
+public class HomeTabFragment extends Fragment implements MainPagerAdapter.Listener {
 
     public enum Kind {
         one_hour(R.string.caption_desc_1_hour, "frag_1_hour"),
@@ -86,5 +89,24 @@ public class HomeTabFragment extends Fragment {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putString(STATE_SELECTED_KIND_KEY, kind.name());
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void removeAllNestedFragments() {
+        if (!isAdded() || isDetached()) {
+            return;
+        }
+
+        FragmentManager manager = getChildFragmentManager();
+        FragmentTransaction transaction = manager.beginTransaction();
+
+        for (Kind k : Kind.values()) {
+            Fragment fragment = manager.findFragmentByTag(k.tag);
+            if (fragment != null) {
+                transaction.remove(fragment);
+            }
+        }
+
+        transaction.commitNowAllowingStateLoss();
     }
 }
