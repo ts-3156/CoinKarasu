@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public class TopPairsImpl implements TopPairs {
 
-    ArrayList<TopPair> topPairs;
+    private ArrayList<TopPair> topPairs;
 
     public TopPairsImpl(TopPairsResponse response) {
         if (response == null || response.getData() == null) {
@@ -32,7 +32,6 @@ public class TopPairsImpl implements TopPairs {
         } catch (JSONException e) {
             Log.e("TopPairsImpl", e.getMessage());
         }
-
     }
 
     @Override

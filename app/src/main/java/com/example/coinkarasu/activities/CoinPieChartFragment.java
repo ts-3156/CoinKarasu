@@ -17,7 +17,6 @@ import android.widget.TextView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.TopPair;
-import com.example.coinkarasu.cryptocompare.data.TopPairs;
 import com.example.coinkarasu.pagers.CoinPieChartPagerAdapter;
 import com.example.coinkarasu.tasks.GetTopPairsTask;
 import com.example.coinkarasu.utils.AssetsHelper;
@@ -160,14 +159,13 @@ public class CoinPieChartFragment extends Fragment implements
     }
 
     @Override
-    public void finished(TopPairs topPairs) {
+    public void finished(ArrayList<TopPair> pairs) {
         if (isDetached() || getView() == null) {
             taskStarted = false;
             errorCount++;
             return;
         }
 
-        ArrayList<TopPair> pairs = topPairs.getTopPairs();
         if (pairs == null) {
             Log.e("finished", "null(retry), " + errorCount);
             taskStarted = false;

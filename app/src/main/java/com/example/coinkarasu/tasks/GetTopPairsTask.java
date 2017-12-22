@@ -3,12 +3,14 @@ package com.example.coinkarasu.tasks;
 import android.os.AsyncTask;
 
 import com.example.coinkarasu.cryptocompare.Client;
-import com.example.coinkarasu.cryptocompare.data.TopPairs;
+import com.example.coinkarasu.cryptocompare.data.TopPair;
+
+import java.util.ArrayList;
 
 public class GetTopPairsTask extends AsyncTask<Integer, Integer, Integer> {
     private Listener listener;
     private Client client;
-    private TopPairs topPairs;
+    private ArrayList<TopPair> topPairs;
     private String fromSymbol;
 
     public GetTopPairsTask(Client client) {
@@ -42,6 +44,6 @@ public class GetTopPairsTask extends AsyncTask<Integer, Integer, Integer> {
     }
 
     public interface Listener {
-        void finished(TopPairs topPairs);
+        void finished(ArrayList<TopPair> topPairs);
     }
 }

@@ -6,7 +6,7 @@ import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.History;
 import com.example.coinkarasu.cryptocompare.data.Price;
 import com.example.coinkarasu.cryptocompare.data.Prices;
-import com.example.coinkarasu.cryptocompare.data.TopPairs;
+import com.example.coinkarasu.cryptocompare.data.TopPair;
 
 import java.util.ArrayList;
 
@@ -33,7 +33,7 @@ public interface Client {
 
     CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol);
 
-    TopPairs getTopPairs(String fromSymbol);
+    ArrayList<TopPair> getTopPairs(String fromSymbol);
 
     ArrayList<PriceMultiFullCoin> getBtcToplist(CoinList coinList);
 }

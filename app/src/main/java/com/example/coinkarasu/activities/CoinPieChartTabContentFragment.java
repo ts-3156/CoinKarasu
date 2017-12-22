@@ -1,6 +1,5 @@
 package com.example.coinkarasu.activities;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,7 +18,6 @@ import com.example.coinkarasu.cryptocompare.Client;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.CoinSnapshot;
 import com.example.coinkarasu.cryptocompare.data.TopPair;
-import com.example.coinkarasu.cryptocompare.data.TopPairs;
 import com.example.coinkarasu.tasks.GetCoinSnapshotTask;
 import com.example.coinkarasu.tasks.GetTopPairsTask;
 import com.github.mikephil.charting.charts.PieChart;
@@ -112,14 +110,13 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     }
 
     @Override
-    public void finished(TopPairs topPairs) {
+    public void finished(ArrayList<TopPair> pairs) {
         if (isDetached() || getView() == null) {
             taskStarted = false;
             errorCount++;
             return;
         }
 
-        ArrayList<TopPair> pairs = topPairs.getTopPairs();
         if (pairs == null) {
             Log.e("finished", "null(retry), " + kind + ", " + errorCount);
             taskStarted = false;

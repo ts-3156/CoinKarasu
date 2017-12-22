@@ -12,7 +12,7 @@ import com.example.coinkarasu.cryptocompare.data.Price;
 import com.example.coinkarasu.cryptocompare.data.PriceImpl;
 import com.example.coinkarasu.cryptocompare.data.Prices;
 import com.example.coinkarasu.cryptocompare.data.PricesImpl;
-import com.example.coinkarasu.cryptocompare.data.TopPairs;
+import com.example.coinkarasu.cryptocompare.data.TopPair;
 import com.example.coinkarasu.cryptocompare.data.TopPairsImpl;
 import com.example.coinkarasu.cryptocompare.request.BlockingRequest;
 import com.example.coinkarasu.cryptocompare.response.CoinSnapshotResponse;
@@ -142,12 +142,20 @@ public class ClientImpl implements Client {
     }
 
     @Override
-    public TopPairs getTopPairs(String fromSymbol) {
+    public ArrayList<TopPair> getTopPairs(String fromSymbol) {
         String url = "https://min-api.cryptocompare.com/data/top/pairs?fsym=" + fromSymbol + "&limit=100";
 
-        JSONObject response = new BlockingRequest(context, url).perform();
-        TopPairsResponse topPairsResponse = new TopPairsResponseImpl(response, fromSymbol);
-        return new TopPairsImpl(topPairsResponse);
+        TopPairsResponse topPairsResponse;
+
+        if (TopPairsResponseImpl.isCacheExist(context, fromSymbol)) {
+            topPairsResponse = TopPairsResponseImpl.restoreFromCache(context, fromSymbol);
+        } else {
+            JSONObject response = new BlockingRequest(context, url).perform();
+            topPairsResponse = new TopPairsResponseImpl(response, fromSymbol);
+            topPairsResponse.saveToCache(context);
+        }
+
+        return new TopPairsImpl(topPairsResponse).getTopPairs();
     }
 
     private ArrayList<History> sampling(ArrayList<History> records, int aggregate) {

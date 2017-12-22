@@ -135,8 +135,6 @@ public class HistoryResponseImpl implements HistoryResponse {
         }
 
         Date lastModified = CacheHelper.lastModified(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
-
-
         return new Date(System.currentTimeMillis() - kind.expires).compareTo(lastModified) <= 0;
     }
 

@@ -13,7 +13,7 @@ public class TopPairImpl implements TopPair {
     private double volume24h;
     private double volume24hTo;
 
-    public TopPairImpl(JSONObject response) {
+    TopPairImpl(JSONObject response) {
         try {
             exchange = response.getString("exchange");
             fromSymbol = response.getString("fromSymbol");
