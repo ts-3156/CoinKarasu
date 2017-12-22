@@ -20,32 +20,32 @@ public class MainFragment extends Fragment implements
         ViewPager.OnPageChangeListener {
 
     public enum NavigationKind {
-        home(R.string.nav_home, R.string.tab_home, R.id.nav_home, R.color.colorNavHome, R.color.colorNavHomeDark, -1, new String[]{}, 0),
-        japan(R.string.nav_japan, R.string.tab_japan, R.id.nav_japan, R.color.colorNavJapan, R.color.colorNavJapanDark, R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}, 1),
-        jpy_toplist(R.string.nav_jpy_toplist, R.string.tab_jpy_toplist, R.id.nav_jpy_toplist, R.color.colorJpyToplist, R.color.colorJpyToplistDark, R.array.jpy_toplist_symbols, new String[]{"cccagg"}, 2),
-        usd_toplist(R.string.nav_usd_toplist, R.string.tab_usd_toplist, R.id.nav_usd_toplist, R.color.colorUsdToplist, R.color.colorUsdToplistDark, R.array.usd_toplist_symbols, new String[]{"cccagg"}, 3),
-        eur_toplist(R.string.nav_eur_toplist, R.string.tab_eur_toplist, R.id.nav_eur_toplist, R.color.colorEurToplist, R.color.colorEurToplistDark, R.array.eur_toplist_symbols, new String[]{"cccagg"}, 4),
-        btc_toplist(R.string.nav_btc_toplist, R.string.tab_btc_toplist, R.id.nav_btc_toplist, R.color.colorBtcToplist, R.color.colorBtcToplistDark, R.array.btc_toplist_symbols, new String[]{"cccagg"}, 5),
-        edit_tabs(R.string.nav_edit_tabs, R.string.tab_edit_tabs, -1, R.color.colorEditTabs, R.color.colorEditTabsDark, -1, new String[]{}, 6);
+        home(R.string.nav_home, R.string.tab_home, R.id.nav_home, R.color.colorNavHome, R.color.colorNavHomeDark, R.color.state_nav_home, -1, new String[]{}),
+        japan(R.string.nav_japan, R.string.tab_japan, R.id.nav_japan, R.color.colorNavJapan, R.color.colorNavJapanDark, R.color.state_nav_japan, R.array.japan_all_symbols, new String[]{"bitflyer", "coincheck", "zaif"}),
+        jpy_toplist(R.string.nav_jpy_toplist, R.string.tab_jpy_toplist, R.id.nav_jpy_toplist, R.color.colorJpyToplist, R.color.colorJpyToplistDark, R.color.state_nav_jpy_toplist, R.array.jpy_toplist_symbols, new String[]{"cccagg"}),
+        usd_toplist(R.string.nav_usd_toplist, R.string.tab_usd_toplist, R.id.nav_usd_toplist, R.color.colorUsdToplist, R.color.colorUsdToplistDark, R.color.state_nav_usd_toplist, R.array.usd_toplist_symbols, new String[]{"cccagg"}),
+        eur_toplist(R.string.nav_eur_toplist, R.string.tab_eur_toplist, R.id.nav_eur_toplist, R.color.colorEurToplist, R.color.colorEurToplistDark, R.color.state_nav_eur_toplist, R.array.eur_toplist_symbols, new String[]{"cccagg"}),
+        btc_toplist(R.string.nav_btc_toplist, R.string.tab_btc_toplist, R.id.nav_btc_toplist, R.color.colorBtcToplist, R.color.colorBtcToplistDark, R.color.state_nav_btc_toplist, R.array.btc_toplist_symbols, new String[]{"cccagg"}),
+        edit_tabs(R.string.nav_edit_tabs, R.string.tab_edit_tabs, R.id.nav_edit_tabs, R.color.colorEditTabs, R.color.colorEditTabsDark, R.color.state_nav_edit_tabs, -1, new String[]{});
 
         int navStrResId;
         public int tabStrResId;
         int navResId;
         int colorResId;
         int colorDarkResId;
+        int colorStateResId;
         public int symbolsResId;
         String[] exchanges;
-        int navPos;
 
-        NavigationKind(int navStrResId, int tabStrResId, int navResId, int colorResId, int colorDarkResId, int symbolsResId, String[] exchanges, int navPos) {
+        NavigationKind(int navStrResId, int tabStrResId, int navResId, int colorResId, int colorDarkResId, int colorStateResId, int symbolsResId, String[] exchanges) {
             this.navStrResId = navStrResId;
             this.tabStrResId = tabStrResId;
             this.navResId = navResId;
             this.colorResId = colorResId;
             this.colorDarkResId = colorDarkResId;
+            this.colorStateResId = colorStateResId;
             this.symbolsResId = symbolsResId;
             this.exchanges = exchanges;
-            this.navPos = navPos;
         }
 
         public boolean isHideable() {
@@ -64,6 +64,10 @@ public class MainFragment extends Fragment implements
                 }
             }
             return values;
+        }
+
+        public static int visiblePosition(Context context, NavigationKind kind) {
+            return visibleValues(context).indexOf(kind);
         }
 
         public boolean defaultVisibility() {
@@ -126,7 +130,7 @@ public class MainFragment extends Fragment implements
         tabs.setupWithViewPager(pager);
         updateTabTitles(tabs);
 
-        int position = NavigationKind.visibleValues(getActivity()).indexOf(kind);
+        int position = NavigationKind.visiblePosition(getActivity(), kind);
         tab = tabs.getTabAt(position);
         pager.setCurrentItem(position); // #setCurrentItem doesn't call #onPageScrollStateChanged.
         listener.onPageChanged(kind);
@@ -166,7 +170,8 @@ public class MainFragment extends Fragment implements
             return;
         }
         this.kind = kind;
-        ((ViewPager) getView().findViewById(R.id.view_pager)).setCurrentItem(kind.ordinal());
+        int position = NavigationKind.visiblePosition(getActivity(), kind);
+        ((ViewPager) getView().findViewById(R.id.view_pager)).setCurrentItem(position);
         listener.onPageChanged(kind);
     }
 
@@ -227,7 +232,7 @@ public class MainFragment extends Fragment implements
         TabLayout tabs = getActivity().findViewById(R.id.tab_layout);
         updateTabTitles(tabs);
 
-        int position = NavigationKind.visibleValues(getActivity()).indexOf(kind);
+        int position = NavigationKind.visiblePosition(getActivity(), kind);
         pager.setCurrentItem(position, false);
         tabs.getTabAt(position).select();
         listener.onPageChanged(kind);

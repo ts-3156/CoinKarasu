@@ -1,6 +1,7 @@
 package com.example.coinkarasu.activities;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -113,7 +114,27 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setNavChecked(NavigationKind kind) {
-        ((NavigationView) findViewById(R.id.nav_view)).getMenu().getItem(kind.navPos).setChecked(true);
+        NavigationView view = findViewById(R.id.nav_view);
+        Menu menu = view.getMenu();
+
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem item = menu.getItem(i);
+
+            for (NavigationKind k : NavigationKind.values()) {
+                if (item.getItemId() == k.navResId) {
+                    item.setVisible(k.isVisible(this));
+
+                    if (k == kind) {
+                        item.setChecked(true);
+                        ColorStateList list = getResources().getColorStateList(k.colorStateResId);
+                        view.setItemTextColor(list);
+                        view.setItemIconTintList(list);
+                    }
+
+                    break;
+                }
+            }
+        }
     }
 
     private void updateToolbarTitle(NavigationKind kind) {
