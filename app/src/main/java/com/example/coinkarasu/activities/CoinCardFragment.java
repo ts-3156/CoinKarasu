@@ -271,11 +271,6 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         kind = null;

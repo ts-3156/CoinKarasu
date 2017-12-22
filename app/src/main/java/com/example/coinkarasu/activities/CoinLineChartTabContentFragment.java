@@ -119,11 +119,6 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         kind = null;

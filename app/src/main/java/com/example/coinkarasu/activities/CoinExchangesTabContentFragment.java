@@ -141,11 +141,6 @@ public class CoinExchangesTabContentFragment extends Fragment implements GetMult
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         kind = null;
