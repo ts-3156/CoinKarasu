@@ -46,6 +46,19 @@
     <string name="tab_btc_toplist">BTCで人気</string>
     <string name="tab_edit_tabs">タブの編集</string>
 
+    <string name="summary_home">直近のサマリー</string>
+    <string name="summary_main">メイン</string>
+    <string name="summary_japan">日本で取引できるコイン</string>
+    <string name="summary_jpy_toplist">円建てで取扱高の多いコイン</string>
+    <string name="summary_usd_toplist">米ドル建てで取扱高の多いコイン</string>
+    <string name="summary_cny_toplist">人民元建てで取扱高の多いコイン</string>
+    <string name="summary_eur_toplist">ユーロ建てで取扱高の多いコイン</string>
+    <string name="summary_gbp_toplist">英ポンド建てで取扱高の多いコイン</string>
+    <string name="summary_krw_toplist">ウォン建てで取扱高の多いコイン</string>
+    <string name="summary_inr_toplist">ルピー建てで取扱高の多いコイン</string>
+    <string name="summary_btc_toplist">BTC建てで取扱高の多いコイン</string>
+    <string name="summary_edit_tabs">タブの編集</string>
+
 
     <string name="caption_day">本日</string>
     <string name="caption_desc_day">(現時点)</string>

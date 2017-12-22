@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
 
-        bar.setTitle(kind.navStrResId);
+        bar.setTitle(kind.headerStrResId);
 
         NavigationKind currentKind = getCurrentKind();
         if (currentKind != null && currentKind == NavigationKind.japan) {

@@ -46,6 +46,19 @@
     <string name="tab_btc_toplist">BTC Toplist</string>
     <string name="tab_edit_tabs">Edit tabs</string>
 
+    <string name="summary_home">Latest summary</string>
+    <string name="summary_main">Main</string>
+    <string name="summary_japan">Available in Japan</string>
+    <string name="summary_jpy_toplist">Popular in JPY</string>
+    <string name="summary_usd_toplist">Popular in USD</string>
+    <string name="summary_cny_toplist">Popular in CNY</string>
+    <string name="summary_eur_toplist">Popular in EUR</string>
+    <string name="summary_gbp_toplist">Popular in GBP</string>
+    <string name="summary_krw_toplist">Popular in KRW</string>
+    <string name="summary_inr_toplist">Popular in INR</string>
+    <string name="summary_btc_toplist">Popular in BTC</string>
+    <string name="summary_edit_tabs">Edit tabs</string>
+
     <string name="caption_left">%1$s - %2$s</string>
     <string name="caption_day">Today</string>
     <string name="caption_desc_day">so far</string>

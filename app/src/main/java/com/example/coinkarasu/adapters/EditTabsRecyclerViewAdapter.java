@@ -33,8 +33,9 @@ public class EditTabsRecyclerViewAdapter extends RecyclerView.Adapter<EditTabsRe
             if (kind == NavigationKind.edit_tabs) {
                 continue;
             }
-            String title = context.getResources().getString(kind.tabStrResId);
-            items.add(new Item(title, "Summary", kind));
+            String title = context.getResources().getString(kind.titleStrResId);
+            String summary = context.getResources().getString(kind.summaryStrResId);
+            items.add(new Item(title, summary, kind));
         }
     }
 
