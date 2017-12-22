@@ -29,6 +29,7 @@ import com.example.coinkarasu.format.PriceColorFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
 import com.example.coinkarasu.tasks.GetPriceTask;
+import com.example.coinkarasu.utils.AssetsHelper;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
 import com.example.coinkarasu.utils.PrefHelper;
 
@@ -74,7 +75,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_card, container, false);
 
-        Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Light.ttf");
+        Typeface typeFace = AssetsHelper.getInstance(getActivity()).light;
         ((TextView) view.findViewById(R.id.caption_left)).setTypeface(typeFace);
         ((TextView) view.findViewById(R.id.caption_right)).setTypeface(typeFace);
 

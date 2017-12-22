@@ -38,7 +38,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     private CoinPieChartFragment.Kind kind;
     private String fromSymbol;
     private String toSymbol;
-    private int position;
     private boolean taskStarted;
     private CoinPieChart chart;
     private int errorCount = 0;
@@ -53,18 +52,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         args.putString("kind", kind.name());
         args.putString("fromSymbol", fromSymbol);
         args.putString("toSymbol", toSymbol);
-        args.putInt("position", kind.ordinal());
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    public static CoinPieChartTabContentFragment newInstance(String kind, String fromSymbol, String toSymbol, int position) {
-        CoinPieChartTabContentFragment fragment = new CoinPieChartTabContentFragment();
-        Bundle args = new Bundle();
-        args.putString("kind", kind);
-        args.putString("fromSymbol", fromSymbol);
-        args.putString("toSymbol", toSymbol);
-        args.putInt("position", position);
         fragment.setArguments(args);
         return fragment;
     }
@@ -76,7 +63,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             kind = CoinPieChartFragment.Kind.valueOf(getArguments().getString("kind"));
             fromSymbol = getArguments().getString("fromSymbol");
             toSymbol = getArguments().getString("toSymbol");
-            position = getArguments().getInt("position");
         }
     }
 

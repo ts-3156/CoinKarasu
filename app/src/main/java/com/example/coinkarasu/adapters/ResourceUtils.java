@@ -12,6 +12,7 @@ import com.example.coinkarasu.format.SurroundedTrendValueFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
+import com.example.coinkarasu.utils.AssetsHelper;
 import com.example.coinkarasu.utils.VolleyHelper;
 
 import java.util.HashMap;
@@ -41,8 +42,8 @@ class ResourceUtils {
         initializeColors(context);
         imageLoader = VolleyHelper.getInstance(context).getImageLoader();
 
-        typeFace = Typeface.createFromAsset(context.getAssets(), "OpenSans-Light.ttf");
-        typeFaceItalic = Typeface.createFromAsset(context.getAssets(), "OpenSans-LightItalic.ttf");
+        typeFace = AssetsHelper.getInstance(context).light;
+        typeFaceItalic = AssetsHelper.getInstance(context).lightItalic;
 
         for (Coin coin : coins) {
             if (!coin.isSectionHeader()) {

@@ -15,11 +15,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.pagers.CoinPieChartPagerAdapter;
 import com.example.coinkarasu.cryptocompare.ClientImpl;
 import com.example.coinkarasu.cryptocompare.data.TopPair;
 import com.example.coinkarasu.cryptocompare.data.TopPairs;
+import com.example.coinkarasu.pagers.CoinPieChartPagerAdapter;
 import com.example.coinkarasu.tasks.GetTopPairsTask;
+import com.example.coinkarasu.utils.AssetsHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -75,12 +76,12 @@ public class CoinPieChartFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_pie_chart, container, false);
 
-        Typeface typeFace = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-Light.ttf");
+        Typeface typeFace = AssetsHelper.getInstance(getActivity()).light;
         ((TextView) view.findViewById(R.id.caption_left)).setTypeface(typeFace);
         ((TextView) view.findViewById(R.id.caption_right)).setTypeface(typeFace);
         ((TextView) view.findViewById(R.id.caption_desc_left)).setTypeface(typeFace);
 
-        typeFace = Typeface.createFromAsset(getActivity().getAssets(), "OpenSans-LightItalic.ttf");
+        typeFace = AssetsHelper.getInstance(getActivity()).lightItalic;
         ((TextView) view.findViewById(R.id.caption_desc_right)).setTypeface(typeFace);
 
         ((TextView) view.findViewById(R.id.caption_left)).setText(fromSymbol);

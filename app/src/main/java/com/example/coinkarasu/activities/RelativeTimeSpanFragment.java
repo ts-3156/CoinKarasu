@@ -2,13 +2,13 @@ package com.example.coinkarasu.activities;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.utils.DateHelper;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -50,11 +50,24 @@ public class RelativeTimeSpanFragment extends Fragment {
             @Override
             public void run() {
                 if (!isDetached() && getView() != null) {
-                    String text = DateHelper.getRelativeTimeSpanString(time, System.currentTimeMillis());
+                    String text = getRelativeTimeSpanString(time, System.currentTimeMillis());
                     ((TextView) getView().findViewById(R.id.time_span)).setText(text);
                 }
             }
         });
+    }
+
+    public static String getRelativeTimeSpanString(long time, long now) {
+        long diff = now - time;
+        String str;
+
+        if (diff < 1000) {
+            str = "Just now";
+        } else {
+            str = DateUtils.getRelativeTimeSpanString(time, now, DateUtils.SECOND_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL).toString();
+        }
+
+        return str;
     }
 
     private void startAutoUpdate() {
