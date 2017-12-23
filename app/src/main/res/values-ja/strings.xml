@@ -65,6 +65,20 @@
     <string name="caption_day">本日</string>
     <string name="caption_desc_day">(現時点)</string>
 
+    <string name="header_name_bitflyer">Bitflyer</string>
+    <string name="header_name_coincheck">Coincheck</string>
+    <string name="header_name_zaif">Zaif</string>
+    <string name="header_name_cccagg">Aggregated Index</string>
+    <string name="trading_header_name_bitflyer">Bitflyer (取引)</string>
+    <string name="trading_header_name_coincheck">Coincheck (取引)</string>
+    <string name="trading_header_name_zaif">Zaif (取引)</string>
+    <string name="trading_header_name_cccagg">Aggregated Index (取引)</string>
+    <string name="sales_header_name_bitflyer">Bitflyer (販売)</string>
+    <string name="sales_header_name_coincheck">Coincheck (販売)</string>
+    <string name="sales_header_name_zaif">Zaif (販売)</string>
+    <string name="sales_header_name_cccagg">Aggregated Index (販売)</string>
+
+
     <string name="dic_filter">フィルター</string>
 
 

@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.coinkarasu.activities.EditTabsFragment;
 import com.example.coinkarasu.activities.HomeTabFragment;
+import com.example.coinkarasu.activities.ListViewByExchangeFragment;
 import com.example.coinkarasu.activities.ListViewFragment;
 
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
             fragment = HomeTabFragment.newInstance(selectedKind);
         } else if (selectedKind == NavigationKind.edit_tabs) {
             fragment = EditTabsFragment.newInstance();
+        } else if (selectedKind == NavigationKind.coincheck) {
+            fragment = ListViewByExchangeFragment.newInstance(selectedKind, defaultKind == selectedKind);
         } else {
             fragment = ListViewFragment.newInstance(selectedKind, defaultKind == selectedKind);
         }

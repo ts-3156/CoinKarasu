@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.SparseArray;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.example.coinkarasu.R;
@@ -24,6 +25,7 @@ class ResourceUtils {
 
     ImageLoader imageLoader;
     HashMap<String, Integer> symbolIconResIdMap;
+    SparseArray<String> headerNameResIdStringMap;
     private int trendUp;
     private int trendFlat;
     private int trendDown;
@@ -41,6 +43,7 @@ class ResourceUtils {
 
     ResourceUtils(Context context, List<Coin> coins) {
         symbolIconResIdMap = buildIconResIdMap(context, coins);
+        headerNameResIdStringMap = buildHeaderNameResIdMap(context, coins);
         initializeColors(context);
         imageLoader = VolleyHelper.getInstance(context).getImageLoader();
 
@@ -71,6 +74,21 @@ class ResourceUtils {
             String name = "ic_coin_" + coin.getSymbol().toLowerCase();
             int resId = resources.getIdentifier(name, "raw", packageName);
             map.put(coin.getSymbol(), resId);
+        }
+
+        return map;
+    }
+
+    private SparseArray<String> buildHeaderNameResIdMap(Context context, List<Coin> coins) {
+        SparseArray<String> map = new SparseArray<>();
+        Resources resources = context.getResources();
+
+        for (Coin coin : coins) {
+            if (!coin.isSectionHeader()) {
+                continue;
+            }
+            int resId = coin.getHeaderNameResId();
+            map.put(resId, resources.getString(resId));
         }
 
         return map;

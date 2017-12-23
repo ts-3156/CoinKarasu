@@ -1,19 +1,17 @@
 package com.example.coinkarasu.coins;
 
+import com.example.coinkarasu.activities.ListViewFragment.Exchange;
+import com.example.coinkarasu.coins.CoinImpl.Kind;
+
 import org.json.JSONObject;
 
-public class SectionHeaderCoinImpl implements Coin {
-    private String name;
-    private String exchange;
+public class SectionHeaderCoinImpl implements SectionHeaderCoin, Coin {
+    private Exchange exchange;
+    private Kind kind;
 
-    public SectionHeaderCoinImpl(String name) {
-        this.name = name;
-        this.exchange = null;
-    }
-
-    public SectionHeaderCoinImpl(String name, String exchange) {
-        this.name = name;
+    public SectionHeaderCoinImpl(Exchange exchange, Kind kind) {
         this.exchange = exchange;
+        this.kind = kind;
     }
 
     @Override
@@ -43,7 +41,7 @@ public class SectionHeaderCoinImpl implements Coin {
 
     @Override
     public String getName() {
-        return name;
+        return null;
     }
 
     @Override
@@ -254,7 +252,7 @@ public class SectionHeaderCoinImpl implements Coin {
 
     @Override
     public String getExchange() {
-        return exchange;
+        return exchange.name();
     }
 
     @Override
@@ -263,7 +261,7 @@ public class SectionHeaderCoinImpl implements Coin {
 
     @Override
     public String toString() {
-        return name;
+        return exchange.name();
     }
 
     @Override
@@ -290,4 +288,24 @@ public class SectionHeaderCoinImpl implements Coin {
     public boolean isSectionHeader() {
         return true;
     }
+
+    @Override
+    public int getHeaderNameResId() {
+        return exchange.getHeaderNameResId(kind);
+    }
+
+    @Override
+    public boolean isSalesCoin() {
+        return kind == Kind.sales;
+    }
+
+    @Override
+    public boolean isTradingCoin() {
+        return kind == Kind.trading;
+    }
+
+    @Override
+    public void setCoinKind(Kind kind) {
+    }
+
 }

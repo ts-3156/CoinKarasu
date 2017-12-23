@@ -3,7 +3,6 @@ package com.example.coinkarasu.tasks;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.example.coinkarasu.activities.ListViewFragment.Exchange;
 import com.example.coinkarasu.api.coincheck.data.Rate;
 import com.example.coinkarasu.coins.CoinImpl;
 
@@ -12,14 +11,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GetCoincheckSalesRatesTask extends AsyncTask<Integer, Integer, Integer> {
-    private ArrayList<GetCoincheckSalesRateThread> threads;
-    private String[] fromSymbols;
+public class GetCoincheckTradingRateTask extends AsyncTask<Integer, Integer, Integer> {
+    private ArrayList<GetCoincheckTradingRateThread> threads;
     private Listener listener;
     private Context context;
 
-    public GetCoincheckSalesRatesTask(Context context) {
-        this.fromSymbols = context.getResources().getStringArray(Exchange.coincheck.salesSymbolsResId);
+    public GetCoincheckTradingRateTask(Context context) {
         this.listener = null;
         this.context = context;
         this.threads = new ArrayList<>();
@@ -29,15 +26,13 @@ public class GetCoincheckSalesRatesTask extends AsyncTask<Integer, Integer, Inte
     protected Integer doInBackground(Integer... params) {
         publishProgress(0);
 
-        for (String fromSymbol : fromSymbols) {
-            threads.add(new GetCoincheckSalesRateThread(context, fromSymbol));
-
-        }
+        threads.add(new GetCoincheckTradingRateThread(context, "sell"));
+        threads.add(new GetCoincheckTradingRateThread(context, "buy"));
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
         CountDownLatch latch = new CountDownLatch(threads.size());
 
-        for (GetCoincheckSalesRateThread thread : threads) {
+        for (GetCoincheckTradingRateThread thread : threads) {
             thread.setLatch(latch);
             executor.submit(thread);
         }
@@ -62,17 +57,20 @@ public class GetCoincheckSalesRatesTask extends AsyncTask<Integer, Integer, Inte
     @Override
     protected void onPostExecute(Integer integer) {
         if (listener != null) {
-            ArrayList<Rate> rates = new ArrayList<>();
+            double sum = 0.0;
 
-            for (GetCoincheckSalesRateThread thread : threads) {
-                rates.add(thread.getRate());
+            for (GetCoincheckTradingRateThread thread : threads) {
+                sum += thread.getRate().value;
             }
 
-            listener.finished(rates);
+            Rate rate = threads.get(0).getRate();
+            new Rate(rate.fromSymbol, rate.toSymbol, sum / threads.size());
+
+            listener.finished(rate);
         }
     }
 
-    public GetCoincheckSalesRatesTask setListener(Listener listener) {
+    public GetCoincheckTradingRateTask setListener(Listener listener) {
         this.listener = listener;
         return this;
     }
@@ -80,6 +78,6 @@ public class GetCoincheckSalesRatesTask extends AsyncTask<Integer, Integer, Inte
     public interface Listener {
         void started(CoinImpl.Kind kind);
 
-        void finished(ArrayList<Rate> rates);
+        void finished(Rate rate);
     }
 }

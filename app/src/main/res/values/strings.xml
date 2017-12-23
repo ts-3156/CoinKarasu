@@ -71,6 +71,20 @@
     <string name="caption_desc_24_hours">\u0020last 24 hours</string>
     <string name="caption_desc_3_days">\u0020last 3 days</string>
 
+    <string name="header_name_bitflyer">Bitflyer</string>
+    <string name="header_name_coincheck">Coincheck</string>
+    <string name="header_name_zaif">Zaif</string>
+    <string name="header_name_cccagg">Aggregated Index</string>
+    <string name="trading_header_name_bitflyer">Bitflyer (Trading)</string>
+    <string name="trading_header_name_coincheck">Coincheck (Trading)</string>
+    <string name="trading_header_name_zaif">Zaif (Trading)</string>
+    <string name="trading_header_name_cccagg">Aggregated Index (Trading)</string>
+    <string name="sales_header_name_bitflyer">Bitflyer (Sales)</string>
+    <string name="sales_header_name_coincheck">Coincheck (Sales)</string>
+    <string name="sales_header_name_zaif">Zaif (Sales)</string>
+    <string name="sales_header_name_cccagg">Aggregated Index (Sales)</string>
+
+
     <string name="dic_filter">Filter</string>
 
     <string name="line_chart_info">The <![CDATA[<b>%1$s - %2$s</b>]]> prices for this chart are aggregated from all exchanges and using a VWAP approach.</string>

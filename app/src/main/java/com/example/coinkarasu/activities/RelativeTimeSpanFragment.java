@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.coins.CoinImpl;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -132,7 +134,22 @@ public class RelativeTimeSpanFragment extends Fragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    public static String getTag(String value) {
-        return value + "-time_span";
+    public static String getTag(String exchange) {
+        return getTag(exchange, -1);
+    }
+
+    public static String getTag(ListViewFragment.Exchange exchange, CoinImpl.Kind kind) {
+        return getTag(exchange.name(), exchange.getHeaderNameResId(kind));
+    }
+
+    public static String getTag(Coin coin) {
+        if (!coin.isSectionHeader()) {
+            throw new RuntimeException("Invalid coin " + coin.toString());
+        }
+        return getTag(coin.getExchange(), coin.getHeaderNameResId());
+    }
+
+    private static String getTag(String exchange, int headerNameResId) {
+        return exchange + "-" + headerNameResId + "-time_span";
     }
 }

@@ -7,6 +7,10 @@ import org.json.JSONObject;
 
 public class CoinImpl implements Coin {
 
+    public enum Kind {
+        trading, sales, none
+    }
+
     private static final int ICON_SIZE = 96;
     private static final int ICON_LARGE_SIZE = 96;
 
@@ -36,6 +40,8 @@ public class CoinImpl implements Coin {
     private double prevPrice;
     private double prevPriceDiff;
     private double prevTrend;
+
+    private Kind kind;
 
     private CoinImpl(JSONObject attrs) {
         try {
@@ -91,6 +97,8 @@ public class CoinImpl implements Coin {
             if (attrs.has("prevPrice")) prevPrice = attrs.getDouble("prevPrice");
             if (attrs.has("prevPriceDiff")) prevPriceDiff = attrs.getDouble("prevPriceDiff");
             if (attrs.has("prevTrend")) prevTrend = attrs.getDouble("prevTrend");
+
+            kind = Kind.trading;
         } catch (JSONException e) {
             Log.e("CoinImpl", e.getMessage() + ", " + attrs.toString());
         }
@@ -428,5 +436,25 @@ public class CoinImpl implements Coin {
     @Override
     public boolean isSectionHeader() {
         return false;
+    }
+
+    @Override
+    public int getHeaderNameResId() {
+        return 0;
+    }
+
+    @Override
+    public boolean isSalesCoin() {
+        return kind == Kind.sales;
+    }
+
+    @Override
+    public boolean isTradingCoin() {
+        return kind == Kind.trading;
+    }
+
+    @Override
+    public void setCoinKind(Kind kind) {
+        this.kind = kind;
     }
 }

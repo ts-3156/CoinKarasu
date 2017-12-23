@@ -125,6 +125,18 @@ public class ListViewAdapter extends BaseAdapter {
         return coins.get(position);
     }
 
+    public ArrayList<Coin> getItems() {
+        ArrayList<Coin> filtered = new ArrayList<>();
+        for (Coin coin : coins) {
+            if (coin.isSectionHeader()) {
+                continue;
+            }
+            filtered.add(coin);
+        }
+
+        return filtered;
+    }
+
     public ArrayList<Coin> getItems(String exchange) {
         ArrayList<Coin> filtered = new ArrayList<>();
         for (Coin coin : coins) {
@@ -175,9 +187,9 @@ public class ListViewAdapter extends BaseAdapter {
                 holder.progressbar.setTag(coin.getExchange() + "-progressbar");
 
                 View timeSpan = convertView.findViewById(R.id.time_span_container);
-                timeSpan.setId(coin.getExchange().hashCode());
+                timeSpan.setId(coin.getHeaderNameResId());
                 fragmentManager.beginTransaction()
-                        .replace(timeSpan.getId(), RelativeTimeSpanFragment.newInstance(), RelativeTimeSpanFragment.getTag(coin.getExchange()))
+                        .replace(timeSpan.getId(), RelativeTimeSpanFragment.newInstance(), RelativeTimeSpanFragment.getTag(coin))
                         .commit();
             }
             convertView.setTag(holder);
@@ -253,7 +265,7 @@ public class ListViewAdapter extends BaseAdapter {
 
             holder.trendIcon.setImageResource(resources.trendIconFormat.format(coin.getTrend()));
         } else if (rowType == TYPE_HEADER) {
-            holder.header.setText(coin.getName());
+            holder.header.setText(resources.headerNameResIdStringMap.get(coin.getHeaderNameResId()));
             if (position == 0) {
                 holder.divider.setVisibility(View.GONE);
             } else {

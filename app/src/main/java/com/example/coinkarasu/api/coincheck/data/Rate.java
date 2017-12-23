@@ -7,9 +7,13 @@ public class Rate {
     public double value;
 
     public Rate(String fromSymbol, String toSymbol) {
+        this(fromSymbol, toSymbol, 0.0);
+    }
+
+    public Rate(String fromSymbol, String toSymbol, double value) {
         this.fromSymbol = fromSymbol;
         this.toSymbol = toSymbol;
-        this.value = 0.0;
+        this.value = value;
     }
 
     public String toString() {

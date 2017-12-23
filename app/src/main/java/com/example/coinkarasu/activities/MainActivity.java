@@ -91,16 +91,6 @@ public class MainActivity extends AppCompatActivity implements
                     .commit();
         }
 
-        new GetCoincheckSalesRatesTask(this)
-                .setListener(new GetCoincheckSalesRatesTask.Listener() {
-                    @Override
-                    public void finished(ArrayList<Rate> rates) {
-                        for (Rate rate : rates) {
-                            Log.e("RATE", rate.toString());
-                        }
-                    }
-                })
-                .execute();
 //        UpdateTrendingIntentService.start(this);
     }
 
