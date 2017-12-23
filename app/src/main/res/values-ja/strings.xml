@@ -18,9 +18,9 @@
     <string name="nav_settings">設定</string>
     <string name="nav_japan">日本で取引できるコイン</string>
     <string name="nav_japan_all">日本で取引できるコイン</string>
-    <string name="nav_bitflyer">BitFlyer</string>
+    <string name="nav_bitflyer">BitFlyerで扱っている</string>
     <string name="nav_coincheck">Coincheckで扱っている</string>
-    <string name="nav_zaif">Zaif</string>
+    <string name="nav_zaif">Zaifで扱っている</string>
     <string name="nav_fiat">法定通貨</string>
     <string name="nav_jpy_toplist">円で人気のコイン</string>
     <string name="nav_usd_toplist">ドルで人気のコイン</string>
@@ -36,7 +36,9 @@
     <string name="tab_home">ホーム</string>
     <string name="tab_main">メイン</string>
     <string name="tab_japan">日本</string>
+    <string name="tab_bitflyer">BitFlyer</string>
     <string name="tab_coincheck">Coincheck</string>
+    <string name="tab_zaif">Zaif</string>
     <string name="tab_jpy_toplist">円で人気</string>
     <string name="tab_usd_toplist">ドルで人気</string>
     <string name="tab_cny_toplist">人民元で人気</string>
@@ -50,7 +52,9 @@
     <string name="summary_home">直近のサマリー</string>
     <string name="summary_main">メイン</string>
     <string name="summary_japan">日本で取引できるコイン</string>
+    <string name="summary_bitflyer">BitFlyerで取引/販売できるコイン <![CDATA[<font color=#FF0000>The api is not available.</font>]]></string>
     <string name="summary_coincheck">コインチェックで取引/販売できるコイン</string>
+    <string name="summary_zaif">Zaifで取引/販売できるコイン <![CDATA[<font color=#FF0000>The api is not available.</font>]]></string>
     <string name="summary_jpy_toplist">円建てで取扱高の多いコイン</string>
     <string name="summary_usd_toplist">米ドル建てで取扱高の多いコイン</string>
     <string name="summary_cny_toplist">人民元建てで取扱高の多いコイン</string>

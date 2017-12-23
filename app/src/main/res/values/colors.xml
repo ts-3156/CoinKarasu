@@ -26,8 +26,12 @@
     <color name="colorNavHomeDark">#388E3C</color>
     <color name="colorNavJapan">#4CAF50</color>
     <color name="colorNavJapanDark">#388E3C</color>
+    <color name="colorBitflyer">@color/colorPrimary</color>
+    <color name="colorBitflyerDark">@color/colorPrimaryDark</color>
     <color name="colorCoincheck">#00BCD4</color>
     <color name="colorCoincheckDark">#0097A7</color>
+    <color name="colorZaif">@color/colorPrimary</color>
+    <color name="colorZaifDark">@color/colorPrimaryDark</color>
     <color name="colorJpyToplist">#F44336</color>
     <color name="colorJpyToplistDark">#D32F2F</color>
     <color name="colorUsdToplist">#03A9F4</color>

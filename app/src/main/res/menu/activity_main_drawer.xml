@@ -20,9 +20,17 @@
             android:icon="@drawable/ic_nav_japan"
             android:title="@string/nav_japan" />
         <item
+            android:id="@+id/nav_bitflyer"
+            android:icon="@drawable/ic_nav_bitflyer"
+            android:title="@string/nav_bitflyer" />
+        <item
             android:id="@+id/nav_coincheck"
-            android:icon="@drawable/ic_coincheck"
+            android:icon="@drawable/ic_nav_coincheck"
             android:title="@string/nav_coincheck" />
+        <item
+            android:id="@+id/nav_zaif"
+            android:icon="@drawable/ic_nav_zaif"
+            android:title="@string/nav_zaif" />
         <item
             android:id="@+id/nav_jpy_toplist"
             android:icon="@drawable/ic_nav_jpy"

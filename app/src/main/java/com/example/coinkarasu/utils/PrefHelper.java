@@ -71,7 +71,7 @@ public class PrefHelper {
     }
 
     public static void setTabVisibility(Context context, NavigationKind kind, boolean flag) {
-        if (!kind.isHideable()) {
+        if (!kind.isHideable() || !kind.isShowable()) {
             return;
         }
         SharedPreferences pref = getPref(context);
