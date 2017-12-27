@@ -75,7 +75,7 @@ public enum NavigationKind {
     }
 
     public boolean defaultVisibility() {
-        return !(this == eur_toplist || this == btc_toplist || this == bitflyer || this == zaif);
+        return !(this == eur_toplist || this == btc_toplist || this == usd_toplist || this == bitflyer || this == zaif);
     }
 
     public static NavigationKind valueByNavResId(int navResId) {
