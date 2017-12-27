@@ -17,7 +17,7 @@ import com.example.coinkarasu.format.TrendValueFormat;
 
 import java.util.ArrayList;
 
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
+public class HomeTabRecyclerViewAdapter extends RecyclerView.Adapter<HomeTabRecyclerViewAdapter.ViewHolder> {
 
     private LayoutInflater inflater;
     private OnItemClickListener listener;
@@ -25,7 +25,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private ResourceUtils resources;
 
-    public RecyclerViewAdapter(Context context, ArrayList<Coin> coins) {
+    public HomeTabRecyclerViewAdapter(Context context, ArrayList<Coin> coins) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.coins = coins;
 

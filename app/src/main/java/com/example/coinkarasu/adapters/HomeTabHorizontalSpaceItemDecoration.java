@@ -6,11 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
 import android.view.View;
 
-public class HorizontalSpaceItemDecoration extends RecyclerView.ItemDecoration {
+public class HomeTabHorizontalSpaceItemDecoration extends RecyclerView.ItemDecoration {
 
     private final int spaceWidth;
 
-    public HorizontalSpaceItemDecoration(Context context, int spaceWidth) {
+    public HomeTabHorizontalSpaceItemDecoration(Context context, int spaceWidth) {
         this.spaceWidth = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, spaceWidth, context.getResources().getDisplayMetrics());
     }

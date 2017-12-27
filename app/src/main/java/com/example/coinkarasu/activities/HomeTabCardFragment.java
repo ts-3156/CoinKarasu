@@ -1,6 +1,5 @@
 package com.example.coinkarasu.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -15,8 +14,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.adapters.HorizontalSpaceItemDecoration;
-import com.example.coinkarasu.adapters.RecyclerViewAdapter;
+import com.example.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
+import com.example.coinkarasu.adapters.HomeTabRecyclerViewAdapter;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.data.Trending;
 import com.example.coinkarasu.utils.AssetsHelper;
@@ -71,14 +70,14 @@ public class HomeTabCardFragment extends Fragment implements
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        recyclerView.addItemDecoration(new HorizontalSpaceItemDecoration(getActivity(), 16));
+        recyclerView.addItemDecoration(new HomeTabHorizontalSpaceItemDecoration(getActivity(), 16));
 
         ArrayList<Coin> coins = new ArrayList<>();
         Trending trending = Trending.restoreFromCache(getActivity(), kind);
         if (trending != null) {
             coins = trending.getCoins();
         }
-        RecyclerViewAdapter adapter = new RecyclerViewAdapter(getActivity(), coins);
+        HomeTabRecyclerViewAdapter adapter = new HomeTabRecyclerViewAdapter(getActivity(), coins);
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
 
