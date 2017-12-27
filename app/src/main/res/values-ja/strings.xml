@@ -87,6 +87,8 @@
 
 
     <string name="edit_tabs_note">タップして 表示 / 非表示 を切り替え</string>
+    <string name="edit_tabs_is_added">%1$s が追加されました</string>
+    <string name="edit_tabs_is_removed">%1$s が削除されました</string>
 
 
     <string name="pref_header_general">全般</string>

@@ -44,7 +44,7 @@ public class PrefHelper {
         return pref.getBoolean("pref_enable_download_icon", true);
     }
 
-    public static void setToSymbol(Activity activity, String toSymbol) {
+    public static void saveToSymbol(Activity activity, String toSymbol) {
         SharedPreferences pref = getPref(activity);
         if (pref == null) {
             return;
@@ -70,7 +70,7 @@ public class PrefHelper {
         return pref.getBoolean("pref_is_visible_tab_" + kind.name(), kind.defaultVisibility());
     }
 
-    public static void setTabVisibility(Context context, NavigationKind kind, boolean flag) {
+    private static void saveTabVisibility(Context context, NavigationKind kind, boolean flag) {
         if (!kind.isHideable() || !kind.isShowable()) {
             return;
         }
@@ -81,6 +81,12 @@ public class PrefHelper {
         SharedPreferences.Editor edit = pref.edit();
         edit.putBoolean("pref_is_visible_tab_" + kind.name(), flag);
         edit.apply();
+    }
+
+    public static boolean toggleTabVisibility(Context context, NavigationKind kind) {
+        boolean isVisible = PrefHelper.isVisibleTab(context, kind);
+        PrefHelper.saveTabVisibility(context, kind, !isVisible);
+        return !isVisible;
     }
 
     public static SharedPreferences getPref(Context context) {

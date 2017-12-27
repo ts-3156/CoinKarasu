@@ -2,19 +2,19 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
-    android:paddingBottom="16dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="16dp">
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/coin_list_vertical_spacing"
+    android:paddingLeft="@dimen/coin_list_horizontal_spacing"
+    android:paddingRight="@dimen/coin_list_horizontal_spacing"
+    android:paddingTop="@dimen/coin_list_vertical_spacing">
 
     <com.android.volley.toolbox.NetworkImageView
         android:id="@+id/icon"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="@dimen/coin_list_icon_size"
+        android:layout_height="@dimen/coin_list_icon_size"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="16dp"
+        android:layout_marginRight="@dimen/coin_list_horizontal_spacing"
         tools:src="@raw/ic_coin_btc" />
 
     <TextView

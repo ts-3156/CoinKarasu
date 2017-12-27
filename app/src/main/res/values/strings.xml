@@ -99,6 +99,8 @@
 
 
     <string name="edit_tabs_note">Show or Hide the tabs</string>
+    <string name="edit_tabs_is_added">%1$s is added.</string>
+    <string name="edit_tabs_is_removed">%1$s is removed.</string>
 
 
     <string name="pref_header_general">General</string>

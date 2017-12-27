@@ -98,8 +98,6 @@ public class ListViewFragment extends Fragment implements
     private boolean isVisibleToUser;
     private boolean isSelected;
     private boolean isStartTaskRequested;
-    private boolean isListViewInitialized;
-    private ListViewAdapter adapter;
 
     public ListViewFragment() {
     }
@@ -126,11 +124,6 @@ public class ListViewFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
 
-        new CollectCoinsTask(getActivity())
-                .setFromSymbols(Utils.getFromSymbols(getResources(), kind))
-                .setListener(this)
-                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
         if (savedInstanceState != null) {
             isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
         } else {
@@ -138,8 +131,6 @@ public class ListViewFragment extends Fragment implements
         }
 
         isStartTaskRequested = false;
-        isListViewInitialized = false;
-        adapter = null;
         PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
         return view;
@@ -149,26 +140,16 @@ public class ListViewFragment extends Fragment implements
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (isListViewInitialized) {
-            if (isStartTaskRequested) {
-                startTask();
-            }
-        } else {
-            if (adapter != null) {
-                initializeListView(adapter);
-            }
-        }
+        new CollectCoinsTask(getActivity())
+                .setFromSymbols(Utils.getFromSymbols(getResources(), kind))
+                .setListener(this)
+                .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private void initializeListView(ListViewAdapter adapter) {
-        if (isListViewInitialized) {
-            return;
-        }
         if (adapter == null || getActivity() == null || getView() == null) {
             return;
         }
-
-        isListViewInitialized = true;
 
         ListView listView = getView().findViewById(R.id.list_view);
         listView.setAdapter(adapter);
@@ -181,8 +162,6 @@ public class ListViewFragment extends Fragment implements
         if (isStartTaskRequested) {
             startTask();
         }
-
-        this.adapter = null;
     }
 
     private void updateViewIfCacheExist(ListViewAdapter adapter) {
@@ -219,15 +198,7 @@ public class ListViewFragment extends Fragment implements
         }
 
         coins = Utils.insertSectionHeader(coins, kind.exchanges);
-        adapter = new ListViewAdapter(getActivity(), coins, getChildFragmentManager());
-
-        if (isListViewInitialized) {
-            if (isStartTaskRequested) {
-                startTask();
-            }
-        } else {
-            initializeListView(adapter);
-        }
+        initializeListView(new ListViewAdapter(getActivity(), coins, getChildFragmentManager()));
     }
 
     private void startTask() {
@@ -288,6 +259,9 @@ public class ListViewFragment extends Fragment implements
     }
 
     private String getTimerTag(NavigationKind kind) {
+        if (kind == null) {
+            return null;
+        }
         String suffix = Utils.getToSymbol(getActivity(), kind);
         if (suffix == null) {
             return null;
@@ -391,7 +365,6 @@ public class ListViewFragment extends Fragment implements
         PrefHelper.getPref(getActivity()).unregisterOnSharedPreferenceChangeListener(this);
         autoUpdateTimer = null;
         kind = null;
-        adapter = null;
     }
 
     @Override
@@ -511,7 +484,7 @@ public class ListViewFragment extends Fragment implements
 
             if (exchanges.length == 1) {
                 Exchange exchange = exchanges[0];
-                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinImpl.Kind.trading));
+                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinImpl.Kind.none));
                 for (Coin coin : coins) {
                     coin.setExchange(exchange.name());
                 }
@@ -520,7 +493,7 @@ public class ListViewFragment extends Fragment implements
             }
 
             for (Exchange exchange : exchanges) {
-                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinImpl.Kind.trading));
+                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinImpl.Kind.none));
                 List<Coin> sub;
 
                 switch (exchange) {

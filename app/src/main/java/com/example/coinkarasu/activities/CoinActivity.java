@@ -129,9 +129,9 @@ public class CoinActivity extends AppCompatActivity {
 
         if (id == R.id.action_currency) {
             if (item.getTitle().toString().equals(getString(MainActivity.Currency.USD.titleStrResId))) {
-                PrefHelper.setToSymbol(this, MainActivity.Currency.JPY.name());
+                PrefHelper.saveToSymbol(this, MainActivity.Currency.JPY.name());
             } else {
-                PrefHelper.setToSymbol(this, MainActivity.Currency.USD.name());
+                PrefHelper.saveToSymbol(this, MainActivity.Currency.USD.name());
             }
             updateView();
 

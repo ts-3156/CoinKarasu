@@ -174,14 +174,14 @@ public class ListViewAdapter extends BaseAdapter {
                 holder.trend = convertView.findViewById(R.id.trend);
                 holder.trendIcon = convertView.findViewById(R.id.trend_icon);
 
-                holder.name.setTypeface(resources.typeFace);
-                holder.symbol.setTypeface(resources.typeFace);
+//                holder.name.setTypeface(resources.typeFace);
+//                holder.symbol.setTypeface(resources.typeFace);
             } else if (rowType == TYPE_HEADER) {
                 convertView = inflater.inflate(R.layout.list_header_item, parent, false);
                 holder.header = convertView.findViewById(R.id.text_separator);
                 holder.divider = convertView.findViewById(R.id.divider);
 
-                holder.header.setTypeface(resources.typeFaceItalic);
+//                holder.header.setTypeface(resources.typeFaceItalic);
 
                 holder.progressbar = convertView.findViewById(R.id.progressbar);
                 holder.progressbar.setTag(coin.getExchange() + "-progressbar");

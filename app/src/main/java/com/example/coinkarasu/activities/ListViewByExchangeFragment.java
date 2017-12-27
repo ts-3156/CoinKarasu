@@ -26,7 +26,6 @@ import com.example.coinkarasu.R;
 import com.example.coinkarasu.adapters.ListViewAdapter;
 import com.example.coinkarasu.animator.ValueAnimatorBase;
 import com.example.coinkarasu.api.coincheck.data.Rate;
-import com.example.coinkarasu.api.cryptocompare.data.Prices;
 import com.example.coinkarasu.api.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
@@ -230,6 +229,9 @@ public class ListViewByExchangeFragment extends Fragment implements
     }
 
     private String getTimerTag(NavigationKind kind) {
+        if (kind == null) {
+            return null;
+        }
         String suffix = Utils.getToSymbol(getActivity(), kind);
         if (suffix == null) {
             return null;
@@ -239,6 +241,9 @@ public class ListViewByExchangeFragment extends Fragment implements
 
     @Override
     public void started(CoinImpl.Kind coinKind) {
+        if (kind == null) {
+            return;
+        }
         Exchange exchange = Exchange.valueOf(kind.name());
         setProgressbarVisibility(View.VISIBLE, exchange, coinKind);
     }

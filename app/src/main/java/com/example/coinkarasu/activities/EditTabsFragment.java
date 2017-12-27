@@ -1,6 +1,7 @@
 package com.example.coinkarasu.activities;
 
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,14 +44,24 @@ public class EditTabsFragment extends Fragment implements
 
     @Override
     public void onItemClick(EditTabsRecyclerViewAdapter.Item item, View view, int position) {
-        boolean isVisible = PrefHelper.isVisibleTab(getActivity(), item.kind);
-        PrefHelper.setTabVisibility(getActivity(), item.kind, !isVisible);
+        boolean isAdded = PrefHelper.toggleTabVisibility(getActivity(), item.kind);
 
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         adapter.notifyItemChanged(position);
 
+        Snackbar.make(getView(), isAddedOrRemoved(item.kind, isAdded), Snackbar.LENGTH_SHORT)
+                .show();
+
         ((MainFragment) getParentFragment()).updateTabVisibility();
+    }
+
+    private String isAddedOrRemoved(NavigationKind kind, boolean isAdded) {
+        if (isAdded) {
+            return getString(R.string.edit_tabs_is_added, getString(kind.tabStrResId));
+        } else {
+            return getString(R.string.edit_tabs_is_removed, getString(kind.tabStrResId));
+        }
     }
 
     @Override

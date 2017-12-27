@@ -28,11 +28,7 @@ import android.view.WindowManager;
 import com.crashlytics.android.Crashlytics;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.settings.PreferencesActivity;
-import com.example.coinkarasu.api.coincheck.data.Rate;
-import com.example.coinkarasu.tasks.GetCoincheckSalesRatesTask;
 import com.example.coinkarasu.utils.PrefHelper;
-
-import java.util.ArrayList;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -249,9 +245,9 @@ public class MainActivity extends AppCompatActivity implements
             return true;
         } else if (id == R.id.action_currency) {
             if (item.getTitle().toString().equals(getString(Currency.USD.titleStrResId))) {
-                PrefHelper.setToSymbol(this, Currency.JPY.name());
+                PrefHelper.saveToSymbol(this, Currency.JPY.name());
             } else {
-                PrefHelper.setToSymbol(this, Currency.USD.name());
+                PrefHelper.saveToSymbol(this, Currency.USD.name());
             }
 
             return true;
