@@ -237,7 +237,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     private void updateRelativeTimeSpanText() {
         Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(coin.getSymbol()));
         if (fragment != null) {
-            ((RelativeTimeSpanFragment) fragment).setTime(System.currentTimeMillis());
+            ((RelativeTimeSpanFragment) fragment).updateText(System.currentTimeMillis());
         }
     }
 

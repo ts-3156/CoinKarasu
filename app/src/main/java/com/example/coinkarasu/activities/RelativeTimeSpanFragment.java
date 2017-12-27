@@ -59,7 +59,7 @@ public class RelativeTimeSpanFragment extends Fragment {
         });
     }
 
-    public static String getRelativeTimeSpanString(long time, long now) {
+    private static String getRelativeTimeSpanString(long time, long now) {
         long diff = now - time;
         String str;
 
@@ -94,7 +94,7 @@ public class RelativeTimeSpanFragment extends Fragment {
         }
     }
 
-    public void setTime(long time) {
+    public void updateText(long time) {
         this.time = time;
         stopAutoUpdate();
         startAutoUpdate();

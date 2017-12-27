@@ -333,7 +333,7 @@ public class ListViewByExchangeFragment extends Fragment implements
     private void updateRelativeTimeSpanText(Exchange exchange, CoinImpl.Kind coinKind) {
         Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, coinKind));
         if (fragment != null) {
-            ((RelativeTimeSpanFragment) fragment).setTime(System.currentTimeMillis());
+            ((RelativeTimeSpanFragment) fragment).updateText(System.currentTimeMillis());
         }
     }
 
