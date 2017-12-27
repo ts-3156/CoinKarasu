@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements
     private void applyKeepScreenOn() {
         boolean value = PreferenceManager
                 .getDefaultSharedPreferences(getApplicationContext())
-                .getBoolean("pref_keep_screen_on", false);
+                .getBoolean("pref_keep_screen_on", getResources().getBoolean(R.bool.keep_screen_on));
 
         if (value) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

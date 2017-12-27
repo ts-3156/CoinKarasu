@@ -21,7 +21,7 @@
             android:title="@string/pref_title_currency" />
 
         <SwitchPreference
-            android:defaultValue="false"
+            android:defaultValue="@bool/keep_screen_on"
             android:key="pref_keep_screen_on"
             android:summary="@string/pref_description_keep_screen_on"
             android:title="@string/pref_title_keep_screen_on" />
@@ -30,13 +30,13 @@
 
     <PreferenceCategory android:title="@string/pref_header_speeding_up">
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="@bool/enable_price_anim"
             android:key="pref_enable_price_anim"
             android:summary="@string/pref_description_enable_price_anim"
             android:title="@string/pref_title_enable_price_anim" />
 
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="@bool/enable_download_icon"
             android:key="pref_enable_download_icon"
             android:summary="@string/pref_description_enable_download_icon"
             android:title="@string/pref_title_enable_download_icon" />

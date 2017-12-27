@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.NavigationKind;
 
 public class PrefHelper {
@@ -33,7 +34,7 @@ public class PrefHelper {
         if (pref == null) {
             return false;
         }
-        return pref.getBoolean("pref_enable_price_anim", true);
+        return pref.getBoolean("pref_enable_price_anim", activity.getResources().getBoolean(R.bool.enable_price_anim));
     }
 
     public static boolean isDownloadIconEnabled(Activity activity) {
@@ -41,7 +42,7 @@ public class PrefHelper {
         if (pref == null) {
             return false;
         }
-        return pref.getBoolean("pref_enable_download_icon", true);
+        return pref.getBoolean("pref_enable_download_icon", activity.getResources().getBoolean(R.bool.enable_download_icon));
     }
 
     public static void saveToSymbol(Activity activity, String toSymbol) {
