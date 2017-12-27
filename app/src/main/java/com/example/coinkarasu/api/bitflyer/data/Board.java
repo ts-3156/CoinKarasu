@@ -150,6 +150,10 @@ public class Board {
         return rows;
     }
 
+    public double getMidPrice() {
+        return midPrice;
+    }
+
     private static class Data {
         double price;
         double size;

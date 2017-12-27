@@ -138,7 +138,7 @@ public class RelativeTimeSpanFragment extends Fragment {
         return getTag(exchange, -1);
     }
 
-    public static String getTag(ListViewFragment.Exchange exchange, CoinImpl.Kind kind) {
+    public static String getTag(Exchange exchange, CoinImpl.Kind kind) {
         return getTag(exchange.name(), exchange.getHeaderNameResId(kind));
     }
 

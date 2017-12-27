@@ -52,7 +52,7 @@ public class CacheHelper {
 
                 text = builder.toString();
             } else {
-                Log.e("read", "the cache does not exist.");
+                Log.e("read", name + " does not exist.");
             }
         } catch (IOException e) {
             Log.e("read1", e.getMessage());

@@ -3,7 +3,7 @@ package com.example.coinkarasu.tasks;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.example.coinkarasu.activities.ListViewFragment.Exchange;
+import com.example.coinkarasu.activities.Exchange;
 import com.example.coinkarasu.api.coincheck.data.Rate;
 import com.example.coinkarasu.coins.CoinImpl;
 

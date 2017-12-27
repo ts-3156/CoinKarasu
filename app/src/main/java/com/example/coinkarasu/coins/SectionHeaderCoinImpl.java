@@ -1,6 +1,6 @@
 package com.example.coinkarasu.coins;
 
-import com.example.coinkarasu.activities.ListViewFragment.Exchange;
+import com.example.coinkarasu.activities.Exchange;
 import com.example.coinkarasu.coins.CoinImpl.Kind;
 
 import org.json.JSONObject;

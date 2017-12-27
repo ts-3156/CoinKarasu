@@ -7,8 +7,6 @@ import com.example.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
 
-import static com.example.coinkarasu.activities.ListViewFragment.Exchange;
-
 public enum NavigationKind {
     home(R.string.nav_home, R.string.tab_home, R.string.summary_home, R.id.nav_home, R.color.colorNavHome, R.color.colorNavHomeDark, R.color.state_nav_home, -1, new Exchange[]{}, R.drawable.ic_nav_home),
     japan(R.string.nav_japan, R.string.tab_japan, R.string.summary_japan, R.id.nav_japan, R.color.colorNavJapan, R.color.colorNavJapanDark, R.color.state_nav_japan, R.array.japan_all_symbols, new Exchange[]{Exchange.bitflyer, Exchange.coincheck, Exchange.zaif}, R.drawable.ic_nav_japan),

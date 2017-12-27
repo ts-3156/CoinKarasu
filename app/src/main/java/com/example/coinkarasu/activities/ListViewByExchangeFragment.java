@@ -41,8 +41,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimerTask;
 
-import static com.example.coinkarasu.activities.ListViewFragment.Exchange;
-
 
 public class ListViewByExchangeFragment extends Fragment implements
         ListView.OnItemClickListener,

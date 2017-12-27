@@ -19,5 +19,4 @@ public class Client {
         JSONObject response = new BlockingRequest(activity, url).perform();
         return new Board(response);
     }
-
 }
