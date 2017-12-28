@@ -32,7 +32,9 @@ import com.example.coinkarasu.api.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.pagers.MainPagerAdapter;
 import com.example.coinkarasu.tasks.CollectCoinsTask;
-import com.example.coinkarasu.tasks.GetPricesTask;
+import com.example.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
+import com.example.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
+import com.example.coinkarasu.tasks.by_exchange.Price;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
 import com.example.coinkarasu.utils.PrefHelper;
 
@@ -43,7 +45,8 @@ import java.util.TimerTask;
 
 
 public class CoinListFragment extends Fragment implements
-        GetPricesTask.Listener,
+        GetCccaggPricesTask.Listener,
+        GetPricesByExchangeTaskBase.Listener,
         SharedPreferences.OnSharedPreferenceChangeListener,
         CollectCoinsTask.Listener,
         MainPagerAdapter.Listener {
@@ -163,7 +166,7 @@ public class CoinListFragment extends Fragment implements
             }
 
             Prices prices = PricesImpl.restoreFromCache(getActivity(), tag);
-            ArrayList<Coin> filtered = adapter.getItems(prices.getExchange());
+            ArrayList<Coin> filtered = adapter.getItems(Exchange.valueOf(prices.getExchange()));
             prices.copyAttrsToCoins(filtered);
 
             adapter.notifyDataSetChanged();
@@ -203,12 +206,18 @@ public class CoinListFragment extends Fragment implements
         adapter.setToSymbol(Utils.getToSymbol(getActivity(), kind));
 
         for (Exchange exchange : kind.exchanges) {
-            new GetPricesTask(ClientFactory.getInstance(getActivity()))
-                    .setFromSymbols(Utils.getFromSymbols(getResources(), kind, exchange))
-                    .setToSymbol(Utils.getToSymbol(getActivity(), kind))
-                    .setExchange(exchange.name())
-                    .setListener(this)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if (kind == NavigationKind.japan && (exchange == Exchange.bitflyer || exchange == Exchange.coincheck)) {
+                GetPricesByExchangeTaskBase.getInstance(getActivity(), exchange, CoinKind.trading)
+                        .setListener(this)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            } else {
+                new GetCccaggPricesTask(ClientFactory.getInstance(getActivity()))
+                        .setFromSymbols(Utils.getFromSymbols(getResources(), kind, exchange))
+                        .setToSymbol(Utils.getToSymbol(getActivity(), kind))
+                        .setExchange(exchange.name())
+                        .setListener(this)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
         }
     }
 
@@ -254,6 +263,46 @@ public class CoinListFragment extends Fragment implements
     }
 
     @Override
+    public void started(Exchange exchange, CoinKind coinKind) {
+        setProgressbarVisibility(View.VISIBLE, exchange);
+    }
+
+    @Override
+    public void finished(Exchange exchange, CoinKind coinKind, ArrayList<Price> prices) {
+        if (isDetached() || getActivity() == null) {
+            stopAutoUpdate();
+            return;
+        }
+
+        String tag = getTimerTag(kind);
+        if (autoUpdateTimer == null || tag == null || !autoUpdateTimer.getTag().equals(tag)) {
+            return;
+        }
+
+//        prices.saveToCache(getActivity(), kind.name() + "-" + prices.getExchange());
+
+        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
+        CoinListRecyclerViewAdapter adapter = (CoinListRecyclerViewAdapter) recyclerView.getAdapter();
+
+        ArrayList<Coin> coins = adapter.getItems(exchange);
+
+        for (Price price : prices) {
+            for (Coin coin : coins) {
+                if (coin.getSymbol().equals(price.fromSymbol)) {
+                    coin.setPrice(price.value);
+                    break;
+                }
+            }
+
+        }
+
+        adapter.notifyDataSetChanged();
+        hideProgressbarDelayed(exchange);
+
+        Log.d("UPDATED", exchange + ", " + new Date().toString());
+    }
+
+    @Override
     public void started(String exchange, String[] fromSymbols, String toSymbol) {
         setProgressbarVisibility(View.VISIBLE, Exchange.valueOf(exchange));
     }
@@ -276,7 +325,7 @@ public class CoinListFragment extends Fragment implements
         CoinListRecyclerViewAdapter adapter = (CoinListRecyclerViewAdapter) recyclerView.getAdapter();
 
         String exchange = prices.getExchange();
-        ArrayList<Coin> filtered = adapter.getItems(exchange);
+        ArrayList<Coin> filtered = adapter.getItems(Exchange.valueOf(exchange));
         prices.copyAttrsToCoins(filtered);
 
         adapter.notifyDataSetChanged();

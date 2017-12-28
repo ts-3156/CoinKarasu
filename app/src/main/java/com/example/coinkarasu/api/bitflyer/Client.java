@@ -1,6 +1,6 @@
 package com.example.coinkarasu.api.bitflyer;
 
-import android.app.Activity;
+import android.content.Context;
 
 import com.example.coinkarasu.api.bitflyer.data.Board;
 import com.example.coinkarasu.api.cryptocompare.request.BlockingRequest;
@@ -8,15 +8,15 @@ import com.example.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import org.json.JSONObject;
 
 public class Client {
-    private Activity activity;
+    private Context context;
 
-    public Client(Activity activity) {
-        this.activity = activity;
+    public Client(Context context) {
+        this.context = context;
     }
 
     public Board getBoard() {
         String url = "https://api.bitflyer.jp/v1/getboard";
-        JSONObject response = new BlockingRequest(activity, url).perform();
+        JSONObject response = new BlockingRequest(context, url).perform();
         return new Board(response);
     }
 }

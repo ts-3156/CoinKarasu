@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.RelativeTimeSpanFragment;
+import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.animator.PriceAnimator;
 import com.example.coinkarasu.animator.PriceBgColorAnimator;
 import com.example.coinkarasu.animator.PriceDiffAnimator;
@@ -131,13 +132,13 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         return filtered;
     }
 
-    public ArrayList<Coin> getItems(String exchange) {
+    public ArrayList<Coin> getItems(Exchange exchange) {
         ArrayList<Coin> filtered = new ArrayList<>();
         for (Coin coin : coins) {
             if (coin.isSectionHeader()) {
                 continue;
             }
-            if (coin.getExchange().equals(exchange)) {
+            if (coin.getExchange().equals(exchange.name())) {
                 filtered.add(coin);
             }
         }

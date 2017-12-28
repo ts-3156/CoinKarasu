@@ -1,9 +1,9 @@
-package com.example.coinkarasu.tasks;
+package com.example.coinkarasu.tasks.by_exchange;
 
 import android.content.Context;
-import android.os.AsyncTask;
 
 import com.example.coinkarasu.activities.etc.CoinKind;
+import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.api.coincheck.data.Rate;
 
 import java.util.ArrayList;
@@ -11,13 +11,12 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GetCoincheckTradingRateTask extends AsyncTask<Integer, Integer, Integer> {
+public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
     private ArrayList<GetCoincheckTradingRateThread> threads;
-    private Listener listener;
     private Context context;
 
-    public GetCoincheckTradingRateTask(Context context) {
-        this.listener = null;
+    protected GetCoincheckTradingRatesTask(Context context) {
+        super(Exchange.coincheck, CoinKind.trading);
         this.context = context;
         this.threads = new ArrayList<>();
     }
@@ -48,13 +47,6 @@ public class GetCoincheckTradingRateTask extends AsyncTask<Integer, Integer, Int
     }
 
     @Override
-    protected void onProgressUpdate(Integer... progress) {
-        if (listener != null) {
-            listener.started(CoinKind.trading);
-        }
-    }
-
-    @Override
     protected void onPostExecute(Integer integer) {
         if (listener != null) {
             double sum = 0.0;
@@ -64,20 +56,10 @@ public class GetCoincheckTradingRateTask extends AsyncTask<Integer, Integer, Int
             }
 
             Rate rate = threads.get(0).getRate();
-            new Rate(rate.fromSymbol, rate.toSymbol, sum / threads.size());
+            ArrayList<Price> prices = new ArrayList<>();
+            prices.add(new Price(Exchange.coincheck, CoinKind.trading, rate.fromSymbol, rate.toSymbol, sum / threads.size()));
 
-            listener.finished(rate);
+            listener.finished(Exchange.coincheck, CoinKind.trading, prices);
         }
-    }
-
-    public GetCoincheckTradingRateTask setListener(Listener listener) {
-        this.listener = listener;
-        return this;
-    }
-
-    public interface Listener {
-        void started(CoinKind coinKind);
-
-        void finished(Rate rate);
     }
 }

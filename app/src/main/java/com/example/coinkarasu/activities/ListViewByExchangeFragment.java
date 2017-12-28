@@ -28,13 +28,12 @@ import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.adapters.ListViewAdapter;
 import com.example.coinkarasu.animator.ValueAnimatorBase;
-import com.example.coinkarasu.api.coincheck.data.Rate;
 import com.example.coinkarasu.api.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.pagers.MainPagerAdapter;
 import com.example.coinkarasu.tasks.CollectCoinsTask;
-import com.example.coinkarasu.tasks.GetCoincheckSalesRatesTask;
-import com.example.coinkarasu.tasks.GetCoincheckTradingRateTask;
+import com.example.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
+import com.example.coinkarasu.tasks.by_exchange.Price;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
 import com.example.coinkarasu.utils.PrefHelper;
 
@@ -50,8 +49,7 @@ public class ListViewByExchangeFragment extends Fragment implements
         SharedPreferences.OnSharedPreferenceChangeListener,
         CollectCoinsTask.Listener,
         MainPagerAdapter.Listener,
-        GetCoincheckSalesRatesTask.Listener,
-        GetCoincheckTradingRateTask.Listener {
+        GetPricesByExchangeTaskBase.Listener {
 
     private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
 
@@ -179,23 +177,13 @@ public class ListViewByExchangeFragment extends Fragment implements
         adapter.setDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
         adapter.setToSymbol(Utils.getToSymbol(getActivity(), kind));
 
-        new GetCoincheckSalesRatesTask(getActivity())
+        GetPricesByExchangeTaskBase.getInstance(getActivity(), Exchange.coincheck, CoinKind.sales)
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-        new GetCoincheckTradingRateTask(getActivity())
+        GetPricesByExchangeTaskBase.getInstance(getActivity(), Exchange.coincheck, CoinKind.trading)
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-//        for (String exchangeStr : kind.exchanges) {
-//            Exchange exchange = Exchange.valueOf(exchangeStr);
-//            new GetPricesTask(ClientFactory.getInstance(getActivity()))
-//                    .setFromSymbols(Utils.getFromSymbols(getResources(), kind, exchange))
-//                    .setToSymbol(Utils.getToSymbol(getActivity(), kind))
-//                    .setExchange(exchangeStr)
-//                    .setListener(this)
-//                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-//        }
     }
 
     private void startAutoUpdate(boolean isRepeated) {
@@ -240,36 +228,21 @@ public class ListViewByExchangeFragment extends Fragment implements
     }
 
     @Override
-    public void started(CoinKind coinKind) {
+    public void started(Exchange exchange, CoinKind coinKind) {
         if (kind == null) {
             return;
         }
-        Exchange exchange = Exchange.valueOf(kind.name());
         setProgressbarVisibility(View.VISIBLE, exchange, coinKind);
     }
 
     @Override
-    public void finished(Rate rate) {
+    public void finished(Exchange exchange, CoinKind coinKind, ArrayList<Price> prices) {
         if (isDetached() || getActivity() == null) {
             stopAutoUpdate();
             return;
         }
 
-        if (rate == null) {
-            return;
-        }
-
-        String tag = getTimerTag(kind);
-        if (autoUpdateTimer == null || tag == null || !autoUpdateTimer.getTag().equals(tag)) {
-            return;
-        }
-
-    }
-
-    @Override
-    public void finished(ArrayList<Rate> rates) {
-        if (isDetached() || getActivity() == null) {
-            stopAutoUpdate();
+        if (prices == null || prices.isEmpty()) {
             return;
         }
 
@@ -284,10 +257,10 @@ public class ListViewByExchangeFragment extends Fragment implements
         ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
 
         ArrayList<Coin> coins = adapter.getItems();
-        for (Rate rate : rates) {
+        for (Price price : prices) {
             for (Coin coin : coins) {
-                if (coin.getSymbol().equals(rate.fromSymbol)) {
-                    coin.setPrice(rate.value);
+                if (coin.getSymbol().equals(price.fromSymbol)) {
+                    coin.setPrice(price.value);
                     break;
                 }
             }

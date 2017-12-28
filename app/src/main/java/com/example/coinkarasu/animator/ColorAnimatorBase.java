@@ -4,7 +4,7 @@ import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 
 public abstract class ColorAnimatorBase implements ValueAnimator.AnimatorUpdateListener {
-    public static final long DURATION = 1000;
+    private static final long DURATION = ValueAnimatorBase.DURATION;
 
     private boolean isStarted;
     private ValueAnimator animator;

@@ -1,4 +1,4 @@
-package com.example.coinkarasu.tasks;
+package com.example.coinkarasu.tasks.by_exchange;
 
 import android.content.Context;
 

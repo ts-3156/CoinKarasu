@@ -1,11 +1,11 @@
-package com.example.coinkarasu.tasks;
+package com.example.coinkarasu.tasks.by_exchange;
 
 import com.example.coinkarasu.api.cryptocompare.Client;
 import com.example.coinkarasu.api.cryptocompare.data.Prices;
 
 import java.util.concurrent.CountDownLatch;
 
-public class GetPricesThread extends Thread {
+public class GetCccaggPricesThread extends Thread {
     private CountDownLatch latch;
     private Prices prices;
 
@@ -14,7 +14,7 @@ public class GetPricesThread extends Thread {
     private String toSymbol;
     private String exchange;
 
-    public GetPricesThread(Client client, String[] fromSymbols, String toSymbol, String exchange) {
+    public GetCccaggPricesThread(Client client, String[] fromSymbols, String toSymbol, String exchange) {
         latch = null;
         prices = null;
 
@@ -33,7 +33,7 @@ public class GetPricesThread extends Thread {
         }
     }
 
-    public GetPricesThread setLatch(CountDownLatch latch) {
+    public GetCccaggPricesThread setLatch(CountDownLatch latch) {
         this.latch = latch;
         return this;
     }

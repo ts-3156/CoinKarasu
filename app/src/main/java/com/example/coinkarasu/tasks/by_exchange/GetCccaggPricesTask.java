@@ -1,4 +1,4 @@
-package com.example.coinkarasu.tasks;
+package com.example.coinkarasu.tasks.by_exchange;
 
 import android.os.AsyncTask;
 
@@ -12,15 +12,15 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
+public class GetCccaggPricesTask extends AsyncTask<Integer, Integer, Integer> {
     private Listener listener;
     private Client client;
-    private ArrayList<GetPricesThread> threads;
+    private ArrayList<GetCccaggPricesThread> threads;
     private String[] fromSymbols;
     private String toSymbol;
     private String exchange;
 
-    public GetPricesTask(Client client) {
+    public GetCccaggPricesTask(Client client) {
         this.listener = null;
         this.client = client;
         this.threads = new ArrayList<>();
@@ -40,7 +40,7 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
             }
 
             String[] target = Arrays.copyOfRange(fromSymbols, i, index + 1);
-            threads.add(new GetPricesThread(client, target, toSymbol, exchange));
+            threads.add(new GetCccaggPricesThread(client, target, toSymbol, exchange));
 
             if (index >= fromSymbols.length) {
                 break;
@@ -50,7 +50,7 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
         ExecutorService executor = Executors.newFixedThreadPool(2);
         CountDownLatch latch = new CountDownLatch(threads.size());
 
-        for (GetPricesThread thread : threads) {
+        for (GetCccaggPricesThread thread : threads) {
             thread.setLatch(latch);
             executor.submit(thread);
         }
@@ -77,7 +77,7 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
         if (listener != null) {
             Prices prices = new PricesImpl(threads.get(0).getExchange());
 
-            for (GetPricesThread thread : threads) {
+            for (GetCccaggPricesThread thread : threads) {
                 prices.merge(thread.getPrices());
             }
 
@@ -85,22 +85,22 @@ public class GetPricesTask extends AsyncTask<Integer, Integer, Integer> {
         }
     }
 
-    public GetPricesTask setFromSymbols(String[] fromSymbols) {
+    public GetCccaggPricesTask setFromSymbols(String[] fromSymbols) {
         this.fromSymbols = fromSymbols;
         return this;
     }
 
-    public GetPricesTask setToSymbol(String toSymbol) {
+    public GetCccaggPricesTask setToSymbol(String toSymbol) {
         this.toSymbol = toSymbol;
         return this;
     }
 
-    public GetPricesTask setExchange(String exchange) {
+    public GetCccaggPricesTask setExchange(String exchange) {
         this.exchange = exchange;
         return this;
     }
 
-    public GetPricesTask setListener(Listener listener) {
+    public GetCccaggPricesTask setListener(Listener listener) {
         this.listener = listener;
         return this;
     }
