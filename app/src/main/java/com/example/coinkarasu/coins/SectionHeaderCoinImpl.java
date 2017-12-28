@@ -1,17 +1,17 @@
 package com.example.coinkarasu.coins;
 
-import com.example.coinkarasu.activities.Exchange;
-import com.example.coinkarasu.coins.CoinImpl.Kind;
+import com.example.coinkarasu.activities.etc.Exchange;
+import com.example.coinkarasu.activities.etc.CoinKind;
 
 import org.json.JSONObject;
 
 public class SectionHeaderCoinImpl implements SectionHeaderCoin, Coin {
     private Exchange exchange;
-    private Kind kind;
+    private CoinKind coinKind;
 
-    public SectionHeaderCoinImpl(Exchange exchange, Kind kind) {
+    public SectionHeaderCoinImpl(Exchange exchange, CoinKind coinKind) {
         this.exchange = exchange;
-        this.kind = kind;
+        this.coinKind = coinKind;
     }
 
     @Override
@@ -291,21 +291,21 @@ public class SectionHeaderCoinImpl implements SectionHeaderCoin, Coin {
 
     @Override
     public int getHeaderNameResId() {
-        return exchange.getHeaderNameResId(kind);
+        return exchange.getHeaderNameResId(coinKind);
     }
 
     @Override
     public boolean isSalesCoin() {
-        return kind == Kind.sales;
+        return coinKind == CoinKind.sales;
     }
 
     @Override
     public boolean isTradingCoin() {
-        return kind == Kind.trading;
+        return coinKind == CoinKind.trading;
     }
 
     @Override
-    public void setCoinKind(Kind kind) {
+    public void setCoinKind(CoinKind coinKind) {
     }
 
 }

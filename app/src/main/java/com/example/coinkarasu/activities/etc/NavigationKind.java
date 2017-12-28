@@ -1,4 +1,4 @@
-package com.example.coinkarasu.activities;
+package com.example.coinkarasu.activities.etc;
 
 import android.content.Context;
 

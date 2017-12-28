@@ -2,14 +2,12 @@ package com.example.coinkarasu.coins;
 
 import android.util.Log;
 
+import com.example.coinkarasu.activities.etc.CoinKind;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CoinImpl implements Coin {
-
-    public enum Kind {
-        trading, sales, none
-    }
 
     private static final int ICON_SIZE = 96;
     private static final int ICON_LARGE_SIZE = 96;
@@ -41,7 +39,7 @@ public class CoinImpl implements Coin {
     private double prevPriceDiff;
     private double prevTrend;
 
-    private Kind kind;
+    private CoinKind coinKind;
 
     private CoinImpl(JSONObject attrs) {
         try {
@@ -98,7 +96,7 @@ public class CoinImpl implements Coin {
             if (attrs.has("prevPriceDiff")) prevPriceDiff = attrs.getDouble("prevPriceDiff");
             if (attrs.has("prevTrend")) prevTrend = attrs.getDouble("prevTrend");
 
-            kind = Kind.trading;
+            coinKind = CoinKind.trading;
         } catch (JSONException e) {
             Log.e("CoinImpl", e.getMessage() + ", " + attrs.toString());
         }
@@ -445,16 +443,16 @@ public class CoinImpl implements Coin {
 
     @Override
     public boolean isSalesCoin() {
-        return kind == Kind.sales;
+        return coinKind == CoinKind.sales;
     }
 
     @Override
     public boolean isTradingCoin() {
-        return kind == Kind.trading;
+        return coinKind == CoinKind.trading;
     }
 
     @Override
-    public void setCoinKind(Kind kind) {
-        this.kind = kind;
+    public void setCoinKind(CoinKind coinKind) {
+        this.coinKind = coinKind;
     }
 }

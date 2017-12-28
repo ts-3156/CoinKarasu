@@ -12,7 +12,7 @@ import com.example.coinkarasu.activities.ListViewByExchangeFragment;
 
 import java.util.ArrayList;
 
-import com.example.coinkarasu.activities.NavigationKind;
+import com.example.coinkarasu.activities.etc.NavigationKind;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
     private Context context;

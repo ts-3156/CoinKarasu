@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.pagers.MainPagerAdapter;
 
 import java.util.ArrayList;

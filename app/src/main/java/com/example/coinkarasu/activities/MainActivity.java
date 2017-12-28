@@ -27,6 +27,7 @@ import android.view.WindowManager;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.activities.settings.PreferencesActivity;
 import com.example.coinkarasu.utils.PrefHelper;
 

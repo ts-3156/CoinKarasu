@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.activities.NavigationKind;
+import com.example.coinkarasu.activities.etc.NavigationKind;
 
 public class PrefHelper {
 

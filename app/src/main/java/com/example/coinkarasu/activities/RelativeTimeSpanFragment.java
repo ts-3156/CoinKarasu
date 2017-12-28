@@ -9,8 +9,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.activities.etc.Exchange;
+import com.example.coinkarasu.activities.etc.CoinKind;
 import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.coins.CoinImpl;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -138,8 +139,8 @@ public class RelativeTimeSpanFragment extends Fragment {
         return getTag(exchange, -1);
     }
 
-    public static String getTag(Exchange exchange, CoinImpl.Kind kind) {
-        return getTag(exchange.name(), exchange.getHeaderNameResId(kind));
+    public static String getTag(Exchange exchange, CoinKind coinKind) {
+        return getTag(exchange.name(), exchange.getHeaderNameResId(coinKind));
     }
 
     public static String getTag(Coin coin) {

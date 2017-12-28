@@ -21,13 +21,15 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.activities.etc.CoinKind;
+import com.example.coinkarasu.activities.etc.Exchange;
+import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.adapters.CoinListRecyclerViewAdapter;
 import com.example.coinkarasu.animator.ValueAnimatorBase;
 import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.Prices;
 import com.example.coinkarasu.api.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.pagers.MainPagerAdapter;
 import com.example.coinkarasu.tasks.CollectCoinsTask;
 import com.example.coinkarasu.tasks.GetPricesTask;
@@ -314,7 +316,7 @@ public class CoinListFragment extends Fragment implements
     }
 
     private void updateRelativeTimeSpanText(Exchange exchange) {
-        Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, CoinImpl.Kind.none));
+        Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, CoinKind.none));
         if (fragment != null) {
             ((RelativeTimeSpanFragment) fragment).updateText(System.currentTimeMillis());
         }
@@ -387,7 +389,7 @@ public class CoinListFragment extends Fragment implements
         FragmentTransaction transaction = manager.beginTransaction();
 
         for (Exchange exchange : kind.exchanges) {
-            Fragment fragment = manager.findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, CoinImpl.Kind.trading));
+            Fragment fragment = manager.findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, CoinKind.trading));
             if (fragment != null) {
                 transaction.remove(fragment);
             }
@@ -434,7 +436,7 @@ public class CoinListFragment extends Fragment implements
 
             if (exchanges.length == 1) {
                 Exchange exchange = exchanges[0];
-                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinImpl.Kind.none));
+                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.none));
                 for (Coin coin : coins) {
                     coin.setExchange(exchange.name());
                 }
@@ -443,7 +445,7 @@ public class CoinListFragment extends Fragment implements
             }
 
             for (Exchange exchange : exchanges) {
-                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinImpl.Kind.none));
+                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.none));
                 List<Coin> sub;
 
                 switch (exchange) {

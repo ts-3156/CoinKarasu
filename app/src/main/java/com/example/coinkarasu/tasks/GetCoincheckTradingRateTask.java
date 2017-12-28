@@ -3,8 +3,8 @@ package com.example.coinkarasu.tasks;
 import android.content.Context;
 import android.os.AsyncTask;
 
+import com.example.coinkarasu.activities.etc.CoinKind;
 import com.example.coinkarasu.api.coincheck.data.Rate;
-import com.example.coinkarasu.coins.CoinImpl;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -50,7 +50,7 @@ public class GetCoincheckTradingRateTask extends AsyncTask<Integer, Integer, Int
     @Override
     protected void onProgressUpdate(Integer... progress) {
         if (listener != null) {
-            listener.started(CoinImpl.Kind.trading);
+            listener.started(CoinKind.trading);
         }
     }
 
@@ -76,7 +76,7 @@ public class GetCoincheckTradingRateTask extends AsyncTask<Integer, Integer, Int
     }
 
     public interface Listener {
-        void started(CoinImpl.Kind kind);
+        void started(CoinKind coinKind);
 
         void finished(Rate rate);
     }

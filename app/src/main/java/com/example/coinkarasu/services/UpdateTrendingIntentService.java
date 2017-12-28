@@ -4,7 +4,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 
-import com.example.coinkarasu.activities.NavigationKind;
+import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.api.cryptocompare.Client;
 import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.CoinListImpl;

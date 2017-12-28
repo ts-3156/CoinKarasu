@@ -13,7 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.activities.NavigationKind;
+import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;

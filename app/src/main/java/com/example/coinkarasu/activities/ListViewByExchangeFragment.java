@@ -23,12 +23,14 @@ import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.activities.etc.CoinKind;
+import com.example.coinkarasu.activities.etc.Exchange;
+import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.adapters.ListViewAdapter;
 import com.example.coinkarasu.animator.ValueAnimatorBase;
 import com.example.coinkarasu.api.coincheck.data.Rate;
 import com.example.coinkarasu.api.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.pagers.MainPagerAdapter;
 import com.example.coinkarasu.tasks.CollectCoinsTask;
 import com.example.coinkarasu.tasks.GetCoincheckSalesRatesTask;
@@ -238,7 +240,7 @@ public class ListViewByExchangeFragment extends Fragment implements
     }
 
     @Override
-    public void started(CoinImpl.Kind coinKind) {
+    public void started(CoinKind coinKind) {
         if (kind == null) {
             return;
         }
@@ -293,12 +295,12 @@ public class ListViewByExchangeFragment extends Fragment implements
         }
 
         adapter.notifyDataSetChanged();
-        hideProgressbarDelayed(Exchange.valueOf(kind.name()), CoinImpl.Kind.sales);
+        hideProgressbarDelayed(Exchange.valueOf(kind.name()), CoinKind.sales);
 
         Log.d("UPDATED", kind.name() + ", " + new Date().toString());
     }
 
-    private void hideProgressbarDelayed(final Exchange exchange, final CoinImpl.Kind coinKind) {
+    private void hideProgressbarDelayed(final Exchange exchange, final CoinKind coinKind) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -307,7 +309,7 @@ public class ListViewByExchangeFragment extends Fragment implements
         }, ValueAnimatorBase.DURATION);
     }
 
-    private void setProgressbarVisibility(int flag, Exchange exchange, CoinImpl.Kind coinKind) {
+    private void setProgressbarVisibility(int flag, Exchange exchange, CoinKind coinKind) {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -328,7 +330,7 @@ public class ListViewByExchangeFragment extends Fragment implements
         }
     }
 
-    private void updateRelativeTimeSpanText(Exchange exchange, CoinImpl.Kind coinKind) {
+    private void updateRelativeTimeSpanText(Exchange exchange, CoinKind coinKind) {
         Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, coinKind));
         if (fragment != null) {
             ((RelativeTimeSpanFragment) fragment).updateText(System.currentTimeMillis());
@@ -434,7 +436,7 @@ public class ListViewByExchangeFragment extends Fragment implements
         FragmentTransaction transaction = manager.beginTransaction();
 
         Exchange exchange = Exchange.valueOf(kind.name());
-        for (CoinImpl.Kind coinKind : CoinImpl.Kind.values()) {
+        for (CoinKind coinKind : CoinKind.values()) {
             Fragment fragment = manager.findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, coinKind));
             if (fragment != null) {
                 transaction.remove(fragment);
@@ -467,21 +469,21 @@ public class ListViewByExchangeFragment extends Fragment implements
             Exchange exchange = Exchange.valueOf(kind.name());
             List<Coin> selected;
 
-            sectionalCoins.add(exchange.createSectionHeaderCoin(CoinImpl.Kind.trading));
+            sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.trading));
 
             selected = coins.subList(0, 1);
             for (Coin coin : selected) {
                 coin.setExchange(exchange.name());
-                coin.setCoinKind(CoinImpl.Kind.trading);
+                coin.setCoinKind(CoinKind.trading);
             }
 
             sectionalCoins.addAll(selected);
-            sectionalCoins.add(exchange.createSectionHeaderCoin(CoinImpl.Kind.sales));
+            sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.sales));
 
             selected = coins.subList(1, coins.size());
             for (Coin coin : selected) {
                 coin.setExchange(exchange.name());
-                coin.setCoinKind(CoinImpl.Kind.sales);
+                coin.setCoinKind(CoinKind.sales);
             }
 
             sectionalCoins.addAll(selected);

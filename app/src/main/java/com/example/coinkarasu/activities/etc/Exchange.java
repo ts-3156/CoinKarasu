@@ -1,8 +1,7 @@
-package com.example.coinkarasu.activities;
+package com.example.coinkarasu.activities.etc;
 
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.coins.SectionHeaderCoinImpl;
 
 public enum Exchange {
@@ -25,9 +24,9 @@ public enum Exchange {
         this.salesHeaderNameResId = salesHeaderNameResId;
     }
 
-    public int getHeaderNameResId(CoinImpl.Kind kind) {
+    public int getHeaderNameResId(CoinKind coinKind) {
         int id;
-        switch (kind) {
+        switch (coinKind) {
             case trading:
                 id = tradingHeaderNameResId;
                 break;
@@ -40,7 +39,7 @@ public enum Exchange {
         return id;
     }
 
-    public Coin createSectionHeaderCoin(CoinImpl.Kind kind) {
-        return new SectionHeaderCoinImpl(this, kind);
+    public Coin createSectionHeaderCoin(CoinKind coinKind) {
+        return new SectionHeaderCoinImpl(this, coinKind);
     }
 }
