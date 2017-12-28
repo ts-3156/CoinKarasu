@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import com.example.coinkarasu.activities.etc.NavigationKind;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private Context context;
     private NavigationKind defaultKind;

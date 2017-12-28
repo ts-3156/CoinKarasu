@@ -446,12 +446,32 @@
         <item>ETH</item>
     </string-array>
 
+    <string-array name="bitflyer_all_symbols">
+        <item>BTC</item>
+    </string-array>
+
     <string-array name="bitflyer_trading_symbols">
         <item>BTC</item>
     </string-array>
 
     <string-array name="bitflyer_sales_symbols">
         <item>BTC</item>
+    </string-array>
+
+    <string-array name="coincheck_all_symbols">
+        <item>BTC</item>
+        <item>ETH</item>
+        <item>ETC</item>
+        <item>LSK</item>
+        <item>FCT</item>
+        <item>XMR</item>
+        <item>REP</item>
+        <item>XRP</item>
+        <item>ZEC</item>
+        <item>XEM</item>
+        <item>LTC</item>
+        <item>DASH</item>
+        <item>BCH</item>
     </string-array>
 
     <string-array name="coincheck_trading_symbols">
@@ -471,6 +491,14 @@
         <item>LTC</item>
         <item>DASH</item>
         <item>BCH</item>
+    </string-array>
+
+    <string-array name="zaif_all_symbols">
+        <item>BTC</item>
+        <item>XEM</item>
+        <item>MONA</item>
+        <item>BCH</item>
+        <item>ETH</item>
     </string-array>
 
     <string-array name="zaif_trading_symbols">

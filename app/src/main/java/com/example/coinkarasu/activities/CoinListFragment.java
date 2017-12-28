@@ -3,7 +3,6 @@ package com.example.coinkarasu.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -111,7 +110,7 @@ public class CoinListFragment extends Fragment implements
         }
 
         new CollectCoinsTask(getActivity())
-                .setFromSymbols(Utils.getFromSymbols(getResources(), kind))
+                .setFromSymbols(getResources().getStringArray(kind.symbolsResId))
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -125,7 +124,7 @@ public class CoinListFragment extends Fragment implements
             }
         }
 
-        coins = Utils.insertSectionHeader(coins, kind.exchanges);
+        coins = Utils.insertSectionHeader(coins, kind);
         initializeListView(new CoinListRecyclerViewAdapter(getActivity(), coins, getChildFragmentManager()));
     }
 
@@ -215,20 +214,41 @@ public class CoinListFragment extends Fragment implements
         adapter.setDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
         adapter.setToSymbol(Utils.getToSymbol(getActivity(), kind));
 
-        for (Exchange exchange : kind.exchanges) {
-            if (kind == NavigationKind.japan && (exchange == Exchange.bitflyer || exchange == Exchange.coincheck)) {
-                GetPricesByExchangeTaskBase.getInstance(getActivity(), exchange, CoinKind.trading)
-                        .setListener(this)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            } else {
-                // zaif(trading) and cccagg(all)
-                new GetCccaggPricesTask(ClientFactory.getInstance(getActivity()))
-                        .setFromSymbols(Utils.getFromSymbols(getResources(), kind, exchange))
-                        .setToSymbol(Utils.getToSymbol(getActivity(), kind))
-                        .setExchange(exchange.name())
-                        .setListener(this)
-                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (kind == NavigationKind.japan) {
+            for (Exchange exchange : kind.exchanges) {
+                if (exchange == Exchange.bitflyer || exchange == Exchange.coincheck) {
+                    GetPricesByExchangeTaskBase.getInstance(getActivity(), exchange, CoinKind.trading)
+                            .setListener(this)
+                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                } else if (exchange == Exchange.zaif) {
+                    String[] fromSymbols = getResources().getStringArray(exchange.tradingSymbolsResId);
+
+                    new GetCccaggPricesTask(ClientFactory.getInstance(getActivity()))
+                            .setFromSymbols(fromSymbols)
+                            .setToSymbol(Utils.getToSymbol(getActivity(), kind))
+                            .setExchange(exchange.name())
+                            .setListener(this)
+                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
             }
+        } else if (kind == NavigationKind.coincheck) {
+            GetPricesByExchangeTaskBase.getInstance(getActivity(), kind.exchanges[0], CoinKind.trading)
+                    .setListener(this)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+            GetPricesByExchangeTaskBase.getInstance(getActivity(), kind.exchanges[0], CoinKind.sales)
+                    .setListener(this)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            // jpy_toplist, usd_toplist, btc_toplist and so on
+            String[] fromSymbols = getResources().getStringArray(kind.symbolsResId);
+
+            new GetCccaggPricesTask(ClientFactory.getInstance(getActivity()))
+                    .setFromSymbols(fromSymbols)
+                    .setToSymbol(Utils.getToSymbol(getActivity(), kind))
+                    .setExchange(kind.exchanges[0].name())
+                    .setListener(this)
+                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -237,7 +257,7 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
-        if (DEBUG) Log.e("startAutoUpdate", "kind=" + (kind == null ? "null" : kind.name()) + " caller=" + caller);
+        if (DEBUG) Log.e("startAutoUpdate", "kind=" + kind + " caller=" + caller);
 
         String tag = getTimerTag(kind);
         if (tag == null) {
@@ -254,7 +274,7 @@ public class CoinListFragment extends Fragment implements
     }
 
     private void stopAutoUpdate(String caller) {
-        if (DEBUG) Log.e("stopAutoUpdate", "kind=" + (kind == null ? "null" : kind.name()) + " caller=" + caller);
+        if (DEBUG) Log.e("stopAutoUpdate", "kind=" + kind + " caller=" + caller);
         if (autoUpdateTimer != null) {
             autoUpdateTimer.cancel();
             autoUpdateTimer = null;
@@ -464,23 +484,6 @@ public class CoinListFragment extends Fragment implements
     }
 
     private static class Utils {
-
-        static String[] getFromSymbols(Resources resources, NavigationKind kind) {
-            return resources.getStringArray(kind.symbolsResId);
-        }
-
-        static String[] getFromSymbols(Resources resources, NavigationKind kind, Exchange exchange) {
-            String[] symbols;
-
-            if (exchange == Exchange.cccagg) {
-                symbols = getFromSymbols(resources, kind);
-            } else {
-                symbols = resources.getStringArray(exchange.tradingSymbolsResId);
-            }
-
-            return symbols;
-        }
-
         static String getToSymbol(Activity activity, NavigationKind kind) {
             String symbol;
 
@@ -496,42 +499,53 @@ public class CoinListFragment extends Fragment implements
             return symbol;
         }
 
-        static ArrayList<Coin> insertSectionHeader(ArrayList<Coin> coins, Exchange[] exchanges) {
+        static ArrayList<Coin> insertSectionHeader(ArrayList<Coin> coins, NavigationKind kind) {
             ArrayList<Coin> sectionalCoins = new ArrayList<>();
 
-            if (exchanges.length == 1) {
-                Exchange exchange = exchanges[0];
+            if (kind == NavigationKind.japan) {
+                for (Exchange exchange : kind.exchanges) {
+                    sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.none));
+                    List<Coin> sub;
+
+                    switch (exchange) {
+                        case bitflyer:
+                            sub = coins.subList(0, 1);
+                            break;
+                        case coincheck:
+                            sub = coins.subList(1, 2);
+                            break;
+                        case zaif:
+                            sub = coins.subList(2, coins.size());
+                            break;
+                        default:
+                            throw new RuntimeException("Invalid exchange " + exchange.name());
+                    }
+
+                    for (Coin coin : sub) {
+                        coin.setExchange(exchange.name());
+                    }
+
+                    sectionalCoins.addAll(sub);
+                }
+            } else if (kind == NavigationKind.coincheck) {
+                Exchange exchange = kind.exchanges[0];
+
+                for (Coin coin : coins) {
+                    coin.setExchange(exchange.name());
+                }
+
+                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.trading));
+                sectionalCoins.addAll(coins.subList(0, 1));
+
+                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.sales));
+                sectionalCoins.addAll(coins.subList(1, coins.size()));
+            } else if (kind == NavigationKind.jpy_toplist) {
+                Exchange exchange = kind.exchanges[0];
                 sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.none));
                 for (Coin coin : coins) {
                     coin.setExchange(exchange.name());
                 }
                 sectionalCoins.addAll(coins);
-                return sectionalCoins;
-            }
-
-            for (Exchange exchange : exchanges) {
-                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.none));
-                List<Coin> sub;
-
-                switch (exchange) {
-                    case bitflyer:
-                        sub = coins.subList(0, 1);
-                        break;
-                    case coincheck:
-                        sub = coins.subList(1, 2);
-                        break;
-                    case zaif:
-                        sub = coins.subList(2, coins.size());
-                        break;
-                    default:
-                        throw new RuntimeException("Invalid exchange " + exchange.name());
-                }
-
-                for (Coin coin : sub) {
-                    coin.setExchange(exchange.name());
-                }
-
-                sectionalCoins.addAll(sub);
             }
 
             return sectionalCoins;
