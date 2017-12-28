@@ -94,9 +94,7 @@ public class EditTabsRecyclerViewAdapter extends RecyclerView.Adapter<EditTabsRe
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (item.kind.isHideable() && item.kind.isShowable()) {
-                    listener.onItemClick(item, view, holder.getAdapterPosition());
-                }
+                listener.onItemClick(item, view, holder.getAdapterPosition());
             }
         });
     }

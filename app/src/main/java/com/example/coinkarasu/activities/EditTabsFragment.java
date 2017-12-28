@@ -45,6 +45,16 @@ public class EditTabsFragment extends Fragment implements
 
     @Override
     public void onItemClick(EditTabsRecyclerViewAdapter.Item item, View view, int position) {
+        if (item.kind == NavigationKind.bitflyer || item.kind == NavigationKind.zaif) {
+            Snackbar.make(getView(), getString(R.string.edit_tabs_is_not_available, getString(item.kind.tabStrResId)), Snackbar.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+
+        if (!(item.kind.isHideable() && item.kind.isShowable())) {
+            return;
+        }
+
         boolean isAdded = PrefHelper.toggleTabVisibility(getActivity(), item.kind);
 
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
@@ -58,11 +68,16 @@ public class EditTabsFragment extends Fragment implements
     }
 
     private String isAddedOrRemoved(NavigationKind kind, boolean isAdded) {
+        String name = getString(kind.tabStrResId);
+        String str;
+
         if (isAdded) {
-            return getString(R.string.edit_tabs_is_added, getString(kind.tabStrResId));
+            str = getString(R.string.edit_tabs_is_added, name);
         } else {
-            return getString(R.string.edit_tabs_is_removed, getString(kind.tabStrResId));
+            str = getString(R.string.edit_tabs_is_removed, name);
         }
+
+        return str;
     }
 
     @Override

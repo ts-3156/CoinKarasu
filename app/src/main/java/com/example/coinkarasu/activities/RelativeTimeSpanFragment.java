@@ -114,12 +114,6 @@ public class RelativeTimeSpanFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-        stopAutoUpdate();
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         timer = null;

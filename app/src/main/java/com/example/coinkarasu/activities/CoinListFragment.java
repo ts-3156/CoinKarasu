@@ -221,6 +221,7 @@ public class CoinListFragment extends Fragment implements
                         .setListener(this)
                         .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             } else {
+                // zaif(trading) and cccagg(all)
                 new GetCccaggPricesTask(ClientFactory.getInstance(getActivity()))
                         .setFromSymbols(Utils.getFromSymbols(getResources(), kind, exchange))
                         .setToSymbol(Utils.getToSymbol(getActivity(), kind))
