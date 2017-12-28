@@ -116,6 +116,19 @@ public class CoinListFragment extends Fragment implements
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    @Override
+    public void collected(ArrayList<Coin> coins) {
+        if (coins != null) {
+            String toSymbol = Utils.getToSymbol(getActivity(), kind);
+            for (Coin coin : coins) {
+                coin.setToSymbol(toSymbol);
+            }
+        }
+
+        coins = Utils.insertSectionHeader(coins, kind.exchanges);
+        initializeListView(new CoinListRecyclerViewAdapter(getActivity(), coins, getChildFragmentManager()));
+    }
+
     private void initializeListView(CoinListRecyclerViewAdapter adapter) {
         if (adapter == null || getActivity() == null || getView() == null) {
             return;
@@ -183,19 +196,6 @@ public class CoinListFragment extends Fragment implements
         }
 
         adapter.restartAnimation();
-    }
-
-    @Override
-    public void collected(ArrayList<Coin> coins) {
-        if (coins != null) {
-            String toSymbol = Utils.getToSymbol(getActivity(), kind);
-            for (Coin coin : coins) {
-                coin.setToSymbol(toSymbol);
-            }
-        }
-
-        coins = Utils.insertSectionHeader(coins, kind.exchanges);
-        initializeListView(new CoinListRecyclerViewAdapter(getActivity(), coins, getChildFragmentManager()));
     }
 
     private void startTask() {

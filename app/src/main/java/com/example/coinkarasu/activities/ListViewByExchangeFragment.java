@@ -116,6 +116,19 @@ public class ListViewByExchangeFragment extends Fragment implements
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    @Override
+    public void collected(ArrayList<Coin> coins) {
+        if (coins != null) {
+            String toSymbol = Utils.getToSymbol(getActivity(), kind);
+            for (Coin coin : coins) {
+                coin.setToSymbol(toSymbol);
+            }
+        }
+
+        coins = Utils.insertSectionHeader(coins, kind);
+        initializeListView(new ListViewAdapter(getActivity(), coins, getChildFragmentManager()));
+    }
+
     private void initializeListView(ListViewAdapter adapter) {
         if (adapter == null || getActivity() == null || getView() == null) {
             return;
@@ -155,19 +168,6 @@ public class ListViewByExchangeFragment extends Fragment implements
         adapter.notifyDataSetChanged();
 
         adapter.restartAnimation();
-    }
-
-    @Override
-    public void collected(ArrayList<Coin> coins) {
-        if (coins != null) {
-            String toSymbol = Utils.getToSymbol(getActivity(), kind);
-            for (Coin coin : coins) {
-                coin.setToSymbol(toSymbol);
-            }
-        }
-
-        coins = Utils.insertSectionHeader(coins, kind);
-        initializeListView(new ListViewAdapter(getActivity(), coins, getChildFragmentManager()));
     }
 
     private void startTask() {
