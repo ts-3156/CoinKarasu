@@ -46,18 +46,18 @@ public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Int
             case bitflyer:
                 switch (coinKind) {
                     case none:
-                        return null;
-                    case trading:
                         return new GetBitflyerTradingRatesTask(context);
+                    case trading:
+                        return null;
                     case sales:
                         return null;
                 }
             case coincheck:
                 switch (coinKind) {
                     case none:
-                        return null;
+                        return new GetCoincheckTradingRatesTask(context, coinKind);
                     case trading:
-                        return new GetCoincheckTradingRatesTask(context);
+                        return new GetCoincheckTradingRatesTask(context, coinKind);
                     case sales:
                         return new GetCoincheckSalesRatesTask(context);
                 }

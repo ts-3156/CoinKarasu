@@ -8,5 +8,7 @@ public interface TradingOrSalesCoin {
     boolean isSalesCoin();
 
     void setCoinKind(CoinKind coinKind);
+
+    CoinKind getCoinKind();
 }
 

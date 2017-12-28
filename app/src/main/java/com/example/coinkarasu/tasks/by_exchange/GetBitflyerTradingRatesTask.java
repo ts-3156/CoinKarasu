@@ -17,7 +17,7 @@ public class GetBitflyerTradingRatesTask extends GetPricesByExchangeTaskBase {
     private Context context;
 
     protected GetBitflyerTradingRatesTask(Context context) {
-        super(Exchange.bitflyer, CoinKind.trading);
+        super(Exchange.bitflyer, CoinKind.none);
         this.context = context;
         this.threads = new ArrayList<>();
     }

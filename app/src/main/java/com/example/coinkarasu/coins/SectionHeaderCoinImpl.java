@@ -256,6 +256,11 @@ public class SectionHeaderCoinImpl implements SectionHeaderCoin, Coin {
     }
 
     @Override
+    public boolean isChanged() {
+        return false;
+    }
+
+    @Override
     public void setExchange(String exchange) {
     }
 
@@ -306,6 +311,11 @@ public class SectionHeaderCoinImpl implements SectionHeaderCoin, Coin {
 
     @Override
     public void setCoinKind(CoinKind coinKind) {
+    }
+
+    @Override
+    public CoinKind getCoinKind() {
+        return coinKind;
     }
 
 }

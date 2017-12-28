@@ -21,7 +21,7 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
     private Context context;
 
     public GetCccaggPricesTask(Context context, Exchange exchange) {
-        super(exchange, CoinKind.trading);
+        super(exchange, CoinKind.none);
         this.threads = new ArrayList<>();
         this.fromSymbols = null;
         this.toSymbol = null;

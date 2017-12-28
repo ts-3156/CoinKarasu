@@ -6,6 +6,8 @@ public interface Coin extends CoinListCoin, PriceMultiFullCoin, SectionHeaderCoi
 
     String getExchange();
 
+    boolean isChanged();
+
     String toString();
 
     JSONObject toJson();

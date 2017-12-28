@@ -96,7 +96,7 @@ public class CoinImpl implements Coin {
             if (attrs.has("prevPriceDiff")) prevPriceDiff = attrs.getDouble("prevPriceDiff");
             if (attrs.has("prevTrend")) prevTrend = attrs.getDouble("prevTrend");
 
-            coinKind = CoinKind.trading;
+            coinKind = null;
         } catch (JSONException e) {
             Log.e("CoinImpl", e.getMessage() + ", " + attrs.toString());
         }
@@ -372,6 +372,11 @@ public class CoinImpl implements Coin {
     }
 
     @Override
+    public boolean isChanged() {
+        return getPrice() != getPrevPrice() || getPriceDiff() != getPrevPriceDiff() || getTrend() != getPrevTrend();
+    }
+
+    @Override
     public void setExchange(String exchange) {
         this.exchange = exchange;
     }
@@ -454,5 +459,10 @@ public class CoinImpl implements Coin {
     @Override
     public void setCoinKind(CoinKind coinKind) {
         this.coinKind = coinKind;
+    }
+
+    @Override
+    public CoinKind getCoinKind() {
+        return coinKind;
     }
 }

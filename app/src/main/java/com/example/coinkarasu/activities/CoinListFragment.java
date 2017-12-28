@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -25,7 +26,6 @@ import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.adapters.CoinListRecyclerViewAdapter;
 import com.example.coinkarasu.animator.ValueAnimatorBase;
-import com.example.coinkarasu.api.cryptocompare.data.Prices;
 import com.example.coinkarasu.api.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.pagers.MainPagerAdapter;
@@ -133,6 +133,8 @@ public class CoinListFragment extends Fragment implements
 
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setHasFixedSize(true);
+        ((DefaultItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
 
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
@@ -185,11 +187,11 @@ public class CoinListFragment extends Fragment implements
                 continue;
             }
 
-            Prices prices = PricesImpl.restoreFromCache(getActivity(), tag);
-            ArrayList<Coin> filtered = adapter.getItems(Exchange.valueOf(prices.getExchange()));
-            prices.copyAttrsToCoins(filtered);
-
-            adapter.notifyDataSetChanged();
+//            Prices prices = PricesImpl.restoreFromCache(getActivity(), tag);
+//            ArrayList<Coin> filtered = adapter.getItems(Exchange.valueOf(prices.getExchange()));
+//            prices.copyAttrsToCoins(filtered);
+//
+//            adapter.notifyCoinsChanged();
         }
 
         adapter.restartAnimation();
@@ -215,7 +217,7 @@ public class CoinListFragment extends Fragment implements
         if (kind == NavigationKind.japan) {
             for (Exchange exchange : kind.exchanges) {
                 if (exchange == Exchange.bitflyer || exchange == Exchange.coincheck) {
-                    GetPricesByExchangeTaskBase.getInstance(getActivity(), exchange, CoinKind.trading)
+                    GetPricesByExchangeTaskBase.getInstance(getActivity(), exchange, CoinKind.none)
                             .setListener(this)
                             .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 } else if (exchange == Exchange.zaif) {
@@ -312,7 +314,7 @@ public class CoinListFragment extends Fragment implements
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         CoinListRecyclerViewAdapter adapter = (CoinListRecyclerViewAdapter) recyclerView.getAdapter();
 
-        ArrayList<Coin> coins = adapter.getItems(exchange);
+        ArrayList<Coin> coins = adapter.getItems(exchange, coinKind);
 
         for (Price price : prices) {
             for (Coin coin : coins) {
@@ -326,10 +328,10 @@ public class CoinListFragment extends Fragment implements
 
         }
 
-        adapter.notifyDataSetChanged();
+        adapter.notifyCoinsChanged(exchange, coinKind);
         hideProgressbarDelayed(exchange);
 
-        Log.d("UPDATED", exchange + ", " + new Date().toString());
+        if (DEBUG) Log.e("UPDATED", exchange + ", " + new Date().toString());
     }
 
     private void hideProgressbarDelayed(final Exchange exchange) {
@@ -491,27 +493,38 @@ public class CoinListFragment extends Fragment implements
 
                     for (Coin coin : sub) {
                         coin.setExchange(exchange.name());
+                        coin.setCoinKind(CoinKind.none);
                     }
 
                     sectionalCoins.addAll(sub);
                 }
             } else if (kind == NavigationKind.coincheck) {
                 Exchange exchange = kind.exchanges[0];
+                List<Coin> sub;
 
                 for (Coin coin : coins) {
                     coin.setExchange(exchange.name());
                 }
 
                 sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.trading));
-                sectionalCoins.addAll(coins.subList(0, 1));
+                sub = coins.subList(0, 1);
+                for (Coin coin : sub) {
+                    coin.setCoinKind(CoinKind.trading);
+                }
+                sectionalCoins.addAll(sub);
 
                 sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.sales));
-                sectionalCoins.addAll(coins.subList(1, coins.size()));
+                sub = coins.subList(1, coins.size());
+                for (Coin coin : sub) {
+                    coin.setCoinKind(CoinKind.sales);
+                }
+                sectionalCoins.addAll(sub);
             } else if (kind == NavigationKind.jpy_toplist) {
                 Exchange exchange = kind.exchanges[0];
                 sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.none));
                 for (Coin coin : coins) {
                     coin.setExchange(exchange.name());
+                    coin.setCoinKind(CoinKind.none);
                 }
                 sectionalCoins.addAll(coins);
             }

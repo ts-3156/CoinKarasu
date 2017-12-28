@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.RelativeTimeSpanFragment;
+import com.example.coinkarasu.activities.etc.CoinKind;
 import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.animator.PriceAnimator;
 import com.example.coinkarasu.animator.PriceBgColorAnimator;
@@ -51,13 +52,15 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         isAnimPaused = false;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        this.resources = new ResourceUtils(activity, coins);
+        this.fragmentManager = fragmentManager;
+
+        setHasStableIds(true);
+
         for (Coin coin : coins) {
             addItem(coin);
         }
-
-        resources = new ResourceUtils(activity, coins);
-
-        this.fragmentManager = fragmentManager;
+        notifyDataSetChanged();
     }
 
     public void setIsScrolled(boolean flag) {
@@ -92,21 +95,6 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         if (coin.isSectionHeader()) {
             sectionHeader.add(coins.size() - 1);
         }
-        notifyDataSetChanged();
-    }
-
-    public void replaceItems(List<Coin> coins) {
-        this.coins.clear();
-        this.coins = new ArrayList<>();
-
-        sectionHeader.clear();
-        sectionHeader = new TreeSet<>();
-
-        notifyDataSetChanged();
-
-        for (Coin coin : coins) {
-            addItem(coin);
-        }
     }
 
     @Override
@@ -120,27 +108,16 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
 
-    public ArrayList<Coin> getItems() {
+    public ArrayList<Coin> getItems(Exchange exchange, CoinKind coinKind) {
         ArrayList<Coin> filtered = new ArrayList<>();
         for (Coin coin : coins) {
-            if (coin.isSectionHeader()) {
+            if (coin.isSectionHeader()
+                    || !coin.getExchange().equals(exchange.name())
+                    || coin.getCoinKind() != coinKind) {
                 continue;
             }
+
             filtered.add(coin);
-        }
-
-        return filtered;
-    }
-
-    public ArrayList<Coin> getItems(Exchange exchange) {
-        ArrayList<Coin> filtered = new ArrayList<>();
-        for (Coin coin : coins) {
-            if (coin.isSectionHeader()) {
-                continue;
-            }
-            if (coin.getExchange().equals(exchange.name())) {
-                filtered.add(coin);
-            }
         }
 
         return filtered;
@@ -151,6 +128,20 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         return position;
     }
 
+    public void notifyCoinsChanged(Exchange exchange, CoinKind coinKind) {
+        for (int i = 0; i < coins.size(); i++) {
+            Coin coin = coins.get(i);
+            if (coin.isSectionHeader()
+                    || !coin.getExchange().equals(exchange.name())
+                    || coin.getCoinKind() != coinKind) {
+                continue;
+            }
+
+            if (coin.isChanged()) {
+                notifyItemChanged(i);
+            }
+        }
+    }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
@@ -200,31 +191,13 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         holder.icon.setDefaultImageResId(resources.symbolIconResIdMap.get(coin.getSymbol()));
         if (isDownloadIconEnabled) {
             holder.icon.setImageUrl(coin.getFullImageUrl(), resources.imageLoader);
-        } else {
-            holder.icon.setImageUrl(null, resources.imageLoader);
         }
 
         holder.name.setText(coin.getCoinName());
         holder.symbol.setText(coin.getSymbol());
         holder.price_diff.setTextColor(resources.getPriceColor(coin.getPriceDiff()));
         holder.trend.setTextColor(resources.getTrendColor(coin.getTrend()));
-
-        if (holder.priceAnimator != null) {
-            holder.priceAnimator.cancel();
-            holder.priceAnimator = null;
-        }
-        if (holder.priceDiffAnimator != null) {
-            holder.priceDiffAnimator.cancel();
-            holder.priceDiffAnimator = null;
-        }
-        if (holder.priceBgColorAnimator != null) {
-            holder.priceBgColorAnimator.cancel();
-            holder.priceBgColorAnimator = null;
-        }
-        if (holder.trendAnimator != null) {
-            holder.trendAnimator.cancel();
-            holder.trendAnimator = null;
-        }
+        holder.trendIcon.setImageResource(resources.trendIconFormat.format(coin.getTrend()));
 
         if (!isAnimPaused && isAnimEnabled && !isScrolled) {
             if (coin.getPrice() != coin.getPrevPrice()) {
@@ -262,14 +235,46 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             holder.container.setBackgroundColor(resources.priceToColor);
         }
 
-        holder.trendIcon.setImageResource(resources.trendIconFormat.format(coin.getTrend()));
-
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.onItemClick(coin, view, holder.getAdapterPosition());
             }
         });
+    }
+
+    @Override
+    public void onViewRecycled(RecyclerView.ViewHolder holder) {
+        switch (holder.getItemViewType()) {
+            case TYPE_HEADER:
+                break;
+            case TYPE_ITEM:
+                itemViewRecycled((ItemViewHolder) holder);
+                break;
+        }
+    }
+
+    private void itemViewRecycled(ItemViewHolder holder) {
+        holder.icon.setImageUrl(null, resources.imageLoader);
+
+        if (holder.priceAnimator != null) {
+            holder.priceAnimator.cancel();
+            holder.priceAnimator = null;
+        }
+        if (holder.priceDiffAnimator != null) {
+            holder.priceDiffAnimator.cancel();
+            holder.priceDiffAnimator = null;
+        }
+        if (holder.priceBgColorAnimator != null) {
+            holder.priceBgColorAnimator.cancel();
+            holder.priceBgColorAnimator = null;
+        }
+        if (holder.trendAnimator != null) {
+            holder.trendAnimator.cancel();
+            holder.trendAnimator = null;
+        }
+
+        holder.container.setOnClickListener(null);
     }
 
     static class ItemViewHolder extends RecyclerView.ViewHolder {

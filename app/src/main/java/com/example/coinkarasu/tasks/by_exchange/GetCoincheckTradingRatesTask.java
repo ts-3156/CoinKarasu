@@ -16,8 +16,8 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
     private ArrayList<Thread> threads;
     private Context context;
 
-    protected GetCoincheckTradingRatesTask(Context context) {
-        super(Exchange.coincheck, CoinKind.trading);
+    protected GetCoincheckTradingRatesTask(Context context, CoinKind coinKind) {
+        super(Exchange.coincheck, coinKind);
         this.context = context;
         this.threads = new ArrayList<>();
     }
@@ -31,7 +31,7 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
 
         threads.add(new GetCoincheckTradingRateThread(context, "sell").setLatch(latch));
         threads.add(new GetCoincheckTradingRateThread(context, "buy").setLatch(latch));
-        threads.add(new GetCccaggPricesThread(context, new String[]{"BTC"}, "JPY", Exchange.coincheck.name()).setLatch(latch));
+        threads.add(new GetCccaggPricesThread(context, new String[]{"BTC"}, "JPY", exchange.name()).setLatch(latch));
 
 
         for (Thread thread : threads) {
