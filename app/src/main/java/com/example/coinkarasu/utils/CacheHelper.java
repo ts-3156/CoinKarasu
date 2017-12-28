@@ -13,6 +13,8 @@ import java.util.Date;
 
 public class CacheHelper {
 
+    private static final boolean DEBUG = false;
+
     public static void write(Context context, String name, String text) {
         FileOutputStream writer = null;
 
@@ -52,7 +54,7 @@ public class CacheHelper {
 
                 text = builder.toString();
             } else {
-                Log.e("read", name + " does not exist.");
+                if (DEBUG) Log.e("read", name + " does not exist.");
             }
         } catch (IOException e) {
             Log.e("read1", e.getMessage());

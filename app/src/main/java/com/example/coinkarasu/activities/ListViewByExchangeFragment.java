@@ -51,6 +51,7 @@ public class ListViewByExchangeFragment extends Fragment implements
         MainPagerAdapter.Listener,
         GetPricesByExchangeTaskBase.Listener {
 
+    private static final boolean DEBUG = true;
     private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
 
     private AutoUpdateTimer autoUpdateTimer;
@@ -58,6 +59,7 @@ public class ListViewByExchangeFragment extends Fragment implements
     private boolean isVisibleToUser;
     private boolean isSelected;
     private boolean isStartTaskRequested;
+    private boolean isRecreated;
 
     public ListViewByExchangeFragment() {
     }
@@ -86,8 +88,10 @@ public class ListViewByExchangeFragment extends Fragment implements
 
         if (savedInstanceState != null) {
             isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
+            isRecreated = true;
         } else {
-            isVisibleToUser = isSelected;
+            isVisibleToUser = isSelected; // TODO 最初に選択されているタブはホームタブなので、必要ないかもしれない。
+            isRecreated = false;
         }
 
         isStartTaskRequested = false;
@@ -99,6 +103,12 @@ public class ListViewByExchangeFragment extends Fragment implements
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        // アクティビティの再作成後は、ページャーによってすぐに次の新しいインスタンスが作成される。
+        // その場合は、ここでは何もしない。そうすることで、後続の処理はすべて実行されなくなる。
+        if (isRecreated) {
+            return;
+        }
 
         new CollectCoinsTask(getActivity())
                 .setFromSymbols(Utils.getFromSymbols(getResources(), kind))
@@ -186,10 +196,12 @@ public class ListViewByExchangeFragment extends Fragment implements
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void startAutoUpdate(boolean isRepeated) {
+    private void startAutoUpdate(String caller) {
         if (autoUpdateTimer != null) {
-            stopAutoUpdate();
+            return;
         }
+
+        if (DEBUG) Log.e("startAutoUpdate", "kind=" + (kind == null ? "null" : kind.name()) + " caller=" + caller);
 
         String tag = getTimerTag(kind);
         if (tag == null) {
@@ -197,19 +209,16 @@ public class ListViewByExchangeFragment extends Fragment implements
         }
         autoUpdateTimer = new AutoUpdateTimer(tag);
 
-        if (isRepeated) {
-            autoUpdateTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    startTask();
-                }
-            }, 0, PrefHelper.getSyncInterval(getActivity()));
-        } else {
-            startTask();
-        }
+        autoUpdateTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                startTask();
+            }
+        }, 0, PrefHelper.getSyncInterval(getActivity()));
     }
 
-    private void stopAutoUpdate() {
+    private void stopAutoUpdate(String caller) {
+        if (DEBUG) Log.e("stopAutoUpdate", "kind=" + (kind == null ? "null" : kind.name()) + " caller=" + caller);
         if (autoUpdateTimer != null) {
             autoUpdateTimer.cancel();
             autoUpdateTimer = null;
@@ -238,7 +247,7 @@ public class ListViewByExchangeFragment extends Fragment implements
     @Override
     public void finished(Exchange exchange, CoinKind coinKind, ArrayList<Price> prices) {
         if (isDetached() || getActivity() == null) {
-            stopAutoUpdate();
+            stopAutoUpdate("finished");
             return;
         }
 
@@ -268,7 +277,7 @@ public class ListViewByExchangeFragment extends Fragment implements
         }
 
         adapter.notifyDataSetChanged();
-        hideProgressbarDelayed(Exchange.valueOf(kind.name()), CoinKind.sales);
+        hideProgressbarDelayed(exchange, coinKind);
 
         Log.d("UPDATED", kind.name() + ", " + new Date().toString());
     }
@@ -314,21 +323,16 @@ public class ListViewByExchangeFragment extends Fragment implements
     public void onResume() {
         super.onResume();
 
-        if (isVisibleToUser) {
-            startAutoUpdate(true);
+        // フラグメントが破棄されずに再開された場合は、ここでオートアップデートを起動する。
+        if (!isRecreated && isVisibleToUser) {
+            startAutoUpdate("onResume");
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        stopAutoUpdate();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        stopAutoUpdate();
+        stopAutoUpdate("onPause");
     }
 
     @Override
@@ -346,7 +350,7 @@ public class ListViewByExchangeFragment extends Fragment implements
             return;
         }
 
-        stopAutoUpdate();
+        stopAutoUpdate("onItemClick");
         Intent intent = new Intent(view.getContext(), CoinActivity.class);
         intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.toJson().toString());
         intent.putExtra(CoinActivity.COIN_SYMBOL_KEY, coin.getSymbol());
@@ -377,9 +381,17 @@ public class ListViewByExchangeFragment extends Fragment implements
         this.isVisibleToUser = isVisibleToUser;
 
         if (isVisibleToUser) {
-            startAutoUpdate(true);
+            // フラグメントのライフサイクルと結びつかないイベントでオートアップデートを起動する。
+            // 例) タブの初期化後に、タブのコンテンツを表示
+            if (kind != null) {
+                startAutoUpdate("setUserVisibleHint");
+            }
         } else {
-            stopAutoUpdate();
+            // フラグメントのライフサイクルと結びつかないイベントでオートアップデートを停止する。
+            // 例) タブの表示後に、他のタブのコンテンツを表示
+            if (kind != null) {
+                stopAutoUpdate("setUserVisibleHint");
+            }
         }
     }
 
@@ -394,8 +406,11 @@ public class ListViewByExchangeFragment extends Fragment implements
         if (key.equals("pref_currency") && isVisibleToUser && getActivity() != null && getView() != null) {
             Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.enter);
             getView().findViewById(R.id.list_view).startAnimation(anim);
-            stopAutoUpdate();
-            startAutoUpdate(true);
+
+            if (isVisibleToUser) {
+                stopAutoUpdate("onSharedPreferenceChanged");
+                startAutoUpdate("onSharedPreferenceChanged");
+            }
         }
     }
 

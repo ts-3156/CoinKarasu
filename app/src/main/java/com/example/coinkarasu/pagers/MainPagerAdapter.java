@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 
 import com.example.coinkarasu.activities.CoinListFragment;
 import com.example.coinkarasu.activities.EditTabsFragment;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import com.example.coinkarasu.activities.etc.NavigationKind;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
+    private static final boolean DEBUG = true;
+
     private Context context;
     private NavigationKind defaultKind;
     private ArrayList<Fragment> fragments;
@@ -36,6 +39,8 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         NavigationKind selectedKind = NavigationKind.visibleValues(context).get(position);
         Fragment fragment;
+
+        if (DEBUG) Log.e("getItem", "" + selectedKind);
 
         if (selectedKind == NavigationKind.home) {
             fragment = HomeTabFragment.newInstance(selectedKind);
