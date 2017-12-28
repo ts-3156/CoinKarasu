@@ -33,6 +33,21 @@
     <string name="nav_btc_toplist">BTC Toplist</string>
     <string name="nav_edit_tabs">Edit tabs</string>
 
+    <string name="header_home">ホーム</string>
+    <string name="header_japan">Available in Japan</string>
+    <string name="header_bitflyer">Available on BitFlyer</string>
+    <string name="header_coincheck">Available on Coincheck</string>
+    <string name="header_zaif">Available on Zaif</string>
+    <string name="header_jpy_toplist">Large trading volume in JPY</string>
+    <string name="header_usd_toplist">Large trading volume in USD</string>
+    <string name="header_cny_toplist">Large trading volume in CNY</string>
+    <string name="header_eur_toplist">Large trading volume in EUR</string>
+    <string name="header_gbp_toplist">Large trading volume in GBP</string>
+    <string name="header_krw_toplist">Large trading volume in KRW</string>
+    <string name="header_inr_toplist">Large trading volume in INR</string>
+    <string name="header_btc_toplist">Large trading volume in BTC</string>
+    <string name="header_edit_tabs">Edit tabs</string>
+
     <string name="tab_home">Home</string>
     <string name="tab_main">Main</string>
     <string name="tab_japan">Japan</string>

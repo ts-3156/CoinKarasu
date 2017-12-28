@@ -532,7 +532,7 @@ public class CoinListFragment extends Fragment implements
                     coin.setCoinKind(CoinKind.sales);
                 }
                 sectionalCoins.addAll(sub);
-            } else if (kind == NavigationKind.jpy_toplist) {
+            } else {
                 Exchange exchange = kind.exchanges[0];
                 sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.none));
                 for (Coin coin : coins) {
