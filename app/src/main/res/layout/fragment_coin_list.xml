@@ -8,7 +8,7 @@
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listheader="@layout/list_header_item"
-        tools:listitem="@layout/list_row_item" />
+        tools:listheader="@layout/recycler_coin_list_header_item"
+        tools:listitem="@layout/recycler_coin_list_row_item" />
 
 </FrameLayout>

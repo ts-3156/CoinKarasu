@@ -38,7 +38,7 @@ public class HomeTabRecyclerViewAdapter extends RecyclerView.Adapter<HomeTabRecy
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(inflater.inflate(R.layout.recycler_row_item, parent, false));
+        return new ViewHolder(inflater.inflate(R.layout.recycler_home_tab_row_item, parent, false));
     }
 
     @Override

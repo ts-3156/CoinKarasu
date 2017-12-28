@@ -294,7 +294,7 @@ public class CoinListFragment extends Fragment implements
 
     @Override
     public void started(Exchange exchange, CoinKind coinKind) {
-        setProgressbarVisibility(View.VISIBLE, exchange);
+        setProgressbarVisibility(View.VISIBLE, exchange, coinKind);
     }
 
     @Override
@@ -329,21 +329,21 @@ public class CoinListFragment extends Fragment implements
         }
 
         adapter.notifyCoinsChanged(exchange, coinKind);
-        hideProgressbarDelayed(exchange);
+        hideProgressbarDelayed(exchange, coinKind);
 
         if (DEBUG) Log.e("UPDATED", exchange + ", " + new Date().toString());
     }
 
-    private void hideProgressbarDelayed(final Exchange exchange) {
+    private void hideProgressbarDelayed(final Exchange exchange, final CoinKind coinKind) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                setProgressbarVisibility(View.GONE, exchange);
+                setProgressbarVisibility(View.GONE, exchange, coinKind);
             }
         }, ValueAnimatorBase.DURATION);
     }
 
-    private void setProgressbarVisibility(int flag, Exchange exchange) {
+    private void setProgressbarVisibility(int flag, Exchange exchange, CoinKind coinKind) {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -356,7 +356,7 @@ public class CoinListFragment extends Fragment implements
         if (flag == View.GONE) {
             progressbar.clearAnimation();
             progressbar.setImageResource(R.drawable.ic_refresh_stop);
-            updateRelativeTimeSpanText(exchange);
+            updateRelativeTimeSpanText(exchange, coinKind);
         } else if (flag == View.VISIBLE) {
             progressbar.setImageResource(R.drawable.ic_refresh_rotate);
             Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
@@ -364,8 +364,8 @@ public class CoinListFragment extends Fragment implements
         }
     }
 
-    private void updateRelativeTimeSpanText(Exchange exchange) {
-        Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, CoinKind.none));
+    private void updateRelativeTimeSpanText(Exchange exchange, CoinKind coinKind) {
+        Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, coinKind));
         if (fragment != null) {
             ((RelativeTimeSpanFragment) fragment).updateText(System.currentTimeMillis());
         }
@@ -425,7 +425,7 @@ public class CoinListFragment extends Fragment implements
     public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
         if (key.equals("pref_currency") && isVisibleToUser && getActivity() != null && getView() != null) {
             Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.enter);
-            getView().findViewById(R.id.list_view).startAnimation(anim);
+            getView().findViewById(R.id.recycler_view).startAnimation(anim);
 
             if (isVisibleToUser) {
                 stopAutoUpdate("onSharedPreferenceChanged");

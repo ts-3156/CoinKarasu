@@ -9,7 +9,6 @@ import android.util.Log;
 import com.example.coinkarasu.activities.CoinListFragment;
 import com.example.coinkarasu.activities.EditTabsFragment;
 import com.example.coinkarasu.activities.HomeTabFragment;
-import com.example.coinkarasu.activities.ListViewByExchangeFragment;
 
 import java.util.ArrayList;
 
@@ -47,7 +46,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
         } else if (selectedKind == NavigationKind.edit_tabs) {
             fragment = EditTabsFragment.newInstance();
         } else if (selectedKind == NavigationKind.coincheck) {
-            fragment = ListViewByExchangeFragment.newInstance(selectedKind, defaultKind == selectedKind);
+            fragment = CoinListFragment.newInstance(selectedKind, defaultKind == selectedKind);
         } else {
             fragment = CoinListFragment.newInstance(selectedKind, defaultKind == selectedKind);
         }
