@@ -168,6 +168,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         if (coin == null) {
             stopAutoUpdate();
             hideProgressbarDelayed();
+            updateRelativeTimeSpanText();
             return;
         }
 
@@ -176,6 +177,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         this.coin.setTrend(coin.getChangePct24Hour() / 100.0);
         updatePrice(getView(), this.coin);
         hideProgressbarDelayed();
+        updateRelativeTimeSpanText();
 
         Log.d("UPDATED", kind + ", " + new Date().toString());
     }
@@ -226,7 +228,6 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         if (flag == View.GONE) {
             progressbar.clearAnimation();
             progressbar.setImageResource(R.drawable.ic_refresh_stop);
-            updateRelativeTimeSpanText();
         } else if (flag == View.VISIBLE) {
             progressbar.setImageResource(R.drawable.ic_refresh_rotate);
             Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);

@@ -2,7 +2,6 @@ package com.example.coinkarasu.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,6 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.activities.RelativeTimeSpanFragment;
 import com.example.coinkarasu.activities.etc.CoinKind;
 import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.animator.PriceAnimator;
@@ -41,9 +39,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     private ResourceUtils resources;
 
-    private FragmentManager fragmentManager;
-
-    public CoinListRecyclerViewAdapter(Activity activity, List<Coin> coins, FragmentManager fragmentManager) {
+    public CoinListRecyclerViewAdapter(Activity activity, List<Coin> coins) {
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         isAnimEnabled = PrefHelper.isAnimEnabled(activity);
@@ -53,7 +49,6 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         this.resources = new ResourceUtils(activity, coins);
-        this.fragmentManager = fragmentManager;
 
         setHasStableIds(true);
 
@@ -175,8 +170,8 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         Coin coin = coins.get(position);
 
         holder.header.setText(resources.headerNameResIdStringMap.get(coin.getHeaderNameResId()));
-        holder.setProgressbarTag(coin.getExchange());
-        holder.initializeTimeSpan(fragmentManager, coin);
+        holder.progressbar.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-progressbar");
+        holder.timeSpan.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-time_span");
 
         if (position == 0) {
             holder.divider.setVisibility(View.GONE);
@@ -247,11 +242,16 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     public void onViewRecycled(RecyclerView.ViewHolder holder) {
         switch (holder.getItemViewType()) {
             case TYPE_HEADER:
+                headerViewRecycled((HeaderViewHolder) holder);
                 break;
             case TYPE_ITEM:
                 itemViewRecycled((ItemViewHolder) holder);
                 break;
         }
+    }
+
+    private void headerViewRecycled(HeaderViewHolder holder) {
+
     }
 
     private void itemViewRecycled(ItemViewHolder holder) {
@@ -319,17 +319,6 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             divider = view.findViewById(R.id.divider);
             progressbar = view.findViewById(R.id.progressbar);
             timeSpan = view.findViewById(R.id.time_span_container);
-        }
-
-        void setProgressbarTag(String exchange) {
-            progressbar.setTag(exchange + "-progressbar");
-        }
-
-        void initializeTimeSpan(FragmentManager manager, Coin coin) {
-            timeSpan.setId(coin.getHeaderNameResId());
-            manager.beginTransaction()
-                    .replace(timeSpan.getId(), RelativeTimeSpanFragment.newInstance(), RelativeTimeSpanFragment.getTag(coin))
-                    .commit();
         }
     }
 

@@ -9,9 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.activities.etc.CoinKind;
-import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.activities.etc.Exchange;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,7 +27,23 @@ public class RelativeTimeSpanFragment extends Fragment {
     }
 
     public static RelativeTimeSpanFragment newInstance() {
-        return new RelativeTimeSpanFragment();
+        return newInstance(-1);
+    }
+
+    public static RelativeTimeSpanFragment newInstance(long time) {
+        RelativeTimeSpanFragment fragment = new RelativeTimeSpanFragment();
+        Bundle args = new Bundle();
+        args.putLong("time", time);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            time = getArguments().getLong("time");
+        }
     }
 
     @Override
@@ -37,8 +52,6 @@ public class RelativeTimeSpanFragment extends Fragment {
 
         if (savedInstanceState != null) {
             time = savedInstanceState.getLong(STATE_TIME_KEY);
-        } else {
-            time = -1;
         }
 
         return view;
@@ -62,7 +75,7 @@ public class RelativeTimeSpanFragment extends Fragment {
 
     private static String getRelativeTimeSpanString(long time, long now) {
         if (time < 0) {
-            return "Unknown";
+            return "";
         }
 
         long diff = now - time;
@@ -79,7 +92,7 @@ public class RelativeTimeSpanFragment extends Fragment {
 
     private void startAutoUpdate() {
         if (timer != null) {
-            stopAutoUpdate();
+            return;
         }
 
         timer = new Timer();
@@ -139,13 +152,6 @@ public class RelativeTimeSpanFragment extends Fragment {
 
     public static String getTag(Exchange exchange, CoinKind coinKind) {
         return getTag(exchange.name(), exchange.getHeaderNameResId(coinKind));
-    }
-
-    public static String getTag(Coin coin) {
-        if (!coin.isSectionHeader()) {
-            throw new RuntimeException("Invalid coin " + coin.toString());
-        }
-        return getTag(coin.getExchange(), coin.getHeaderNameResId());
     }
 
     private static String getTag(String exchange, int headerNameResId) {

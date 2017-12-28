@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.coinkarasu.activities.etc.CoinKind;
 import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.api.coincheck.data.Rate;
+import com.example.coinkarasu.api.cryptocompare.data.Prices;
 import com.example.coinkarasu.coins.PriceMultiFullCoin;
 
 import java.util.ArrayList;
@@ -51,17 +52,22 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
     @Override
     protected void onPostExecute(Integer integer) {
         if (listener != null) {
-            double sum = 0.0;
-            sum += ((GetCoincheckTradingRateThread) threads.get(0)).getRate().value;
-            sum += ((GetCoincheckTradingRateThread) threads.get(1)).getRate().value;
-            double avg = sum / 2.0;
+            Rate sellRate = ((GetCoincheckTradingRateThread) threads.get(0)).getRate();
+            Rate buyRate = ((GetCoincheckTradingRateThread) threads.get(1)).getRate();
+            if (sellRate == null || buyRate == null) {
+                listener.finished(exchange, coinKind, null);
+                return;
+            }
 
-            PriceMultiFullCoin coin = ((GetCccaggPricesThread) threads.get(2)).getPrices().getCoins().get(0);
+            double avg = (sellRate.value + buyRate.value) / 2.0;
+            Price price = new Price(exchange, coinKind, sellRate.fromSymbol, sellRate.toSymbol, avg);
 
-            Rate rate = ((GetCoincheckTradingRateThread) threads.get(0)).getRate();
-            Price price = new Price(exchange, coinKind, rate.fromSymbol, rate.toSymbol, avg);
-            price.priceDiff = coin.getChange24Hour();
-            price.trend = coin.getChangePct24Hour() / 100.0;
+            Prices prices = ((GetCccaggPricesThread) threads.get(2)).getPrices();
+            if (!prices.getCoins().isEmpty()) {
+                PriceMultiFullCoin coin = prices.getCoins().get(0);
+                price.priceDiff = coin.getChange24Hour();
+                price.trend = coin.getChangePct24Hour() / 100.0;
+            }
 
             ArrayList<Price> pricesArray = new ArrayList<>();
             pricesArray.add(price);

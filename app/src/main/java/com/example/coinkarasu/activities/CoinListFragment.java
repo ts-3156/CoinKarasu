@@ -123,7 +123,7 @@ public class CoinListFragment extends Fragment implements
         }
 
         coins = Utils.insertSectionHeader(coins, kind);
-        initializeListView(new CoinListRecyclerViewAdapter(getActivity(), coins, getChildFragmentManager()));
+        initializeListView(new CoinListRecyclerViewAdapter(getActivity(), coins));
     }
 
     private void initializeListView(CoinListRecyclerViewAdapter adapter) {
@@ -309,6 +309,10 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
+        if (prices == null) {
+            return;
+        }
+
 //        prices.saveToCache(getActivity(), kind.name() + "-" + prices.getExchange());
 
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
@@ -329,9 +333,10 @@ public class CoinListFragment extends Fragment implements
         }
 
         adapter.notifyCoinsChanged(exchange, coinKind);
+        updateRelativeTimeSpanText(exchange, coinKind);
         hideProgressbarDelayed(exchange, coinKind);
 
-        if (DEBUG) Log.e("UPDATED", exchange + ", " + new Date().toString());
+        if (DEBUG) Log.e("UPDATED", exchange + ", " + coinKind + ", " + new Date().toString());
     }
 
     private void hideProgressbarDelayed(final Exchange exchange, final CoinKind coinKind) {
@@ -348,7 +353,7 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
-        ImageView progressbar = getView().findViewWithTag(exchange.name() + "-progressbar");
+        ImageView progressbar = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-progressbar");
         if (progressbar == null) {
             return;
         }
@@ -356,7 +361,6 @@ public class CoinListFragment extends Fragment implements
         if (flag == View.GONE) {
             progressbar.clearAnimation();
             progressbar.setImageResource(R.drawable.ic_refresh_stop);
-            updateRelativeTimeSpanText(exchange, coinKind);
         } else if (flag == View.VISIBLE) {
             progressbar.setImageResource(R.drawable.ic_refresh_rotate);
             Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
@@ -366,9 +370,16 @@ public class CoinListFragment extends Fragment implements
 
     private void updateRelativeTimeSpanText(Exchange exchange, CoinKind coinKind) {
         Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, coinKind));
-        if (fragment != null) {
-            ((RelativeTimeSpanFragment) fragment).updateText(System.currentTimeMillis());
+        if (fragment == null) {
+            View timeSpan = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-time_span");
+            timeSpan.setId(exchange.getHeaderNameResId(coinKind)); // 何かしらの値をセットしないと、すべて同じIDになってしまう。
+
+            fragment = RelativeTimeSpanFragment.newInstance(System.currentTimeMillis());
+            getChildFragmentManager().beginTransaction()
+                    .replace(timeSpan.getId(), fragment, RelativeTimeSpanFragment.getTag(exchange, coinKind))
+                    .commit();
         }
+        ((RelativeTimeSpanFragment) fragment).updateText(System.currentTimeMillis());
     }
 
     @Override
@@ -444,9 +455,11 @@ public class CoinListFragment extends Fragment implements
         FragmentTransaction transaction = manager.beginTransaction();
 
         for (Exchange exchange : kind.exchanges) {
-            Fragment fragment = manager.findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, CoinKind.trading));
-            if (fragment != null) {
-                transaction.remove(fragment);
+            for (CoinKind coinKind : CoinKind.values()) {
+                Fragment fragment = manager.findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, coinKind));
+                if (fragment != null) {
+                    transaction.remove(fragment);
+                }
             }
         }
 

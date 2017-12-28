@@ -57,7 +57,9 @@ public class GetCoincheckSalesRatesTask extends GetPricesByExchangeTaskBase {
 
             for (GetCoincheckSalesRateThread thread : threads) {
                 Rate rate = thread.getRate();
-                prices.add(new Price(Exchange.coincheck, CoinKind.sales, rate.fromSymbol, rate.toSymbol, rate.value));
+                if (rate != null) {
+                    prices.add(new Price(exchange, coinKind, rate.fromSymbol, rate.toSymbol, rate.value));
+                }
             }
 
             listener.finished(exchange, coinKind, prices);
