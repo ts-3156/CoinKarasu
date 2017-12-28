@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="@dimen/coin_list_vertical_spacing"
+    android:paddingLeft="@dimen/coin_list_horizontal_spacing"
+    android:paddingRight="@dimen/coin_list_horizontal_spacing"
+    android:paddingTop="@dimen/coin_list_vertical_spacing">
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/icon"
+        android:layout_width="@dimen/coin_list_icon_size"
+        android:layout_height="@dimen/coin_list_icon_size"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="@dimen/coin_list_horizontal_spacing"
+        tools:src="@raw/ic_coin_btc" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/icon"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        tools:text="Bitcoin" />
+
+    <TextView
+        android:id="@+id/symbol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name"
+        android:layout_toRightOf="@+id/icon"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        tools:text="BTC" />
+
+    <TextView
+        android:id="@+id/price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/name"
+        android:layout_alignParentRight="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        tools:text="¥ 1,000,000" />
+
+    <ImageView
+        android:id="@+id/trend_icon"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignBottom="@id/trend"
+        android:layout_toLeftOf="@id/price_diff"
+        android:paddingRight="4dp"
+        android:paddingTop="4dp" />
+
+    <TextView
+        android:id="@+id/price_diff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/symbol"
+        android:layout_toLeftOf="@id/trend"
+        android:paddingRight="4dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        tools:text="10.0%" />
+
+    <TextView
+        android:id="@+id/trend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/symbol"
+        android:layout_alignParentRight="true"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        tools:text="10.0%" />
+
+</RelativeLayout>

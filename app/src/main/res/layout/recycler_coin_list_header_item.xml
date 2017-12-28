@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/coin_list_header_horizontal_offset"
+    android:paddingRight="@dimen/coin_list_horizontal_spacing">
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="?android:attr/listDivider" />
+
+    <TextView
+        android:id="@+id/text_separator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/divider"
+        android:layout_marginTop="@dimen/coin_list_vertical_spacing"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="#999999"
+        tools:text="Aggregated index" />
+
+    <FrameLayout
+        android:id="@+id/time_span_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/text_separator"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="@dimen/coin_list_header_time_span_horizontal_offset" />
+
+    <ImageView
+        android:id="@+id/progressbar"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_alignBottom="@id/text_separator"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_refresh_stop" />
+
+</RelativeLayout>

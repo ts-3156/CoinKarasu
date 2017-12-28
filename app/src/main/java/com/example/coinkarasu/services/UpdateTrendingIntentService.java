@@ -38,7 +38,7 @@ public class UpdateTrendingIntentService extends IntentService {
 //        }
 //
 //        ArrayList<String> exchanges = new ArrayList<>();
-//        for (ListViewFragment.Exchange exchange : ListViewFragment.Exchange.values()) {
+//        for (Exchange exchange : Exchange.values()) {
 //
 //        }
 

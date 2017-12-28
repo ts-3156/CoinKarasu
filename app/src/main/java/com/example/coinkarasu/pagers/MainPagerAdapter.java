@@ -5,10 +5,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
+import com.example.coinkarasu.activities.CoinListFragment;
 import com.example.coinkarasu.activities.EditTabsFragment;
 import com.example.coinkarasu.activities.HomeTabFragment;
 import com.example.coinkarasu.activities.ListViewByExchangeFragment;
-import com.example.coinkarasu.activities.ListViewFragment;
 
 import java.util.ArrayList;
 
@@ -44,7 +44,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
         } else if (selectedKind == NavigationKind.coincheck) {
             fragment = ListViewByExchangeFragment.newInstance(selectedKind, defaultKind == selectedKind);
         } else {
-            fragment = ListViewFragment.newInstance(selectedKind, defaultKind == selectedKind);
+            fragment = CoinListFragment.newInstance(selectedKind, defaultKind == selectedKind);
         }
 
         fragments.add(fragment);

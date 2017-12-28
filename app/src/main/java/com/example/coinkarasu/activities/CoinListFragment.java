@@ -10,20 +10,18 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.adapters.ListViewAdapter;
+import com.example.coinkarasu.adapters.CoinListRecyclerViewAdapter;
 import com.example.coinkarasu.animator.ValueAnimatorBase;
 import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.Prices;
@@ -42,9 +40,7 @@ import java.util.List;
 import java.util.TimerTask;
 
 
-public class ListViewFragment extends Fragment implements
-        ListView.OnItemClickListener,
-        ListView.OnScrollListener,
+public class CoinListFragment extends Fragment implements
         GetPricesTask.Listener,
         SharedPreferences.OnSharedPreferenceChangeListener,
         CollectCoinsTask.Listener,
@@ -58,11 +54,11 @@ public class ListViewFragment extends Fragment implements
     private boolean isSelected;
     private boolean isStartTaskRequested;
 
-    public ListViewFragment() {
+    public CoinListFragment() {
     }
 
-    public static ListViewFragment newInstance(NavigationKind kind, boolean isSelected) {
-        ListViewFragment fragment = new ListViewFragment();
+    public static CoinListFragment newInstance(NavigationKind kind, boolean isSelected) {
+        CoinListFragment fragment = new CoinListFragment();
         Bundle args = new Bundle();
         args.putString("kind", kind.name());
         args.putBoolean("isSelected", isSelected);
@@ -81,7 +77,7 @@ public class ListViewFragment extends Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_coin_list, container, false);
 
         if (savedInstanceState != null) {
             isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
@@ -105,16 +101,43 @@ public class ListViewFragment extends Fragment implements
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void initializeListView(ListViewAdapter adapter) {
+    private void initializeListView(CoinListRecyclerViewAdapter adapter) {
         if (adapter == null || getActivity() == null || getView() == null) {
             return;
         }
 
-        ListView listView = getView().findViewById(R.id.list_view);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(this);
-        listView.setOnScrollListener(this);
-        ViewCompat.setNestedScrollingEnabled(listView, true); // <= 21 http://starzero.hatenablog.com/entry/2015/09/30/114136
+        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+
+        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                switch (newState) {
+                    case RecyclerView.SCROLL_STATE_IDLE:
+                        ((CoinListRecyclerViewAdapter) recyclerView.getAdapter()).setIsScrolled(false);
+                        break;
+                    case RecyclerView.SCROLL_STATE_DRAGGING:
+                        ((CoinListRecyclerViewAdapter) recyclerView.getAdapter()).setIsScrolled(true);
+                        break;
+                }
+            }
+        });
+
+        adapter.setOnItemClickListener(new CoinListRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Coin coin, View view, int position) {
+                if (coin.isSectionHeader()) {
+                    return;
+                }
+
+                stopAutoUpdate();
+                Intent intent = new Intent(view.getContext(), CoinActivity.class);
+                intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.toJson().toString());
+                intent.putExtra(CoinActivity.COIN_SYMBOL_KEY, coin.getSymbol());
+                startActivity(intent);
+            }
+        });
+        recyclerView.setAdapter(adapter);
 
         updateViewIfCacheExist(adapter);
 
@@ -123,7 +146,7 @@ public class ListViewFragment extends Fragment implements
         }
     }
 
-    private void updateViewIfCacheExist(ListViewAdapter adapter) {
+    private void updateViewIfCacheExist(CoinListRecyclerViewAdapter adapter) {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -157,7 +180,7 @@ public class ListViewFragment extends Fragment implements
         }
 
         coins = Utils.insertSectionHeader(coins, kind.exchanges);
-        initializeListView(new ListViewAdapter(getActivity(), coins, getChildFragmentManager()));
+        initializeListView(new CoinListRecyclerViewAdapter(getActivity(), coins, getChildFragmentManager()));
     }
 
     private void startTask() {
@@ -165,8 +188,8 @@ public class ListViewFragment extends Fragment implements
             return;
         }
 
-        ListView listView = getView().findViewById(R.id.list_view);
-        ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
+        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
+        CoinListRecyclerViewAdapter adapter = (CoinListRecyclerViewAdapter) recyclerView.getAdapter();
 
         if (adapter == null) {
             isStartTaskRequested = true;
@@ -247,8 +270,8 @@ public class ListViewFragment extends Fragment implements
 
         prices.saveToCache(getActivity(), kind.name() + "-" + prices.getExchange());
 
-        ListView listView = getView().findViewById(R.id.list_view);
-        ListViewAdapter adapter = (ListViewAdapter) listView.getAdapter();
+        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
+        CoinListRecyclerViewAdapter adapter = (CoinListRecyclerViewAdapter) recyclerView.getAdapter();
 
         String exchange = prices.getExchange();
         ArrayList<Coin> filtered = adapter.getItems(exchange);
@@ -324,38 +347,6 @@ public class ListViewFragment extends Fragment implements
         PrefHelper.getPref(getActivity()).unregisterOnSharedPreferenceChangeListener(this);
         autoUpdateTimer = null;
         kind = null;
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int pos, long id) {
-        Coin coin = (Coin) ((ListView) parent).getItemAtPosition(pos);
-        if (coin.isSectionHeader()) {
-            return;
-        }
-
-        stopAutoUpdate();
-        Intent intent = new Intent(view.getContext(), CoinActivity.class);
-        intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.toJson().toString());
-        intent.putExtra(CoinActivity.COIN_SYMBOL_KEY, coin.getSymbol());
-        startActivity(intent);
-    }
-
-    @Override
-    public void onScrollStateChanged(AbsListView listView, int state) {
-        switch (state) {
-            case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                ((ListViewAdapter) listView.getAdapter()).setIsScrolled(false);
-                break;
-            case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                ((ListViewAdapter) listView.getAdapter()).setIsScrolled(true);
-                break;
-            case AbsListView.OnScrollListener.SCROLL_STATE_FLING:
-                break;
-        }
-    }
-
-    @Override
-    public void onScroll(AbsListView absListView, int i, int i1, int i2) {
     }
 
     @Override
