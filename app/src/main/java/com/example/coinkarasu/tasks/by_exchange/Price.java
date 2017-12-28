@@ -9,13 +9,17 @@ public class Price {
 
     public String fromSymbol;
     public String toSymbol;
-    public double value;
+    public double price;
+    public double priceDiff;
+    public double trend;
 
-    public Price(Exchange exchange, CoinKind coinKind, String fromSymbol, String toSymbol, double value) {
+    public Price(Exchange exchange, CoinKind coinKind, String fromSymbol, String toSymbol, double price) {
         this.exchange = exchange;
         this.coinKind = coinKind;
         this.fromSymbol = fromSymbol;
         this.toSymbol = toSymbol;
-        this.value = value;
+        this.price = price;
+        this.priceDiff = 0.0;
+        this.trend = 0.0;
     }
 }

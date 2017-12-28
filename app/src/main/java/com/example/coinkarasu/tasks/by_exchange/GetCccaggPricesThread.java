@@ -1,6 +1,9 @@
 package com.example.coinkarasu.tasks.by_exchange;
 
+import android.content.Context;
+
 import com.example.coinkarasu.api.cryptocompare.Client;
+import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.Prices;
 
 import java.util.concurrent.CountDownLatch;
@@ -14,11 +17,11 @@ public class GetCccaggPricesThread extends Thread {
     private String toSymbol;
     private String exchange;
 
-    public GetCccaggPricesThread(Client client, String[] fromSymbols, String toSymbol, String exchange) {
+    public GetCccaggPricesThread(Context context, String[] fromSymbols, String toSymbol, String exchange) {
         latch = null;
         prices = null;
 
-        this.client = client;
+        this.client = ClientFactory.getInstance(context);
         this.fromSymbols = fromSymbols;
         this.toSymbol = toSymbol;
         this.exchange = exchange;

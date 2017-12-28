@@ -1,10 +1,11 @@
 package com.example.coinkarasu.tasks.by_exchange;
 
-import android.os.AsyncTask;
+import android.content.Context;
 
-import com.example.coinkarasu.api.cryptocompare.Client;
+import com.example.coinkarasu.activities.etc.CoinKind;
+import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.api.cryptocompare.data.Prices;
-import com.example.coinkarasu.api.cryptocompare.data.PricesImpl;
+import com.example.coinkarasu.coins.PriceMultiFullCoin;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,21 +13,20 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class GetCccaggPricesTask extends AsyncTask<Integer, Integer, Integer> {
-    private Listener listener;
-    private Client client;
+public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
     private ArrayList<GetCccaggPricesThread> threads;
     private String[] fromSymbols;
     private String toSymbol;
-    private String exchange;
+    private String exchangeStr;
+    private Context context;
 
-    public GetCccaggPricesTask(Client client) {
-        this.listener = null;
-        this.client = client;
+    public GetCccaggPricesTask(Context context, Exchange exchange) {
+        super(exchange, CoinKind.trading);
         this.threads = new ArrayList<>();
         this.fromSymbols = null;
         this.toSymbol = null;
-        this.exchange = null;
+        this.exchangeStr = null;
+        this.context = context;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class GetCccaggPricesTask extends AsyncTask<Integer, Integer, Integer> {
             }
 
             String[] target = Arrays.copyOfRange(fromSymbols, i, index + 1);
-            threads.add(new GetCccaggPricesThread(client, target, toSymbol, exchange));
+            threads.add(new GetCccaggPricesThread(context, target, toSymbol, exchangeStr));
 
             if (index >= fromSymbols.length) {
                 break;
@@ -66,22 +66,22 @@ public class GetCccaggPricesTask extends AsyncTask<Integer, Integer, Integer> {
     }
 
     @Override
-    protected void onProgressUpdate(Integer... progress) {
-        if (listener != null) {
-            listener.started(exchange, fromSymbols, toSymbol);
-        }
-    }
-
-    @Override
     protected void onPostExecute(Integer integer) {
         if (listener != null) {
-            Prices prices = new PricesImpl(threads.get(0).getExchange());
+            ArrayList<Price> pricesArray = new ArrayList<>();
 
             for (GetCccaggPricesThread thread : threads) {
-                prices.merge(thread.getPrices());
+                Prices prices = thread.getPrices();
+
+                for (PriceMultiFullCoin coin : prices.getCoins()) {
+                    Price price = new Price(exchange, coinKind, coin.getFromSymbol(), coin.getToSymbol(), coin.getPrice());
+                    price.priceDiff = coin.getChange24Hour();
+                    price.trend = coin.getChangePct24Hour() / 100.0;
+                    pricesArray.add(price);
+                }
             }
 
-            listener.finished(prices);
+            listener.finished(exchange, coinKind, pricesArray);
         }
     }
 
@@ -95,19 +95,8 @@ public class GetCccaggPricesTask extends AsyncTask<Integer, Integer, Integer> {
         return this;
     }
 
-    public GetCccaggPricesTask setExchange(String exchange) {
-        this.exchange = exchange;
+    public GetCccaggPricesTask setExchange(String exchangeStr) {
+        this.exchangeStr = exchangeStr;
         return this;
-    }
-
-    public GetCccaggPricesTask setListener(Listener listener) {
-        this.listener = listener;
-        return this;
-    }
-
-    public interface Listener {
-        void started(String exchange, String[] fromSymbols, String toSymbol);
-
-        void finished(Prices prices);
     }
 }

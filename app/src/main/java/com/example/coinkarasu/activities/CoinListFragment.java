@@ -25,7 +25,6 @@ import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.adapters.CoinListRecyclerViewAdapter;
 import com.example.coinkarasu.animator.ValueAnimatorBase;
-import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.Prices;
 import com.example.coinkarasu.api.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.coins.Coin;
@@ -44,7 +43,6 @@ import java.util.TimerTask;
 
 
 public class CoinListFragment extends Fragment implements
-        GetCccaggPricesTask.Listener,
         GetPricesByExchangeTaskBase.Listener,
         SharedPreferences.OnSharedPreferenceChangeListener,
         CollectCoinsTask.Listener,
@@ -166,7 +164,7 @@ public class CoinListFragment extends Fragment implements
         });
         recyclerView.setAdapter(adapter);
 
-        updateViewIfCacheExist(adapter);
+//        updateViewIfCacheExist(adapter);
 
         if (isStartTaskRequested) {
             startTask();
@@ -223,7 +221,7 @@ public class CoinListFragment extends Fragment implements
                 } else if (exchange == Exchange.zaif) {
                     String[] fromSymbols = getResources().getStringArray(exchange.tradingSymbolsResId);
 
-                    new GetCccaggPricesTask(ClientFactory.getInstance(getActivity()))
+                    new GetCccaggPricesTask(getContext(), exchange)
                             .setFromSymbols(fromSymbols)
                             .setToSymbol(Utils.getToSymbol(getActivity(), kind))
                             .setExchange(exchange.name())
@@ -243,7 +241,7 @@ public class CoinListFragment extends Fragment implements
             // jpy_toplist, usd_toplist, btc_toplist and so on
             String[] fromSymbols = getResources().getStringArray(kind.symbolsResId);
 
-            new GetCccaggPricesTask(ClientFactory.getInstance(getActivity()))
+            new GetCccaggPricesTask(getContext(), Exchange.cccagg)
                     .setFromSymbols(fromSymbols)
                     .setToSymbol(Utils.getToSymbol(getActivity(), kind))
                     .setExchange(kind.exchanges[0].name())
@@ -319,7 +317,9 @@ public class CoinListFragment extends Fragment implements
         for (Price price : prices) {
             for (Coin coin : coins) {
                 if (coin.getSymbol().equals(price.fromSymbol)) {
-                    coin.setPrice(price.value);
+                    coin.setPrice(price.price);
+                    coin.setPriceDiff(price.priceDiff);
+                    coin.setTrend(price.trend);
                     break;
                 }
             }
@@ -328,38 +328,6 @@ public class CoinListFragment extends Fragment implements
 
         adapter.notifyDataSetChanged();
         hideProgressbarDelayed(exchange);
-
-        Log.d("UPDATED", exchange + ", " + new Date().toString());
-    }
-
-    @Override
-    public void started(String exchange, String[] fromSymbols, String toSymbol) {
-        setProgressbarVisibility(View.VISIBLE, Exchange.valueOf(exchange));
-    }
-
-    @Override
-    public void finished(Prices prices) {
-        if (isDetached() || getActivity() == null) {
-            stopAutoUpdate("finished");
-            return;
-        }
-
-        String tag = getTimerTag(kind);
-        if (autoUpdateTimer == null || tag == null || !autoUpdateTimer.getTag().equals(tag)) {
-            return;
-        }
-
-        prices.saveToCache(getActivity(), kind.name() + "-" + prices.getExchange());
-
-        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
-        CoinListRecyclerViewAdapter adapter = (CoinListRecyclerViewAdapter) recyclerView.getAdapter();
-
-        String exchange = prices.getExchange();
-        ArrayList<Coin> filtered = adapter.getItems(Exchange.valueOf(exchange));
-        prices.copyAttrsToCoins(filtered);
-
-        adapter.notifyDataSetChanged();
-        hideProgressbarDelayed(Exchange.valueOf(exchange));
 
         Log.d("UPDATED", exchange + ", " + new Date().toString());
     }

@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.coinkarasu.activities.etc.CoinKind;
 import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.api.bitflyer.data.Board;
+import com.example.coinkarasu.coins.PriceMultiFullCoin;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -12,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GetBitflyerTradingRatesTask extends GetPricesByExchangeTaskBase {
-    private ArrayList<GetBitflyerBoardThread> threads;
+    private ArrayList<Thread> threads;
     private Context context;
 
     protected GetBitflyerTradingRatesTask(Context context) {
@@ -25,13 +26,13 @@ public class GetBitflyerTradingRatesTask extends GetPricesByExchangeTaskBase {
     protected Integer doInBackground(Integer... params) {
         publishProgress(0);
 
-        threads.add(new GetBitflyerBoardThread(context));
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        CountDownLatch latch = new CountDownLatch(2);
 
-        ExecutorService executor = Executors.newFixedThreadPool(1);
-        CountDownLatch latch = new CountDownLatch(threads.size());
+        threads.add(new GetBitflyerBoardThread(context).setLatch(latch));
+        threads.add(new GetCccaggPricesThread(context, new String[]{"BTC"}, "JPY", Exchange.bitflyer.name()).setLatch(latch));
 
-        for (GetBitflyerBoardThread thread : threads) {
-            thread.setLatch(latch);
+        for (Thread thread : threads) {
             executor.submit(thread);
         }
 
@@ -48,12 +49,17 @@ public class GetBitflyerTradingRatesTask extends GetPricesByExchangeTaskBase {
     @Override
     protected void onPostExecute(Integer integer) {
         if (listener != null) {
-            Board board = threads.get(0).getBoard();
+            Board board = ((GetBitflyerBoardThread) threads.get(0)).getBoard();
+            PriceMultiFullCoin coin = ((GetCccaggPricesThread) threads.get(1)).getPrices().getCoins().get(0);
 
-            ArrayList<Price> prices = new ArrayList<>();
-            prices.add(new Price(Exchange.bitflyer, CoinKind.trading, "BTC", "JPY", board.getMidPrice()));
+            Price price = new Price(exchange, coinKind, "BTC", "JPY", board.getMidPrice());
+            price.priceDiff = coin.getChange24Hour();
+            price.trend = coin.getChangePct24Hour() / 100.0;
 
-            listener.finished(Exchange.bitflyer, CoinKind.trading, prices);
+            ArrayList<Price> pricesArray = new ArrayList<>();
+            pricesArray.add(price);
+
+            listener.finished(exchange, coinKind, pricesArray);
         }
     }
 }

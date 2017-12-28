@@ -5,6 +5,7 @@ import android.content.Context;
 import com.example.coinkarasu.activities.etc.CoinKind;
 import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.api.coincheck.data.Rate;
+import com.example.coinkarasu.coins.PriceMultiFullCoin;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -12,7 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
-    private ArrayList<GetCoincheckTradingRateThread> threads;
+    private ArrayList<Thread> threads;
     private Context context;
 
     protected GetCoincheckTradingRatesTask(Context context) {
@@ -25,14 +26,15 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
     protected Integer doInBackground(Integer... params) {
         publishProgress(0);
 
-        threads.add(new GetCoincheckTradingRateThread(context, "sell"));
-        threads.add(new GetCoincheckTradingRateThread(context, "buy"));
-
         ExecutorService executor = Executors.newFixedThreadPool(2);
-        CountDownLatch latch = new CountDownLatch(threads.size());
+        CountDownLatch latch = new CountDownLatch(3);
 
-        for (GetCoincheckTradingRateThread thread : threads) {
-            thread.setLatch(latch);
+        threads.add(new GetCoincheckTradingRateThread(context, "sell").setLatch(latch));
+        threads.add(new GetCoincheckTradingRateThread(context, "buy").setLatch(latch));
+        threads.add(new GetCccaggPricesThread(context, new String[]{"BTC"}, "JPY", Exchange.coincheck.name()).setLatch(latch));
+
+
+        for (Thread thread : threads) {
             executor.submit(thread);
         }
 
@@ -50,16 +52,21 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
     protected void onPostExecute(Integer integer) {
         if (listener != null) {
             double sum = 0.0;
+            sum += ((GetCoincheckTradingRateThread) threads.get(0)).getRate().value;
+            sum += ((GetCoincheckTradingRateThread) threads.get(1)).getRate().value;
+            double avg = sum / 2.0;
 
-            for (GetCoincheckTradingRateThread thread : threads) {
-                sum += thread.getRate().value;
-            }
+            PriceMultiFullCoin coin = ((GetCccaggPricesThread) threads.get(2)).getPrices().getCoins().get(0);
 
-            Rate rate = threads.get(0).getRate();
-            ArrayList<Price> prices = new ArrayList<>();
-            prices.add(new Price(Exchange.coincheck, CoinKind.trading, rate.fromSymbol, rate.toSymbol, sum / threads.size()));
+            Rate rate = ((GetCoincheckTradingRateThread) threads.get(0)).getRate();
+            Price price = new Price(exchange, coinKind, rate.fromSymbol, rate.toSymbol, avg);
+            price.priceDiff = coin.getChange24Hour();
+            price.trend = coin.getChangePct24Hour() / 100.0;
 
-            listener.finished(Exchange.coincheck, CoinKind.trading, prices);
+            ArrayList<Price> pricesArray = new ArrayList<>();
+            pricesArray.add(price);
+
+            listener.finished(exchange, coinKind, pricesArray);
         }
     }
 }

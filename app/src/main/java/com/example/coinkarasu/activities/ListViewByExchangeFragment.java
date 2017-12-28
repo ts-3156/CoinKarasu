@@ -269,7 +269,7 @@ public class ListViewByExchangeFragment extends Fragment implements
         for (Price price : prices) {
             for (Coin coin : coins) {
                 if (coin.getSymbol().equals(price.fromSymbol)) {
-                    coin.setPrice(price.value);
+                    coin.setPrice(price.price);
                     break;
                 }
             }

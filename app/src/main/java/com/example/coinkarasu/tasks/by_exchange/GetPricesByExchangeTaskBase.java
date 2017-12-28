@@ -10,8 +10,8 @@ import java.util.ArrayList;
 
 public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Integer, Integer> {
     protected Listener listener;
-    private Exchange exchange;
-    private CoinKind coinKind;
+    protected Exchange exchange;
+    protected CoinKind coinKind;
 
     protected GetPricesByExchangeTaskBase(Exchange exchange, CoinKind coinKind) {
         this.listener = null;

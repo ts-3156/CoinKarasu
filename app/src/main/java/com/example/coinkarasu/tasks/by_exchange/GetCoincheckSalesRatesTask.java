@@ -60,7 +60,7 @@ public class GetCoincheckSalesRatesTask extends GetPricesByExchangeTaskBase {
                 prices.add(new Price(Exchange.coincheck, CoinKind.sales, rate.fromSymbol, rate.toSymbol, rate.value));
             }
 
-            listener.finished(Exchange.coincheck, CoinKind.sales, prices);
+            listener.finished(exchange, coinKind, prices);
         }
     }
 }

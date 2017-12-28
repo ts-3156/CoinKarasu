@@ -38,7 +38,7 @@ public class RelativeTimeSpanFragment extends Fragment {
         if (savedInstanceState != null) {
             time = savedInstanceState.getLong(STATE_TIME_KEY);
         } else {
-            time = System.currentTimeMillis();
+            time = -1;
         }
 
         return view;
@@ -61,6 +61,10 @@ public class RelativeTimeSpanFragment extends Fragment {
     }
 
     private static String getRelativeTimeSpanString(long time, long now) {
+        if (time < 0) {
+            return "Unknown";
+        }
+
         long diff = now - time;
         String str;
 
