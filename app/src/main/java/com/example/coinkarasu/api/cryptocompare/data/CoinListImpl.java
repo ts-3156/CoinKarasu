@@ -3,11 +3,11 @@ package com.example.coinkarasu.api.cryptocompare.data;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.coinkarasu.coins.Coin;
-import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.api.cryptocompare.CoinListReader;
 import com.example.coinkarasu.api.cryptocompare.response.CoinListResponse;
 import com.example.coinkarasu.api.cryptocompare.response.CoinListResponseImpl;
+import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.database.AppDatabase;
 import com.example.coinkarasu.database.CoinListCoin;
 import com.example.coinkarasu.services.UpdateCoinListIntentService;
@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CoinListImpl implements CoinList {
+
+    private static final boolean DEBUG = true;
 
     private static CoinList instance;
     private CoinListResponse response;
@@ -41,14 +43,14 @@ public class CoinListImpl implements CoinList {
             } catch (Exception e) {
                 Log.e("getInstance1", e.getMessage());
             }
+        }
 
-            if (instance == null) {
-                try {
-                    instance = CoinListImpl.buildByResponse(new JSONObject(CoinListReader.read(context)));
-                    UpdateCoinListIntentService.start(context);
-                } catch (JSONException e) {
-                    Log.e("getInstance2", e.getMessage());
-                }
+        if (instance == null) {
+            try {
+                instance = CoinListImpl.buildByResponse(new JSONObject(CoinListReader.read(context)));
+                UpdateCoinListIntentService.start(context);
+            } catch (JSONException e) {
+                Log.e("getInstance2", e.getMessage());
             }
         }
 
@@ -119,14 +121,18 @@ public class CoinListImpl implements CoinList {
             coins.add(coin);
         }
 
-        Log.d("collectCoins", "Load from FILE, records " + fromSymbols.length + ", " + (System.currentTimeMillis() - start) + " ms");
+        if (fromSymbols.length != coins.size()) {
+            if (DEBUG) Log.e("collectCoins", "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
+        }
+
+        if (DEBUG) Log.e("collectCoins", "Load from FILE " + coins.size() + " records " + (System.currentTimeMillis() - start) + " ms");
 
         return coins;
     }
 
     public static ArrayList<Coin> collectCoins(Context context, String[] fromSymbols) {
         long start = System.currentTimeMillis();
-        ArrayList<Coin> coins = new ArrayList<>();
+        ArrayList<Coin> coins = new ArrayList<>(fromSymbols.length);
         AppDatabase db = AppDatabase.getAppDatabase(context);
 
         List<CoinListCoin> coinListCoins = db.coinListCoinDao().findBySymbols(fromSymbols);
@@ -135,11 +141,16 @@ public class CoinListImpl implements CoinList {
             for (CoinListCoin coinListCoin : coinListCoins) {
                 if (coinListCoin.getSymbol().equals(symbol)) {
                     coins.add(CoinImpl.buildByCoinListCoin(coinListCoin));
+                    break;
                 }
             }
         }
 
-        Log.d("collectCoins", "Load from DB, records " + fromSymbols.length + ", " + (System.currentTimeMillis() - start) + " ms");
+        if (fromSymbols.length != coins.size()) {
+            if (DEBUG) Log.e("collectCoins", "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
+        }
+
+        if (DEBUG) Log.e("collectCoins", "Load from DB " + coins.size() + " records " + (System.currentTimeMillis() - start) + " ms");
 
         return coins;
     }

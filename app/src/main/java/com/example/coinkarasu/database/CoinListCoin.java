@@ -11,7 +11,7 @@ import com.example.coinkarasu.coins.Coin;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-@Entity(tableName = "coin_list_coins", indices = {@Index("symbol")})
+@Entity(tableName = "coin_list_coins", indices = {@Index(value = {"symbol"}, unique = true)})
 public class CoinListCoin {
 
     public CoinListCoin() {
@@ -53,7 +53,6 @@ public class CoinListCoin {
     private int id;
 
     @ColumnInfo(name = "ccid")
-
     private int ccid;
 
     @ColumnInfo(name = "url")

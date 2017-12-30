@@ -12,7 +12,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class HistoryResponseImpl implements HistoryResponse {
 
@@ -134,8 +133,7 @@ public class HistoryResponseImpl implements HistoryResponse {
             return false;
         }
 
-        Date lastModified = CacheHelper.lastModified(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
-        return new Date(System.currentTimeMillis() - kind.expires).compareTo(lastModified) <= 0;
+        return !CacheHelper.isExpired(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange), kind.expires);
     }
 
     @Override

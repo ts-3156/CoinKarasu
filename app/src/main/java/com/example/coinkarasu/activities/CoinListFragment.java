@@ -372,6 +372,9 @@ public class CoinListFragment extends Fragment implements
         Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, coinKind));
         if (fragment == null) {
             View timeSpan = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-time_span");
+            if (timeSpan == null) {
+                return;
+            }
             timeSpan.setId(exchange.getHeaderNameResId(coinKind)); // 何かしらの値をセットしないと、すべて同じIDになってしまう。
 
             fragment = RelativeTimeSpanFragment.newInstance(System.currentTimeMillis());

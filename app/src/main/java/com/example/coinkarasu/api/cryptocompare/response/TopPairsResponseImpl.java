@@ -84,8 +84,7 @@ public class TopPairsResponseImpl implements TopPairsResponse {
             return false;
         }
 
-        Date lastModified = CacheHelper.lastModified(context, getCacheName(fromSymbol));
-        return new Date(System.currentTimeMillis() - THIRTY_MINUTES).compareTo(lastModified) <= 0;
+        return !CacheHelper.isExpired(context, getCacheName(fromSymbol), THIRTY_MINUTES);
     }
 
     @Override

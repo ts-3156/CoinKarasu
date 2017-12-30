@@ -76,8 +76,26 @@ public class CacheHelper {
         return file.exists();
     }
 
+    public static boolean remove(Context context, String name) {
+        File file = new File(context.getCacheDir(), name);
+        return file.delete();
+    }
+
     public static Date lastModified(Context context, String name) {
         File file = new File(context.getCacheDir(), name);
         return new Date(file.lastModified());
+    }
+
+    public static boolean isExpired(Context context, String name, long duration) {
+        return new Date(System.currentTimeMillis() - duration).compareTo(lastModified(context, name)) > 0;
+    }
+
+    public static boolean touch(Context context, String name) {
+        File file = new File(context.getCacheDir(), name);
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+        }
+        return file.setLastModified(System.currentTimeMillis());
     }
 }
