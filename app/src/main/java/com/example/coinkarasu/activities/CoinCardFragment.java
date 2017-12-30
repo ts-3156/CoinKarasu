@@ -25,6 +25,9 @@ import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.coins.PriceMultiFullCoin;
 import com.example.coinkarasu.format.PriceColorFormat;
+import com.example.coinkarasu.format.PriceFormat;
+import com.example.coinkarasu.format.SignedPriceFormat;
+import com.example.coinkarasu.format.SurroundedTrendValueFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
 import com.example.coinkarasu.tasks.GetPriceTask;
@@ -83,7 +86,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
                 .commit();
 
         kind = "coin_card";
-        updatePrice(view, coin);
+        updatePrice(view, coin, true);
         startAutoUpdate(true);
 
         return view;
@@ -175,34 +178,47 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         this.coin.setPrice(coin.getPrice());
         this.coin.setPriceDiff(coin.getChange24Hour());
         this.coin.setTrend(coin.getChangePct24Hour() / 100.0);
-        updatePrice(getView(), this.coin);
+        updatePrice(getView(), this.coin, false);
         hideProgressbarDelayed();
         updateRelativeTimeSpanText();
 
         Log.d("UPDATED", kind + ", " + new Date().toString());
     }
 
-    private void updatePrice(View view, Coin coin) {
+    private void updatePrice(View view, Coin coin, boolean isFirstUpdate) {
         if (view == null) {
             return;
         }
 
+        TextView priceView = view.findViewById(R.id.price);
         TextView priceDiffView = view.findViewById(R.id.price_diff);
-        priceDiffView.setTextColor(getResources().getColor(new PriceColorFormat().format(coin.getPriceDiff())));
-
         TextView trendView = view.findViewById(R.id.trend);
+
+        priceDiffView.setTextColor(getResources().getColor(new PriceColorFormat().format(coin.getPriceDiff())));
         trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(coin.getTrend())));
 
         ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(new TrendIconFormat().format(coin.getTrend()));
 
-        if (coin.getPrevPrice() != coin.getPrice()) {
-            new PriceAnimator(coin, (TextView) view.findViewById(R.id.price)).start();
-        }
-        if (coin.getPrevPriceDiff() != coin.getPriceDiff()) {
-            new PriceDiffAnimator(coin, priceDiffView).start();
-        }
-        if (coin.getPrevTrend() != coin.getTrend()) {
-            new TrendAnimator(coin, trendView).start();
+        if (!isFirstUpdate && PrefHelper.isAnimEnabled(getActivity())) {
+            if (coin.getPrevPrice() != coin.getPrice()) {
+                new PriceAnimator(coin, priceView).start();
+            } else {
+                priceView.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+            }
+            if (coin.getPrevPriceDiff() != coin.getPriceDiff()) {
+                new PriceDiffAnimator(coin, priceDiffView).start();
+            } else {
+                priceDiffView.setText(new SignedPriceFormat(coin.getToSymbol()).format(coin.getPriceDiff()));
+            }
+            if (coin.getPrevTrend() != coin.getTrend()) {
+                new TrendAnimator(coin, trendView).start();
+            } else {
+                trendView.setText(new SurroundedTrendValueFormat().format(coin.getTrend()));
+            }
+        } else {
+            priceView.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+            priceDiffView.setText(new SignedPriceFormat(coin.getToSymbol()).format(coin.getPriceDiff()));
+            trendView.setText(new SurroundedTrendValueFormat().format(coin.getTrend()));
         }
     }
 

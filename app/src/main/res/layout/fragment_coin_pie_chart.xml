@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#ffffff"
+    android:paddingBottom="16dp"
     tools:context="com.example.coinkarasu.activities.CoinLineChartFragment">
 
     <TextView
@@ -54,6 +55,7 @@
         tools:text="@string/caption_desc_day" />
 
     <LinearLayout
+        android:id="@+id/pager_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
@@ -84,10 +86,20 @@
         <android.support.v4.view.ViewPager
             android:id="@+id/view_pager"
             android:layout_width="match_parent"
-            android:layout_height="352dp"
+            android:layout_height="340dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginTop="0dp" />
 
     </LinearLayout>
 
+    <include
+        layout="@layout/container_info"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/pager_container"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp" />
 
 </RelativeLayout>

@@ -1,9 +1,11 @@
 package com.example.coinkarasu.activities.settings;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -45,7 +47,6 @@ public class PreferencesFragment extends PreferenceFragment {
             }
         });
 
-
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         bindPreferenceSummaryToValue(prefs, "pref_sync_frequency");
         bindPreferenceSummaryToValue(prefs, "pref_currency");
@@ -61,6 +62,15 @@ public class PreferencesFragment extends PreferenceFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         listener = (Preference.OnPreferenceChangeListener) context;
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
+            return;
+        }
+        listener = (Preference.OnPreferenceChangeListener) activity;
     }
 
     @Override

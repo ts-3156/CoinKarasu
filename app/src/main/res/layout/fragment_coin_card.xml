@@ -35,14 +35,14 @@
         android:layout_below="@id/caption_left"
         android:layout_marginRight="10dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="#90000000"
+        android:textColor="#80000000"
         tools:text="¥ 1,000,000" />
 
     <ImageView
         android:id="@+id/trend_icon"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:layout_alignBottom="@id/trend"
+        android:layout_alignBottom="@id/price"
         android:layout_toRightOf="@id/price"
         android:paddingRight="4dp"
         tools:src="@drawable/ic_trending_down" />

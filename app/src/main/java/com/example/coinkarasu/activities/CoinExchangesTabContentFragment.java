@@ -129,7 +129,7 @@ public class CoinExchangesTabContentFragment extends Fragment implements GetMult
             getView().findViewById(R.id.line_chart).setVisibility(View.GONE);
             Spanned text = Html.fromHtml(getString(R.string.exchange_warn_each_exchange, fromSymbol, toSymbol, "")); // TODO
             ((TextView) getView().findViewById(R.id.warn_text)).setText(text);
-            getView().findViewById(R.id.warn).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.warn_container).setVisibility(View.VISIBLE);
             return;
         }
 

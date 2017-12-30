@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -84,6 +86,9 @@ public class CoinPieChartFragment extends Fragment implements
         ((TextView) view.findViewById(R.id.caption_desc_right)).setTypeface(typeFace);
 
         ((TextView) view.findViewById(R.id.caption_left)).setText(fromSymbol);
+
+        Spanned text = Html.fromHtml(getString(R.string.line_chart_info, fromSymbol, toSymbol));
+        ((TextView) view.findViewById(R.id.info_text)).setText(text); // TODO Change text
 
         startTask();
 

@@ -144,7 +144,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
             getView().findViewById(R.id.line_chart).setVisibility(View.GONE);
             Spanned text = Html.fromHtml(getString(R.string.exchange_warn_each_exchange, coin.getFromSymbol(), coin.getToSymbol(), exchange));
             ((TextView) getView().findViewById(R.id.warn_text)).setText(text);
-            getView().findViewById(R.id.warn).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.warn_container).setVisibility(View.VISIBLE);
             return;
         }
 

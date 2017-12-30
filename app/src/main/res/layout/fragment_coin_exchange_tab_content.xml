@@ -17,7 +17,7 @@
         android:layout_marginTop="0dp" />
 
     <LinearLayout
-        android:id="@+id/warn"
+        android:id="@+id/warn_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"

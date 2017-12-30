@@ -209,7 +209,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             getView().findViewById(R.id.pie_chart).setVisibility(View.GONE);
             Spanned text = Html.fromHtml(getString(R.string.pie_chart_exchange_warn, fromSymbol, toSymbol));
             ((TextView) getView().findViewById(R.id.warn_text)).setText(text);
-            getView().findViewById(R.id.warn).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.warn_container).setVisibility(View.VISIBLE);
             return;
         }
 

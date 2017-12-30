@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:background="#ffffff"
     android:orientation="vertical"
+    android:paddingBottom="16dp"
     tools:context="com.example.coinkarasu.activities.CoinLineChartFragment">
 
     <TextView
@@ -94,64 +95,22 @@
 
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/warn"
+    <include
+        layout="@layout/container_warn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/pager_container"
-        android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/colorWarnBackground"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="10dp"
-        android:visibility="gone">
+        android:layout_marginRight="16dp" />
 
-        <ImageView
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:src="@drawable/ic_warn" />
-
-        <TextView
-            android:id="@+id/warn_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="@string/exchange_warn"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="@color/colorWarnText" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/info"
+    <include
+        layout="@layout/container_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/pager_container"
-        android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@color/colorInfoBackground"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="10dp">
-
-        <ImageView
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/ic_info" />
-
-        <TextView
-            android:id="@+id/info_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:text="@string/exchange_info"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="@color/colorInfoText" />
-    </LinearLayout>
+        android:layout_marginRight="16dp" />
 
 </RelativeLayout>
