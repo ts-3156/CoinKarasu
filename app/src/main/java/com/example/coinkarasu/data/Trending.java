@@ -3,7 +3,7 @@ package com.example.coinkarasu.data;
 import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
-import com.example.coinkarasu.activities.HomeTabFragment.Kind;
+import com.example.coinkarasu.activities.etc.TrendingKind;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.utils.CacheHelper;
@@ -16,10 +16,10 @@ import java.util.ArrayList;
 
 public class Trending {
 
-    private Kind kind;
+    private TrendingKind kind;
     private ArrayList<Coin> coins;
 
-    public Trending(ArrayList<Coin> coins, Kind kind) {
+    public Trending(ArrayList<Coin> coins, TrendingKind kind) {
         this.coins = coins;
         this.kind = kind;
     }
@@ -33,7 +33,7 @@ public class Trending {
         CacheHelper.write(context, getCacheName(kind), data.toString());
     }
 
-    public static Trending restoreFromCache(Context context, Kind kind) {
+    public static Trending restoreFromCache(Context context, TrendingKind kind) {
         String text = CacheHelper.read(context, getCacheName(kind));
         if (text == null) {
             return null;
@@ -54,7 +54,7 @@ public class Trending {
         return new Trending(coins, kind);
     }
 
-    private static String getCacheName(Kind kind) {
+    private static String getCacheName(TrendingKind kind) {
         return "trending_" + kind.name() + ".json";
     }
 
@@ -62,7 +62,7 @@ public class Trending {
         return coins;
     }
 
-    public Kind getKind() {
+    public TrendingKind getKind() {
         return kind;
     }
 }

@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 
-import static com.example.coinkarasu.activities.HomeTabFragment.Kind;
+import com.example.coinkarasu.activities.etc.TrendingKind;
 
 public class UpdateTrendingIntentService extends IntentService {
 
@@ -47,12 +47,12 @@ public class UpdateTrendingIntentService extends IntentService {
 //
 //        }
 
-        for (Kind kind : Kind.values()) {
+        for (TrendingKind kind : TrendingKind.values()) {
             update(kind, "JPY", "zaif");
         }
     }
 
-    private void update(Kind kind, String toSymbol, String exchange) {
+    private void update(TrendingKind kind, String toSymbol, String exchange) {
         long start = System.currentTimeMillis();
         String logFile = logFile(kind, toSymbol, exchange);
 
@@ -104,7 +104,7 @@ public class UpdateTrendingIntentService extends IntentService {
             Log.e("onHandleIntent", kind.name() + " trending updated, " + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 
-    private ArrayList<History> getHistories(Kind kind, String fromSymbol, String toSymbol, String exchange) {
+    private ArrayList<History> getHistories(TrendingKind kind, String fromSymbol, String toSymbol, String exchange) {
         Client client = ClientFactory.getInstance(this);
         ArrayList<History> records = new ArrayList<>();
 
@@ -129,7 +129,7 @@ public class UpdateTrendingIntentService extends IntentService {
         return records;
     }
 
-    private String logFile(Kind kind, String toSymbol, String exchange) {
+    private String logFile(TrendingKind kind, String toSymbol, String exchange) {
         return UpdateTrendingIntentService.class.getSimpleName() + "-" + kind.name() + "-" + toSymbol + "-" + exchange + ".log";
     }
 

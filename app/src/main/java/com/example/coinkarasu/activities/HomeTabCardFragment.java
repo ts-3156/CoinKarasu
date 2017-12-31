@@ -22,7 +22,7 @@ import com.example.coinkarasu.utils.AssetsHelper;
 
 import java.util.ArrayList;
 
-import static com.example.coinkarasu.activities.HomeTabFragment.Kind;
+import com.example.coinkarasu.activities.etc.TrendingKind;
 
 
 public class HomeTabCardFragment extends Fragment implements
@@ -30,13 +30,13 @@ public class HomeTabCardFragment extends Fragment implements
 
     private static final String STATE_SELECTED_KIND_KEY = "kind";
 
-    private Kind kind;
+    private TrendingKind kind;
     private boolean isFilterChecked;
 
     public HomeTabCardFragment() {
     }
 
-    public static HomeTabCardFragment newInstance(Kind kind) {
+    public static HomeTabCardFragment newInstance(TrendingKind kind) {
         HomeTabCardFragment fragment = new HomeTabCardFragment();
         Bundle args = new Bundle();
         args.putString("kind", kind.name());
@@ -48,7 +48,7 @@ public class HomeTabCardFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = Kind.valueOf(getArguments().getString("kind"));
+            kind = TrendingKind.valueOf(getArguments().getString("kind"));
         }
     }
 
