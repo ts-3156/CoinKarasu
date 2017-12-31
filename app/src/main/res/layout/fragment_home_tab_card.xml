@@ -55,9 +55,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/caption_desc_left"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp" />
+        android:layout_below="@id/caption_right"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp" />
 
     <ImageButton
         android:id="@+id/popup_menu"
