@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.coinkarasu.R;
+import com.example.coinkarasu.activities.etc.TrendingKind;
 import com.example.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
 import com.example.coinkarasu.adapters.HomeTabRecyclerViewAdapter;
 import com.example.coinkarasu.coins.Coin;
@@ -21,8 +22,6 @@ import com.example.coinkarasu.data.Trending;
 import com.example.coinkarasu.utils.AssetsHelper;
 
 import java.util.ArrayList;
-
-import com.example.coinkarasu.activities.etc.TrendingKind;
 
 
 public class HomeTabCardFragment extends Fragment implements
@@ -68,7 +67,26 @@ public class HomeTabCardFragment extends Fragment implements
 
         ((TextView) view.findViewById(R.id.caption_desc_right)).setText(getString(kind.labelResId));
 
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        view.findViewById(R.id.popup_menu).setOnClickListener(this);
+        view.findViewById(R.id.filter).setOnClickListener(this);
+
+        isFilterChecked = true;
+
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        initializeRecyclerView();
+    }
+
+    private void initializeRecyclerView() {
+        if (getView() == null) {
+            return;
+        }
+
+        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         recyclerView.addItemDecoration(new HomeTabHorizontalSpaceItemDecoration(getActivity(), 16));
 
@@ -80,13 +98,6 @@ public class HomeTabCardFragment extends Fragment implements
         HomeTabRecyclerViewAdapter adapter = new HomeTabRecyclerViewAdapter(getActivity(), coins);
         adapter.setOnItemClickListener(this);
         recyclerView.setAdapter(adapter);
-
-        view.findViewById(R.id.popup_menu).setOnClickListener(this);
-        view.findViewById(R.id.filter).setOnClickListener(this);
-
-        isFilterChecked = true;
-
-        return view;
     }
 
     @Override

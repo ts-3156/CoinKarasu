@@ -3,9 +3,12 @@ package com.example.coinkarasu.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.example.coinkarasu.activities.HomeTabFragment;
 import com.example.coinkarasu.activities.etc.NavigationKind;
+import com.example.coinkarasu.activities.etc.TrendingKind;
 import com.example.coinkarasu.api.cryptocompare.Client;
 import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.CoinListImpl;
@@ -21,8 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
-
-import com.example.coinkarasu.activities.etc.TrendingKind;
 
 public class UpdateTrendingIntentService extends IntentService {
 
@@ -99,6 +100,11 @@ public class UpdateTrendingIntentService extends IntentService {
 
         Trending trending = new Trending(coins, kind);
         trending.saveToCache(this);
+
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.putExtra("kind", kind.name());
+        broadcastIntent.setAction(HomeTabFragment.ACTION_UPDATE_TRENDING);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
 
         if (DEBUG)
             Log.e("onHandleIntent", kind.name() + " trending updated, " + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
