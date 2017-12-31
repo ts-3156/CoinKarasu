@@ -1,8 +1,13 @@
 package com.example.coinkarasu.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ShortcutInfo;
+import android.content.pm.ShortcutManager;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -60,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        createShortcut();
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -312,5 +318,42 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             icon.setAlpha(204); // 80%
         }
+    }
+
+    private void createShortcut() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if (prefs.getBoolean("pref_shortcut_created", false)) {
+            return;
+        }
+
+        Intent shortcutIntent = new Intent();
+        shortcutIntent.setClassName(getPackageName(), getClass().getName());
+        shortcutIntent.setAction(Intent.ACTION_MAIN);
+        shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // TODO
+            ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(this, "shortcut-id")
+                    .setShortLabel(getString(R.string.app_name))
+                    .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher_round))
+                    .setIntent(shortcutIntent)
+                    .build();
+            ((ShortcutManager) getSystemService(Context.SHORTCUT_SERVICE)).requestPinShortcut(shortcutInfo, null);
+        } else {
+            Intent.ShortcutIconResource icon = Intent.ShortcutIconResource.fromContext(this, R.mipmap.ic_launcher);
+
+            Intent intent = new Intent();
+            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
+            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
+            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
+            intent.putExtra("duplicate", false);
+
+            sendBroadcast(intent);
+        }
+
+        SharedPreferences.Editor edit = prefs.edit();
+        edit.putBoolean("pref_shortcut_created", true);
+        edit.apply();
     }
 }

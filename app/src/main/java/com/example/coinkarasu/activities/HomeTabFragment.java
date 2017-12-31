@@ -88,7 +88,7 @@ public class HomeTabFragment extends Fragment implements MainPagerAdapter.Listen
         for (TrendingKind kind : TrendingKind.values()) {
             transaction.replace(kind.containerId, HomeTabCardFragment.newInstance(kind), kind.tag);
         }
-        transaction.commit();
+        transaction.commitNowAllowingStateLoss();
     }
 
     private void initializeCards(TrendingKind kind) {
@@ -98,7 +98,7 @@ public class HomeTabFragment extends Fragment implements MainPagerAdapter.Listen
 
         getChildFragmentManager().beginTransaction()
                 .replace(kind.containerId, HomeTabCardFragment.newInstance(kind), kind.tag)
-                .commit();
+                .commitNowAllowingStateLoss();
     }
 
     @Override
