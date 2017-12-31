@@ -3,12 +3,13 @@ package com.example.coinkarasu.chart;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.v4.content.res.ResourcesCompat;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.StyleSpan;
 
-import com.example.coinkarasu.utils.AssetsHelper;
+import com.example.coinkarasu.R;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -134,7 +135,7 @@ public class CoinPieChart {
         if (activity == null) {
             return;
         }
-        Typeface typeFace = AssetsHelper.getInstance(activity).light;
+        Typeface typeFace = ResourcesCompat.getFont(activity, R.font.opensans_light);
         chart.setCenterTextTypeface(typeFace);
         chart.setCenterText(currencySpannableText(symbol));
     }
@@ -158,7 +159,7 @@ public class CoinPieChart {
         if (activity == null) {
             return;
         }
-        Typeface typeFace = AssetsHelper.getInstance(activity).light;
+        Typeface typeFace = ResourcesCompat.getFont(activity, R.font.opensans_light);
         chart.setCenterTextTypeface(typeFace);
         chart.setCenterText(exchangeSpannableText(fromSymbol, toSymbol));
     }

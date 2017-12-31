@@ -1,7 +1,6 @@
 package com.example.coinkarasu.activities;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,7 +18,6 @@ import com.example.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
 import com.example.coinkarasu.adapters.HomeTabRecyclerViewAdapter;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.data.Trending;
-import com.example.coinkarasu.utils.AssetsHelper;
 
 import java.util.ArrayList;
 
@@ -54,16 +52,6 @@ public class HomeTabCardFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_tab_card, container, false);
-
-        Typeface typeFace = AssetsHelper.getInstance(getActivity()).light;
-//        ((TextView) view.findViewById(R.id.caption_left)).setTypeface(typeFace);
-        ((TextView) view.findViewById(R.id.caption_right)).setTypeface(typeFace);
-        ((TextView) view.findViewById(R.id.caption_desc_left)).setTypeface(typeFace);
-
-        typeFace = AssetsHelper.getInstance(getActivity()).lightItalic;
-        ((TextView) view.findViewById(R.id.caption_desc_right)).setTypeface(typeFace);
-
-//        ((TextView) view.findViewById(R.id.caption_left)).setText(getString(R.string.caption_left, "TEST1", "TEST2"));
 
         ((TextView) view.findViewById(R.id.caption_desc_right)).setText(getString(kind.labelResId));
 

@@ -15,7 +15,6 @@ import com.example.coinkarasu.format.SurroundedTrendValueFormat;
 import com.example.coinkarasu.format.TrendColorFormat;
 import com.example.coinkarasu.format.TrendIconFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
-import com.example.coinkarasu.utils.AssetsHelper;
 import com.example.coinkarasu.utils.VolleyHelper;
 
 import java.util.HashMap;
@@ -32,8 +31,6 @@ class ResourceUtils {
     int priceUpFromColor;
     int priceDownFromColor;
     int priceToColor;
-    Typeface typeFace;
-    Typeface typeFaceItalic;
 
     PriceFormat priceFormatter;
     SignedPriceFormat signedPriceFormatter;
@@ -46,9 +43,6 @@ class ResourceUtils {
         headerNameResIdStringMap = buildHeaderNameResIdMap(context, coins);
         initializeColors(context);
         imageLoader = VolleyHelper.getInstance(context).getImageLoader();
-
-        typeFace = AssetsHelper.getInstance(context).light;
-        typeFaceItalic = AssetsHelper.getInstance(context).lightItalic;
 
         for (Coin coin : coins) {
             if (!coin.isSectionHeader()) {

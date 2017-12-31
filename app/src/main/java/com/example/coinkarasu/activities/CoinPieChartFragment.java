@@ -2,7 +2,6 @@ package com.example.coinkarasu.activities;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -21,7 +20,6 @@ import com.example.coinkarasu.api.cryptocompare.ClientFactory;
 import com.example.coinkarasu.api.cryptocompare.data.TopPair;
 import com.example.coinkarasu.pagers.CoinPieChartPagerAdapter;
 import com.example.coinkarasu.tasks.GetTopPairsTask;
-import com.example.coinkarasu.utils.AssetsHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -76,14 +74,6 @@ public class CoinPieChartFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_pie_chart, container, false);
-
-        Typeface typeFace = AssetsHelper.getInstance(getActivity()).light;
-        ((TextView) view.findViewById(R.id.caption_left)).setTypeface(typeFace);
-        ((TextView) view.findViewById(R.id.caption_right)).setTypeface(typeFace);
-        ((TextView) view.findViewById(R.id.caption_desc_left)).setTypeface(typeFace);
-
-        typeFace = AssetsHelper.getInstance(getActivity()).lightItalic;
-        ((TextView) view.findViewById(R.id.caption_desc_right)).setTypeface(typeFace);
 
         ((TextView) view.findViewById(R.id.caption_left)).setText(fromSymbol);
 
