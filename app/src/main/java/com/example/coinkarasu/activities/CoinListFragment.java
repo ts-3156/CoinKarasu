@@ -28,6 +28,7 @@ import com.example.coinkarasu.adapters.CoinListRecyclerViewAdapter;
 import com.example.coinkarasu.animator.ValueAnimatorBase;
 import com.example.coinkarasu.api.cryptocompare.data.PricesImpl;
 import com.example.coinkarasu.coins.Coin;
+import com.example.coinkarasu.data.Toplist;
 import com.example.coinkarasu.pagers.MainPagerAdapter;
 import com.example.coinkarasu.tasks.CollectCoinsTask;
 import com.example.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
@@ -107,8 +108,21 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
+        String[] fromSymbols = null;
+
+        if (kind.isToplist()) {
+            Toplist toplist = Toplist.restoreFromCache(getActivity(), kind);
+            if (toplist != null) {
+                fromSymbols = toplist.getSymbols();
+            }
+        }
+
+        if (fromSymbols == null) {
+            fromSymbols = getResources().getStringArray(kind.symbolsResId);
+        }
+
         new CollectCoinsTask(getActivity())
-                .setFromSymbols(getResources().getStringArray(kind.symbolsResId))
+                .setFromSymbols(fromSymbols)
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -241,7 +255,18 @@ public class CoinListFragment extends Fragment implements
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             // jpy_toplist, usd_toplist, btc_toplist and so on
-            String[] fromSymbols = getResources().getStringArray(kind.symbolsResId);
+            String[] fromSymbols = null;
+
+            if (kind.isToplist()) {
+                Toplist toplist = Toplist.restoreFromCache(getActivity(), kind);
+                if (toplist != null) {
+                    fromSymbols = toplist.getSymbols();
+                }
+            }
+
+            if (fromSymbols == null) {
+                fromSymbols = getResources().getStringArray(kind.symbolsResId);
+            }
 
             new GetCccaggPricesTask(getContext(), Exchange.cccagg)
                     .setFromSymbols(fromSymbols)

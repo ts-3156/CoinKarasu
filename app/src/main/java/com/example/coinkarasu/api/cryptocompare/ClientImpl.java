@@ -172,30 +172,4 @@ class ClientImpl implements Client {
 
         return sampled;
     }
-
-    @Override
-    public ArrayList<PriceMultiFullCoin> getBtcToplist(final CoinList coinList) {
-//        StringBuilder builder = new StringBuilder();
-//        ArrayList<String> symbols = coinList.getAllSymbols(20);
-//
-//        for (int i = 0; i < symbols.size(); i++) {
-//            builder.append(symbols.get(i)).append(',');
-//        }
-//
-//        String url = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC"
-//                + "&tsyms=" + builder.substring(0, builder.length() - 1);
-//
-//        new NonBlockingRequest(context, url).perform(new Request.Listener() {
-//            @Override
-//            public void finished(JSONObject response) {
-//                ArrayList<PriceMultiFullCoin> coins = new ToplistImpl(response).getCoins();
-//                for (PriceMultiFullCoin coin : coins) {
-//                    Log.d("COINS", coin.getFromSymbol() + ", " + coin.getToSymbol());
-//                }
-//            }
-//        });
-//
-//
-        return null;
-    }
 }

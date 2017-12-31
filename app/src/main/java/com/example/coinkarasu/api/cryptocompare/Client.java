@@ -34,6 +34,4 @@ public interface Client {
     CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol);
 
     ArrayList<TopPair> getTopPairs(String fromSymbol);
-
-    ArrayList<PriceMultiFullCoin> getBtcToplist(CoinList coinList);
 }

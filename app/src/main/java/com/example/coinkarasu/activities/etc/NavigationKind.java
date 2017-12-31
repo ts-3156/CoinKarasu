@@ -6,6 +6,7 @@ import com.example.coinkarasu.R;
 import com.example.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public enum NavigationKind {
     home(R.string.nav_home, R.string.header_home, R.string.tab_home, R.string.summary_home, R.id.nav_home, R.color.colorNavHome, R.color.colorNavHomeDark, R.color.state_nav_home, -1, new Exchange[]{}, R.drawable.ic_nav_home),
@@ -85,5 +86,19 @@ public enum NavigationKind {
             }
         }
         return null;
+    }
+
+    public boolean isToplist() {
+        return name().endsWith("toplist");
+    }
+
+    public static NavigationKind[] toplistValues() {
+        List<NavigationKind> list = new ArrayList<>();
+        for (NavigationKind kind : values()) {
+            if (kind.isToplist()) {
+                list.add(kind);
+            }
+        }
+        return list.toArray(new NavigationKind[list.size()]);
     }
 }

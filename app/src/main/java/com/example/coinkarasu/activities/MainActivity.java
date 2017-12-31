@@ -29,6 +29,8 @@ import com.crashlytics.android.Crashlytics;
 import com.example.coinkarasu.R;
 import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.activities.settings.PreferencesActivity;
+import com.example.coinkarasu.services.UpdateToplistIntentService;
+import com.example.coinkarasu.services.UpdateTrendingIntentService;
 import com.example.coinkarasu.utils.PrefHelper;
 
 import io.fabric.sdk.android.Fabric;
@@ -88,7 +90,12 @@ public class MainActivity extends AppCompatActivity implements
                     .commit();
         }
 
-//        UpdateTrendingIntentService.start(this);
+        for (NavigationKind kind : NavigationKind.toplistValues()) {
+            if (kind.isVisible(this)) {
+                UpdateToplistIntentService.start(this, kind);
+            }
+        }
+        UpdateTrendingIntentService.start(this);
     }
 
     @Override

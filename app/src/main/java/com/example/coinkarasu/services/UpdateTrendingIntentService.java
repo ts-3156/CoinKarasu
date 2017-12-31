@@ -3,6 +3,7 @@ package com.example.coinkarasu.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.api.cryptocompare.Client;
@@ -14,6 +15,7 @@ import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.coins.CoinImpl;
 import com.example.coinkarasu.coins.PriceMultiFullCoin;
 import com.example.coinkarasu.data.Trending;
+import com.example.coinkarasu.utils.CacheHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,6 +26,9 @@ import static com.example.coinkarasu.activities.HomeTabFragment.Kind;
 
 public class UpdateTrendingIntentService extends IntentService {
 
+    private static final boolean DEBUG = true;
+
+    private static final long ONE_DAY = 24 * 60 * 60 * 1000;
     private static final String TAG = UpdateTrendingIntentService.class.getSimpleName();
 
     public UpdateTrendingIntentService() {
@@ -48,6 +53,15 @@ public class UpdateTrendingIntentService extends IntentService {
     }
 
     private void update(Kind kind, String toSymbol, String exchange) {
+        long start = System.currentTimeMillis();
+        String logFile = logFile(kind, toSymbol, exchange);
+
+        if (CacheHelper.exists(this, logFile) && !CacheHelper.isExpired(this, logFile, ONE_DAY)) {
+            if (DEBUG) Log.e("onHandleIntent", "Recently executed.");
+            return;
+        }
+        CacheHelper.touch(this, logFile);
+
         LinkedHashSet<String> uniqueSymbols = new LinkedHashSet<>();
         String[] array = getResources().getStringArray(NavigationKind.japan.symbolsResId);
         Collections.addAll(uniqueSymbols, array);
@@ -85,6 +99,9 @@ public class UpdateTrendingIntentService extends IntentService {
 
         Trending trending = new Trending(coins, kind);
         trending.saveToCache(this);
+
+        if (DEBUG)
+            Log.e("onHandleIntent", kind.name() + " trending updated, " + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private ArrayList<History> getHistories(Kind kind, String fromSymbol, String toSymbol, String exchange) {
@@ -110,6 +127,10 @@ public class UpdateTrendingIntentService extends IntentService {
         }
 
         return records;
+    }
+
+    private String logFile(Kind kind, String toSymbol, String exchange) {
+        return UpdateTrendingIntentService.class.getSimpleName() + "-" + kind.name() + "-" + toSymbol + "-" + exchange + ".log";
     }
 
     public static void start(Context context) {
