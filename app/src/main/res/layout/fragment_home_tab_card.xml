@@ -63,6 +63,6 @@
         android:layout_alignParentTop="true"
         android:paddingRight="16dp"
         android:paddingTop="16dp"
-        android:text="@string/dic_filter"
+        android:text="@string/home_tab_filter"
         android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 </RelativeLayout>

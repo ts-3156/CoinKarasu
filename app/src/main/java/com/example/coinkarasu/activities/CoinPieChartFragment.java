@@ -77,8 +77,8 @@ public class CoinPieChartFragment extends Fragment implements
 
         ((TextView) view.findViewById(R.id.caption_left)).setText(fromSymbol);
 
-        Spanned text = Html.fromHtml(getString(R.string.line_chart_info, fromSymbol, toSymbol));
-        ((TextView) view.findViewById(R.id.info_text)).setText(text); // TODO Change text
+        Spanned text = Html.fromHtml(getString(R.string.pie_chart_info, fromSymbol));
+        ((TextView) view.findViewById(R.id.info_text)).setText(text);
 
         startTask();
 

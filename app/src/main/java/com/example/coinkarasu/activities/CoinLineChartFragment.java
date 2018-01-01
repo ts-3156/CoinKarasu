@@ -31,16 +31,17 @@ public class CoinLineChartFragment extends Fragment implements
     private static final Kind DEFAULT_KIND = Kind.hour;
 
     public enum Kind {
-        hour("1 Hour"),
-        day("1 Day"),
-        week("1 Week"),
-        month("1 Month"),
-        year("1 Year");
+        hour(R.string.line_chart_label_1_hour),
+        day(R.string.line_chart_label_1_day),
+        week(R.string.line_chart_label_1_week),
+        month(R.string.line_chart_label_1_month),
+        year(R.string.line_chart_label_1_year);
 
+        int labelResId;
         String label;
 
-        Kind(String label) {
-            this.label = label;
+        Kind(int labelResId) {
+            this.labelResId = labelResId;
         }
     }
 
@@ -84,11 +85,9 @@ public class CoinLineChartFragment extends Fragment implements
         TabLayout tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
-        tabs.getTabAt(Kind.hour.ordinal()).setCustomView(createTab(inflater, container, Kind.hour.label));
-        tabs.getTabAt(Kind.day.ordinal()).setCustomView(createTab(inflater, container, Kind.day.label));
-        tabs.getTabAt(Kind.week.ordinal()).setCustomView(createTab(inflater, container, Kind.week.label));
-        tabs.getTabAt(Kind.month.ordinal()).setCustomView(createTab(inflater, container, Kind.month.label));
-        tabs.getTabAt(Kind.year.ordinal()).setCustomView(createTab(inflater, container, Kind.year.label));
+        for (Kind kind : Kind.values()) {
+            tabs.getTabAt(kind.ordinal()).setCustomView(createTab(inflater, container, getString(kind.labelResId)));
+        }
 
         tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
         setSelected(DEFAULT_KIND.ordinal(), view);

@@ -81,8 +81,13 @@
     <string name="summary_edit_tabs">Edit tabs</string>
 
     <string name="caption_left">%1$s - %2$s</string>
-    <string name="caption_day">Today</string>
-    <string name="caption_desc_day">so far</string>
+    <string name="caption_day">Latest price</string>
+    <string name="caption_desc_day">\u0020vs last 24 hours</string>
+    <string name="caption_historical_price">\u0020Historical Price</string>
+    <string name="caption_trading_volume">\u0020Trading Volume</string>
+    <string name="caption_aggregated_index">\u0020Aggregated index</string>
+    <string name="caption_exchange">\u0020Exchange</string>
+    <string name="caption_last_24_hours">\u0020last 24 hours</string>
 
     <string name="caption_desc_1_hour">\u0020in last 1 hour</string>
     <string name="caption_desc_6_hours">\u0020in last 6 hours</string>
@@ -103,17 +108,22 @@
     <string name="sales_header_name_zaif">Zaif (Sales)</string>
     <string name="sales_header_name_cccagg">Aggregated Index (Sales)</string>
 
-
-    <string name="dic_filter">Filter</string>
+    <string name="line_chart_label_1_hour">1 Hour</string>
+    <string name="line_chart_label_1_day">1 Day</string>
+    <string name="line_chart_label_1_week">1 Week</string>
+    <string name="line_chart_label_1_month">1 Month</string>
+    <string name="line_chart_label_1_year">1 Year</string>
 
     <string name="line_chart_info">The <![CDATA[<b>%1$s - %2$s</b>]]> prices for this chart are aggregated from all exchanges and using a VWAP approach.</string>
     <string name="exchange_info">Only showing exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
     <string name="exchange_warn">There are no exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
     <string name="exchange_warn_each_exchange">%3$s have not traded <![CDATA[<b>%1$s - %2$s</b>]]> in the last 24 hours.</string>
+    <string name="pie_chart_info">Money Flow into <![CDATA[<b>%1$s</b>]]> is total volume over time. Trading Volume for <![CDATA[<b>%1$s</b>]]> is trading volume by exchange.</string>
     <string name="pie_chart_exchange_warn">There are no exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
 
 
     <string name="home_tab_trending">Trending</string>
+    <string name="home_tab_filter">Filter</string>
     <string name="home_tab_not_found">N/A</string>
 
     <string name="edit_tabs_note">Show or Hide the tabs</string>

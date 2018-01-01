@@ -38,7 +38,7 @@ public class UpdateToplistIntentService extends IntentService {
         String logFile = logFile(symbol);
 
         if (CacheHelper.exists(this, logFile) && !CacheHelper.isExpired(this, logFile, ONE_DAY)) {
-            if (DEBUG) Log.e("onHandleIntent", "Recently executed.");
+            if (DEBUG) Log.e(TAG, "Recently executed.");
             return;
         }
         CacheHelper.touch(this, logFile);
@@ -79,7 +79,7 @@ public class UpdateToplistIntentService extends IntentService {
         Toplist toplist = new Toplist(coins, kind);
         toplist.saveToCache(this);
 
-        if (DEBUG) Log.e("onHandleIntent", symbol + " toplist updated, " + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
+        if (DEBUG) Log.e(TAG, symbol + " toplist updated, " + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private String logFile(String symbol) {

@@ -25,7 +25,7 @@
         android:layout_marginTop="@dimen/coin_list_vertical_spacing"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textColor="#999999"
-        tools:text="Aggregated index" />
+        tools:text="@string/header_name_cccagg" />
 
     <FrameLayout
         android:id="@+id/time_span_container"

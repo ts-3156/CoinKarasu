@@ -107,11 +107,12 @@ public class CoinImpl implements Coin {
         return new CoinImpl(attrs);
     }
 
-    public static Coin buildByAttrs(String symbol, String imageUrl) {
+    public static Coin buildByPMFCoin(PriceMultiFullCoin coin, String fullName, String imageUrl) {
         JSONObject attrs = new JSONObject();
 
         try {
-            attrs.put("Symbol", symbol);
+            attrs.put("Symbol", coin.getFromSymbol());
+            attrs.put("FullName", fullName);
             attrs.put("ImageUrl", imageUrl);
         } catch (JSONException e) {
         }

@@ -35,7 +35,7 @@ public class UpdateCoinListIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         if (CacheHelper.exists(this, LOG) && !CacheHelper.isExpired(this, LOG, THIRTY_MINUTES)) {
-            if (DEBUG) Log.e("onHandleIntent", "Recently executed.");
+            if (DEBUG) Log.e(TAG, "Recently executed.");
             return;
         }
         CacheHelper.touch(this, LOG);
@@ -72,7 +72,7 @@ public class UpdateCoinListIntentService extends IntentService {
         removeUnusedSymbolsFromCoinList(coinList, uniqueSymbols);
         coinList.saveToCache(this);
 
-        if (DEBUG) Log.e("onHandleIntent", "CoinList updated, db " + db.coinListCoinDao().size() + " records, CoinList " +
+        if (DEBUG) Log.e(TAG, "CoinList updated, db " + db.coinListCoinDao().size() + " records, CoinList " +
                 +coinList.getAllSymbols().size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 

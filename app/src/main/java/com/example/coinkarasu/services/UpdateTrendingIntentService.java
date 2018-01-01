@@ -11,6 +11,7 @@ import com.example.coinkarasu.activities.etc.NavigationKind;
 import com.example.coinkarasu.activities.etc.TrendingKind;
 import com.example.coinkarasu.api.cryptocompare.Client;
 import com.example.coinkarasu.api.cryptocompare.ClientFactory;
+import com.example.coinkarasu.api.cryptocompare.data.CoinList;
 import com.example.coinkarasu.api.cryptocompare.data.CoinListImpl;
 import com.example.coinkarasu.api.cryptocompare.data.History;
 import com.example.coinkarasu.api.cryptocompare.data.Prices;
@@ -58,7 +59,7 @@ public class UpdateTrendingIntentService extends IntentService {
         String logFile = logFile(kind, toSymbol, exchange);
 
         if (CacheHelper.exists(this, logFile) && !CacheHelper.isExpired(this, logFile, ONE_DAY)) {
-            if (DEBUG) Log.e("onHandleIntent", "Recently executed.");
+            if (DEBUG) Log.e(TAG, kind.name() + "is recently executed.");
             return;
         }
         CacheHelper.touch(this, logFile);
@@ -70,6 +71,7 @@ public class UpdateTrendingIntentService extends IntentService {
         Prices prices = ClientFactory.getInstance(this).getPrices(uniqueSymbols.toArray(new String[uniqueSymbols.size()]), toSymbol, exchange);
         ArrayList<PriceMultiFullCoin> baseCoins = prices.getCoins();
         ArrayList<Coin> coins = new ArrayList<>();
+        CoinList coinList = CoinListImpl.getInstance(this);
 
         for (PriceMultiFullCoin coin : baseCoins) {
             ArrayList<History> records = getHistories(kind, coin.getFromSymbol(), coin.getToSymbol(), exchange);
@@ -83,8 +85,8 @@ public class UpdateTrendingIntentService extends IntentService {
                 continue;
             }
 
-            String imageUrl = CoinListImpl.getInstance(this).getCoinBySymbol(coin.getFromSymbol()).getImageUrl();
-            Coin newCoin = CoinImpl.buildByAttrs(coin.getFromSymbol(), imageUrl);
+            Coin coinListCoin = coinList.getCoinBySymbol(coin.getFromSymbol());
+            Coin newCoin = CoinImpl.buildByPMFCoin(coin, coinListCoin.getFullName(), coinListCoin.getImageUrl());
             newCoin.setToSymbol(coin.getToSymbol());
             newCoin.setPrice(oldest.getClose());
             newCoin.setPrice(latest.getClose());
@@ -106,8 +108,7 @@ public class UpdateTrendingIntentService extends IntentService {
         broadcastIntent.setAction(HomeTabFragment.ACTION_UPDATE_TRENDING);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
 
-        if (DEBUG)
-            Log.e("onHandleIntent", kind.name() + " trending updated, " + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
+        if (DEBUG) Log.e(TAG, kind.name() + " trending updated, " + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private ArrayList<History> getHistories(TrendingKind kind, String fromSymbol, String toSymbol, String exchange) {

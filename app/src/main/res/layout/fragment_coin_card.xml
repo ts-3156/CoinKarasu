@@ -12,10 +12,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:text="Today so far"
+        android:text="@string/caption_day"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="#000000"
-        tools:text="@string/caption_day" />
+        android:textColor="#000000" />
 
     <TextView
         android:id="@+id/caption_right"
@@ -23,9 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/caption_left"
         android:layout_toRightOf="@id/caption_left"
-        android:text="\u0020vs last 24 hours"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        tools:text="@string/caption_day" />
+        android:text="@string/caption_desc_day"
+        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
     <TextView
         android:id="@+id/price"
@@ -35,7 +33,6 @@
         android:layout_below="@id/caption_left"
         android:layout_marginRight="10dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="#80000000"
         tools:text="¥ 1,000,000" />
 
     <ImageView
