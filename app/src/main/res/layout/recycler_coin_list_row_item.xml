@@ -4,6 +4,7 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
     android:paddingBottom="@dimen/coin_list_vertical_spacing"
     android:paddingLeft="@dimen/coin_list_horizontal_spacing"
     android:paddingRight="@dimen/coin_list_horizontal_spacing"

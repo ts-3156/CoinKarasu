@@ -23,7 +23,7 @@ import java.util.ArrayList;
 
 
 public class HomeTabCardFragment extends Fragment implements
-        View.OnClickListener, OnItemClickListener, PopupMenu.OnMenuItemClickListener {
+        View.OnClickListener, HomeTabRecyclerViewAdapter.OnItemClickListener, PopupMenu.OnMenuItemClickListener {
 
     private static final String STATE_SELECTED_KIND_KEY = "kind";
 

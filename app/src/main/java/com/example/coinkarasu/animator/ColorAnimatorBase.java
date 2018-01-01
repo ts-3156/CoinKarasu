@@ -1,5 +1,7 @@
 package com.example.coinkarasu.animator;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 
@@ -21,6 +23,19 @@ public abstract class ColorAnimatorBase implements ValueAnimator.AnimatorUpdateL
         animator = ValueAnimator.ofObject(new ArgbEvaluator(), getPrevValue(), getValue());
         animator.setDuration(DURATION);
         animator.addUpdateListener(this);
+
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                ColorAnimatorBase.this.onAnimationEnd();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                ColorAnimatorBase.this.onAnimationEnd();
+            }
+        });
+
         animator.start();
         isStarted = true;
     }
@@ -38,6 +53,10 @@ public abstract class ColorAnimatorBase implements ValueAnimator.AnimatorUpdateL
     }
 
     void setValue(int value) {
+        throw new RuntimeException("Stub");
+    }
+
+    void onAnimationEnd() {
         throw new RuntimeException("Stub");
     }
 

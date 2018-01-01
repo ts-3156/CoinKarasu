@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.example.coinkarasu.R;
-import com.example.coinkarasu.activities.OnItemClickListener;
 import com.example.coinkarasu.coins.Coin;
 import com.example.coinkarasu.format.PriceFormat;
 import com.example.coinkarasu.format.TrendValueFormat;
@@ -86,5 +85,9 @@ public class HomeTabRecyclerViewAdapter extends RecyclerView.Adapter<HomeTabRecy
             trend = view.findViewById(R.id.trend);
             trendIcon = view.findViewById(R.id.trend_icon);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(Coin coin, View view, int position);
     }
 }

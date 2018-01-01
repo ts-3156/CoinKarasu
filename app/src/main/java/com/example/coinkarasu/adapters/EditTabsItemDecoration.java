@@ -13,7 +13,7 @@ public class EditTabsItemDecoration extends RecyclerView.ItemDecoration {
 
     private final int spaceHeight;
 
-    private static final int[] ATTRS = new int[]{android.R.attr.listDivider};
+    private static final int[] ATTRS = {android.R.attr.listDivider};
 
     private Drawable divider;
 
@@ -22,9 +22,9 @@ public class EditTabsItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     public EditTabsItemDecoration(Context context, int spaceHeight) {
-        TypedArray attrs = context.obtainStyledAttributes(ATTRS);
-        divider = attrs.getDrawable(0);
-        attrs.recycle();
+        TypedArray ta = context.obtainStyledAttributes(ATTRS);
+        divider = ta.getDrawable(0);
+        ta.recycle();
 
         this.spaceHeight = (int) TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP, spaceHeight, context.getResources().getDisplayMetrics());

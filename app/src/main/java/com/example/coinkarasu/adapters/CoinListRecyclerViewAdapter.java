@@ -166,8 +166,8 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
     }
 
-    private void bindHeaderViewHolder(HeaderViewHolder holder, int position) {
-        Coin coin = coins.get(position);
+    private void bindHeaderViewHolder(final HeaderViewHolder holder, int position) {
+        final Coin coin = coins.get(position);
 
         holder.header.setText(resources.headerNameResIdStringMap.get(coin.getHeaderNameResId()));
         holder.progressbar.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-progressbar");
@@ -178,6 +178,13 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         } else {
             holder.divider.setVisibility(View.VISIBLE);
         }
+
+        holder.container.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onItemClick(coin, view, holder.getAdapterPosition());
+            }
+        });
     }
 
     private void bindItemViewHolder(final ItemViewHolder holder, int position) {
@@ -207,7 +214,6 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 holder.priceBgColorAnimator.start();
             } else {
                 holder.price.setText(resources.priceFormatter.format(coin.getPrice()));
-                holder.container.setBackgroundColor(resources.priceToColor);
             }
 
             if (coin.getPriceDiff() != coin.getPrevPriceDiff()) {
@@ -227,7 +233,6 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             holder.price.setText(resources.priceFormatter.format(coin.getPrice()));
             holder.price_diff.setText(resources.signedPriceFormatter.format(coin.getPriceDiff()));
             holder.trend.setText(resources.surroundedTrendFormatter.format(coin.getTrend()));
-            holder.container.setBackgroundColor(resources.priceToColor);
         }
 
         holder.container.setOnClickListener(new View.OnClickListener() {
@@ -251,7 +256,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     private void headerViewRecycled(HeaderViewHolder holder) {
-
+        holder.container.setOnClickListener(null);
     }
 
     private void itemViewRecycled(ItemViewHolder holder) {
