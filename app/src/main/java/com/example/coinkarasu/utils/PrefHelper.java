@@ -11,7 +11,7 @@ import com.example.coinkarasu.activities.etc.NavigationKind;
 
 public class PrefHelper {
 
-    private static final int DEFAULT_SYNC_INTERVAL = 10000;
+    private static final int DEFAULT_SYNC_INTERVAL = 30000;
 
     public static int getSyncInterval(Activity activity) {
         SharedPreferences pref = getPref(activity);

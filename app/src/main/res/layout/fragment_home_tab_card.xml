@@ -3,64 +3,46 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="16dp"
     tools:context="com.example.coinkarasu.activities.HomeTabCardFragment">
 
-    <!--<TextView-->
-    <!--android:id="@+id/caption_left"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentLeft="true"-->
-    <!--android:layout_alignParentTop="true"-->
-    <!--android:textAppearance="@style/TextAppearance.AppCompat.Medium"-->
-    <!--android:textColor="#000000"-->
-    <!--tools:text="@string/caption_day" />-->
-
     <TextView
-        android:id="@+id/caption_right"
+        android:id="@+id/caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:fontFamily="@font/opensans_light"
-        android:text="Trending"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="#000000"
-        tools:text="@string/caption_day" />
+        android:text="@string/home_tab_trending"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
     <TextView
-        android:id="@+id/caption_desc_left"
+        android:id="@+id/caption_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/caption_right"
-        android:layout_marginLeft="16dp"
-        android:layout_toRightOf="@id/caption_right"
-        android:fontFamily="@font/opensans_light"
-        android:text="in"
+        android:layout_alignBaseline="@id/caption"
+        android:layout_toRightOf="@id/caption"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="#ff888888"
-        tools:text="@string/caption_desc_day" />
-
-    <TextView
-        android:id="@+id/caption_desc_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/caption_desc_left"
-        android:layout_toRightOf="@id/caption_desc_left"
-        android:fontFamily="@font/opensans_light_italic"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="#33b5e5"
-        tools:text="@string/caption_desc_day" />
+        tools:text="@string/caption_desc_1_hour" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/caption_right"
-        android:paddingBottom="16dp"
+        android:layout_below="@id/caption"
         android:paddingTop="16dp" />
+
+    <include
+        layout="@layout/container_warn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/caption"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp" />
 
     <ImageButton
         android:id="@+id/popup_menu"

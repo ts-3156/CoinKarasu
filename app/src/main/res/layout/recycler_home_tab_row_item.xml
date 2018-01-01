@@ -20,8 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/icon"
         android:layout_centerHorizontal="true"
-        android:text="BTC"
-        android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        tools:text="BTC" />
 
 
     <TextView

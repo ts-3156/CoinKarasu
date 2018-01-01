@@ -84,11 +84,11 @@
     <string name="caption_day">Today</string>
     <string name="caption_desc_day">so far</string>
 
-    <string name="caption_desc_1_hour">\u0020last 1 hour</string>
-    <string name="caption_desc_6_hours">\u0020last 6 hours</string>
-    <string name="caption_desc_12_hours">\u0020last 12 hours</string>
-    <string name="caption_desc_24_hours">\u0020last 24 hours</string>
-    <string name="caption_desc_3_days">\u0020last 3 days</string>
+    <string name="caption_desc_1_hour">\u0020in last 1 hour</string>
+    <string name="caption_desc_6_hours">\u0020in last 6 hours</string>
+    <string name="caption_desc_12_hours">\u0020in last 12 hours</string>
+    <string name="caption_desc_24_hours">\u0020in last 24 hours</string>
+    <string name="caption_desc_3_days">\u0020in last 3 days</string>
 
     <string name="header_name_bitflyer">Bitflyer</string>
     <string name="header_name_coincheck">Coincheck</string>
@@ -112,6 +112,9 @@
     <string name="exchange_warn_each_exchange">%3$s have not traded <![CDATA[<b>%1$s - %2$s</b>]]> in the last 24 hours.</string>
     <string name="pie_chart_exchange_warn">There are no exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
 
+
+    <string name="home_tab_trending">Trending</string>
+    <string name="home_tab_not_found">N/A</string>
 
     <string name="edit_tabs_note">Show or Hide the tabs</string>
     <string name="edit_tabs_is_added">%1$s is added.</string>

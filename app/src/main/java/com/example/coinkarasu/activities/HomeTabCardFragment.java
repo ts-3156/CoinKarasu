@@ -53,7 +53,7 @@ public class HomeTabCardFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_tab_card, container, false);
 
-        ((TextView) view.findViewById(R.id.caption_desc_right)).setText(getString(kind.labelResId));
+        ((TextView) view.findViewById(R.id.caption_desc)).setText(getString(kind.labelResId));
 
         view.findViewById(R.id.popup_menu).setOnClickListener(this);
         view.findViewById(R.id.filter).setOnClickListener(this);
@@ -83,9 +83,16 @@ public class HomeTabCardFragment extends Fragment implements
         if (trending != null) {
             coins = trending.getCoins();
         }
-        HomeTabRecyclerViewAdapter adapter = new HomeTabRecyclerViewAdapter(getActivity(), coins);
-        adapter.setOnItemClickListener(this);
-        recyclerView.setAdapter(adapter);
+
+        if (coins.isEmpty()) {
+            recyclerView.setVisibility(View.GONE);
+            ((TextView) getView().findViewById(R.id.warn_text)).setText(getString(R.string.home_tab_not_found));
+            getView().findViewById(R.id.warn_container).setVisibility(View.VISIBLE);
+        } else {
+            HomeTabRecyclerViewAdapter adapter = new HomeTabRecyclerViewAdapter(getActivity(), coins);
+            adapter.setOnItemClickListener(this);
+            recyclerView.setAdapter(adapter);
+        }
     }
 
     @Override
@@ -116,6 +123,7 @@ public class HomeTabCardFragment extends Fragment implements
 
         MenuItem item = popup.getMenu().findItem(R.id.action_filter);
         item.setChecked(isFilterChecked);
+        item.setEnabled(false);
 
         popup.show();
     }
