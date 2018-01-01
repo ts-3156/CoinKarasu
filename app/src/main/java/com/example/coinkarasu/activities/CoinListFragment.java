@@ -130,7 +130,7 @@ public class CoinListFragment extends Fragment implements
     @Override
     public void collected(ArrayList<Coin> coins) {
         if (coins != null) {
-            String toSymbol = Utils.getToSymbol(getActivity(), kind);
+            String toSymbol = kind.getToSymbol();
             for (Coin coin : coins) {
                 coin.setToSymbol(toSymbol);
             }
@@ -173,8 +173,7 @@ public class CoinListFragment extends Fragment implements
 
                 stopAutoUpdate("onItemClick");
                 Intent intent = new Intent(view.getContext(), CoinActivity.class);
-                intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.toJson().toString());
-                intent.putExtra(CoinActivity.COIN_SYMBOL_KEY, coin.getSymbol());
+                intent.putExtra(CoinActivity.KEY_COIN_JSON, coin.toJson().toString());
                 startActivity(intent);
             }
         });
@@ -224,9 +223,11 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
+        String toSymbol = kind.getToSymbol();
+
         adapter.setAnimEnabled(PrefHelper.isAnimEnabled(getActivity()));
         adapter.setDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
-        adapter.setToSymbol(Utils.getToSymbol(getActivity(), kind));
+        adapter.setToSymbol(toSymbol);
 
         if (kind == NavigationKind.japan) {
             for (Exchange exchange : kind.exchanges) {
@@ -239,7 +240,7 @@ public class CoinListFragment extends Fragment implements
 
                     new GetCccaggPricesTask(getContext(), exchange)
                             .setFromSymbols(fromSymbols)
-                            .setToSymbol(Utils.getToSymbol(getActivity(), kind))
+                            .setToSymbol(toSymbol)
                             .setExchange(exchange.name())
                             .setListener(this)
                             .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -270,7 +271,7 @@ public class CoinListFragment extends Fragment implements
 
             new GetCccaggPricesTask(getContext(), Exchange.cccagg)
                     .setFromSymbols(fromSymbols)
-                    .setToSymbol(Utils.getToSymbol(getActivity(), kind))
+                    .setToSymbol(toSymbol)
                     .setExchange(kind.exchanges[0].name())
                     .setListener(this)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -310,7 +311,7 @@ public class CoinListFragment extends Fragment implements
         if (kind == null) {
             return null;
         }
-        String suffix = Utils.getToSymbol(getActivity(), kind);
+        String suffix = kind.getToSymbol();
         if (suffix == null) {
             return null;
         }

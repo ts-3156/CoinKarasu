@@ -32,8 +32,7 @@ public class CoinActivity extends AppCompatActivity {
 
     public enum Tag {card, line, exchange, pie, board}
 
-    public static final String COIN_NAME_KEY = "COIN_NAME_KEY";
-    public static final String COIN_SYMBOL_KEY = "COIN_SYMBOL_KEY";
+    public static final String KEY_COIN_JSON = "KEY_COIN_JSON";
 
     Client client;
     String boardKind;
@@ -46,7 +45,7 @@ public class CoinActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         try {
-            coin = CoinImpl.buildByAttrs(new JSONObject(intent.getStringExtra(COIN_NAME_KEY)));
+            coin = CoinImpl.buildByAttrs(new JSONObject(intent.getStringExtra(KEY_COIN_JSON)));
         } catch (JSONException e) {
             Log.d("onCreate", e.getMessage());
         }
@@ -58,8 +57,7 @@ public class CoinActivity extends AppCompatActivity {
     }
 
     private void updateView() {
-        String toSymbol = PrefHelper.getToSymbol(this);
-        coin.setToSymbol(toSymbol);
+        String toSymbol = coin.getToSymbol();
         updateToolbarTitle(toSymbol);
 
         Fragment card = CoinCardFragment.newInstance(coin);
@@ -113,7 +111,7 @@ public class CoinActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.coin, menu);
+//        getMenuInflater().inflate(R.menu.coin, menu);
         return true;
     }
 

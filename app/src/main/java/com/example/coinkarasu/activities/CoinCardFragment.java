@@ -91,7 +91,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
             return;
         }
 
-        String toSymbol = getToSymbol();
+        String toSymbol = coin.getToSymbol();
         if (toSymbol == null) {
             return;
         }
@@ -136,7 +136,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     }
 
     private String getTimerTag(String kind) {
-        String suffix = getToSymbol();
+        String suffix = coin.getToSymbol();
         if (suffix == null) {
             return null;
         }
@@ -250,14 +250,6 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         if (fragment != null) {
             ((RelativeTimeSpanFragment) fragment).updateText(System.currentTimeMillis());
         }
-    }
-
-    private String getToSymbol() {
-        if (getActivity() == null) {
-            return null;
-        }
-
-        return PrefHelper.getToSymbol(getActivity());
     }
 
     @Override

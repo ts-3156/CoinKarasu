@@ -101,4 +101,25 @@ public enum NavigationKind {
         }
         return list.toArray(new NavigationKind[list.size()]);
     }
+
+    public String getToSymbol() {
+        String symbol;
+
+        if (isToplist()) {
+            symbol = name().substring(0, 3).toUpperCase();
+        } else {
+            switch (this) {
+                case japan:
+                case bitflyer:
+                case coincheck:
+                case zaif:
+                    symbol = "JPY";
+                    break;
+                default:
+                    throw new RuntimeException("Invalid kind " + name());
+            }
+        }
+
+        return symbol;
+    }
 }

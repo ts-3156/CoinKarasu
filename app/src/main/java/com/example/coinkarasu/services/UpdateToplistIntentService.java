@@ -34,7 +34,7 @@ public class UpdateToplistIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         long start = System.currentTimeMillis();
         NavigationKind kind = NavigationKind.valueOf(intent.getAction());
-        String symbol = kind.name().substring(0, 3).toUpperCase();
+        String symbol = kind.getToSymbol();
         String logFile = logFile(symbol);
 
         if (CacheHelper.exists(this, logFile) && !CacheHelper.isExpired(this, logFile, ONE_DAY)) {

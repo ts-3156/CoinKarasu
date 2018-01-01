@@ -110,8 +110,7 @@ public class HomeTabCardFragment extends Fragment implements
     @Override
     public void onItemClick(Coin coin, View view, int position) {
         Intent intent = new Intent(view.getContext(), CoinActivity.class);
-        intent.putExtra(CoinActivity.COIN_NAME_KEY, coin.toJson().toString());
-        intent.putExtra(CoinActivity.COIN_SYMBOL_KEY, coin.getSymbol());
+        intent.putExtra(CoinActivity.KEY_COIN_JSON, coin.toJson().toString());
         startActivity(intent);
     }
 

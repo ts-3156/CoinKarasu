@@ -156,12 +156,12 @@ public class MainActivity extends AppCompatActivity implements
 
         bar.setTitle(kind.headerStrResId);
 
-        NavigationKind currentKind = getCurrentKind();
-        if (currentKind != null && currentKind == NavigationKind.japan) {
-            bar.setSubtitle(Currency.JPY.disabledTitleStrResId);
-        } else {
-            bar.setSubtitle(null);
-        }
+//        NavigationKind currentKind = getCurrentKind();
+//        if (currentKind != null && currentKind == NavigationKind.japan) {
+//            bar.setSubtitle(Currency.JPY.disabledTitleStrResId);
+//        } else {
+//            bar.setSubtitle(null);
+//        }
     }
 
     private void updateTabColor(NavigationKind kind) {

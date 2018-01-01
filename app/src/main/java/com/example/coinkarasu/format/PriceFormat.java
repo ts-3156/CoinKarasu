@@ -1,7 +1,5 @@
 package com.example.coinkarasu.format;
 
-import android.util.Log;
-
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
@@ -24,22 +22,32 @@ public class PriceFormat {
     }
 
     public String format(double price) {
-        if (Math.abs(price) >= 1000) {
-            formatter.setMaximumFractionDigits(0);
+        if (toSymbol.equals("BTC")) {
+            formatter.setMaximumFractionDigits(6);
+            formatter.setMinimumFractionDigits(6);
         } else {
-            formatter.setMaximumFractionDigits(2);
-            formatter.setMinimumFractionDigits(2);
+            if (Math.abs(price) >= 1000) {
+                formatter.setMaximumFractionDigits(0);
+            } else {
+                formatter.setMaximumFractionDigits(2);
+                formatter.setMinimumFractionDigits(2);
+            }
         }
 
         if (toSymbol.equals("JPY")) {
             price /= Math.pow(10, currency.getDefaultFractionDigits());
         }
 
-        return formatter.format(price);
+        String str = formatter.format(price);
+        if (toSymbol.equals("BTC")) {
+            str = str.replace("$", "Ƀ");
+        }
+
+        return str;
     }
 
     private Locale symbolToLocale(String symbol) {
-        Locale locale;
+        Locale locale = null;
 
         switch (symbol) {
             case "JPY":
@@ -48,9 +56,20 @@ public class PriceFormat {
             case "USD":
                 locale = Locale.US;
                 break;
+            case "BTC":
+                locale = Locale.US;
+                break;
             default:
-                Log.d("Invalid locale", symbol);
-                locale = Locale.JAPAN;
+                for (Locale l : NumberFormat.getAvailableLocales()) {
+                    String code = NumberFormat.getCurrencyInstance(l).getCurrency().getCurrencyCode();
+                    if (symbol.equals(code)) {
+                        locale = l;
+                        break;
+                    }
+                }
+                if (locale == null) {
+                    throw new RuntimeException("Invalid symbol " + symbol);
+                }
         }
 
         return locale;
