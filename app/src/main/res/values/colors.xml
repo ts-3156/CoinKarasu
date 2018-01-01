@@ -24,6 +24,8 @@
     <color name="colorNavMainDark">#388E3C</color>
     <color name="colorNavHome">#4CAF50</color>
     <color name="colorNavHomeDark">#388E3C</color>
+    <color name="colorNavAssets">#FFB300</color>
+    <color name="colorNavAssetsDark">#FFA000</color>
     <color name="colorNavJapan">#4CAF50</color>
     <color name="colorNavJapanDark">#388E3C</color>
     <color name="colorBitflyer">@color/colorPrimary</color>

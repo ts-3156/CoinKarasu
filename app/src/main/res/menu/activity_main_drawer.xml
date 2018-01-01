@@ -16,6 +16,10 @@
         android:id="@+id/group2"
         android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_assets"
+            android:icon="@drawable/ic_nav_assets"
+            android:title="@string/nav_assets" />
+        <item
             android:id="@+id/nav_japan"
             android:icon="@drawable/ic_nav_japan"
             android:title="@string/nav_japan" />

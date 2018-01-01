@@ -10,6 +10,7 @@ import java.util.List;
 
 public enum NavigationKind {
     home(R.string.nav_home, R.string.header_home, R.string.tab_home, R.string.summary_home, R.id.nav_home, R.color.colorNavHome, R.color.colorNavHomeDark, R.color.state_nav_home, -1, new Exchange[]{}, R.drawable.ic_nav_home),
+//    assets(R.string.nav_assets, R.string.header_assets, R.string.tab_assets, R.string.summary_assets, R.id.nav_assets, R.color.colorNavAssets, R.color.colorNavAssetsDark, R.color.state_nav_assets, -1, new Exchange[]{}, R.drawable.ic_nav_assets),
     japan(R.string.nav_japan, R.string.header_japan, R.string.tab_japan, R.string.summary_japan, R.id.nav_japan, R.color.colorNavJapan, R.color.colorNavJapanDark, R.color.state_nav_japan, R.array.japan_all_symbols, new Exchange[]{Exchange.bitflyer, Exchange.coincheck, Exchange.zaif}, R.drawable.ic_nav_japan),
     bitflyer(R.string.nav_bitflyer, R.string.header_bitflyer, R.string.tab_bitflyer, R.string.summary_bitflyer, R.id.nav_bitflyer, R.color.colorBitflyer, R.color.colorBitflyerDark, R.color.state_nav_bitflyer, R.array.bitflyer_all_symbols, new Exchange[]{}, R.drawable.ic_nav_bitflyer),
     coincheck(R.string.nav_coincheck, R.string.header_coincheck, R.string.tab_coincheck, R.string.summary_coincheck, R.id.nav_coincheck, R.color.colorCoincheck, R.color.colorCoincheckDark, R.color.state_nav_coincheck, R.array.coincheck_all_symbols, new Exchange[]{Exchange.coincheck}, R.drawable.ic_nav_coincheck),

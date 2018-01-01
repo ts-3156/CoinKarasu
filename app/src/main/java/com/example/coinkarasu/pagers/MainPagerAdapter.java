@@ -9,10 +9,9 @@ import android.util.Log;
 import com.example.coinkarasu.activities.CoinListFragment;
 import com.example.coinkarasu.activities.EditTabsFragment;
 import com.example.coinkarasu.activities.HomeTabFragment;
+import com.example.coinkarasu.activities.etc.NavigationKind;
 
 import java.util.ArrayList;
-
-import com.example.coinkarasu.activities.etc.NavigationKind;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
     private static final boolean DEBUG = false;
@@ -41,14 +40,18 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
         if (DEBUG) Log.e("getItem", "" + selectedKind);
 
-        if (selectedKind == NavigationKind.home) {
-            fragment = HomeTabFragment.newInstance(selectedKind);
-        } else if (selectedKind == NavigationKind.edit_tabs) {
-            fragment = EditTabsFragment.newInstance();
-        } else if (selectedKind == NavigationKind.coincheck) {
-            fragment = CoinListFragment.newInstance(selectedKind, defaultKind == selectedKind);
-        } else {
-            fragment = CoinListFragment.newInstance(selectedKind, defaultKind == selectedKind);
+        switch (selectedKind) {
+            case home:
+                fragment = HomeTabFragment.newInstance(selectedKind);
+                break;
+//            case assets:
+//                fragment = HomeTabFragment.newInstance(selectedKind);
+//                break;
+            case edit_tabs:
+                fragment = EditTabsFragment.newInstance();
+                break;
+            default:
+                fragment = CoinListFragment.newInstance(selectedKind, defaultKind == selectedKind);
         }
 
         fragments.add(fragment);
