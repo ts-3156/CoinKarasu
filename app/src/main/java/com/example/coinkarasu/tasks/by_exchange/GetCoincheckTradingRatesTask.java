@@ -7,6 +7,7 @@ import com.example.coinkarasu.activities.etc.Exchange;
 import com.example.coinkarasu.api.coincheck.data.Rate;
 import com.example.coinkarasu.api.cryptocompare.data.Prices;
 import com.example.coinkarasu.coins.PriceMultiFullCoin;
+import com.example.coinkarasu.tasks.by_exchange.data.Price;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;

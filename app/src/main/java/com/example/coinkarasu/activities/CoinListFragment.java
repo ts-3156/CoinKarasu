@@ -33,7 +33,8 @@ import com.example.coinkarasu.pagers.MainPagerAdapter;
 import com.example.coinkarasu.tasks.CollectCoinsTask;
 import com.example.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
 import com.example.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
-import com.example.coinkarasu.tasks.by_exchange.Price;
+import com.example.coinkarasu.tasks.by_exchange.data.CachedPrices;
+import com.example.coinkarasu.tasks.by_exchange.data.Price;
 import com.example.coinkarasu.utils.AutoUpdateTimer;
 import com.example.coinkarasu.utils.PrefHelper;
 
@@ -179,10 +180,38 @@ public class CoinListFragment extends Fragment implements
         });
         recyclerView.setAdapter(adapter);
 
-//        updateViewIfCacheExist(adapter);
+        updateViewIfCacheExist(adapter);
 
         if (isStartTaskRequested) {
             startTask();
+        }
+    }
+
+    private void updateViewIfCacheExist(Exchange exchange, CoinKind coinKind, CoinListRecyclerViewAdapter adapter) {
+        if (!CachedPrices.isCacheExist(getActivity(), kind, exchange, coinKind)) {
+            return;
+        }
+
+        CachedPrices cachedPrices = CachedPrices.restoreFromCache(getActivity(), kind, exchange, coinKind);
+        if (cachedPrices == null || cachedPrices.getPrices() == null || cachedPrices.getPrices().isEmpty()) {
+            return;
+        }
+
+        ArrayList<Coin> coins = adapter.getItems(exchange, coinKind);
+        if (coins.isEmpty()) {
+            return;
+        }
+
+        for (Price price : cachedPrices.getPrices()) {
+            for (Coin coin : coins) {
+                if (coin.getSymbol().equals(price.fromSymbol)) {
+                    coin.setPrice(price.price);
+                    coin.setPriceDiff(price.priceDiff);
+                    coin.setTrend(price.trend);
+                    break;
+                }
+            }
+
         }
     }
 
@@ -193,20 +222,18 @@ public class CoinListFragment extends Fragment implements
 
         adapter.pauseAnimation();
 
-        for (Exchange exchange : kind.exchanges) {
-            String tag = kind.name() + "-" + exchange.name();
-            boolean isCacheExists = PricesImpl.isCacheExist(getActivity(), tag);
-            if (!isCacheExists) {
-                continue;
+        if (kind == NavigationKind.japan) {
+            for (Exchange exchange : kind.exchanges) {
+                updateViewIfCacheExist(exchange, CoinKind.none, adapter);
             }
-
-//            Prices prices = PricesImpl.restoreFromCache(getActivity(), tag);
-//            ArrayList<Coin> filtered = adapter.getItems(Exchange.valueOf(prices.getExchange()));
-//            prices.copyAttrsToCoins(filtered);
-//
-//            adapter.notifyCoinsChanged();
+        } else if (kind == NavigationKind.coincheck) {
+            updateViewIfCacheExist(kind.exchanges[0], CoinKind.trading, adapter);
+            updateViewIfCacheExist(kind.exchanges[0], CoinKind.sales, adapter);
+        } else {
+            updateViewIfCacheExist(kind.exchanges[0], CoinKind.none, adapter);
         }
 
+        adapter.notifyDataSetChanged();
         adapter.restartAnimation();
     }
 
@@ -339,7 +366,7 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
-//        prices.saveToCache(getActivity(), kind.name() + "-" + prices.getExchange());
+        new CachedPrices(prices).saveToCache(getActivity(), kind, exchange, coinKind);
 
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         CoinListRecyclerViewAdapter adapter = (CoinListRecyclerViewAdapter) recyclerView.getAdapter();

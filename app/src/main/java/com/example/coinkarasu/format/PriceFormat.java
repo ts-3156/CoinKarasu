@@ -40,7 +40,9 @@ public class PriceFormat {
 
         String str = formatter.format(price);
         if (toSymbol.equals("BTC")) {
-            str = str.replace("$", "Ƀ");
+            str = str.replace("$", "Ƀ ");
+        } else if (toSymbol.equals("USD")) {
+            str = str.replace("$", "$ ");
         }
 
         return str;

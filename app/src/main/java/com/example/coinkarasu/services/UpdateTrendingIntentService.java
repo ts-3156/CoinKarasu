@@ -59,7 +59,7 @@ public class UpdateTrendingIntentService extends IntentService {
         String logFile = logFile(kind, toSymbol, exchange);
 
         if (CacheHelper.exists(this, logFile) && !CacheHelper.isExpired(this, logFile, ONE_DAY)) {
-            if (DEBUG) Log.e(TAG, kind.name() + "is recently executed.");
+            if (DEBUG) Log.e(TAG, kind.name() + " is recently executed.");
             return;
         }
         CacheHelper.touch(this, logFile);
