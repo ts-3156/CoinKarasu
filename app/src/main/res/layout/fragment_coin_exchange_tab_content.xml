@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="#ffffff"
     android:orientation="vertical"
-    tools:context="com.example.coinkarasu.activities.CoinExchangeTabContentFragment">
+    tools:context="com.coinkarasu.activities.CoinExchangeTabContentFragment">
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"

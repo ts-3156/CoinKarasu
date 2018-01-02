@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:background="#ffffff"
     android:padding="16dp"
-    tools:context="com.example.coinkarasu.activities.CoinLineChartFragment">
+    tools:context="com.coinkarasu.activities.CoinLineChartFragment">
 
     <TextView
         android:id="@+id/caption_left"
