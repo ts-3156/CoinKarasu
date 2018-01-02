@@ -299,7 +299,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         ItemViewHolder(View view) {
             super(view);
-            container = view.findViewById(R.id.container);
+            container = view.findViewById(R.id.inner_container);
             icon = view.findViewById(R.id.icon);
             name = view.findViewById(R.id.name);
             symbol = view.findViewById(R.id.symbol);

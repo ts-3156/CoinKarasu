@@ -4,6 +4,7 @@ import android.animation.ValueAnimator;
 
 public abstract class ValueAnimatorBase implements ValueAnimator.AnimatorUpdateListener {
     public static final long DURATION = 1000;
+    private static final double THRESHOLD = 0.95;
 
     private boolean isStarted;
     private ValueAnimator animator;
@@ -17,12 +18,23 @@ public abstract class ValueAnimatorBase implements ValueAnimator.AnimatorUpdateL
             return;
         }
 
+        double cur = getValue();
         double prev = getPrevValue();
-        if (prev == 0.0) {
-            prev = 0.95 * getValue();
+
+        if (prev == cur) {
+            setValue(cur);
+            return;
         }
 
-        animator = ValueAnimator.ofFloat((float) prev, (float) getValue());
+        if (Math.abs(prev - cur) > (1.0 - THRESHOLD) * cur) {
+            if (prev < cur) {
+                prev = THRESHOLD * cur;
+            } else {
+                prev = (1.0 + (1.0 - THRESHOLD)) * cur;
+            }
+        }
+
+        animator = ValueAnimator.ofFloat((float) prev, (float) cur);
         animator.setDuration(DURATION);
         animator.addUpdateListener(this);
         animator.start();
@@ -30,7 +42,9 @@ public abstract class ValueAnimatorBase implements ValueAnimator.AnimatorUpdateL
     }
 
     public void cancel() {
-        animator.cancel();
+        if (animator != null) {
+            animator.cancel();
+        }
     }
 
     double getPrevValue() {

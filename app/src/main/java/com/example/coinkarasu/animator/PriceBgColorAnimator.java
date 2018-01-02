@@ -14,7 +14,7 @@ public class PriceBgColorAnimator extends ColorAnimatorBase {
         super();
         this.prevColor = fromColor;
         this.color = toColor;
-        this.prevBackground = view.getBackground().getConstantState().newDrawable().mutate();
+//        this.prevBackground = view.getBackground().getConstantState().newDrawable().mutate();
         this.view = view;
     }
 
@@ -35,6 +35,6 @@ public class PriceBgColorAnimator extends ColorAnimatorBase {
 
     @Override
     void onAnimationEnd() {
-        view.setBackground(prevBackground);
+//        view.setBackground(prevBackground);
     }
 }
