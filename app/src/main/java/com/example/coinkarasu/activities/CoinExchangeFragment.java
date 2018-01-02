@@ -241,10 +241,7 @@ public class CoinExchangeFragment extends Fragment implements
         Iterator<SnapshotCoin> iterator = coins.iterator();
         while (iterator.hasNext()) {
             SnapshotCoin coin = iterator.next();
-            if (coin.getVolume24Hour() <= 0.0
-                    || coin.getMarket().equals("LocalBitcoins")
-                    || (coin.getMarket().equals("Tidex") && coin.getFromSymbol().equals("BTC") && coin.getToSymbol().equals("WUSD"))
-                    || (coin.getMarket().equals("Tidex") && coin.getFromSymbol().equals("BTC") && coin.getToSymbol().equals("WEUR"))) {
+            if (coin.getVolume24Hour() <= 0.0 || coin.getMarket().equals("LocalBitcoins")) {
                 iterator.remove();
             }
         }
