@@ -6,12 +6,11 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.View;
 
 public class EditTabsItemDecoration extends RecyclerView.ItemDecoration {
 
-    private final int spaceHeight;
+    private int verticalGap;
 
     private static final int[] ATTRS = {android.R.attr.listDivider};
 
@@ -21,13 +20,12 @@ public class EditTabsItemDecoration extends RecyclerView.ItemDecoration {
         this(context, 0);
     }
 
-    public EditTabsItemDecoration(Context context, int spaceHeight) {
+    public EditTabsItemDecoration(Context context, int verticalGap) {
         TypedArray ta = context.obtainStyledAttributes(ATTRS);
         divider = ta.getDrawable(0);
         ta.recycle();
 
-        this.spaceHeight = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, spaceHeight, context.getResources().getDisplayMetrics());
+        this.verticalGap = verticalGap;
     }
 
     @Override
@@ -62,7 +60,7 @@ public class EditTabsItemDecoration extends RecyclerView.ItemDecoration {
         int size = parent.getAdapter().getItemCount();
 
         if (position == 0) {
-            outRect.bottom = spaceHeight;
+            outRect.bottom = verticalGap;
         }
     }
 }

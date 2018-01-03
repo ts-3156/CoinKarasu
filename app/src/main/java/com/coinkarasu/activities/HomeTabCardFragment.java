@@ -76,7 +76,7 @@ public class HomeTabCardFragment extends Fragment implements
 
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        recyclerView.addItemDecoration(new HomeTabHorizontalSpaceItemDecoration(getActivity(), 16));
+        recyclerView.addItemDecoration(new HomeTabHorizontalSpaceItemDecoration(getActivity(), (int) getResources().getDimension(R.dimen.home_tab_horizontal_gap)));
 
         ArrayList<Coin> coins = new ArrayList<>();
         Trending trending = Trending.restoreFromCache(getActivity(), kind);

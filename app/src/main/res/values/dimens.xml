@@ -19,4 +19,7 @@
     <dimen name="coin_list_icon_size">40dp</dimen>
 
     <dimen name="home_tab_icon_size">40dp</dimen>
+    <dimen name="home_tab_horizontal_gap">16dp</dimen>
+
+    <dimen name="edit_tabs_vertical_gap">16dp</dimen>
 </resources>

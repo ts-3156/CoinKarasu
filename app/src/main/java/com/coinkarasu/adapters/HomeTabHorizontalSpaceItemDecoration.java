@@ -3,16 +3,14 @@ package com.coinkarasu.adapters;
 import android.content.Context;
 import android.graphics.Rect;
 import android.support.v7.widget.RecyclerView;
-import android.util.TypedValue;
 import android.view.View;
 
 public class HomeTabHorizontalSpaceItemDecoration extends RecyclerView.ItemDecoration {
 
-    private final int spaceWidth;
+    private int horizontalGap;
 
-    public HomeTabHorizontalSpaceItemDecoration(Context context, int spaceWidth) {
-        this.spaceWidth = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, spaceWidth, context.getResources().getDisplayMetrics());
+    public HomeTabHorizontalSpaceItemDecoration(Context context, int horizontalGap) {
+        this.horizontalGap = horizontalGap;
     }
 
     @Override
@@ -21,9 +19,9 @@ public class HomeTabHorizontalSpaceItemDecoration extends RecyclerView.ItemDecor
         int size = parent.getAdapter().getItemCount();
 
         if (position == 0) {
-            outRect.left = spaceWidth;
+            outRect.left = horizontalGap;
         }
 
-        outRect.right = spaceWidth;
+        outRect.right = horizontalGap;
     }
 }
