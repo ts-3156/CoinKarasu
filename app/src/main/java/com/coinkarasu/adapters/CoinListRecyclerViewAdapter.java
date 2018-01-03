@@ -171,7 +171,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         holder.header.setText(resources.headerNameResIdStringMap.get(coin.getHeaderNameResId()));
         holder.progressbar.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-progressbar");
-        holder.timeSpan.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-time_span");
+        holder.timeSpanContainer.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-time_span");
 
         if (position == 0) {
             holder.divider.setVisibility(View.GONE);
@@ -315,7 +315,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         TextView header;
         View divider;
         View progressbar;
-        View timeSpan;
+        View timeSpanContainer;
 
         HeaderViewHolder(View view) {
             super(view);
@@ -323,7 +323,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             header = view.findViewById(R.id.text_separator);
             divider = view.findViewById(R.id.divider);
             progressbar = view.findViewById(R.id.progressbar);
-            timeSpan = view.findViewById(R.id.time_span_container);
+            timeSpanContainer = view.findViewById(R.id.time_span_container);
         }
     }
 

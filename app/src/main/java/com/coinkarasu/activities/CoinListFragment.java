@@ -421,17 +421,18 @@ public class CoinListFragment extends Fragment implements
     }
 
     private void updateRelativeTimeSpanText(Exchange exchange, CoinKind coinKind) {
-        Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, coinKind));
+        String tag = RelativeTimeSpanFragment.getTag(exchange, coinKind);
+        Fragment fragment = getChildFragmentManager().findFragmentByTag(tag);
         if (fragment == null) {
-            View timeSpan = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-time_span");
-            if (timeSpan == null) {
+            View timeSpanContainer = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-time_span");
+            if (timeSpanContainer == null) {
                 return;
             }
-            timeSpan.setId(exchange.getHeaderNameResId(coinKind)); // 何かしらの値をセットしないと、すべて同じIDになってしまう。
+            timeSpanContainer.setId(exchange.getHeaderNameResId(coinKind)); // 何かしらの値をセットしないと、すべて同じIDになってしまう。
 
             fragment = RelativeTimeSpanFragment.newInstance(System.currentTimeMillis());
             getChildFragmentManager().beginTransaction()
-                    .replace(timeSpan.getId(), fragment, RelativeTimeSpanFragment.getTag(exchange, coinKind))
+                    .replace(timeSpanContainer.getId(), fragment, tag)
                     .commit();
         }
         ((RelativeTimeSpanFragment) fragment).updateText(System.currentTimeMillis());
