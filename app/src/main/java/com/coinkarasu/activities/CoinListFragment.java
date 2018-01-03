@@ -1,6 +1,5 @@
 package com.coinkarasu.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -24,6 +23,7 @@ import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.adapters.CoinListRecyclerViewAdapter;
 import com.coinkarasu.animator.ValueAnimatorBase;
 import com.coinkarasu.coins.Coin;
@@ -38,15 +38,14 @@ import com.coinkarasu.utils.AutoUpdateTimer;
 import com.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.TimerTask;
 
 
 public class CoinListFragment extends Fragment implements
         GetPricesByExchangeTaskBase.Listener,
         SharedPreferences.OnSharedPreferenceChangeListener,
-        CollectCoinsTask.Listener,
         MainPagerAdapter.Listener {
 
     private static final boolean DEBUG = true;
@@ -108,6 +107,19 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
+        collectCoins();
+    }
+
+    private void collectCoins() {
+        if (getActivity() == null || getActivity().isFinishing()) {
+            return;
+        }
+
+        ArrayList<Coin> coins = new ArrayList<>();
+        addCoins(coins, kind.sections[0]);
+    }
+
+    private void addCoins(final ArrayList<Coin> inCoins, final Section section) {
         String[] fromSymbols = null;
 
         if (kind.isToplist()) {
@@ -118,34 +130,49 @@ public class CoinListFragment extends Fragment implements
         }
 
         if (fromSymbols == null) {
-            fromSymbols = getResources().getStringArray(kind.symbolsResId);
+            fromSymbols = getResources().getStringArray(section.getSymbolsResId());
         }
 
         new CollectCoinsTask(getActivity())
                 .setFromSymbols(fromSymbols)
-                .setListener(this)
+                .setListener(new CollectCoinsTask.Listener() {
+                    @Override
+                    public void coinsCollected(ArrayList<Coin> coins) {
+                        String toSymbol = kind.getToSymbol();
+                        for (Coin coin : coins) {
+                            coin.setToSymbol(toSymbol);
+                            coin.setExchange(section.getExchange().name());
+                            coin.setCoinKind(section.getCoinKind());
+                        }
+
+                        inCoins.add(section.createSectionHeaderCoin());
+                        inCoins.addAll(coins);
+
+                        int indexOfSection = Arrays.asList(kind.sections).indexOf(section);
+                        if (indexOfSection == -1) {
+                            throw new RuntimeException("Invalid section " + section.toString());
+                        }
+
+                        if (indexOfSection < kind.sections.length - 1) {
+                            addCoins(inCoins, kind.sections[indexOfSection + 1]);
+                        } else {
+                            RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
+                            CoinListRecyclerViewAdapter adapter = (CoinListRecyclerViewAdapter) recyclerView.getAdapter();
+                            if (adapter == null) {
+                                adapter = new CoinListRecyclerViewAdapter(getActivity(), inCoins);
+                                initializeRecyclerView(recyclerView, adapter);
+                            }
+                        }
+                    }
+                })
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    @Override
-    public void collected(ArrayList<Coin> coins) {
-        if (coins != null) {
-            String toSymbol = kind.getToSymbol();
-            for (Coin coin : coins) {
-                coin.setToSymbol(toSymbol);
-            }
-        }
-
-        coins = Utils.insertSectionHeader(coins, kind);
-        initializeListView(new CoinListRecyclerViewAdapter(getActivity(), coins));
-    }
-
-    private void initializeListView(CoinListRecyclerViewAdapter adapter) {
-        if (adapter == null || getActivity() == null || getView() == null) {
+    private void initializeRecyclerView(RecyclerView recyclerView, CoinListRecyclerViewAdapter adapter) {
+        if (getActivity() == null || getView() == null) {
             return;
         }
 
-        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setHasFixedSize(true);
         ((DefaultItemAnimator) recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
@@ -255,33 +282,7 @@ public class CoinListFragment extends Fragment implements
         adapter.setDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
         adapter.setToSymbol(toSymbol);
 
-        if (kind == NavigationKind.japan) {
-            for (Exchange exchange : kind.exchanges) {
-                if (exchange == Exchange.bitflyer || exchange == Exchange.coincheck) {
-                    GetPricesByExchangeTaskBase.getInstance(getActivity(), exchange, CoinKind.none)
-                            .setListener(this)
-                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                } else if (exchange == Exchange.zaif) {
-                    String[] fromSymbols = getResources().getStringArray(exchange.tradingSymbolsResId);
-
-                    new GetCccaggPricesTask(getContext(), exchange)
-                            .setFromSymbols(fromSymbols)
-                            .setToSymbol(toSymbol)
-                            .setExchange(exchange.name())
-                            .setListener(this)
-                            .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                }
-            }
-        } else if (kind == NavigationKind.coincheck) {
-            GetPricesByExchangeTaskBase.getInstance(getActivity(), kind.exchanges[0], CoinKind.trading)
-                    .setListener(this)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-            GetPricesByExchangeTaskBase.getInstance(getActivity(), kind.exchanges[0], CoinKind.sales)
-                    .setListener(this)
-                    .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else {
-            // jpy_toplist, usd_toplist, btc_toplist and so on
+        if (kind.isToplist()) {
             String[] fromSymbols = null;
 
             if (kind.isToplist()) {
@@ -301,6 +302,12 @@ public class CoinListFragment extends Fragment implements
                     .setExchange(kind.exchanges[0].name())
                     .setListener(this)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            for (Section section : kind.sections) {
+                GetPricesByExchangeTaskBase.getInstance(getActivity(), section.getExchange(), section.getCoinKind())
+                        .setListener(this)
+                        .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
         }
     }
 
@@ -520,85 +527,5 @@ public class CoinListFragment extends Fragment implements
         }
 
         transaction.commitNowAllowingStateLoss();
-    }
-
-    private static class Utils {
-        static String getToSymbol(Activity activity, NavigationKind kind) {
-            String symbol;
-
-            if (kind == NavigationKind.japan) {
-                symbol = MainActivity.Currency.JPY.name();
-            } else {
-                if (activity == null) {
-                    return null;
-                }
-                symbol = PrefHelper.getToSymbol(activity);
-            }
-
-            return symbol;
-        }
-
-        static ArrayList<Coin> insertSectionHeader(ArrayList<Coin> coins, NavigationKind kind) {
-            ArrayList<Coin> sectionalCoins = new ArrayList<>();
-
-            if (kind == NavigationKind.japan) {
-                for (Exchange exchange : kind.exchanges) {
-                    sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.none));
-                    List<Coin> sub;
-
-                    switch (exchange) {
-                        case bitflyer:
-                            sub = coins.subList(0, 1);
-                            break;
-                        case coincheck:
-                            sub = coins.subList(1, 2);
-                            break;
-                        case zaif:
-                            sub = coins.subList(2, coins.size());
-                            break;
-                        default:
-                            throw new RuntimeException("Invalid exchange " + exchange.name());
-                    }
-
-                    for (Coin coin : sub) {
-                        coin.setExchange(exchange.name());
-                        coin.setCoinKind(CoinKind.none);
-                    }
-
-                    sectionalCoins.addAll(sub);
-                }
-            } else if (kind == NavigationKind.coincheck) {
-                Exchange exchange = kind.exchanges[0];
-                List<Coin> sub;
-
-                for (Coin coin : coins) {
-                    coin.setExchange(exchange.name());
-                }
-
-                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.trading));
-                sub = coins.subList(0, 1);
-                for (Coin coin : sub) {
-                    coin.setCoinKind(CoinKind.trading);
-                }
-                sectionalCoins.addAll(sub);
-
-                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.sales));
-                sub = coins.subList(1, coins.size());
-                for (Coin coin : sub) {
-                    coin.setCoinKind(CoinKind.sales);
-                }
-                sectionalCoins.addAll(sub);
-            } else {
-                Exchange exchange = kind.exchanges[0];
-                sectionalCoins.add(exchange.createSectionHeaderCoin(CoinKind.none));
-                for (Coin coin : coins) {
-                    coin.setExchange(exchange.name());
-                    coin.setCoinKind(CoinKind.none);
-                }
-                sectionalCoins.addAll(coins);
-            }
-
-            return sectionalCoins;
-        }
     }
 }

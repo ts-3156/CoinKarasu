@@ -65,7 +65,7 @@ public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Int
             case zaif:
                 switch (coinKind) {
                     case none:
-                        return null;
+                        return new GetZaifTradingRatesTask(context, coinKind);
                     case trading:
                         return null;
                     case sales:

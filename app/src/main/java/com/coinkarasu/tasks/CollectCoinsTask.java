@@ -29,7 +29,7 @@ public class CollectCoinsTask extends AsyncTask<Integer, Integer, Integer> {
             coins = CoinListImpl.collectCoins(context, fromSymbols); // DB
 
             if (coins == null || coins.size() != fromSymbols.length) {
-                coins = CoinListImpl.getInstance(context).collectCoins(fromSymbols);
+                coins = CoinListImpl.getInstance(context).collectCoins(fromSymbols); // File
                 UpdateCoinListIntentService.start(context);
             }
         }
@@ -41,7 +41,7 @@ public class CollectCoinsTask extends AsyncTask<Integer, Integer, Integer> {
     protected void onPostExecute(Integer integer) {
         context = null;
         if (listener != null) {
-            listener.collected(coins);
+            listener.coinsCollected(coins);
         }
     }
 
@@ -56,6 +56,6 @@ public class CollectCoinsTask extends AsyncTask<Integer, Integer, Integer> {
     }
 
     public interface Listener {
-        void collected(ArrayList<Coin> coins);
+        void coinsCollected(ArrayList<Coin> coins);
     }
 }
