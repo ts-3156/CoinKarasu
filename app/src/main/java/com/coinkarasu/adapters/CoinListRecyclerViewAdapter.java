@@ -6,13 +6,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
+import com.coinkarasu.adapters.row.HeaderViewHolder;
+import com.coinkarasu.adapters.row.ItemViewHolder;
 import com.coinkarasu.animator.PriceAnimator;
 import com.coinkarasu.animator.PriceBgColorAnimator;
 import com.coinkarasu.animator.PriceDiffAnimator;
@@ -48,7 +47,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         isAnimPaused = false;
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        this.resources = new ResourceUtils(activity, coins);
+        resources = new ResourceUtils(activity, coins);
 
         setHasStableIds(true);
 
@@ -280,51 +279,6 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         holder.container.setOnClickListener(null);
-    }
-
-    static class ItemViewHolder extends RecyclerView.ViewHolder {
-        View container;
-        NetworkImageView icon;
-        TextView name;
-        TextView symbol;
-        TextView price;
-        TextView price_diff;
-        TextView trend;
-        ImageView trendIcon;
-
-        PriceAnimator priceAnimator = null;
-        PriceDiffAnimator priceDiffAnimator = null;
-        PriceBgColorAnimator priceBgColorAnimator = null;
-        TrendAnimator trendAnimator = null;
-
-        ItemViewHolder(View view) {
-            super(view);
-            container = view.findViewById(R.id.inner_container);
-            icon = view.findViewById(R.id.icon);
-            name = view.findViewById(R.id.name);
-            symbol = view.findViewById(R.id.symbol);
-            price = view.findViewById(R.id.price);
-            price_diff = view.findViewById(R.id.price_diff);
-            trend = view.findViewById(R.id.trend);
-            trendIcon = view.findViewById(R.id.trend_icon);
-        }
-    }
-
-    static class HeaderViewHolder extends RecyclerView.ViewHolder {
-        View container;
-        TextView header;
-        View divider;
-        View progressbar;
-        View timeSpanContainer;
-
-        HeaderViewHolder(View view) {
-            super(view);
-            container = view.findViewById(R.id.container);
-            header = view.findViewById(R.id.text_separator);
-            divider = view.findViewById(R.id.divider);
-            progressbar = view.findViewById(R.id.progressbar);
-            timeSpanContainer = view.findViewById(R.id.time_span_container);
-        }
     }
 
     public interface OnItemClickListener {
