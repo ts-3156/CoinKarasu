@@ -127,9 +127,11 @@ public class CoinListFragment extends Fragment implements
             if (toplist != null) {
                 fromSymbols = toplist.getSymbols();
             }
-        }
 
-        if (fromSymbols == null) {
+            if (fromSymbols == null) {
+                fromSymbols = getResources().getStringArray(kind.symbolsResId);
+            }
+        } else {
             fromSymbols = getResources().getStringArray(section.getSymbolsResId());
         }
 
@@ -285,11 +287,9 @@ public class CoinListFragment extends Fragment implements
         if (kind.isToplist()) {
             String[] fromSymbols = null;
 
-            if (kind.isToplist()) {
-                Toplist toplist = Toplist.restoreFromCache(getActivity(), kind);
-                if (toplist != null) {
-                    fromSymbols = toplist.getSymbols();
-                }
+            Toplist toplist = Toplist.restoreFromCache(getActivity(), kind);
+            if (toplist != null) {
+                fromSymbols = toplist.getSymbols();
             }
 
             if (fromSymbols == null) {
