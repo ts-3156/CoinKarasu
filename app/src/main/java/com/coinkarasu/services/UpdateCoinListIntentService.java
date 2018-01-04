@@ -3,7 +3,6 @@ package com.coinkarasu.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.api.cryptocompare.data.CoinList;
@@ -13,6 +12,7 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.database.AppDatabase;
 import com.coinkarasu.database.CoinListCoin;
 import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.Log;
 
 import org.json.JSONObject;
 
@@ -34,8 +34,9 @@ public class UpdateCoinListIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log logger = new Log(getApplicationContext());
         if (CacheHelper.exists(this, LOG) && !CacheHelper.isExpired(this, LOG, THIRTY_MINUTES)) {
-            if (DEBUG) Log.e(TAG, "Recently executed.");
+            if (DEBUG) logger.d(TAG, "Recently executed.");
             return;
         }
         CacheHelper.touch(this, LOG);
@@ -72,7 +73,8 @@ public class UpdateCoinListIntentService extends IntentService {
         removeUnusedSymbolsFromCoinList(coinList, uniqueSymbols);
         coinList.saveToCache(this);
 
-        if (DEBUG) Log.e(TAG, "CoinList updated, db " + db.coinListCoinDao().size() + " records, CoinList " +
+        if (DEBUG) logger.d(TAG, "CoinList updated, db "
+                + db.coinListCoinDao().size() + " records, CoinList " +
                 +coinList.getAllSymbols().size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 

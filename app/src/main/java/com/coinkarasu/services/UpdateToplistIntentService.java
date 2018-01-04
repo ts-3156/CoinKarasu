@@ -3,7 +3,6 @@ package com.coinkarasu.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.api.cryptocompare.Client;
@@ -12,6 +11,7 @@ import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.data.Toplist;
 import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,12 +33,13 @@ public class UpdateToplistIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         long start = System.currentTimeMillis();
+        Log logger = new Log(getApplicationContext());
         NavigationKind kind = NavigationKind.valueOf(intent.getAction());
         String symbol = kind.getToSymbol();
         String logFile = logFile(symbol);
 
         if (CacheHelper.exists(this, logFile) && !CacheHelper.isExpired(this, logFile, ONE_DAY)) {
-            if (DEBUG) Log.e(TAG, kind.name() + " is recently executed.");
+            if (DEBUG) logger.d(TAG, kind.name() + " is recently executed.");
             return;
         }
         CacheHelper.touch(this, logFile);
@@ -63,7 +64,7 @@ public class UpdateToplistIntentService extends IntentService {
         }
 
         Iterator<PriceMultiFullCoin> iterator = coins.iterator();
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             PriceMultiFullCoin coin = iterator.next();
             if (coin.getVolume24HourTo() == 0.0) {
                 iterator.remove();
@@ -79,7 +80,8 @@ public class UpdateToplistIntentService extends IntentService {
         Toplist toplist = new Toplist(coins, kind);
         toplist.saveToCache(this);
 
-        if (DEBUG) Log.e(TAG, symbol + " toplist updated, " + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
+        if (DEBUG) logger.d(TAG, symbol + " toplist updated, "
+                + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private String logFile(String symbol) {

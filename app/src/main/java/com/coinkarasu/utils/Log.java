@@ -1,6 +1,7 @@
 package com.coinkarasu.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.widget.Toast;
 
@@ -10,12 +11,12 @@ import java.util.Queue;
 public class Log {
     private static final boolean DEBUG = true;
 
-    private Activity activity;
+    private Context context;
     private Queue<String> queue;
     private boolean isRunning;
 
-    public Log(Activity activity) {
-        this.activity = activity;
+    public Log(Context context) {
+        this.context = context;
         queue = new LinkedList<>();
         isRunning = false;
     }
@@ -23,33 +24,33 @@ public class Log {
     public void d(String tag, String message) {
         if (!DEBUG) return;
         android.util.Log.d(tag, message);
-        makeToast(message);
+        makeToast(tag, message);
     }
 
     public void i(String tag, String message) {
         if (!DEBUG) return;
         android.util.Log.i(tag, message);
-        makeToast(message);
+        makeToast(tag, message);
     }
 
     public void w(String tag, String message) {
         if (!DEBUG) return;
         android.util.Log.w(tag, message);
-        makeToast(message);
+        makeToast(tag, message);
     }
 
     public void e(String tag, String message) {
         if (!DEBUG) return;
         android.util.Log.e(tag, message);
-        makeToast(message);
+        makeToast(tag, message);
     }
 
-    void makeToast(String message) {
-        if (activity == null) {
+    void makeToast(String tag, String message) {
+        if (context == null) {
             return;
         }
 
-        queue.offer(message);
+        queue.offer(tag + ": " + message);
         if (isRunning) {
             return;
         }
@@ -62,20 +63,24 @@ public class Log {
             }
         };
 
-        final Handler handler = new Handler();
+        final Handler handler = new Handler(context.getMainLooper());
 
         Thread thread = new Thread() {
             @Override
             public void run() {
                 while (!queue.isEmpty()) {
-                    if (activity == null || activity.isFinishing()) {
-                        activity = null;
+                    if (context == null) {
+                        break;
+                    }
+
+                    if (context instanceof Activity && ((Activity) context).isFinishing()) {
+                        context = null;
                         break;
                     }
 
                     handler.post(new Runnable() {
                         public void run() {
-                            Toast.makeText(activity, queue.poll(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(context, queue.poll(), Toast.LENGTH_SHORT).show();
                         }
                     });
 

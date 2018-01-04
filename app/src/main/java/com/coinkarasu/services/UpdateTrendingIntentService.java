@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.coinkarasu.activities.HomeTabFragment;
 import com.coinkarasu.activities.etc.NavigationKind;
@@ -20,6 +19,7 @@ import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.data.Trending;
 import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,10 +56,11 @@ public class UpdateTrendingIntentService extends IntentService {
 
     private void update(TrendingKind kind, String toSymbol, String exchange) {
         long start = System.currentTimeMillis();
+        Log logger = new Log(getApplicationContext());
         String logFile = logFile(kind, toSymbol, exchange);
 
         if (CacheHelper.exists(this, logFile) && !CacheHelper.isExpired(this, logFile, ONE_DAY)) {
-            if (DEBUG) Log.e(TAG, kind.name() + " is recently executed.");
+            if (DEBUG) logger.d(TAG, kind.name() + " is recently executed.");
             return;
         }
         CacheHelper.touch(this, logFile);
@@ -108,7 +109,8 @@ public class UpdateTrendingIntentService extends IntentService {
         broadcastIntent.setAction(HomeTabFragment.ACTION_UPDATE_TRENDING);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
 
-        if (DEBUG) Log.e(TAG, kind.name() + " trending updated, " + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
+        if (DEBUG) logger.d(TAG, kind.name() + " trending updated, "
+                + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 
     private ArrayList<History> getHistories(TrendingKind kind, String fromSymbol, String toSymbol, String exchange) {
