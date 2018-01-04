@@ -131,7 +131,7 @@ public class CoinListFragment extends Fragment implements
                 fromSymbols = toplist.getSymbols();
             }
 
-            if (fromSymbols == null) {
+            if (fromSymbols == null || fromSymbols.length == 0) {
                 fromSymbols = getResources().getStringArray(kind.symbolsResId);
             }
         } else {
@@ -162,10 +162,10 @@ public class CoinListFragment extends Fragment implements
                             addCoins(inCoins, kind.sections[indexOfSection + 1]);
                         } else {
                             RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
-                            CoinListRecyclerViewAdapter adapter = (CoinListRecyclerViewAdapter) recyclerView.getAdapter();
+                            RecyclerView.Adapter adapter = recyclerView.getAdapter();
                             if (adapter == null) {
                                 adapter = new CoinListRecyclerViewAdapter(getActivity(), inCoins);
-                                initializeRecyclerView(recyclerView, adapter);
+                                initializeRecyclerView(recyclerView, (CoinListRecyclerViewAdapter) adapter);
                             }
                         }
                     }
@@ -295,7 +295,7 @@ public class CoinListFragment extends Fragment implements
                 fromSymbols = toplist.getSymbols();
             }
 
-            if (fromSymbols == null) {
+            if (fromSymbols == null || fromSymbols.length == 0) {
                 fromSymbols = getResources().getStringArray(kind.symbolsResId);
             }
 
@@ -398,7 +398,7 @@ public class CoinListFragment extends Fragment implements
         updateRelativeTimeSpanText(exchange, coinKind);
         hideProgressbarDelayed(exchange, coinKind);
 
-        if (DEBUG) logger.d(TAG, "finished() " + exchange + ", " + coinKind + ", " + new Date().toString());
+        if (DEBUG) logger.d(TAG, "finished() " + exchange + ", " + coinKind);
     }
 
     private void hideProgressbarDelayed(final Exchange exchange, final CoinKind coinKind) {
