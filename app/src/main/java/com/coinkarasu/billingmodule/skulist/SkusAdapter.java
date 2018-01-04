@@ -34,11 +34,11 @@ public class SkusAdapter extends RecyclerView.Adapter<RowViewHolder> implements 
     private UiManager mUiManager;
     private List<SkuRowData> mListData;
 
-    void setUiManager(UiManager uiManager) {
+    public void setUiManager(UiManager uiManager) {
         mUiManager = uiManager;
     }
 
-    void updateData(List<SkuRowData> data) {
+    public void updateData(List<SkuRowData> data) {
         mListData = data;
         notifyDataSetChanged();
     }
