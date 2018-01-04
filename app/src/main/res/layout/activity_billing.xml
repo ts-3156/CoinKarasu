@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/billing_loading_indicator" />
+
+    <LinearLayout
+        android:id="@id/billing_screen_main"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <Button
+                android:id="@id/billing_button_drive"
+                style="@style/BillingDriveButtonStyle"
+                android:text="@string/billing_button_drive" />
+
+            <Button
+                android:id="@id/billing_button_purchase"
+                style="@style/BillingButtonStyle"
+                android:layout_marginTop="@dimen/billing_double_padding"
+                android:text="@string/billing_button_purchase" />
+        </LinearLayout>
+
+    </LinearLayout>
+</FrameLayout>

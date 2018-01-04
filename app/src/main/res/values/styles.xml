@@ -23,4 +23,42 @@
         <item name="textAllCaps">false</item>
         <item name="android:textAllCaps">false</item>
     </style>
+
+    <style name="BillingAppTheme" parent="Theme.AppCompat.Light">
+        <item name="colorAccent">@color/billing_ascent_color</item>
+        <item name="colorPrimary">@color/billing_primary_color</item>
+        <item name="colorPrimaryDark">@color/billing_primary_color_dark</item>
+    </style>
+
+    <style name="BillingBaseButtonStyle" parent="Widget.AppCompat.Button.Colored">
+        <item name="android:layout_width">@dimen/billing_button_width</item>
+        <item name="android:layout_height">@dimen/billing_button_height</item>
+    </style>
+
+    <style name="BillingButtonStyle" parent="BillingBaseButtonStyle">
+        <item name="android:background">@color/billing_ascent_color</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_gravity">bottom|end</item>
+    </style>
+
+    <style name="BillingDriveButtonStyle" parent="BillingButtonStyle">
+        <item name="android:background">@android:color/white</item>
+        <item name="android:textColor">@color/billing_ascent_color</item>
+    </style>
+
+    <style name="BillingCardViewStyle" parent="CardView">
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginRight">@dimen/billing_card_view_margin</item>
+        <item name="android:layout_marginLeft">@dimen/billing_card_view_margin</item>
+        <item name="cardCornerRadius">@dimen/billing_card_view_card_corner_radius</item>
+        <item name="cardElevation">@dimen/billing_card_view_card_elevation</item>
+        <item name="cardPreventCornerOverlap">false</item>
+    </style>
+
+    <style name="BillingToolbarStyle" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="titleTextColor">@android:color/white</item>
+    </style>
+
 </resources>

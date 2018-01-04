@@ -22,4 +22,22 @@
     <dimen name="home_tab_horizontal_gap">16dp</dimen>
 
     <dimen name="edit_tabs_vertical_gap">16dp</dimen>
+
+    <dimen name="billing_single_padding">8dp</dimen>
+    <dimen name="billing_double_padding">16dp</dimen>
+    <dimen name="billing_header_gap">8dp</dimen>
+    <dimen name="billing_row_gap">1px</dimen>
+    <dimen name="billing_button_width">152dp</dimen>
+    <dimen name="billing_button_height">48dp</dimen>
+    <dimen name="billing_title_margin">8dp</dimen>
+    <dimen name="billing_image_margin">32dp</dimen>
+    <dimen name="billing_sku_details_row_height">216dp</dimen>
+    <dimen name="billing_sku_details_row_padding">24dp</dimen>
+    <dimen name="billing_sku_details_row_text_size">16sp</dimen>
+    <dimen name="billing_sku_details_row_description_text_size">15sp</dimen>
+    <dimen name="billing_sku_details_row_header_height">64dp</dimen>
+    <dimen name="billing_card_view_margin">8dp</dimen>
+    <dimen name="billing_card_view_card_corner_radius">2dp</dimen>
+    <dimen name="billing_card_view_card_elevation">2sp</dimen>
+
 </resources>

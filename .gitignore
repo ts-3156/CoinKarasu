@@ -1,4 +1,5 @@
 app/fabric.properties
+app/billing.properties
 *.iml
 .gradle
 /local.properties

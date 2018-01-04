@@ -23,8 +23,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="com.coinkarasu.activities.CoinActivity"
+            android:parentActivityName="com.coinkarasu.activities.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.coinkarasu.activities.MainActivity" />
+        </activity>
+
+        <activity
+            android:name="com.coinkarasu.billingmodule.BillingActivity"
             android:parentActivityName="com.coinkarasu.activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

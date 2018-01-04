@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="billing_screen_wait" type="id" />
+    <item name="billing_screen_main" type="id" />
+    <item name="billing_free_or_premium" type="id" />
+    <item name="billing_gas_gauge" type="id" />
+    <item name="billing_button_purchase" type="id" />
+    <item name="billing_button_drive" type="id" />
+</resources>

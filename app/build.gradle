@@ -16,9 +16,16 @@ repositories {
     maven { url 'https://maven.fabric.io/public' }
 }
 
-Properties props = new Properties()
+Properties fabricProps = new Properties()
 try {
-    props.load(file('fabric.properties').newDataInputStream())
+    fabricProps.load(file('fabric.properties').newDataInputStream())
+} catch (Exception e) {
+    throw new GradleException(e.getMessage())
+}
+
+Properties billingProps = new Properties()
+try {
+    billingProps.load(file('billing.properties').newDataInputStream())
 } catch (Exception e) {
     throw new GradleException(e.getMessage())
 }
@@ -29,13 +36,19 @@ android {
         applicationId "com.coinkarasu"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 1
+        versionCode 3
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [fabricApiKey: "${props.getProperty("apiKey")}"]
+        manifestPlaceholders = [fabricApiKey: "${fabricProps.getProperty("apiKey")}"]
     }
     buildTypes {
+        debug {
+            buildConfigField "String", "PK1", "\"${billingProps.getProperty("pkey1")}\""
+            buildConfigField "String", "PK2", "\"${billingProps.getProperty("pkey2")}\""
+        }
         release {
+            buildConfigField "String", "PK1", "\"${billingProps.getProperty("pkey1")}\""
+            buildConfigField "String", "PK2", "\"${billingProps.getProperty("pkey2")}\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             lintOptions {

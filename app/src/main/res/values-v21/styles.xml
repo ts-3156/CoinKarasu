@@ -5,4 +5,16 @@
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+    <style name="BillingButtonStyle" parent="BillingBaseButtonStyle">
+        <item name="android:backgroundTint">@color/billing_ascent_color</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:layout_gravity">bottom|end</item>
+    </style>
+
+    <style name="BillingDriveButtonStyle" parent="BillingButtonStyle">
+        <item name="android:backgroundTint">@android:color/white</item>
+        <item name="android:textColor">@color/billing_ascent_color</item>
+    </style>
+
 </resources>

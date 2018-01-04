@@ -1,19 +1,14 @@
 package com.coinkarasu.activities;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -30,13 +25,14 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.settings.PreferencesActivity;
+import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.services.UpdateTrendingIntentService;
 import com.coinkarasu.utils.PrefHelper;
+import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -65,8 +61,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        createShortcut();
         Fabric.with(this, new Crashlytics());
+        createShortcut();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,8 +71,10 @@ public class MainActivity extends AppCompatActivity implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(view.getContext(), BillingActivity.class);
+                startActivity(intent);
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
             }
         });
 
@@ -332,13 +330,12 @@ public class MainActivity extends AppCompatActivity implements
         shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            // TODO
-            ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(this, "shortcut-id")
-                    .setShortLabel(getString(R.string.app_name))
-                    .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher_round))
-                    .setIntent(shortcutIntent)
-                    .build();
-            ((ShortcutManager) getSystemService(Context.SHORTCUT_SERVICE)).requestPinShortcut(shortcutInfo, null);
+//            ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(this, "shortcut-id")
+//                    .setShortLabel(getString(R.string.app_name))
+//                    .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher_round))
+//                    .setIntent(shortcutIntent)
+//                    .build();
+//            ((ShortcutManager) getSystemService(Context.SHORTCUT_SERVICE)).requestPinShortcut(shortcutInfo, null);
         } else {
             Intent.ShortcutIconResource icon = Intent.ShortcutIconResource.fromContext(this, R.mipmap.ic_launcher);
 
