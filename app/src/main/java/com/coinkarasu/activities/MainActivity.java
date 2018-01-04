@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-        createShortcut();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -316,41 +315,5 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             icon.setAlpha(204); // 80%
         }
-    }
-
-    private void createShortcut() {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if (prefs.getBoolean("pref_shortcut_created", false)) {
-            return;
-        }
-
-        Intent shortcutIntent = new Intent();
-        shortcutIntent.setClassName(getPackageName(), getClass().getName());
-        shortcutIntent.setAction(Intent.ACTION_MAIN);
-        shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            ShortcutInfo shortcutInfo = new ShortcutInfo.Builder(this, "shortcut-id")
-//                    .setShortLabel(getString(R.string.app_name))
-//                    .setIcon(Icon.createWithResource(this, R.mipmap.ic_launcher_round))
-//                    .setIntent(shortcutIntent)
-//                    .build();
-//            ((ShortcutManager) getSystemService(Context.SHORTCUT_SERVICE)).requestPinShortcut(shortcutInfo, null);
-        } else {
-            Intent.ShortcutIconResource icon = Intent.ShortcutIconResource.fromContext(this, R.mipmap.ic_launcher);
-
-            Intent intent = new Intent();
-            intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
-            intent.putExtra(Intent.EXTRA_SHORTCUT_NAME, getString(R.string.app_name));
-            intent.setAction("com.android.launcher.action.INSTALL_SHORTCUT");
-            intent.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, icon);
-            intent.putExtra("duplicate", false);
-
-            sendBroadcast(intent);
-        }
-
-        SharedPreferences.Editor edit = prefs.edit();
-        edit.putBoolean("pref_shortcut_created", true);
-        edit.apply();
     }
 }
