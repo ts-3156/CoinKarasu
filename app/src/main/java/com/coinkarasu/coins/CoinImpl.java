@@ -466,4 +466,9 @@ public class CoinImpl implements Coin {
     public CoinKind getCoinKind() {
         return coinKind;
     }
+
+    @Override
+    public boolean isAdCoin() {
+        return false;
+    }
 }

@@ -5,11 +5,13 @@ import android.content.Context;
 import android.os.Handler;
 import android.widget.Toast;
 
+import com.coinkarasu.BuildConfig;
+
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class Log {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = BuildConfig.DEBUG;
 
     private Context context;
     private Queue<String> queue;

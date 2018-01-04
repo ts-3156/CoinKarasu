@@ -1,3 +1,4 @@
+app/admob.properties
 app/fabric.properties
 app/billing.properties
 *.iml

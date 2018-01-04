@@ -25,6 +25,7 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.adapters.CoinListRecyclerViewAdapter;
 import com.coinkarasu.animator.ValueAnimatorBase;
+import com.coinkarasu.coins.AdCoinImpl;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.data.Toplist;
 import com.coinkarasu.pagers.MainPagerAdapter;
@@ -39,7 +40,6 @@ import com.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.TimerTask;
 
 
@@ -153,6 +153,10 @@ public class CoinListFragment extends Fragment implements
                         inCoins.add(section.createSectionHeaderCoin());
                         inCoins.addAll(coins);
 
+                        if (kind.isToplist() && section.getExchange() == Exchange.cccagg && inCoins.size() >= 3) {
+                            inCoins.add(2, new AdCoinImpl());
+                        }
+
                         int indexOfSection = Arrays.asList(kind.sections).indexOf(section);
                         if (indexOfSection == -1) {
                             throw new RuntimeException("Invalid section " + section.toString());
@@ -199,7 +203,7 @@ public class CoinListFragment extends Fragment implements
         adapter.setOnItemClickListener(new CoinListRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Coin coin, View view, int position) {
-                if (coin.isSectionHeader()) {
+                if (coin.isSectionHeader() || coin.isAdCoin()) {
                     return;
                 }
 

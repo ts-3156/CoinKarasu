@@ -44,7 +44,7 @@ class ResourceUtils {
         imageLoader = VolleyHelper.getInstance(context).getImageLoader();
 
         for (Coin coin : coins) {
-            if (!coin.isSectionHeader()) {
+            if (!coin.isSectionHeader() && !coin.isAdCoin()) {
                 priceFormatter = new PriceFormat(coin.getToSymbol());
                 signedPriceFormatter = new SignedPriceFormat(coin.getToSymbol());
                 break;
@@ -61,7 +61,7 @@ class ResourceUtils {
         String packageName = context.getPackageName();
 
         for (Coin coin : coins) {
-            if (coin.isSectionHeader()) {
+            if (coin.isSectionHeader() || coin.isAdCoin()) {
                 continue;
             }
             String name = "ic_coin_" + coin.getSymbol().toLowerCase();

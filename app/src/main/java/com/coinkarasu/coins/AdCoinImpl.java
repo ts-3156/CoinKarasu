@@ -1,18 +1,11 @@
 package com.coinkarasu.coins;
 
-import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.CoinKind;
+import com.coinkarasu.activities.etc.Exchange;
 
 import org.json.JSONObject;
 
-public class SectionHeaderCoinImpl implements SectionHeaderCoin, Coin {
-    private Exchange exchange;
-    private CoinKind coinKind;
-
-    public SectionHeaderCoinImpl(Exchange exchange, CoinKind coinKind) {
-        this.exchange = exchange;
-        this.coinKind = coinKind;
-    }
+public class AdCoinImpl implements AdCoin, Coin {
 
     @Override
     public int getId() {
@@ -252,7 +245,7 @@ public class SectionHeaderCoinImpl implements SectionHeaderCoin, Coin {
 
     @Override
     public String getExchange() {
-        return exchange.name();
+        return null;
     }
 
     @Override
@@ -266,7 +259,7 @@ public class SectionHeaderCoinImpl implements SectionHeaderCoin, Coin {
 
     @Override
     public String toString() {
-        return exchange.name();
+        return null;
     }
 
     @Override
@@ -291,22 +284,22 @@ public class SectionHeaderCoinImpl implements SectionHeaderCoin, Coin {
 
     @Override
     public boolean isSectionHeader() {
-        return true;
+        return false;
     }
 
     @Override
     public int getHeaderNameResId() {
-        return exchange.getHeaderNameResId(coinKind);
+        return 0;
     }
 
     @Override
     public boolean isSalesCoin() {
-        return coinKind == CoinKind.sales;
+        return false;
     }
 
     @Override
     public boolean isTradingCoin() {
-        return coinKind == CoinKind.trading;
+        return false;
     }
 
     @Override
@@ -315,11 +308,11 @@ public class SectionHeaderCoinImpl implements SectionHeaderCoin, Coin {
 
     @Override
     public CoinKind getCoinKind() {
-        return coinKind;
+        return null;
     }
 
     @Override
     public boolean isAdCoin() {
-        return false;
+        return true;
     }
 }

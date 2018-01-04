@@ -1,7 +1,6 @@
 package com.coinkarasu.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -25,6 +24,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.settings.PreferencesActivity;
@@ -33,6 +33,7 @@ import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.services.UpdateTrendingIntentService;
 import com.coinkarasu.utils.PrefHelper;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.ads.MobileAds;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -65,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        MobileAds.initialize(this, BuildConfig.ADMOB_APP_ID);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {

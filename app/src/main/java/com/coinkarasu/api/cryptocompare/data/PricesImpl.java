@@ -3,10 +3,10 @@ package com.coinkarasu.api.cryptocompare.data;
 import android.content.Context;
 import android.util.Log;
 
+import com.coinkarasu.api.cryptocompare.response.PricesResponse;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.coins.PriceMultiFullCoinImpl;
-import com.coinkarasu.api.cryptocompare.response.PricesResponse;
 import com.coinkarasu.utils.CacheHelper;
 
 import org.json.JSONArray;
@@ -136,7 +136,7 @@ public class PricesImpl implements Prices {
 
     @Override
     public void copyAttrsToCoin(Coin coin) {
-        if (coin.isSectionHeader()) {
+        if (coin.isSectionHeader() || coin.isAdCoin()) {
             return;
         }
 

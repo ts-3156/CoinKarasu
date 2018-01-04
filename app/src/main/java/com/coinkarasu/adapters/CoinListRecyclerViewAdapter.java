@@ -3,6 +3,7 @@ package com.coinkarasu.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
+import com.coinkarasu.adapters.row.AdViewHolder;
 import com.coinkarasu.adapters.row.HeaderViewHolder;
 import com.coinkarasu.adapters.row.ItemViewHolder;
 import com.coinkarasu.animator.PriceAnimator;
@@ -18,19 +20,20 @@ import com.coinkarasu.animator.PriceDiffAnimator;
 import com.coinkarasu.animator.TrendAnimator;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.utils.PrefHelper;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TreeSet;
 
 public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_HEADER = 1;
+    private static final int TYPE_AD = 2;
 
     private OnItemClickListener listener;
     private LayoutInflater inflater;
     private ArrayList<Coin> coins = new ArrayList<>();
-    private TreeSet<Integer> sectionHeader = new TreeSet<>();
     private boolean isAnimEnabled;
     private boolean isDownloadIconEnabled;
     private boolean isScrolled;
@@ -86,14 +89,18 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     public void addItem(Coin coin) {
         coins.add(coin);
-        if (coin.isSectionHeader()) {
-            sectionHeader.add(coins.size() - 1);
-        }
     }
 
     @Override
     public int getItemViewType(int position) {
-        return sectionHeader.contains(position) ? TYPE_HEADER : TYPE_ITEM;
+        Coin coin = coins.get(position);
+        if (coin.isSectionHeader()) {
+            return TYPE_HEADER;
+        } else if (coin.isAdCoin()) {
+            return TYPE_AD;
+        } else {
+            return TYPE_ITEM;
+        }
     }
 
     @Override
@@ -106,6 +113,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         ArrayList<Coin> filtered = new ArrayList<>();
         for (Coin coin : coins) {
             if (coin.isSectionHeader()
+                    || coin.isAdCoin()
                     || !coin.getExchange().equals(exchange.name())
                     || coin.getCoinKind() != coinKind) {
                 continue;
@@ -126,6 +134,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         for (int i = 0; i < coins.size(); i++) {
             Coin coin = coins.get(i);
             if (coin.isSectionHeader()
+                    || coin.isAdCoin()
                     || !coin.getExchange().equals(exchange.name())
                     || coin.getCoinKind() != coinKind) {
                 continue;
@@ -146,6 +155,8 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         switch (viewType) {
             case TYPE_HEADER:
                 return new HeaderViewHolder(inflater.inflate(R.layout.recycler_coin_list_header_item, parent, false));
+            case TYPE_AD:
+                return new AdViewHolder(inflater.inflate(R.layout.recycler_coin_list_ad_item, parent, false));
             case TYPE_ITEM:
                 return new ItemViewHolder(inflater.inflate(R.layout.recycler_coin_list_row_item, parent, false));
             default:
@@ -158,6 +169,9 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         switch (holder.getItemViewType()) {
             case TYPE_HEADER:
                 bindHeaderViewHolder((HeaderViewHolder) holder, position);
+                break;
+            case TYPE_AD:
+                bindAdViewHolder((AdViewHolder) holder, position);
                 break;
             case TYPE_ITEM:
                 bindItemViewHolder((ItemViewHolder) holder, position);
@@ -184,6 +198,18 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 listener.onItemClick(coin, view, holder.getAdapterPosition());
             }
         });
+    }
+
+    private void bindAdViewHolder(final AdViewHolder holder, int position) {
+        final Coin coin = coins.get(position);
+
+        holder.ad.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                Log.e("bindAdViewHolder", "onAdFailedToLoad() " + errorCode);
+            }
+        });
+        holder.ad.loadAd(new AdRequest.Builder().build());
     }
 
     private void bindItemViewHolder(final ItemViewHolder holder, int position) {
@@ -247,6 +273,9 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         switch (holder.getItemViewType()) {
             case TYPE_HEADER:
                 headerViewRecycled((HeaderViewHolder) holder);
+                break;
+            case TYPE_AD:
+                // Do nothing.
                 break;
             case TYPE_ITEM:
                 itemViewRecycled((ItemViewHolder) holder);
