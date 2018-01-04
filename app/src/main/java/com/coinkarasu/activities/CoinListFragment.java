@@ -11,7 +11,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +34,7 @@ import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
 import com.coinkarasu.tasks.by_exchange.data.CachedPrices;
 import com.coinkarasu.tasks.by_exchange.data.Price;
 import com.coinkarasu.utils.AutoUpdateTimer;
+import com.coinkarasu.utils.Log;
 import com.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
@@ -49,6 +49,7 @@ public class CoinListFragment extends Fragment implements
         MainPagerAdapter.Listener {
 
     private static final boolean DEBUG = true;
+    private static final String TAG = "CoinListFragment";
     private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
 
     private AutoUpdateTimer autoUpdateTimer;
@@ -57,6 +58,7 @@ public class CoinListFragment extends Fragment implements
     private boolean isSelected;
     private boolean isStartTaskRequested;
     private boolean isRecreated;
+    private Log logger;
 
     public CoinListFragment() {
     }
@@ -91,6 +93,7 @@ public class CoinListFragment extends Fragment implements
             isRecreated = false;
         }
 
+        logger = new Log(getActivity());
         isStartTaskRequested = false;
         PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
@@ -316,7 +319,7 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
-        if (DEBUG) Log.e("startAutoUpdate", "kind=" + kind + " caller=" + caller);
+        if (DEBUG) logger.d(TAG, "startAutoUpdate() kind=" + kind + " caller=" + caller);
 
         String tag = getTimerTag(kind);
         if (tag == null) {
@@ -333,7 +336,7 @@ public class CoinListFragment extends Fragment implements
     }
 
     private void stopAutoUpdate(String caller) {
-        if (DEBUG) Log.e("stopAutoUpdate", "kind=" + kind + " caller=" + caller);
+        if (DEBUG) logger.d(TAG, "stopAutoUpdate() kind=" + kind + " caller=" + caller);
         if (autoUpdateTimer != null) {
             autoUpdateTimer.cancel();
             autoUpdateTimer = null;
@@ -395,7 +398,7 @@ public class CoinListFragment extends Fragment implements
         updateRelativeTimeSpanText(exchange, coinKind);
         hideProgressbarDelayed(exchange, coinKind);
 
-        if (DEBUG) Log.e("UPDATED", exchange + ", " + coinKind + ", " + new Date().toString());
+        if (DEBUG) logger.d(TAG, "finished() " + exchange + ", " + coinKind + ", " + new Date().toString());
     }
 
     private void hideProgressbarDelayed(final Exchange exchange, final CoinKind coinKind) {
