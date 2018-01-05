@@ -3,7 +3,6 @@ package com.coinkarasu.activities;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +10,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.CoinKind;
+import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.animator.PriceAnimator;
 import com.coinkarasu.animator.PriceDiffAnimator;
 import com.coinkarasu.animator.TrendAnimator;
 import com.coinkarasu.animator.ValueAnimatorBase;
-import com.coinkarasu.api.cryptocompare.ClientFactory;
-import com.coinkarasu.api.cryptocompare.data.Price;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
-import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
 import com.coinkarasu.format.PriceColorFormat;
@@ -28,29 +26,34 @@ import com.coinkarasu.format.SignedPriceFormat;
 import com.coinkarasu.format.SurroundedTrendValueFormat;
 import com.coinkarasu.format.TrendColorFormat;
 import com.coinkarasu.format.TrendIconFormat;
-import com.coinkarasu.tasks.GetPriceTask;
+import com.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
+import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
+import com.coinkarasu.tasks.by_exchange.data.Price;
+import com.coinkarasu.utils.Log;
 import com.coinkarasu.utils.PeriodicalUpdater;
 import com.coinkarasu.utils.PrefHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
+import java.util.ArrayList;
 
 
-public class CoinCardFragment extends Fragment implements
-        GetPriceTask.Listener,
-        PeriodicalUpdater.PeriodicallyRunnable {
+public class PriceOverviewFragment extends Fragment implements
+        PeriodicalUpdater.PeriodicallyRunnable, GetPricesByExchangeTaskBase.Listener {
 
-    private String kind;
+    private static final boolean DEBUG = true;
+    private static final String TAG = "PriceOverviewFragment";
+
     private Coin coin;
     private PeriodicalUpdater updater;
+    private Log logger;
 
-    public CoinCardFragment() {
+    public PriceOverviewFragment() {
     }
 
-    public static CoinCardFragment newInstance(Coin coin) {
-        CoinCardFragment fragment = new CoinCardFragment();
+    public static PriceOverviewFragment newInstance(Coin coin) {
+        PriceOverviewFragment fragment = new PriceOverviewFragment();
         Bundle args = new Bundle();
         args.putString("coinJson", coin.toJson().toString());
         fragment.setArguments(args);
@@ -60,23 +63,24 @@ public class CoinCardFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        logger = new Log(getActivity());
+
         if (getArguments() != null) {
             String coinJson = getArguments().getString("coinJson");
 
             try {
                 coin = CoinImpl.buildByAttrs(new JSONObject(coinJson));
             } catch (JSONException e) {
-                Log.e("onCreate", e.getMessage());
+                logger.e(TAG, e);
             }
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_coin_card, container, false);
+        View view = inflater.inflate(R.layout.fragment_price_overview, container, false);
 
-        kind = "coin_card";
-        updatePrice(view, coin, true);
+        updateCard(view, coin, true);
         updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
         updater.start("onCreateView");
 
@@ -94,21 +98,20 @@ public class CoinCardFragment extends Fragment implements
         }
         coin.setToSymbol(toSymbol);
 
-        new GetPriceTask(ClientFactory.getInstance(getActivity()))
-                .setFromSymbol(coin.getSymbol())
+        new GetCccaggPricesTask(getContext(), Exchange.cccagg)
+                .setFromSymbols(new String[]{coin.getSymbol()})
                 .setToSymbol(toSymbol)
-                .setExchange("cccagg")
+                .setExchange(Exchange.cccagg.name())
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    @Override
-    public void started(String exchange, String fromSymbol, String toSymbol) {
+    public void started(Exchange exchange, CoinKind coinKind) {
         ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).startAnimation();
     }
 
     @Override
-    public void finished(Price price) {
+    public void finished(Exchange exchange, CoinKind coinKind, ArrayList<Price> prices) {
         if (isDetached() || getActivity() == null) {
             if (updater != null) {
                 updater.stop("finished");
@@ -116,29 +119,19 @@ public class CoinCardFragment extends Fragment implements
             return;
         }
 
-        RelativeTimeSpanTextView timeSpan = getView().findViewById(R.id.relative_time_span);
-        AggressiveProgressbar progressbar = getView().findViewById(R.id.progressbar);
-        PriceMultiFullCoin coin = price.getCoin();
-        if (coin == null) {
-            if (updater != null) {
-                updater.stop("finished");
-            }
-            progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION);
-            timeSpan.updateText();
-            return;
-        }
+        ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).stopAnimationDelayed(ValueAnimatorBase.DURATION);
+        ((RelativeTimeSpanTextView) getView().findViewById(R.id.relative_time_span)).updateText();
 
-        this.coin.setPrice(coin.getPrice());
-        this.coin.setPriceDiff(coin.getChange24Hour());
-        this.coin.setTrend(coin.getChangePct24Hour() / 100.0);
-        updatePrice(getView(), this.coin, false);
-        progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION);
-        timeSpan.updateText();
+        Price price = prices.get(0);
+        coin.setPrice(price.price);
+        coin.setPriceDiff(price.priceDiff);
+        coin.setTrend(price.trend);
+        updateCard(getView(), coin, false);
 
-        Log.d("UPDATED", kind + ", " + new Date().toString());
+        if (DEBUG) logger.d(TAG, "finished()");
     }
 
-    private void updatePrice(View view, Coin coin, boolean isFirstUpdate) {
+    private void updateCard(View view, Coin coin, boolean isFirstUpdate) {
         if (view == null) {
             return;
         }
@@ -152,26 +145,14 @@ public class CoinCardFragment extends Fragment implements
 
         ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(new TrendIconFormat().format(coin.getTrend()));
 
-        if (!isFirstUpdate && PrefHelper.isAnimEnabled(getActivity())) {
-            if (coin.getPrevPrice() != coin.getPrice()) {
-                new PriceAnimator(coin, priceView).start();
-            } else {
-                priceView.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
-            }
-            if (coin.getPrevPriceDiff() != coin.getPriceDiff()) {
-                new PriceDiffAnimator(coin, priceDiffView).start();
-            } else {
-                priceDiffView.setText(new SignedPriceFormat(coin.getToSymbol()).format(coin.getPriceDiff()));
-            }
-            if (coin.getPrevTrend() != coin.getTrend()) {
-                new TrendAnimator(coin, trendView).start();
-            } else {
-                trendView.setText(new SurroundedTrendValueFormat().format(coin.getTrend()));
-            }
-        } else {
+        if (isFirstUpdate || !PrefHelper.isAnimEnabled(getActivity())) {
             priceView.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
             priceDiffView.setText(new SignedPriceFormat(coin.getToSymbol()).format(coin.getPriceDiff()));
             trendView.setText(new SurroundedTrendValueFormat().format(coin.getTrend()));
+        } else {
+            new PriceAnimator(coin, priceView).start();
+            new PriceDiffAnimator(coin, priceDiffView).start();
+            new TrendAnimator(coin, trendView).start();
         }
     }
 
@@ -194,7 +175,6 @@ public class CoinCardFragment extends Fragment implements
     @Override
     public void onDetach() {
         super.onDetach();
-        kind = null;
         coin = null;
         updater = null;
     }

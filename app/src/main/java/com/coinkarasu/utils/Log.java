@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.coinkarasu.BuildConfig;
+import com.crashlytics.android.Crashlytics;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -45,6 +46,11 @@ public class Log {
         if (!DEBUG) return;
         android.util.Log.e(tag, message);
         makeToast(tag, message);
+    }
+
+    public void e(String tag, Exception ex) {
+        Crashlytics.logException(ex);
+        if (DEBUG) android.util.Log.e(tag, ex.getMessage());
     }
 
     void makeToast(String tag, String message) {

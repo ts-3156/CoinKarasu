@@ -9,48 +9,46 @@ import android.support.v7.app.AppCompatActivity;
 import android.transition.Fade;
 import android.transition.Slide;
 import android.transition.TransitionSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.coinkarasu.R;
 import com.coinkarasu.api.bitflyer.data.Board;
-import com.coinkarasu.api.cryptocompare.Client;
-import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.tasks.GetBoardTask;
+import com.coinkarasu.utils.Log;
 import com.coinkarasu.utils.PrefHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
-
 public class CoinActivity extends AppCompatActivity {
 
     public enum Tag {card, line, exchange, pie, board}
 
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinActivity";
     public static final String KEY_COIN_JSON = "KEY_COIN_JSON";
 
-    Client client;
-    String boardKind;
-    Coin coin;
+    private String boardKind;
+    private Coin coin;
+    private Log logger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coin);
+        logger = new Log(this);
 
         Intent intent = getIntent();
         try {
             coin = CoinImpl.buildByAttrs(new JSONObject(intent.getStringExtra(KEY_COIN_JSON)));
         } catch (JSONException e) {
-            Log.d("onCreate", e.getMessage());
+            logger.e(TAG, e);
         }
 
-        client = ClientFactory.getInstance(this);
         boardKind = "order_book";
         updateView();
         drawBoardChart();
@@ -60,7 +58,7 @@ public class CoinActivity extends AppCompatActivity {
         String toSymbol = coin.getToSymbol();
         updateToolbarTitle(toSymbol);
 
-        Fragment card = CoinCardFragment.newInstance(coin);
+        Fragment card = PriceOverviewFragment.newInstance(coin);
         Fragment lineChart = CoinLineChartFragment.newInstance(coin.getSymbol(), toSymbol);
         Fragment exchange = CoinExchangeFragment.newInstance("overview", coin.toJson().toString());
         Fragment pieChart = CoinPieChartFragment.newInstance(coin.getSymbol(), toSymbol);
@@ -169,7 +167,7 @@ public class CoinActivity extends AppCompatActivity {
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(Tag.board.name());
                 if (fragment != null) {
                     ((CoinBoardFragment) fragment).updateView(board);
-                    Log.d("UPDATED", "board, " + new Date().toString());
+                    if (DEBUG) logger.d(TAG, "drawBoardChart()");
                 }
             }
         }).execute();
