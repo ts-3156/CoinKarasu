@@ -34,13 +34,12 @@ import com.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
 import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
 import com.coinkarasu.tasks.by_exchange.data.CachedPrices;
 import com.coinkarasu.tasks.by_exchange.data.Price;
-import com.coinkarasu.utils.AutoUpdateTimer;
 import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.PeriodicalUpdater;
 import com.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.TimerTask;
 
 
 public class CoinListFragment extends Fragment implements
@@ -52,7 +51,7 @@ public class CoinListFragment extends Fragment implements
     private static final String TAG = "CoinListFragment";
     private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
 
-    private AutoUpdateTimer autoUpdateTimer;
+    private PeriodicalUpdater updater;
     private NavigationKind kind;
     private boolean isVisibleToUser;
     private boolean isSelected;
@@ -94,6 +93,7 @@ public class CoinListFragment extends Fragment implements
             isRecreated = false;
         }
 
+        updater = new PeriodicalUpdater(this, kind, PrefHelper.getSyncInterval(getActivity()));
         isStartTaskRequested = false;
         PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
@@ -207,7 +207,9 @@ public class CoinListFragment extends Fragment implements
                     return;
                 }
 
-                stopAutoUpdate("onItemClick");
+                if (updater != null) {
+                    updater.stop("onItemClick");
+                }
                 Intent intent = new Intent(view.getContext(), CoinActivity.class);
                 intent.putExtra(CoinActivity.KEY_COIN_JSON, coin.toJson().toString());
                 startActivity(intent);
@@ -272,7 +274,7 @@ public class CoinListFragment extends Fragment implements
         adapter.restartAnimation();
     }
 
-    private void startTask() {
+    public void startTask() {
         if (!isAdded() || getActivity() == null || isDetached() || getView() == null) {
             return;
         }
@@ -318,46 +320,6 @@ public class CoinListFragment extends Fragment implements
         }
     }
 
-    private void startAutoUpdate(String caller) {
-        if (autoUpdateTimer != null) {
-            return;
-        }
-
-        if (DEBUG) logger.d(TAG, "startAutoUpdate() kind=" + kind + " caller=" + caller);
-
-        String tag = getTimerTag(kind);
-        if (tag == null) {
-            return;
-        }
-        autoUpdateTimer = new AutoUpdateTimer(tag);
-
-        autoUpdateTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                startTask();
-            }
-        }, 0, PrefHelper.getSyncInterval(getActivity()));
-    }
-
-    private void stopAutoUpdate(String caller) {
-        if (DEBUG) logger.d(TAG, "stopAutoUpdate() kind=" + kind + " caller=" + caller);
-        if (autoUpdateTimer != null) {
-            autoUpdateTimer.cancel();
-            autoUpdateTimer = null;
-        }
-    }
-
-    private String getTimerTag(NavigationKind kind) {
-        if (kind == null) {
-            return null;
-        }
-        String suffix = kind.getToSymbol();
-        if (suffix == null) {
-            return null;
-        }
-        return kind.name() + "-" + suffix;
-    }
-
     @Override
     public void started(Exchange exchange, CoinKind coinKind) {
         setProgressbarVisibility(View.VISIBLE, exchange, coinKind);
@@ -366,12 +328,9 @@ public class CoinListFragment extends Fragment implements
     @Override
     public void finished(Exchange exchange, CoinKind coinKind, ArrayList<Price> prices) {
         if (isDetached() || getActivity() == null) {
-            stopAutoUpdate("finished");
-            return;
-        }
-
-        String tag = getTimerTag(kind);
-        if (autoUpdateTimer == null || tag == null || !autoUpdateTimer.getTag().equals(tag)) {
+            if (updater != null) {
+                updater.stop("finished");
+            }
             return;
         }
 
@@ -457,22 +416,25 @@ public class CoinListFragment extends Fragment implements
         super.onResume();
 
         // フラグメントが破棄されずに再開された場合は、ここでオートアップデートを起動する。
-        if (!isRecreated && isVisibleToUser) {
-            startAutoUpdate("onResume");
+        if (!isRecreated && isVisibleToUser && updater != null) {
+            updater.setInterval(PrefHelper.getSyncInterval(getActivity()));
+            updater.start("onResume");
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        stopAutoUpdate("onPause");
+        if (updater != null) {
+            updater.stop("onPause");
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         PrefHelper.getPref(getActivity()).unregisterOnSharedPreferenceChangeListener(this);
-        autoUpdateTimer = null;
+        updater = null;
         kind = null;
     }
 
@@ -484,14 +446,14 @@ public class CoinListFragment extends Fragment implements
         if (isVisibleToUser) {
             // フラグメントのライフサイクルと結びつかないイベントでオートアップデートを起動する。
             // 例) タブの初期化後に、タブのコンテンツを表示
-            if (kind != null) {
-                startAutoUpdate("setUserVisibleHint");
+            if (updater != null) {
+                updater.start("setUserVisibleHint");
             }
         } else {
             // フラグメントのライフサイクルと結びつかないイベントでオートアップデートを停止する。
             // 例) タブの表示後に、他のタブのコンテンツを表示
-            if (kind != null) {
-                stopAutoUpdate("setUserVisibleHint");
+            if (updater != null) {
+                updater.stop("setUserVisibleHint");
             }
         }
     }
@@ -508,9 +470,8 @@ public class CoinListFragment extends Fragment implements
             Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.enter);
             getView().findViewById(R.id.recycler_view).startAnimation(anim);
 
-            if (isVisibleToUser) {
-                stopAutoUpdate("onSharedPreferenceChanged");
-                startAutoUpdate("onSharedPreferenceChanged");
+            if (isVisibleToUser && updater != null) {
+                updater.restart("onSharedPreferenceChanged");
             }
         }
     }
