@@ -4,10 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.CoinKind;
@@ -27,6 +23,7 @@ import com.coinkarasu.adapters.CoinListRecyclerViewAdapter;
 import com.coinkarasu.animator.ValueAnimatorBase;
 import com.coinkarasu.coins.AdCoinImpl;
 import com.coinkarasu.coins.Coin;
+import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
 import com.coinkarasu.data.Toplist;
 import com.coinkarasu.pagers.MainPagerAdapter;
@@ -323,7 +320,7 @@ public class CoinListFragment extends Fragment implements
 
     @Override
     public void started(Exchange exchange, CoinKind coinKind) {
-        setProgressbarVisibility(View.VISIBLE, exchange, coinKind);
+        showProgressbar(exchange, coinKind);
     }
 
     @Override
@@ -365,32 +362,17 @@ public class CoinListFragment extends Fragment implements
         if (DEBUG) logger.d(TAG, "finished() " + exchange + ", " + coinKind);
     }
 
-    private void hideProgressbarDelayed(final Exchange exchange, final CoinKind coinKind) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setProgressbarVisibility(View.GONE, exchange, coinKind);
-            }
-        }, ValueAnimatorBase.DURATION);
+    private void hideProgressbarDelayed(Exchange exchange, CoinKind coinKind) {
+        AggressiveProgressbar progressbar = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-progressbar");
+        if (progressbar != null) {
+            progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION);
+        }
     }
 
-    private void setProgressbarVisibility(int flag, Exchange exchange, CoinKind coinKind) {
-        if (isDetached() || getView() == null) {
-            return;
-        }
-
-        ImageView progressbar = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-progressbar");
-        if (progressbar == null) {
-            return;
-        }
-
-        if (flag == View.GONE) {
-            progressbar.clearAnimation();
-            progressbar.setImageResource(R.drawable.ic_refresh_stop);
-        } else if (flag == View.VISIBLE) {
-            progressbar.setImageResource(R.drawable.ic_refresh_rotate);
-            Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
-            progressbar.startAnimation(anim);
+    private void showProgressbar(Exchange exchange, CoinKind coinKind) {
+        AggressiveProgressbar progressbar = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-progressbar");
+        if (progressbar != null) {
+            progressbar.startAnimation();
         }
     }
 

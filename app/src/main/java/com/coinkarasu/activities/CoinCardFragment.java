@@ -2,14 +2,11 @@ package com.coinkarasu.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +20,7 @@ import com.coinkarasu.api.cryptocompare.data.Price;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.coins.PriceMultiFullCoin;
+import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
 import com.coinkarasu.format.PriceColorFormat;
 import com.coinkarasu.format.PriceFormat;
@@ -142,7 +140,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
 
     @Override
     public void started(String exchange, String fromSymbol, String toSymbol) {
-        setProgressbarVisibility(View.VISIBLE);
+        ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).startAnimation();
     }
 
     @Override
@@ -158,11 +156,13 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
             return;
         }
 
+        RelativeTimeSpanTextView timeSpan = getView().findViewById(R.id.relative_time_span);
+        AggressiveProgressbar progressbar = getView().findViewById(R.id.progressbar);
         PriceMultiFullCoin coin = price.getCoin();
         if (coin == null) {
             stopAutoUpdate();
-            hideProgressbarDelayed();
-            updateRelativeTimeSpanText();
+            progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION);
+            timeSpan.updateText();
             return;
         }
 
@@ -170,8 +170,8 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         this.coin.setPriceDiff(coin.getChange24Hour());
         this.coin.setTrend(coin.getChangePct24Hour() / 100.0);
         updatePrice(getView(), this.coin, false);
-        hideProgressbarDelayed();
-        updateRelativeTimeSpanText();
+        progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION);
+        timeSpan.updateText();
 
         Log.d("UPDATED", kind + ", " + new Date().toString());
     }
@@ -211,39 +211,6 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
             priceDiffView.setText(new SignedPriceFormat(coin.getToSymbol()).format(coin.getPriceDiff()));
             trendView.setText(new SurroundedTrendValueFormat().format(coin.getTrend()));
         }
-    }
-
-    private void hideProgressbarDelayed() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                setProgressbarVisibility(View.GONE);
-            }
-        }, ValueAnimatorBase.DURATION);
-    }
-
-    public void setProgressbarVisibility(int flag) {
-        if (isDetached() || getView() == null) {
-            return;
-        }
-
-        ImageView progressbar = getView().findViewById(R.id.progressbar);
-        if (progressbar == null) {
-            return;
-        }
-
-        if (flag == View.GONE) {
-            progressbar.clearAnimation();
-            progressbar.setImageResource(R.drawable.ic_refresh_stop);
-        } else if (flag == View.VISIBLE) {
-            progressbar.setImageResource(R.drawable.ic_refresh_rotate);
-            Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.rotate);
-            progressbar.startAnimation(anim);
-        }
-    }
-
-    private void updateRelativeTimeSpanText() {
-        ((RelativeTimeSpanTextView) getView().findViewById(R.id.relative_time_span)).updateText();
     }
 
     @Override

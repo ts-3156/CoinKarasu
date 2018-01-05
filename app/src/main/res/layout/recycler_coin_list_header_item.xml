@@ -35,7 +35,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/coin_list_header_time_span_horizontal_offset" />
 
-    <ImageView
+    <com.coinkarasu.custom.AggressiveProgressbar
         android:id="@+id/progressbar"
         android:layout_width="16dp"
         android:layout_height="16dp"

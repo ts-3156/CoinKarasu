@@ -5,13 +5,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.coinkarasu.R;
+import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
 
 public final class HeaderViewHolder extends RecyclerView.ViewHolder {
     public View container;
     public TextView header;
     public View divider;
-    public View progressbar;
+    public AggressiveProgressbar progressbar;
     public RelativeTimeSpanTextView timeSpan;
 
     public HeaderViewHolder(View view) {
