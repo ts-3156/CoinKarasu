@@ -287,8 +287,8 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
                             mRecyclerView.setAdapter(mAdapter);
                             Resources res = getResources();
                             mRecyclerView.addItemDecoration(new CardsWithHeadersDecoration(mAdapter,
-                                    (int) res.getDimension(R.dimen.billing_header_gap),
-                                    (int) res.getDimension(R.dimen.billing_row_gap)));
+                                    res.getDimensionPixelSize(R.dimen.billing_header_gap),
+                                    res.getDimensionPixelSize(R.dimen.billing_row_gap)));
                             mRecyclerView.setLayoutManager(new LinearLayoutManager(BillingActivity.this));
                         }
 

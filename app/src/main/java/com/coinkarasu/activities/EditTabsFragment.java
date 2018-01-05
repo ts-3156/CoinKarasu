@@ -34,7 +34,7 @@ public class EditTabsFragment extends Fragment implements
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-        recyclerView.addItemDecoration(new EditTabsItemDecoration(getActivity(), (int) getResources().getDimension(R.dimen.edit_tabs_vertical_gap)));
+        recyclerView.addItemDecoration(new EditTabsItemDecoration(getActivity(), getResources().getDimensionPixelSize(R.dimen.edit_tabs_vertical_gap)));
 
         EditTabsRecyclerViewAdapter adapter = new EditTabsRecyclerViewAdapter(getActivity());
         adapter.setOnItemClickListener(this);

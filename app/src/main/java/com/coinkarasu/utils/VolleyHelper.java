@@ -1,13 +1,12 @@
 package com.coinkarasu.utils;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.support.v4.util.LruCache;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
+import com.coinkarasu.utils.volley.DiskCache;
 
 public class VolleyHelper {
     private static VolleyHelper mInstance;
@@ -19,19 +18,7 @@ public class VolleyHelper {
         mCtx = context;
         mRequestQueue = getRequestQueue();
 
-        mImageLoader = new ImageLoader(mRequestQueue, new ImageLoader.ImageCache() {
-            private final LruCache<String, Bitmap> cache = new LruCache<>(20);
-
-            @Override
-            public Bitmap getBitmap(String url) {
-                return cache.get(url);
-            }
-
-            @Override
-            public void putBitmap(String url, Bitmap bitmap) {
-                cache.put(url, bitmap);
-            }
-        });
+        mImageLoader = new ImageLoader(mRequestQueue, new DiskCache(context));
     }
 
     public static synchronized VolleyHelper getInstance(Context context) {
@@ -57,4 +44,5 @@ public class VolleyHelper {
     public ImageLoader getImageLoader() {
         return mImageLoader;
     }
+
 }

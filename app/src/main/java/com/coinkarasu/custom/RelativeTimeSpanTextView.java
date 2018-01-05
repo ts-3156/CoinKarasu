@@ -122,7 +122,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
     @Override
     public Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
-        bundle.putParcelable("superState", super.onSaveInstanceState());
+        bundle.putParcelable("state", super.onSaveInstanceState());
         bundle.putLong("time", time);
         return bundle;
     }
@@ -132,7 +132,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
             time = bundle.getLong("time");
-            state = bundle.getParcelable("superState");
+            state = bundle.getParcelable("state");
         }
         super.onRestoreInstanceState(state);
     }
