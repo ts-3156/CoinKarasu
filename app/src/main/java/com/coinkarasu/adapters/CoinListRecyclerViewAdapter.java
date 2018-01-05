@@ -3,11 +3,11 @@ package com.coinkarasu.adapters;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
@@ -19,14 +19,18 @@ import com.coinkarasu.animator.PriceBgColorAnimator;
 import com.coinkarasu.animator.PriceDiffAnimator;
 import com.coinkarasu.animator.TrendAnimator;
 import com.coinkarasu.coins.Coin;
+import com.coinkarasu.utils.Log;
 import com.coinkarasu.utils.PrefHelper;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private static final boolean DEBUG = true;
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_HEADER = 1;
     private static final int TYPE_AD = 2;
@@ -40,6 +44,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     private boolean isAnimPaused;
 
     private ResourceUtils resources;
+    private Log logger;
 
     public CoinListRecyclerViewAdapter(Activity activity, List<Coin> coins) {
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -58,6 +63,8 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             addItem(coin);
         }
         notifyDataSetChanged();
+
+        logger = new Log(activity);
     }
 
     public void setIsScrolled(boolean flag) {
@@ -201,12 +208,23 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     private void bindAdViewHolder(final AdViewHolder holder, int position) {
-        final Coin coin = coins.get(position);
+        holder.ad = new AdView(holder.itemView.getContext());
+        holder.ad.setAdSize(AdSize.SMART_BANNER);
+        holder.ad.setAdUnitId(BuildConfig.ADMOB_UNIT_ID);
 
         holder.ad.setAdListener(new AdListener() {
             @Override
+            public void onAdLoaded() {
+                if (holder.ad != null && holder.ad.getParent() == null) {
+                    holder.container.setVisibility(View.VISIBLE);
+                    holder.container.addView(holder.ad);
+                    if (DEBUG) logger.d("onAdLoaded", "loaded");
+                }
+            }
+
+            @Override
             public void onAdFailedToLoad(int errorCode) {
-                Log.e("bindAdViewHolder", "onAdFailedToLoad() " + errorCode);
+                if (DEBUG) logger.e("bindAdViewHolder", "onAdFailedToLoad() " + errorCode);
             }
         });
         holder.ad.loadAd(new AdRequest.Builder().build());
@@ -275,7 +293,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 headerViewRecycled((HeaderViewHolder) holder);
                 break;
             case TYPE_AD:
-                // Do nothing.
+                adViewRecycled((AdViewHolder) holder);
                 break;
             case TYPE_ITEM:
                 itemViewRecycled((ItemViewHolder) holder);
@@ -285,6 +303,16 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     private void headerViewRecycled(HeaderViewHolder holder) {
         holder.container.setOnClickListener(null);
+    }
+
+    private void adViewRecycled(AdViewHolder holder) {
+        if (holder.ad != null && holder.ad.getParent() != null) {
+            ((ViewGroup) holder.ad.getParent()).removeView(holder.ad);
+        } else {
+            holder.container.removeAllViews();
+        }
+        holder.container.setVisibility(View.GONE);
+        holder.ad = null;
     }
 
     private void itemViewRecycled(ItemViewHolder holder) {

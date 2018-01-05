@@ -49,13 +49,15 @@ android {
         manifestPlaceholders = [fabricApiKey: "${fabricProps.getProperty("apiKey")}"]
         buildConfigField "String", "PK1", "\"${billingProps.getProperty("pkey1")}\""
         buildConfigField "String", "PK2", "\"${billingProps.getProperty("pkey2")}\""
-        buildConfigField "String", "ADMOB_APP_ID", "\"${admobProps.getProperty("appId")}\""
-        buildConfigField "String", "ADMOB_UNIT_ID", "\"${admobProps.getProperty("adUnitId")}\""
+        buildConfigField "String", "ADMOB_APP_ID", "\"${admobProps.getProperty("dummyAppId")}\""
+        buildConfigField "String", "ADMOB_UNIT_ID", "\"${admobProps.getProperty("dummyAdUnitId")}\""
     }
     buildTypes {
         debug {
         }
         release {
+            buildConfigField "String", "ADMOB_APP_ID", "\"${admobProps.getProperty("appId")}\""
+            buildConfigField "String", "ADMOB_UNIT_ID", "\"${admobProps.getProperty("adUnitId")}\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             lintOptions {

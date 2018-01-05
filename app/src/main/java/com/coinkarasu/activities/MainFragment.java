@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.pagers.MainPagerAdapter;
+import com.coinkarasu.utils.Log;
 
 import java.util.ArrayList;
 
@@ -19,12 +20,15 @@ import java.util.ArrayList;
 public class MainFragment extends Fragment implements
         ViewPager.OnPageChangeListener {
 
+    private static final boolean DEBUG = true;
+    private static final String TAG = "MainFragment";
     private static final String STATE_SELECTED_KIND_KEY = "kind";
 
     private OnFragmentInteractionListener listener;
 
     private NavigationKind kind;
     private TabLayout.Tab tab;
+    private Log logger;
 
     public MainFragment() {
     }
@@ -48,6 +52,7 @@ public class MainFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+        logger = new Log(getActivity());
 
         if (savedInstanceState != null) {
             kind = NavigationKind.valueOf(savedInstanceState.getString(STATE_SELECTED_KIND_KEY));

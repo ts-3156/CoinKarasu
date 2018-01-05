@@ -17,10 +17,10 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -31,8 +31,13 @@ import com.coinkarasu.activities.settings.PreferencesActivity;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.services.UpdateTrendingIntentService;
+import com.coinkarasu.utils.Log;
 import com.coinkarasu.utils.PrefHelper;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 
 import io.fabric.sdk.android.Fabric;
@@ -41,8 +46,13 @@ public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         MainFragment.OnFragmentInteractionListener {
 
+    private static final boolean DEBUG = true;
+    private static final String TAG = "MainActivity";
     private static final String STATE_SELECTED_KIND = "kind";
     public static final NavigationKind DEFAULT_KIND = NavigationKind.home;
+    private static final String FRAGMENT_TAG = "fragment";
+
+    private Log logger;
 
     public enum Currency {
         JPY(R.string.action_currency_switch_to_usd, R.string.action_currency_only_for_jpy),
@@ -57,17 +67,17 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private static final String FRAGMENT_TAG = "fragment";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
+        logger = new Log(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         MobileAds.initialize(this, BuildConfig.ADMOB_APP_ID);
+        setupAdView();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -121,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        Log.d("KeepScrOn", "" + value);
+        if (DEBUG) logger.d("KeepScrOn", "" + value);
     }
 
     private void setNavChecked(NavigationKind kind) {
@@ -318,5 +328,32 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             icon.setAlpha(204); // 80%
         }
+    }
+
+    private void setupAdView() {
+        final AdView ad = new AdView(this);
+        ad.setAdSize(AdSize.SMART_BANNER);
+        ad.setAdUnitId(BuildConfig.ADMOB_UNIT_ID);
+
+        ad.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                if (ad.getParent() == null) {
+                    ViewGroup parent = findViewById(R.id.main_ad_container);
+                    parent.addView(ad);
+
+                    int adHeight = AdSize.SMART_BANNER.getHeightInPixels(MainActivity.this);
+                    findViewById(R.id.fragment_container).setPadding(0, 0, 0, adHeight);
+
+                    if (DEBUG) logger.d("onAdLoaded", "loaded");
+                }
+            }
+
+            @Override
+            public void onAdFailedToLoad(int errorCode) {
+                if (DEBUG) logger.e(TAG, "onAdFailedToLoad() " + errorCode);
+            }
+        });
+        ad.loadAd(new AdRequest.Builder().build());
     }
 }

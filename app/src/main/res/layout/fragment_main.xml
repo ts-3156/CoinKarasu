@@ -12,4 +12,7 @@
         android:layout_height="match_parent"
         android:background="#ffffff" />
 
+    <!-- ここに要素を追加すると、ViewPagerの高さが動的に決まるため、
+     layout_belowを指定しても基本的には表示されない。 -->
+
 </FrameLayout>

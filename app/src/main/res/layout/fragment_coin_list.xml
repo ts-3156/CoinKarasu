@@ -11,4 +11,7 @@
         tools:listheader="@layout/recycler_coin_list_header_item"
         tools:listitem="@layout/recycler_coin_list_row_item" />
 
+    <!-- ここに要素を追加すると、縦スクロールの際、まずFrameLayoutがスクロールし、
+     そのスクロールが完了後、RecyclerViewがスクロールするようになる。 -->
+
 </FrameLayout>

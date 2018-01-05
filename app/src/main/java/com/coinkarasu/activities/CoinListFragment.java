@@ -84,6 +84,7 @@ public class CoinListFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_list, container, false);
+        logger = new Log(getActivity());
 
         if (savedInstanceState != null) {
             isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
@@ -93,7 +94,6 @@ public class CoinListFragment extends Fragment implements
             isRecreated = false;
         }
 
-        logger = new Log(getActivity());
         isStartTaskRequested = false;
         PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
