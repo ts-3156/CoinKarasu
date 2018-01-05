@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.coinkarasu.R;
+import com.coinkarasu.activities.HistoricalPriceFragment.HistoricalPriceKind;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.chart.CoinLineChart;
@@ -20,7 +21,7 @@ import java.util.Date;
 
 public class CoinLineChartTabContentFragment extends Fragment implements GetHistoryTaskBase.Listener {
 
-    private CoinLineChartFragment.Kind kind;
+    private HistoricalPriceKind kind;
     private String fromSymbol;
     private String toSymbol;
     private boolean taskStarted;
@@ -31,7 +32,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     public CoinLineChartTabContentFragment() {
     }
 
-    public static CoinLineChartTabContentFragment newInstance(CoinLineChartFragment.Kind kind, String fromSymbol, String toSymbol) {
+    public static CoinLineChartTabContentFragment newInstance(HistoricalPriceKind kind, String fromSymbol, String toSymbol) {
         CoinLineChartTabContentFragment fragment = new CoinLineChartTabContentFragment();
         Bundle args = new Bundle();
         args.putString("kind", kind.name());
@@ -45,7 +46,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = CoinLineChartFragment.Kind.valueOf(getArguments().getString("kind"));
+            kind = HistoricalPriceKind.valueOf(getArguments().getString("kind"));
             fromSymbol = getArguments().getString("fromSymbol");
             toSymbol = getArguments().getString("toSymbol");
         }
@@ -105,7 +106,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
 
         drawChart(records);
-        ((CoinLineChartFragment) getParentFragment()).updateTab(kind.ordinal(), records);
+        ((HistoricalPriceFragment) getParentFragment()).updateTab(kind.ordinal(), records);
 
         Log.d("UPDATED", kind + ", " + records.size() + ", " + new Date().toString());
     }

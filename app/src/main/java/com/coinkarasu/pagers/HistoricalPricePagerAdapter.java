@@ -4,18 +4,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.coinkarasu.activities.CoinLineChartFragment;
+import com.coinkarasu.activities.HistoricalPriceFragment.HistoricalPriceKind;
 import com.coinkarasu.activities.CoinLineChartTabContentFragment;
 
-public class CoinLineChartPagerAdapter extends FragmentPagerAdapter {
+public class HistoricalPricePagerAdapter extends FragmentPagerAdapter {
     String fromSymbol;
     String toSymbol;
 
-    public CoinLineChartPagerAdapter(FragmentManager manager) {
+    public HistoricalPricePagerAdapter(FragmentManager manager) {
         super(manager);
     }
 
-    public CoinLineChartPagerAdapter(FragmentManager manager, String fromSymbol, String toSymbol) {
+    public HistoricalPricePagerAdapter(FragmentManager manager, String fromSymbol, String toSymbol) {
         super(manager);
         this.fromSymbol = fromSymbol;
         this.toSymbol = toSymbol;
@@ -23,11 +23,11 @@ public class CoinLineChartPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return CoinLineChartTabContentFragment.newInstance(CoinLineChartFragment.Kind.values()[position], fromSymbol, toSymbol);
+        return CoinLineChartTabContentFragment.newInstance(HistoricalPriceKind.values()[position], fromSymbol, toSymbol);
     }
 
     @Override
     public int getCount() {
-        return CoinLineChartFragment.Kind.values().length;
+        return HistoricalPriceKind.values().length;
     }
 }

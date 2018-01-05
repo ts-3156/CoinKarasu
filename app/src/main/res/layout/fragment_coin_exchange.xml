@@ -6,7 +6,7 @@
     android:background="#ffffff"
     android:orientation="vertical"
     android:paddingBottom="16dp"
-    tools:context="com.coinkarasu.activities.CoinLineChartFragment">
+    tools:context="com.coinkarasu.activities.HistoricalPriceFragment">
 
     <TextView
         android:id="@+id/caption_left"

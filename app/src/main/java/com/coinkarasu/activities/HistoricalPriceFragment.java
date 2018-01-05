@@ -14,7 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.coinkarasu.R;
-import com.coinkarasu.pagers.CoinLineChartPagerAdapter;
+import com.coinkarasu.pagers.HistoricalPricePagerAdapter;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.format.PriceColorFormat;
 import com.coinkarasu.format.SignedPriceFormat;
@@ -25,12 +25,14 @@ import com.coinkarasu.format.TrendValueFormat;
 import java.util.ArrayList;
 
 
-public class CoinLineChartFragment extends Fragment implements
+public class HistoricalPriceFragment extends Fragment implements
         ViewPager.OnPageChangeListener {
 
-    private static final Kind DEFAULT_KIND = Kind.hour;
+    private static final boolean DEBUG = true;
+    private static final String TAG = "HistoricalPriceFragment";
+    private static final HistoricalPriceKind DEFAULT_KIND = HistoricalPriceKind.hour;
 
-    public enum Kind {
+    public enum HistoricalPriceKind {
         hour(R.string.line_chart_label_1_hour),
         day(R.string.line_chart_label_1_day),
         week(R.string.line_chart_label_1_week),
@@ -38,9 +40,8 @@ public class CoinLineChartFragment extends Fragment implements
         year(R.string.line_chart_label_1_year);
 
         int labelResId;
-        String label;
 
-        Kind(int labelResId) {
+        HistoricalPriceKind(int labelResId) {
             this.labelResId = labelResId;
         }
     }
@@ -49,11 +50,11 @@ public class CoinLineChartFragment extends Fragment implements
     private String toSymbol;
     private TabLayout.Tab tab;
 
-    public CoinLineChartFragment() {
+    public HistoricalPriceFragment() {
     }
 
-    public static CoinLineChartFragment newInstance(String fromSymbol, String toSymbol) {
-        CoinLineChartFragment fragment = new CoinLineChartFragment();
+    public static HistoricalPriceFragment newInstance(String fromSymbol, String toSymbol) {
+        HistoricalPriceFragment fragment = new HistoricalPriceFragment();
         Bundle args = new Bundle();
         args.putString("fromSymbol", fromSymbol);
         args.putString("toSymbol", toSymbol);
@@ -72,20 +73,20 @@ public class CoinLineChartFragment extends Fragment implements
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_coin_line_chart, container, false);
+        View view = inflater.inflate(R.layout.fragment_histrical_price, container, false);
 
         ((TextView) view.findViewById(R.id.caption_left)).setText(getString(R.string.caption_left, fromSymbol, toSymbol));
 
         ViewPager pager = view.findViewById(R.id.view_pager);
-        pager.setAdapter(new CoinLineChartPagerAdapter(getChildFragmentManager(), fromSymbol, toSymbol));
+        pager.setAdapter(new HistoricalPricePagerAdapter(getChildFragmentManager(), fromSymbol, toSymbol));
         pager.setCurrentItem(DEFAULT_KIND.ordinal());
         pager.addOnPageChangeListener(this);
-        pager.setOffscreenPageLimit(Kind.values().length);
+        pager.setOffscreenPageLimit(HistoricalPriceKind.values().length);
 
         TabLayout tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
-        for (Kind kind : Kind.values()) {
+        for (HistoricalPriceKind kind : HistoricalPriceKind.values()) {
             tabs.getTabAt(kind.ordinal()).setCustomView(createTab(inflater, container, getString(kind.labelResId)));
         }
 
@@ -99,7 +100,7 @@ public class CoinLineChartFragment extends Fragment implements
     }
 
     private View createTab(LayoutInflater inflater, ViewGroup container, String label) {
-        View view = inflater.inflate(R.layout.tab_line_chart, container, false);
+        View view = inflater.inflate(R.layout.tab_historical_price, container, false);
 
         ((TextView) view.findViewById(R.id.label)).setText(label);
         ((TextView) view.findViewById(R.id.price)).setText("0.00");

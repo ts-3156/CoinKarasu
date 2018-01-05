@@ -59,7 +59,7 @@ public class CoinActivity extends AppCompatActivity {
         updateToolbarTitle(toSymbol);
 
         Fragment card = PriceOverviewFragment.newInstance(coin);
-        Fragment lineChart = CoinLineChartFragment.newInstance(coin.getSymbol(), toSymbol);
+        Fragment lineChart = HistoricalPriceFragment.newInstance(coin.getSymbol(), toSymbol);
         Fragment exchange = CoinExchangeFragment.newInstance("overview", coin.toJson().toString());
         Fragment pieChart = CoinPieChartFragment.newInstance(coin.getSymbol(), toSymbol);
         Fragment board = CoinBoardFragment.newInstance(boardKind);
