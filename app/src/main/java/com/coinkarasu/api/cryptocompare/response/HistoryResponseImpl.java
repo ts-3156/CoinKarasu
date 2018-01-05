@@ -5,7 +5,7 @@ import android.util.Log;
 
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.api.cryptocompare.data.HistoryImpl;
-import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -101,7 +101,7 @@ public class HistoryResponseImpl implements HistoryResponse {
             return false;
         }
 
-        CacheHelper.write(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange), response.toString());
+        DiskCacheHelper.write(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange), response.toString());
         return true;
     }
 
@@ -111,7 +111,7 @@ public class HistoryResponseImpl implements HistoryResponse {
     }
 
     public static HistoryResponse restoreFromCache(Context context, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
-        String text = CacheHelper.read(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
+        String text = DiskCacheHelper.read(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
         JSONObject response = null;
 
         try {
@@ -128,12 +128,12 @@ public class HistoryResponseImpl implements HistoryResponse {
     }
 
     public static boolean isCacheExist(Context context, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
-        boolean exists = CacheHelper.exists(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
+        boolean exists = DiskCacheHelper.exists(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
         if (!exists) {
             return false;
         }
 
-        return !CacheHelper.isExpired(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange), kind.expires);
+        return !DiskCacheHelper.isExpired(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange), kind.expires);
     }
 
     @Override

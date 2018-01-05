@@ -3,7 +3,7 @@ package com.coinkarasu.api.cryptocompare.response;
 import android.content.Context;
 import android.util.Log;
 
-import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,12 +55,12 @@ public class TopPairsResponseImpl implements TopPairsResponse {
             return false;
         }
 
-        CacheHelper.write(context, getCacheName(fromSymbol), response.toString());
+        DiskCacheHelper.write(context, getCacheName(fromSymbol), response.toString());
         return true;
     }
 
     public static TopPairsResponse restoreFromCache(Context context, String fromSymbol) {
-        String text = CacheHelper.read(context, getCacheName(fromSymbol));
+        String text = DiskCacheHelper.read(context, getCacheName(fromSymbol));
         JSONObject response = null;
 
         try {
@@ -77,12 +77,12 @@ public class TopPairsResponseImpl implements TopPairsResponse {
     }
 
     public static boolean isCacheExist(Context context, String fromSymbol) {
-        boolean exists = CacheHelper.exists(context, getCacheName(fromSymbol));
+        boolean exists = DiskCacheHelper.exists(context, getCacheName(fromSymbol));
         if (!exists) {
             return false;
         }
 
-        return !CacheHelper.isExpired(context, getCacheName(fromSymbol), THIRTY_MINUTES);
+        return !DiskCacheHelper.isExpired(context, getCacheName(fromSymbol), THIRTY_MINUTES);
     }
 
     @Override

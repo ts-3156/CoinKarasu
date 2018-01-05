@@ -8,7 +8,7 @@ import com.android.volley.toolbox.ImageLoader;
 class MemoryCache implements ImageLoader.ImageCache {
     private LruCache<String, Bitmap> cache;
 
-    public MemoryCache() {
+    MemoryCache() {
         cache = new LruCache<>(20);
     }
 

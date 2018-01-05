@@ -6,7 +6,7 @@ import android.util.Log;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.coinkarasu.utils.VolleyHelper;
+import com.coinkarasu.utils.volley.VolleyHelper;
 
 import org.json.JSONObject;
 

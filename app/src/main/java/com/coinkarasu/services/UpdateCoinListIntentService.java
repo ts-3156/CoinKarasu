@@ -11,7 +11,7 @@ import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.database.AppDatabase;
 import com.coinkarasu.database.CoinListCoin;
-import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.DiskCacheHelper;
 import com.coinkarasu.utils.Log;
 
 import org.json.JSONObject;
@@ -35,11 +35,11 @@ public class UpdateCoinListIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         Log logger = new Log(getApplicationContext());
-        if (CacheHelper.exists(this, LOG) && !CacheHelper.isExpired(this, LOG, THIRTY_MINUTES)) {
+        if (DiskCacheHelper.exists(this, LOG) && !DiskCacheHelper.isExpired(this, LOG, THIRTY_MINUTES)) {
             if (DEBUG) logger.d(TAG, "Recently executed.");
             return;
         }
-        CacheHelper.touch(this, LOG);
+        DiskCacheHelper.touch(this, LOG);
 
         long start = System.currentTimeMillis();
         String url = "https://www.cryptocompare.com/api/data/coinlist/";

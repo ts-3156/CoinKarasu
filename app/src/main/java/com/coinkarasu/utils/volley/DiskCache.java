@@ -10,7 +10,7 @@ public class DiskCache implements ImageLoader.ImageCache {
     private MemoryCache memCache;
     private Context context;
 
-    public DiskCache(Context context) {
+    DiskCache(Context context) {
         this.context = context;
         this.memCache = new MemoryCache();
     }

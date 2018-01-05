@@ -18,7 +18,7 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.data.Trending;
-import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.DiskCacheHelper;
 import com.coinkarasu.utils.Log;
 
 import java.util.ArrayList;
@@ -59,11 +59,11 @@ public class UpdateTrendingIntentService extends IntentService {
         Log logger = new Log(getApplicationContext());
         String logFile = logFile(kind, toSymbol, exchange);
 
-        if (CacheHelper.exists(this, logFile) && !CacheHelper.isExpired(this, logFile, ONE_DAY)) {
+        if (DiskCacheHelper.exists(this, logFile) && !DiskCacheHelper.isExpired(this, logFile, ONE_DAY)) {
             if (DEBUG) logger.d(TAG, kind.name() + " is recently executed.");
             return;
         }
-        CacheHelper.touch(this, logFile);
+        DiskCacheHelper.touch(this, logFile);
 
         LinkedHashSet<String> uniqueSymbols = new LinkedHashSet<>();
         String[] array = getResources().getStringArray(NavigationKind.japan.symbolsResId);

@@ -3,7 +3,7 @@ package com.coinkarasu.api.cryptocompare.response;
 import android.content.Context;
 import android.util.Log;
 
-import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -77,14 +77,14 @@ public class PricesResponseImpl implements PricesResponse {
         if (data == null) {
             return false;
         } else {
-            CacheHelper.write(context, getCacheName(tag), data.toString());
+            DiskCacheHelper.write(context, getCacheName(tag), data.toString());
             return true;
         }
     }
 
     // @Override
     public static PricesResponse restoreFromCache(Context context, String tag) {
-        String text = CacheHelper.read(context, getCacheName(tag));
+        String text = DiskCacheHelper.read(context, getCacheName(tag));
         JSONObject data;
         ArrayList<String> fromSymbols = new ArrayList<>();
         String toSymbol = null;
@@ -116,7 +116,7 @@ public class PricesResponseImpl implements PricesResponse {
     }
 
     public static boolean isCacheExist(Context context, String tag) {
-        return CacheHelper.exists(context, getCacheName(tag));
+        return DiskCacheHelper.exists(context, getCacheName(tag));
     }
 
     @Override

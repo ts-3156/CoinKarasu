@@ -7,7 +7,7 @@ import com.crashlytics.android.Crashlytics;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.coins.PriceMultiFullCoinImpl;
-import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,11 +33,11 @@ public class Toplist {
             data.put(coin.toJson());
         }
 
-        CacheHelper.write(context, getCacheName(kind), data.toString());
+        DiskCacheHelper.write(context, getCacheName(kind), data.toString());
     }
 
     public static Toplist restoreFromCache(Context context, NavigationKind kind) {
-        String text = CacheHelper.read(context, getCacheName(kind));
+        String text = DiskCacheHelper.read(context, getCacheName(kind));
         if (text == null) {
             if (DEBUG) Log.e("restoreFromCache", "The " + kind.name() + " cache is null.");
             return null;

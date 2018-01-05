@@ -7,7 +7,7 @@ import com.coinkarasu.api.cryptocompare.response.PricesResponse;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.coins.PriceMultiFullCoinImpl;
-import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -93,7 +93,7 @@ public class PricesImpl implements Prices {
             Log.e("saveToCache", e.getMessage());
         }
 
-        CacheHelper.write(context, getCacheName(tag), data.toString());
+        DiskCacheHelper.write(context, getCacheName(tag), data.toString());
         return true;
     }
 
@@ -104,7 +104,7 @@ public class PricesImpl implements Prices {
 
     // @Override
     public static Prices restoreFromCache(Context context, String tag) {
-        String text = CacheHelper.read(context, getCacheName(tag));
+        String text = DiskCacheHelper.read(context, getCacheName(tag));
         JSONObject data;
         ArrayList<PriceMultiFullCoin> coins = new ArrayList<>();
         String exchange = null;
@@ -131,7 +131,7 @@ public class PricesImpl implements Prices {
     }
 
     public static boolean isCacheExist(Context context, String tag) {
-        return CacheHelper.exists(context, getCacheName(tag));
+        return DiskCacheHelper.exists(context, getCacheName(tag));
     }
 
     @Override

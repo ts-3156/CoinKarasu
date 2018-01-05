@@ -6,7 +6,7 @@ import com.crashlytics.android.Crashlytics;
 import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
-import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -30,11 +30,11 @@ public class Trending {
             data.put(coin.toJson());
         }
 
-        CacheHelper.write(context, getCacheName(kind), data.toString());
+        DiskCacheHelper.write(context, getCacheName(kind), data.toString());
     }
 
     public static Trending restoreFromCache(Context context, TrendingKind kind) {
-        String text = CacheHelper.read(context, getCacheName(kind));
+        String text = DiskCacheHelper.read(context, getCacheName(kind));
         if (text == null) {
             return null;
         }

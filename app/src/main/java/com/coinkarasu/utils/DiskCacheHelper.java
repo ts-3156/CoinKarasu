@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
 
-public class CacheHelper {
+public class DiskCacheHelper {
 
     private static final boolean DEBUG = false;
 

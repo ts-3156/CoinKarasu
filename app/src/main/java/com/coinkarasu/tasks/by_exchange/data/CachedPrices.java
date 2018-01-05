@@ -6,7 +6,7 @@ import android.util.Log;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
-import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,7 +45,7 @@ public class CachedPrices {
             array.put(price.toJson());
         }
 
-        CacheHelper.write(context, getCacheName(kind, exchange, coinKind), array.toString());
+        DiskCacheHelper.write(context, getCacheName(kind, exchange, coinKind), array.toString());
         return true;
     }
 
@@ -54,7 +54,7 @@ public class CachedPrices {
     }
 
     public static CachedPrices restoreFromCache(Context context, NavigationKind kind, Exchange exchange, CoinKind coinKind) {
-        String text = CacheHelper.read(context, getCacheName(kind, exchange, coinKind));
+        String text = DiskCacheHelper.read(context, getCacheName(kind, exchange, coinKind));
         ArrayList<Price> prices = new ArrayList<>();
 
         try {
@@ -72,7 +72,7 @@ public class CachedPrices {
     }
 
     public static boolean isCacheExist(Context context, NavigationKind kind, Exchange exchange, CoinKind coinKind) {
-        return CacheHelper.exists(context, getCacheName(kind, exchange, coinKind));
+        return DiskCacheHelper.exists(context, getCacheName(kind, exchange, coinKind));
     }
 
 }

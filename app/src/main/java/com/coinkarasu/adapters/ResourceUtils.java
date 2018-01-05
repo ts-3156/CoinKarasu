@@ -14,7 +14,7 @@ import com.coinkarasu.format.SurroundedTrendValueFormat;
 import com.coinkarasu.format.TrendColorFormat;
 import com.coinkarasu.format.TrendIconFormat;
 import com.coinkarasu.format.TrendValueFormat;
-import com.coinkarasu.utils.VolleyHelper;
+import com.coinkarasu.utils.volley.VolleyHelper;
 
 import java.util.HashMap;
 import java.util.List;

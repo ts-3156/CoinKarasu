@@ -1,4 +1,4 @@
-package com.coinkarasu.utils;
+package com.coinkarasu.utils.volley;
 
 import android.content.Context;
 
@@ -6,7 +6,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
-import com.coinkarasu.utils.volley.DiskCache;
 
 public class VolleyHelper {
     private static VolleyHelper mInstance;

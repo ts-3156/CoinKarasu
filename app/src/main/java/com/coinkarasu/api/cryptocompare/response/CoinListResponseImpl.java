@@ -3,7 +3,7 @@ package com.coinkarasu.api.cryptocompare.response;
 import android.content.Context;
 import android.util.Log;
 
-import com.coinkarasu.utils.CacheHelper;
+import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,7 +64,7 @@ public class CoinListResponseImpl implements CoinListResponse {
             return false;
         }
 
-        CacheHelper.write(context, CACHE_NAME, response.toString());
+        DiskCacheHelper.write(context, CACHE_NAME, response.toString());
         return true;
     }
 
@@ -80,7 +80,7 @@ public class CoinListResponseImpl implements CoinListResponse {
 
     // @Override
     public static CoinListResponse restoreFromCache(Context context) {
-        String text = CacheHelper.read(context, CACHE_NAME);
+        String text = DiskCacheHelper.read(context, CACHE_NAME);
         if (text == null) {
             Log.e("restoreFromCache", "the text is null.");
             return null;
@@ -103,11 +103,11 @@ public class CoinListResponseImpl implements CoinListResponse {
     // @Override
     public static boolean cacheExists(Context context) {
         // TODO Check timestamp
-        return CacheHelper.exists(context, CACHE_NAME);
+        return DiskCacheHelper.exists(context, CACHE_NAME);
     }
 
     // @Override
     public static Date lastModified(Context context) {
-        return CacheHelper.lastModified(context, CACHE_NAME);
+        return DiskCacheHelper.lastModified(context, CACHE_NAME);
     }
 }
