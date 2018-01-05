@@ -23,6 +23,7 @@ import com.coinkarasu.api.cryptocompare.data.Price;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.coins.PriceMultiFullCoin;
+import com.coinkarasu.custom.RelativeTimeSpanTextView;
 import com.coinkarasu.format.PriceColorFormat;
 import com.coinkarasu.format.PriceFormat;
 import com.coinkarasu.format.SignedPriceFormat;
@@ -74,10 +75,6 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_card, container, false);
-
-        getChildFragmentManager().beginTransaction()
-                .replace(R.id.time_span_container, RelativeTimeSpanFragment.newInstance(), RelativeTimeSpanFragment.getTag(coin.getSymbol()))
-                .commit();
 
         kind = "coin_card";
         updatePrice(view, coin, true);
@@ -246,10 +243,7 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     }
 
     private void updateRelativeTimeSpanText() {
-        Fragment fragment = getChildFragmentManager().findFragmentByTag(RelativeTimeSpanFragment.getTag(coin.getSymbol()));
-        if (fragment != null) {
-            ((RelativeTimeSpanFragment) fragment).updateText(System.currentTimeMillis());
-        }
+        ((RelativeTimeSpanTextView) getView().findViewById(R.id.relative_time_span)).updateText();
     }
 
     @Override

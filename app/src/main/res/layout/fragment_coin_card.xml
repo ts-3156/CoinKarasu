@@ -65,8 +65,8 @@
         tools:text="¥ 162 (29%)"
         tools:textColor="#ff0000" />
 
-    <FrameLayout
-        android:id="@+id/time_span_container"
+    <com.coinkarasu.custom.RelativeTimeSpanTextView
+        android:id="@+id/relative_time_span"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/text_separator"

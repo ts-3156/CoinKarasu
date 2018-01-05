@@ -468,22 +468,5 @@ public class CoinListFragment extends Fragment implements
 
     @Override
     public void removeAllNestedFragments() {
-        if (!isAdded() || isDetached()) {
-            return;
-        }
-
-        FragmentManager manager = getChildFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-
-        for (Exchange exchange : kind.exchanges) {
-            for (CoinKind coinKind : CoinKind.values()) {
-                Fragment fragment = manager.findFragmentByTag(RelativeTimeSpanFragment.getTag(exchange, coinKind));
-                if (fragment != null) {
-                    transaction.remove(fragment);
-                }
-            }
-        }
-
-        transaction.commitNowAllowingStateLoss();
     }
 }
