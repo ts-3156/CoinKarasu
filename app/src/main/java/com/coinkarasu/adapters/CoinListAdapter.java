@@ -29,7 +29,7 @@ import com.google.android.gms.ads.AdView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class CoinListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final boolean DEBUG = true;
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_HEADER = 1;
@@ -46,7 +46,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     private ResourceUtils resources;
     private Log logger;
 
-    public CoinListRecyclerViewAdapter(Activity activity, List<Coin> coins) {
+    public CoinListAdapter(Activity activity, List<Coin> coins) {
         inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         isAnimEnabled = PrefHelper.isAnimEnabled(activity);
@@ -161,11 +161,11 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case TYPE_HEADER:
-                return new HeaderViewHolder(inflater.inflate(R.layout.recycler_coin_list_header_item, parent, false));
+                return new HeaderViewHolder(inflater.inflate(R.layout.coin_list_header_item, parent, false));
             case TYPE_AD:
-                return new AdViewHolder(inflater.inflate(R.layout.recycler_coin_list_ad_item, parent, false));
+                return new AdViewHolder(inflater.inflate(R.layout.coin_list_ad_item, parent, false));
             case TYPE_ITEM:
-                return new ItemViewHolder(inflater.inflate(R.layout.recycler_coin_list_row_item, parent, false));
+                return new ItemViewHolder(inflater.inflate(R.layout.coin_list_row_item, parent, false));
             default:
                 throw new RuntimeException("Invalid viewType " + viewType);
         }

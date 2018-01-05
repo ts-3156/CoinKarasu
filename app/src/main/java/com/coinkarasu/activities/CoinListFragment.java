@@ -19,7 +19,7 @@ import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.Section;
-import com.coinkarasu.adapters.CoinListRecyclerViewAdapter;
+import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.animator.ValueAnimatorBase;
 import com.coinkarasu.coins.AdCoinImpl;
 import com.coinkarasu.coins.Coin;
@@ -167,8 +167,8 @@ public class CoinListFragment extends Fragment implements
                             RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
                             RecyclerView.Adapter adapter = recyclerView.getAdapter();
                             if (adapter == null) {
-                                adapter = new CoinListRecyclerViewAdapter(getActivity(), inCoins);
-                                initializeRecyclerView(recyclerView, (CoinListRecyclerViewAdapter) adapter);
+                                adapter = new CoinListAdapter(getActivity(), inCoins);
+                                initializeRecyclerView(recyclerView, (CoinListAdapter) adapter);
                             }
                         }
                     }
@@ -176,7 +176,7 @@ public class CoinListFragment extends Fragment implements
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void initializeRecyclerView(RecyclerView recyclerView, CoinListRecyclerViewAdapter adapter) {
+    private void initializeRecyclerView(RecyclerView recyclerView, CoinListAdapter adapter) {
         if (getActivity() == null || getView() == null) {
             return;
         }
@@ -190,16 +190,16 @@ public class CoinListFragment extends Fragment implements
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 switch (newState) {
                     case RecyclerView.SCROLL_STATE_IDLE:
-                        ((CoinListRecyclerViewAdapter) recyclerView.getAdapter()).setIsScrolled(false);
+                        ((CoinListAdapter) recyclerView.getAdapter()).setIsScrolled(false);
                         break;
                     case RecyclerView.SCROLL_STATE_DRAGGING:
-                        ((CoinListRecyclerViewAdapter) recyclerView.getAdapter()).setIsScrolled(true);
+                        ((CoinListAdapter) recyclerView.getAdapter()).setIsScrolled(true);
                         break;
                 }
             }
         });
 
-        adapter.setOnItemClickListener(new CoinListRecyclerViewAdapter.OnItemClickListener() {
+        adapter.setOnItemClickListener(new CoinListAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(Coin coin, View view, int position) {
                 if (coin.isSectionHeader() || coin.isAdCoin()) {
@@ -223,7 +223,7 @@ public class CoinListFragment extends Fragment implements
         }
     }
 
-    private void updateViewIfCacheExist(Exchange exchange, CoinKind coinKind, CoinListRecyclerViewAdapter adapter) {
+    private void updateViewIfCacheExist(Exchange exchange, CoinKind coinKind, CoinListAdapter adapter) {
         if (!CachedPrices.isCacheExist(getActivity(), kind, exchange, coinKind)) {
             return;
         }
@@ -251,7 +251,7 @@ public class CoinListFragment extends Fragment implements
         }
     }
 
-    private void updateViewIfCacheExist(CoinListRecyclerViewAdapter adapter) {
+    private void updateViewIfCacheExist(CoinListAdapter adapter) {
         if (isDetached() || getView() == null) {
             return;
         }
@@ -279,7 +279,7 @@ public class CoinListFragment extends Fragment implements
         }
 
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
-        CoinListRecyclerViewAdapter adapter = (CoinListRecyclerViewAdapter) recyclerView.getAdapter();
+        CoinListAdapter adapter = (CoinListAdapter) recyclerView.getAdapter();
 
         if (adapter == null) {
             isStartTaskRequested = true;
@@ -340,7 +340,7 @@ public class CoinListFragment extends Fragment implements
         new CachedPrices(prices).saveToCache(getActivity(), kind, exchange, coinKind);
 
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
-        CoinListRecyclerViewAdapter adapter = (CoinListRecyclerViewAdapter) recyclerView.getAdapter();
+        CoinListAdapter adapter = (CoinListAdapter) recyclerView.getAdapter();
 
         ArrayList<Coin> coins = adapter.getItems(exchange, coinKind);
 
