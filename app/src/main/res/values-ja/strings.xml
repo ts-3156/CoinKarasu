@@ -139,6 +139,7 @@
     <string name="pref_header_general">全般</string>
     <string name="pref_header_speeding_up">高速化</string>
     <string name="pref_header_about">概要</string>
+    <string name="pref_header_cache">キャッシュ</string>
     <string name="pref_header_data_sync">データの同期</string>
 
     <string name="pref_open_source_licenses_title">オープンソースライセンス</string>
@@ -146,6 +147,9 @@
     <string name="pref_app_version_title">バージョン</string>
     <string name="pref_app_version_summary">バージョン 1.0.0</string>
     <string name="pref_app_version_up_to_date">このアプリは、最新バージョンです。</string>
+    <string name="pref_clear_cache_title">キャッシュを削除する</string>
+    <string name="pref_clear_cache_summary">このデバイスに保存されたすべてのキャッシュを削除する</string>
+    <string name="pref_clear_cache_dialog">このデバイスに保存されたすべてのキャッシュを削除してもよろしいですか？ 削除後、すべての最新データがサーバーから取得されます。</string>
 
     <string name="pref_title">設定</string>
     <string name="pref_title_currency">表示する通貨</string>

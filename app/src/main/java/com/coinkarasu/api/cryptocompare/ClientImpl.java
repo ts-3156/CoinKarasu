@@ -1,7 +1,6 @@
 package com.coinkarasu.api.cryptocompare;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshotImpl;
@@ -20,6 +19,7 @@ import com.coinkarasu.api.cryptocompare.response.HistoryResponseImpl;
 import com.coinkarasu.api.cryptocompare.response.PricesResponseImpl;
 import com.coinkarasu.api.cryptocompare.response.TopPairsResponse;
 import com.coinkarasu.api.cryptocompare.response.TopPairsResponseImpl;
+import com.coinkarasu.utils.Log;
 import com.coinkarasu.utils.StringHelper;
 
 import org.json.JSONObject;
@@ -28,12 +28,16 @@ import java.util.ArrayList;
 
 class ClientImpl implements Client {
 
+    private static final boolean DEBUG = true;
+    private static final String TAG = "ClientImpl";
     private static final String DEFAULT_EXCHANGE = "cccagg";
 
     private Context context;
+    private Log logger;
 
     ClientImpl(Context context) {
         this.context = context;
+        this.logger = new Log(context);
     }
 
     @Override
@@ -157,17 +161,18 @@ class ClientImpl implements Client {
     }
 
     private ArrayList<History> sampling(ArrayList<History> records, int aggregate) {
-        ArrayList<History> sampled = new ArrayList<>();
+        ArrayList<History> samples = new ArrayList<>();
         int size = records.size();
 
         for (int i = 0; i < size; i++) {
-            if (i != 0 && i != size - 1 && i % aggregate == 0) {
-                sampled.add(records.get(i));
+            if ((i < 3 || i > (size - 1 - 3)) || i % aggregate == 0) {
+                samples.add(records.get(i));
             }
         }
 
-        Log.d("SAMPLING", "" + aggregate + ", " + records.size() + ", " + sampled.size());
+        if (DEBUG) logger.d(TAG, "aggregate " + aggregate + ", records "
+                + records.size() + ", samples " + samples.size());
 
-        return sampled;
+        return samples;
     }
 }

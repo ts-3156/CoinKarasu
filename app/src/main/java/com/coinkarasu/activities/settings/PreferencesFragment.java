@@ -13,27 +13,43 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 
 import com.coinkarasu.R;
+import com.coinkarasu.utils.DiskCacheHelper;
+import com.coinkarasu.utils.Log;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 public class PreferencesFragment extends PreferenceFragment {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "PreferencesFragment";
 
     private Preference.OnPreferenceChangeListener listener;
+    private Log logger;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.fragment_preferences);
+        logger = new Log(getActivity());
 
         Preference prefAppVersion = getPreferenceScreen().findPreference("pref_app_version");
         prefAppVersion.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage(R.string.pref_app_version_up_to_date)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                            }
-                        });
-                builder.create().show();
+                showDialog(R.string.pref_app_version_up_to_date, false, null);
+
+                return true;
+            }
+        });
+
+        Preference prefClearCache = getPreferenceScreen().findPreference("pref_clear_cache");
+        prefClearCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                showDialog(R.string.pref_clear_cache_dialog, true, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        long start = System.currentTimeMillis();
+                        DiskCacheHelper.clear(getActivity());
+                        if (DEBUG) logger.d(TAG, "Clear cache elapsed time: "
+                                + (System.currentTimeMillis() - start) + "ms");
+                    }
+                });
 
                 return true;
             }
@@ -50,6 +66,17 @@ public class PreferencesFragment extends PreferenceFragment {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         bindPreferenceSummaryToValue(prefs, "pref_sync_frequency");
         bindPreferenceSummaryToValue(prefs, "pref_currency");
+    }
+
+    private void showDialog(int msgResId, boolean isNeedNegativeButton, DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage(msgResId).setPositiveButton("OK", listener);
+
+        if (isNeedNegativeButton) {
+            builder.setNegativeButton("CANCEL", null);
+        }
+
+        builder.create().show();
     }
 
     private void bindPreferenceSummaryToValue(SharedPreferences prefs, String key) {
