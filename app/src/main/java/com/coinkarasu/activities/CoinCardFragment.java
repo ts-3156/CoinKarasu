@@ -29,21 +29,22 @@ import com.coinkarasu.format.SurroundedTrendValueFormat;
 import com.coinkarasu.format.TrendColorFormat;
 import com.coinkarasu.format.TrendIconFormat;
 import com.coinkarasu.tasks.GetPriceTask;
-import com.coinkarasu.utils.AutoUpdateTimer;
+import com.coinkarasu.utils.PeriodicalUpdater;
 import com.coinkarasu.utils.PrefHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
-import java.util.TimerTask;
 
 
-public class CoinCardFragment extends Fragment implements GetPriceTask.Listener {
+public class CoinCardFragment extends Fragment implements
+        GetPriceTask.Listener,
+        PeriodicalUpdater.PeriodicallyRunnable {
 
     private String kind;
     private Coin coin;
-    private AutoUpdateTimer autoUpdateTimer;
+    private PeriodicalUpdater updater;
 
     public CoinCardFragment() {
     }
@@ -76,12 +77,13 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
 
         kind = "coin_card";
         updatePrice(view, coin, true);
-        startAutoUpdate(true);
+        updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
+        updater.start("onCreateView");
 
         return view;
     }
 
-    private void startTask() {
+    public void startTask() {
         if (getActivity() == null) {
             return;
         }
@@ -100,44 +102,6 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void startAutoUpdate(boolean isRepeated) {
-        if (autoUpdateTimer != null) {
-            stopAutoUpdate();
-        }
-
-        String tag = getTimerTag(kind);
-        if (tag == null) {
-            return;
-        }
-        autoUpdateTimer = new AutoUpdateTimer(tag);
-
-        if (isRepeated) {
-            autoUpdateTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    startTask();
-                }
-            }, 0, 10000);
-        } else {
-            startTask();
-        }
-    }
-
-    public void stopAutoUpdate() {
-        if (autoUpdateTimer != null) {
-            autoUpdateTimer.cancel();
-            autoUpdateTimer = null;
-        }
-    }
-
-    private String getTimerTag(String kind) {
-        String suffix = coin.getToSymbol();
-        if (suffix == null) {
-            return null;
-        }
-        return kind + "-" + suffix;
-    }
-
     @Override
     public void started(String exchange, String fromSymbol, String toSymbol) {
         ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).startAnimation();
@@ -146,13 +110,9 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     @Override
     public void finished(Price price) {
         if (isDetached() || getActivity() == null) {
-            stopAutoUpdate();
-            return;
-        }
-
-        String tag = getTimerTag(kind);
-        if (autoUpdateTimer == null || tag == null || !autoUpdateTimer.getTag().equals(tag)) {
-            stopAutoUpdate();
+            if (updater != null) {
+                updater.stop("finished");
+            }
             return;
         }
 
@@ -160,7 +120,9 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         AggressiveProgressbar progressbar = getView().findViewById(R.id.progressbar);
         PriceMultiFullCoin coin = price.getCoin();
         if (coin == null) {
-            stopAutoUpdate();
+            if (updater != null) {
+                updater.stop("finished");
+            }
             progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION);
             timeSpan.updateText();
             return;
@@ -216,22 +178,17 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
     @Override
     public void onResume() {
         super.onResume();
-
-        if (autoUpdateTimer == null) {
-            startAutoUpdate(true);
+        if (updater != null) {
+            updater.start("onResume");
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        stopAutoUpdate();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        stopAutoUpdate();
+        if (updater != null) {
+            updater.stop("onPause");
+        }
     }
 
     @Override
@@ -239,6 +196,6 @@ public class CoinCardFragment extends Fragment implements GetPriceTask.Listener 
         super.onDetach();
         kind = null;
         coin = null;
-        autoUpdateTimer = null;
+        updater = null;
     }
 }

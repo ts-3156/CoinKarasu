@@ -43,7 +43,8 @@ import java.util.Arrays;
 public class CoinListFragment extends Fragment implements
         GetPricesByExchangeTaskBase.Listener,
         SharedPreferences.OnSharedPreferenceChangeListener,
-        MainPagerAdapter.Listener {
+        MainPagerAdapter.Listener,
+        PeriodicalUpdater.PeriodicallyRunnable {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "CoinListFragment";
@@ -91,7 +92,7 @@ public class CoinListFragment extends Fragment implements
             isRecreated = false;
         }
 
-        updater = new PeriodicalUpdater(this, kind, PrefHelper.getSyncInterval(getActivity()));
+        updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
         isStartTaskRequested = false;
         PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
