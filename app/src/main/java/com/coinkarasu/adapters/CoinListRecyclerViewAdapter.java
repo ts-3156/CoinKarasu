@@ -191,7 +191,7 @@ public class CoinListRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         holder.header.setText(resources.headerNameResIdStringMap.get(coin.getHeaderNameResId()));
         holder.progressbar.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-progressbar");
-        holder.timeSpanContainer.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-time_span");
+        holder.timeSpan.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-time_span");
 
         if (position == 0) {
             holder.divider.setVisibility(View.GONE);

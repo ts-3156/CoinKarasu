@@ -27,8 +27,8 @@
         android:textColor="#999999"
         tools:text="@string/header_name_cccagg" />
 
-    <FrameLayout
-        android:id="@+id/time_span_container"
+    <com.coinkarasu.custom.RelativeTimeSpanTextView
+        android:id="@+id/relative_time_span"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/text_separator"

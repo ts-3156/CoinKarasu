@@ -27,6 +27,7 @@ import com.coinkarasu.adapters.CoinListRecyclerViewAdapter;
 import com.coinkarasu.animator.ValueAnimatorBase;
 import com.coinkarasu.coins.AdCoinImpl;
 import com.coinkarasu.coins.Coin;
+import com.coinkarasu.custom.RelativeTimeSpanTextView;
 import com.coinkarasu.data.Toplist;
 import com.coinkarasu.pagers.MainPagerAdapter;
 import com.coinkarasu.tasks.CollectCoinsTask;
@@ -394,21 +395,10 @@ public class CoinListFragment extends Fragment implements
     }
 
     private void updateRelativeTimeSpanText(Exchange exchange, CoinKind coinKind) {
-        String tag = RelativeTimeSpanFragment.getTag(exchange, coinKind);
-        Fragment fragment = getChildFragmentManager().findFragmentByTag(tag);
-        if (fragment == null) {
-            View timeSpanContainer = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-time_span");
-            if (timeSpanContainer == null) {
-                return;
-            }
-            timeSpanContainer.setId(exchange.getHeaderNameResId(coinKind)); // 何かしらの値をセットしないと、すべて同じIDになってしまう。
-
-            fragment = RelativeTimeSpanFragment.newInstance(System.currentTimeMillis());
-            getChildFragmentManager().beginTransaction()
-                    .replace(timeSpanContainer.getId(), fragment, tag)
-                    .commit();
+        View timeSpan = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-time_span");
+        if (timeSpan != null) {
+            ((RelativeTimeSpanTextView) timeSpan).updateText();
         }
-        ((RelativeTimeSpanFragment) fragment).updateText(System.currentTimeMillis());
     }
 
     @Override

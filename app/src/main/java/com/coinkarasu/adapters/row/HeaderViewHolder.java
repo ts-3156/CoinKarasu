@@ -5,13 +5,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.coinkarasu.R;
+import com.coinkarasu.custom.RelativeTimeSpanTextView;
 
 public final class HeaderViewHolder extends RecyclerView.ViewHolder {
     public View container;
     public TextView header;
     public View divider;
     public View progressbar;
-    public View timeSpanContainer;
+    public RelativeTimeSpanTextView timeSpan;
 
     public HeaderViewHolder(View view) {
         super(view);
@@ -19,6 +20,6 @@ public final class HeaderViewHolder extends RecyclerView.ViewHolder {
         header = view.findViewById(R.id.text_separator);
         divider = view.findViewById(R.id.divider);
         progressbar = view.findViewById(R.id.progressbar);
-        timeSpanContainer = view.findViewById(R.id.time_span_container);
+        timeSpan = view.findViewById(R.id.relative_time_span);
     }
 }
