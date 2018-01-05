@@ -88,31 +88,27 @@ public class PriceOverviewFragment extends Fragment implements
     }
 
     public void startTask() {
-        if (getActivity() == null) {
+        if (getActivity() == null || getView() == null) {
             return;
         }
-
-        String toSymbol = coin.getToSymbol();
-        if (toSymbol == null) {
-            return;
-        }
-        coin.setToSymbol(toSymbol);
 
         new GetCccaggPricesTask(getContext(), Exchange.cccagg)
                 .setFromSymbols(new String[]{coin.getSymbol()})
-                .setToSymbol(toSymbol)
+                .setToSymbol(coin.getToSymbol())
                 .setExchange(Exchange.cccagg.name())
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public void started(Exchange exchange, CoinKind coinKind) {
-        ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).startAnimation();
+        if (getView() != null) {
+            ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).startAnimation();
+        }
     }
 
     @Override
     public void finished(Exchange exchange, CoinKind coinKind, ArrayList<Price> prices) {
-        if (isDetached() || getActivity() == null) {
+        if (isDetached() || getActivity() == null || getView() == null) {
             if (updater != null) {
                 updater.stop("finished");
             }

@@ -14,13 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.coinkarasu.R;
-import com.coinkarasu.pagers.HistoricalPricePagerAdapter;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.format.PriceColorFormat;
 import com.coinkarasu.format.SignedPriceFormat;
 import com.coinkarasu.format.TrendColorFormat;
 import com.coinkarasu.format.TrendIconFormat;
 import com.coinkarasu.format.TrendValueFormat;
+import com.coinkarasu.pagers.HistoricalPricePagerAdapter;
 
 import java.util.ArrayList;
 
@@ -91,7 +91,7 @@ public class HistoricalPriceFragment extends Fragment implements
         }
 
         tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
-        setSelected(DEFAULT_KIND.ordinal(), view);
+        setTabSelected(tab);
 
         Spanned text = Html.fromHtml(getString(R.string.line_chart_info, fromSymbol, toSymbol));
         ((TextView) view.findViewById(R.id.info_text)).setText(text);
@@ -111,8 +111,7 @@ public class HistoricalPriceFragment extends Fragment implements
     }
 
     public void updateTab(int position, ArrayList<History> records) {
-        View container = getView();
-        if (container == null) {
+        if (getView() == null) {
             return;
         }
 
@@ -144,39 +143,46 @@ public class HistoricalPriceFragment extends Fragment implements
         tab.setTag(priceDiff);
     }
 
-    private void setSelected(int position, View container) {
-        if (tab == null || container == null) {
+    private void setTabSelected(TabLayout.Tab tab) {
+        if (tab == null || tab.getCustomView() == null) {
             return;
         }
 
-        int inactiveTextColor = getResources().getColor(R.color.colorTabInactiveText);
         View view = tab.getCustomView();
-        view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
-        ((TextView) view.findViewById(R.id.label)).setTextColor(inactiveTextColor);
-        ((TextView) view.findViewById(R.id.price)).setTextColor(inactiveTextColor);
+        int activeTextColor = getResources().getColor(R.color.colorTabActiveText);
+
+        view.findViewById(R.id.tab_container).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        ((TextView) view.findViewById(R.id.label)).setTextColor(activeTextColor);
+        ((TextView) view.findViewById(R.id.price)).setTextColor(activeTextColor);
+        ((TextView) view.findViewById(R.id.trend)).setTextColor(activeTextColor);
 
         Object tag = tab.getTag();
         double priceDiff = tag == null ? 0 : (double) tag;
+
+        ((ImageView) view.findViewById(R.id.trend_icon))
+                .setImageResource(new TrendIconFormat().format(priceDiff, true));
+    }
+
+    private void setTabUnselected(TabLayout.Tab tab) {
+        if (tab == null || tab.getCustomView() == null) {
+            return;
+        }
+
+        View view = tab.getCustomView();
+        int inactiveTextColor = getResources().getColor(R.color.colorTabInactiveText);
+
+        view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
+        ((TextView) view.findViewById(R.id.label)).setTextColor(inactiveTextColor);
+
+        Object tag = tab.getTag();
+        double priceDiff = tag == null ? 0 : (double) tag;
+
         ((TextView) view.findViewById(R.id.price))
                 .setTextColor(getResources().getColor(new PriceColorFormat().format(priceDiff)));
         ((TextView) view.findViewById(R.id.trend))
                 .setTextColor(getResources().getColor(new TrendColorFormat().format(priceDiff)));
         ((ImageView) view.findViewById(R.id.trend_icon))
                 .setImageResource(new TrendIconFormat().format(priceDiff));
-
-        tab = ((TabLayout) container.findViewById(R.id.tab_layout)).getTabAt(position);
-
-        int activeTextColor = getResources().getColor(R.color.colorTabActiveText);
-        view = tab.getCustomView();
-        view.findViewById(R.id.tab_container).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        ((TextView) view.findViewById(R.id.label)).setTextColor(activeTextColor);
-        ((TextView) view.findViewById(R.id.price)).setTextColor(activeTextColor);
-
-        tag = tab.getTag();
-        priceDiff = tag == null ? 0 : (double) tag;
-        ((TextView) view.findViewById(R.id.trend)).setTextColor(activeTextColor);
-        ((ImageView) view.findViewById(R.id.trend_icon))
-                .setImageResource(new TrendIconFormat().format(priceDiff, true));
     }
 
     @Override
@@ -205,7 +211,9 @@ public class HistoricalPriceFragment extends Fragment implements
             int position = ((ViewPager) getView().findViewById(R.id.view_pager)).getCurrentItem();
 
             if (position != tab.getPosition()) {
-                setSelected(position, getView());
+                setTabUnselected(tab);
+                tab = ((TabLayout) getView().findViewById(R.id.tab_layout)).getTabAt(position);
+                setTabSelected(tab);
             }
         }
     }

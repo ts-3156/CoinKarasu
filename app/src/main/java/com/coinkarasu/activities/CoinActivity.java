@@ -32,7 +32,6 @@ public class CoinActivity extends AppCompatActivity {
     private static final String TAG = "CoinActivity";
     public static final String KEY_COIN_JSON = "KEY_COIN_JSON";
 
-    private String boardKind;
     private Coin coin;
     private Log logger;
 
@@ -49,12 +48,13 @@ public class CoinActivity extends AppCompatActivity {
             logger.e(TAG, e);
         }
 
-        boardKind = "order_book";
-        updateView();
-        drawBoardChart();
+        if (savedInstanceState == null) {
+            setupFragment();
+            drawBoardChart();
+        }
     }
 
-    private void updateView() {
+    private void setupFragment() {
         String toSymbol = coin.getToSymbol();
         updateToolbarTitle(toSymbol);
 
@@ -62,7 +62,7 @@ public class CoinActivity extends AppCompatActivity {
         Fragment lineChart = HistoricalPriceFragment.newInstance(coin.getSymbol(), toSymbol);
         Fragment exchange = CoinExchangeFragment.newInstance("overview", coin.toJson().toString());
         Fragment pieChart = CoinPieChartFragment.newInstance(coin.getSymbol(), toSymbol);
-        Fragment board = CoinBoardFragment.newInstance(boardKind);
+        Fragment board = CoinBoardFragment.newInstance("order_book");
 
         setEnterTransition(card);
         setEnterTransition(lineChart);
@@ -129,7 +129,7 @@ public class CoinActivity extends AppCompatActivity {
             } else {
                 PrefHelper.saveToSymbol(this, MainActivity.Currency.USD.name());
             }
-            updateView();
+            setupFragment();
 
             return true;
         }

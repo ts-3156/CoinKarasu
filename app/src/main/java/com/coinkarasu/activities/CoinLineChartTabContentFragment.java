@@ -80,9 +80,6 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
 
         if (taskStarted) {
-//            if (chart != null) {
-//                chart.animateX();
-//            }
             return;
         }
 
