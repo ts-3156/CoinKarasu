@@ -45,6 +45,7 @@ public abstract class ValueAnimatorBase implements ValueAnimator.AnimatorUpdateL
         if (animator != null) {
             animator.cancel();
         }
+        setValue(getValue());
     }
 
     double getPrevValue() {

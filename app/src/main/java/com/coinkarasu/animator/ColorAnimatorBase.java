@@ -42,6 +42,7 @@ public abstract class ColorAnimatorBase implements ValueAnimator.AnimatorUpdateL
 
     public void cancel() {
         animator.cancel();
+        setValue(getValue());
     }
 
     int getPrevValue() {

@@ -19,7 +19,7 @@ public class Log {
     private boolean isRunning;
 
     public Log(Context context) {
-        this.context = context;
+//        this.context = context.getApplicationContext();
         queue = new LinkedList<>();
         isRunning = false;
     }

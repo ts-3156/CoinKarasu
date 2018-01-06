@@ -245,37 +245,29 @@ public class CoinListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         holder.trendIcon.setImageResource(resources.trendIconFormat.format(coin.getTrend()));
 
         if (!isAnimPaused && isAnimEnabled && !isScrolled) {
-            if (coin.getPrice() != coin.getPrevPrice()) {
-                holder.priceAnimator = new PriceAnimator(coin, holder.price);
-                holder.priceAnimator.start();
+            holder.priceAnimator = new PriceAnimator(coin, holder.price);
+            holder.priceAnimator.start();
 
-                if (coin.getPrice() > coin.getPrevPrice()) {
-                    holder.priceBgColorAnimator = new PriceBgColorAnimator(resources.priceUpFromColor, resources.priceToColor, holder.container);
-                } else {
-                    holder.priceBgColorAnimator = new PriceBgColorAnimator(resources.priceDownFromColor, resources.priceToColor, holder.container);
-                }
+            if (coin.getPrice() > coin.getPrevPrice()) {
+                holder.priceBgColorAnimator = new PriceBgColorAnimator(resources.priceUpFromColor, resources.priceToColor, holder.container);
+            } else if (coin.getPrice() < coin.getPrevPrice()) {
+                holder.priceBgColorAnimator = new PriceBgColorAnimator(resources.priceDownFromColor, resources.priceToColor, holder.container);
+            }
+            if (holder.priceBgColorAnimator != null) {
                 holder.priceBgColorAnimator.start();
-            } else {
-                holder.price.setText(resources.priceFormatter.format(coin.getPrice()));
             }
 
-            if (coin.getPriceDiff() != coin.getPrevPriceDiff()) {
-                holder.priceDiffAnimator = new PriceDiffAnimator(coin, holder.price_diff);
-                holder.priceDiffAnimator.start();
-            } else {
-                holder.price_diff.setText(resources.signedPriceFormatter.format(coin.getPriceDiff()));
-            }
+            holder.priceDiffAnimator = new PriceDiffAnimator(coin, holder.price_diff);
+            holder.priceDiffAnimator.start();
 
-            if (coin.getTrend() != coin.getPrevTrend()) {
-                holder.trendAnimator = new TrendAnimator(coin, holder.trend);
-                holder.trendAnimator.start();
-            } else {
-                holder.trend.setText(resources.surroundedTrendFormatter.format(coin.getTrend()));
-            }
+            holder.trendAnimator = new TrendAnimator(coin, holder.trend);
+            holder.trendAnimator.start();
         } else {
             holder.price.setText(resources.priceFormatter.format(coin.getPrice()));
             holder.price_diff.setText(resources.signedPriceFormatter.format(coin.getPriceDiff()));
             holder.trend.setText(resources.surroundedTrendFormatter.format(coin.getTrend()));
+            holder.container.setBackgroundColor(resources.priceToColor);
+
         }
 
         holder.container.setOnClickListener(new View.OnClickListener() {
