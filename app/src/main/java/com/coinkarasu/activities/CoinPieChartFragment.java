@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class CoinPieChartFragment extends Fragment implements
@@ -85,7 +86,7 @@ public class CoinPieChartFragment extends Fragment implements
         return view;
     }
 
-    private void createTabs(ArrayList<TopPair> pairs) {
+    private void createTabs(List<TopPair> pairs) {
         if (tabsCreated || getView() == null || getActivity() == null) {
             return;
         }
@@ -154,7 +155,7 @@ public class CoinPieChartFragment extends Fragment implements
     }
 
     @Override
-    public void finished(ArrayList<TopPair> pairs) {
+    public void finished(List<TopPair> pairs) {
         if (isDetached() || getView() == null) {
             taskStarted = false;
             errorCount++;

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 
 public class UpdateTrendingIntentService extends IntentService {
 
@@ -70,12 +71,12 @@ public class UpdateTrendingIntentService extends IntentService {
         Collections.addAll(uniqueSymbols, array);
 
         Prices prices = ClientFactory.getInstance(this).getPrices(uniqueSymbols.toArray(new String[uniqueSymbols.size()]), toSymbol, exchange);
-        ArrayList<PriceMultiFullCoin> baseCoins = prices.getCoins();
+        List<PriceMultiFullCoin> baseCoins = prices.getCoins();
         ArrayList<Coin> coins = new ArrayList<>();
         CoinList coinList = CoinListImpl.getInstance(this);
 
         for (PriceMultiFullCoin coin : baseCoins) {
-            ArrayList<History> records = getHistories(kind, coin.getFromSymbol(), coin.getToSymbol(), exchange);
+            List<History> records = getHistories(kind, coin.getFromSymbol(), coin.getToSymbol(), exchange);
             if (records.isEmpty()) {
                 continue;
             }
@@ -113,9 +114,9 @@ public class UpdateTrendingIntentService extends IntentService {
                 + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 
-    private ArrayList<History> getHistories(TrendingKind kind, String fromSymbol, String toSymbol, String exchange) {
+    private List<History> getHistories(TrendingKind kind, String fromSymbol, String toSymbol, String exchange) {
         Client client = ClientFactory.getInstance(this);
-        ArrayList<History> records = new ArrayList<>();
+        List<History> records = new ArrayList<>();
 
         switch (kind) {
             case one_hour:

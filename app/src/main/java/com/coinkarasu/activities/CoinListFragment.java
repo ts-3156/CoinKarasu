@@ -37,6 +37,7 @@ import com.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 public class CoinListFragment extends Fragment implements
@@ -140,7 +141,7 @@ public class CoinListFragment extends Fragment implements
                 .setFromSymbols(fromSymbols)
                 .setListener(new CollectCoinsTask.Listener() {
                     @Override
-                    public void coinsCollected(ArrayList<Coin> coins) {
+                    public void coinsCollected(List<Coin> coins) {
                         String toSymbol = kind.getToSymbol();
                         for (Coin coin : coins) {
                             coin.setToSymbol(toSymbol);
@@ -217,7 +218,7 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
-        ArrayList<Coin> coins = adapter.getItems(exchange, coinKind);
+        List<Coin> coins = adapter.getItems(exchange, coinKind);
         if (coins.isEmpty()) {
             return;
         }
@@ -326,7 +327,7 @@ public class CoinListFragment extends Fragment implements
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         CoinListAdapter adapter = (CoinListAdapter) recyclerView.getAdapter();
 
-        ArrayList<Coin> coins = adapter.getItems(exchange, coinKind);
+        List<Coin> coins = adapter.getItems(exchange, coinKind);
 
         for (Price price : prices) {
             for (Coin coin : coins) {

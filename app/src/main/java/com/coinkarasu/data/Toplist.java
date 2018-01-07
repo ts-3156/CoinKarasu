@@ -3,17 +3,18 @@ package com.coinkarasu.data;
 import android.content.Context;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.coins.PriceMultiFullCoinImpl;
 import com.coinkarasu.utils.DiskCacheHelper;
+import com.crashlytics.android.Crashlytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Toplist {
 
@@ -63,7 +64,7 @@ public class Toplist {
         return "toplist_" + kind.name() + ".json";
     }
 
-    public ArrayList<PriceMultiFullCoin> getCoins() {
+    public List<PriceMultiFullCoin> getCoins() {
         return coins;
     }
 

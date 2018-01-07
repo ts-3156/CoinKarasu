@@ -4,6 +4,7 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.api.cryptocompare.response.Cacheable;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface CoinList extends Cacheable {
 //    static CoinList buildByResponse(JSONObject response);
@@ -16,11 +17,11 @@ public interface CoinList extends Cacheable {
 
     //    static CoinListImpl.Builder builder();
 
-    ArrayList<Coin> collectCoins(String[] fromSymbols);
+    List<Coin> collectCoins(String[] fromSymbols);
 
-    ArrayList<String> getAllSymbols();
+    List<String> getAllSymbols();
 
-    ArrayList<String> getAllSymbols(int offset, int limit);
+    List<String> getAllSymbols(int offset, int limit);
 
     void removeBySymbols(ArrayList<String> symbols);
 }

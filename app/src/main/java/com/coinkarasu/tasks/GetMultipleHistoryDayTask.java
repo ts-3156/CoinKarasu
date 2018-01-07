@@ -7,6 +7,7 @@ import com.coinkarasu.api.cryptocompare.data.History;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,7 +58,7 @@ public class GetMultipleHistoryDayTask extends AsyncTask<Integer, Integer, Integ
     @Override
     protected void onPostExecute(Integer integer) {
         if (listener != null) {
-            HashMap<String, ArrayList<History>> map = new HashMap<>();
+            HashMap<String, List<History>> map = new HashMap<>();
 
             for (GetHistoryDayThread thread : threads) {
                 map.put(thread.getExchange(), thread.getHistories());
@@ -88,6 +89,6 @@ public class GetMultipleHistoryDayTask extends AsyncTask<Integer, Integer, Integ
     }
 
     public interface Listener {
-        void finished(HashMap<String, ArrayList<History>> map);
+        void finished(HashMap<String, List<History>> map);
     }
 }

@@ -4,7 +4,6 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.api.cryptocompare.response.Cacheable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface Prices extends Cacheable {
@@ -12,7 +11,7 @@ public interface Prices extends Cacheable {
 
     void copyAttrsToCoin(Coin coin);
 
-    ArrayList<PriceMultiFullCoin> getCoins();
+    List<PriceMultiFullCoin> getCoins();
 
     void copyAttrsToCoins(List<Coin> coins);
 

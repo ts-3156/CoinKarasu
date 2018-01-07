@@ -22,7 +22,7 @@ import com.coinkarasu.format.TrendIconFormat;
 import com.coinkarasu.format.TrendValueFormat;
 import com.coinkarasu.pagers.HistoricalPricePagerAdapter;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class HistoricalPriceFragment extends Fragment implements
@@ -110,7 +110,7 @@ public class HistoricalPriceFragment extends Fragment implements
         return view;
     }
 
-    public void updateTab(int position, ArrayList<History> records) {
+    public void updateTab(int position, List<History> records) {
         if (getView() == null) {
             return;
         }

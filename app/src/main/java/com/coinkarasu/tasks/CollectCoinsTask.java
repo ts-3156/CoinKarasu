@@ -8,12 +8,13 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.services.UpdateCoinListIntentService;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CollectCoinsTask extends AsyncTask<Integer, Integer, Integer> {
     private Listener listener;
     private String[] fromSymbols;
     private Context context;
-    private ArrayList<Coin> coins;
+    private List<Coin> coins;
 
     public CollectCoinsTask(Context context) {
         this.context = context;
@@ -56,6 +57,6 @@ public class CollectCoinsTask extends AsyncTask<Integer, Integer, Integer> {
     }
 
     public interface Listener {
-        void coinsCollected(ArrayList<Coin> coins);
+        void coinsCollected(List<Coin> coins);
     }
 }

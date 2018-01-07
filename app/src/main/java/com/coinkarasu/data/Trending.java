@@ -2,17 +2,18 @@ package com.coinkarasu.data;
 
 import android.content.Context;
 
-import com.crashlytics.android.Crashlytics;
 import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.utils.DiskCacheHelper;
+import com.crashlytics.android.Crashlytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Trending {
 
@@ -58,7 +59,7 @@ public class Trending {
         return "trending_" + kind.name() + ".json";
     }
 
-    public ArrayList<Coin> getCoins() {
+    public List<Coin> getCoins() {
         return coins;
     }
 

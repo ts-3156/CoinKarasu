@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 public class CoinLineChart {
     private LineChart chart;
@@ -71,7 +72,7 @@ public class CoinLineChart {
         chart.getXAxis().setValueFormatter(new OffsetFormatter(getSimpleDateFormat(kind)));
     }
 
-    public void setData(ArrayList<History> records) {
+    public void setData(List<History> records) {
         ArrayList<Entry> values = new ArrayList<>(records.size());
 
         offsetSeconds = records.get(0).getTime();
@@ -102,13 +103,13 @@ public class CoinLineChart {
         chart.setData(data);
     }
 
-    public void setData(HashMap<String, ArrayList<History>> map) {
+    public void setData(HashMap<String, List<History>> map) {
         LineData data = new LineData();
         data.setValueTextColor(Color.WHITE);
         data.setValueTextSize(9f);
 
         for (String exchange : map.keySet()) {
-            ArrayList<History> records = map.get(exchange);
+            List<History> records = map.get(exchange);
             if (records.isEmpty()) {
                 continue;
             }

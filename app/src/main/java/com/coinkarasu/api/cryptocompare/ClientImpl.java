@@ -25,6 +25,7 @@ import com.coinkarasu.utils.StringHelper;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class ClientImpl implements Client {
 
@@ -61,7 +62,7 @@ class ClientImpl implements Client {
         return new PricesImpl(new PricesResponseImpl(response, fromSymbols, toSymbol, exchange));
     }
 
-    private ArrayList<History> getHistoryXxx(HistoryResponseImpl.Kind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+    private List<History> getHistoryXxx(HistoryResponseImpl.Kind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
         String url = "https://min-api.cryptocompare.com/data/histo" + kind +
                 "?fsym=" + fromSymbol + "&tsym=" + toSymbol + "&e=" + exchange +
                 "&limit=" + limit + "&aggregate=" + aggregate;
@@ -80,8 +81,8 @@ class ClientImpl implements Client {
     }
 
     @Override
-    public ArrayList<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        ArrayList<History> records = getHistoryXxx(HistoryResponseImpl.Kind.minute, fromSymbol, toSymbol, limit, 1, exchange);
+    public List<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+        List<History> records = getHistoryXxx(HistoryResponseImpl.Kind.minute, fromSymbol, toSymbol, limit, 1, exchange);
         if (aggregate == 1) {
             return records;
         } else {
@@ -90,23 +91,23 @@ class ClientImpl implements Client {
     }
 
     @Override
-    public ArrayList<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit) {
+    public List<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit) {
         return getHistoryMinute(fromSymbol, toSymbol, limit, 1, DEFAULT_EXCHANGE);
     }
 
     @Override
-    public ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate) {
+    public List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate) {
         return getHistoryHour(fromSymbol, toSymbol, limit, aggregate, DEFAULT_EXCHANGE);
     }
 
     @Override
-    public ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit) {
+    public List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit) {
         return getHistoryHour(fromSymbol, toSymbol, limit, 1);
     }
 
     @Override
-    public ArrayList<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        ArrayList<History> records = getHistoryXxx(HistoryResponseImpl.Kind.hour, fromSymbol, toSymbol, limit, 1, exchange);
+    public List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+        List<History> records = getHistoryXxx(HistoryResponseImpl.Kind.hour, fromSymbol, toSymbol, limit, 1, exchange);
         if (aggregate == 1) {
             return records;
         } else {
@@ -115,18 +116,18 @@ class ClientImpl implements Client {
     }
 
     @Override
-    public ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit) {
+    public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit) {
         return getHistoryDay(fromSymbol, toSymbol, limit, 1);
     }
 
     @Override
-    public ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate) {
+    public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate) {
         return getHistoryDay(fromSymbol, toSymbol, limit, aggregate, DEFAULT_EXCHANGE);
     }
 
     @Override
-    public ArrayList<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        ArrayList<History> records = getHistoryXxx(HistoryResponseImpl.Kind.day, fromSymbol, toSymbol, limit, 1, exchange);
+    public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+        List<History> records = getHistoryXxx(HistoryResponseImpl.Kind.day, fromSymbol, toSymbol, limit, 1, exchange);
         if (aggregate == 1) {
             return records;
         } else {
@@ -144,7 +145,7 @@ class ClientImpl implements Client {
     }
 
     @Override
-    public ArrayList<TopPair> getTopPairs(String fromSymbol) {
+    public List<TopPair> getTopPairs(String fromSymbol) {
         String url = "https://min-api.cryptocompare.com/data/top/pairs?fsym=" + fromSymbol + "&limit=100";
 
         TopPairsResponse topPairsResponse;
@@ -160,7 +161,7 @@ class ClientImpl implements Client {
         return new TopPairsImpl(topPairsResponse).getTopPairs();
     }
 
-    private ArrayList<History> sampling(ArrayList<History> records, int aggregate) {
+    private ArrayList<History> sampling(List<History> records, int aggregate) {
         ArrayList<History> samples = new ArrayList<>();
         int size = records.size();
 

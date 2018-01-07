@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HistoryResponseImpl implements HistoryResponse {
 
@@ -70,7 +71,7 @@ public class HistoryResponseImpl implements HistoryResponse {
     }
 
     @Override
-    public ArrayList<History> getHistories() {
+    public List<History> getHistories() {
         JSONArray data = getData();
         if (data == null) {
             Log.d("getHistories", "null");

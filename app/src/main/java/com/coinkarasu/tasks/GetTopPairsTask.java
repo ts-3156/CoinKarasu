@@ -6,11 +6,12 @@ import com.coinkarasu.api.cryptocompare.Client;
 import com.coinkarasu.api.cryptocompare.data.TopPair;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GetTopPairsTask extends AsyncTask<Integer, Integer, Integer> {
     private Listener listener;
     private Client client;
-    private ArrayList<TopPair> topPairs;
+    private List<TopPair> topPairs;
     private String fromSymbol;
 
     public GetTopPairsTask(Client client) {
@@ -44,6 +45,6 @@ public class GetTopPairsTask extends AsyncTask<Integer, Integer, Integer> {
     }
 
     public interface Listener {
-        void finished(ArrayList<TopPair> topPairs);
+        void finished(List<TopPair> topPairs);
     }
 }

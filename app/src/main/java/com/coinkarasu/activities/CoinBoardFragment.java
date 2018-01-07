@@ -17,7 +17,7 @@ import com.coinkarasu.api.bitflyer.data.Board;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class CoinBoardFragment extends Fragment implements View.OnClickListener {
@@ -143,7 +143,7 @@ public class CoinBoardFragment extends Fragment implements View.OnClickListener 
         DecimalFormat sizeFormat = new DecimalFormat("#.#");
         sizeFormat.setMinimumFractionDigits(8);
 
-        ArrayList<Board.Row> rows = board.getRows(8, 8);
+        List<Board.Row> rows = board.getRows(8, 8);
 
         addOverRow(board.getOver(8), columnAsk, columnPrice, columnBid, layoutParams);
 

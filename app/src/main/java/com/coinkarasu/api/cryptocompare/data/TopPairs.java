@@ -1,8 +1,8 @@
 package com.coinkarasu.api.cryptocompare.data;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface TopPairs {
 
-    ArrayList<TopPair> getTopPairs();
+    List<TopPair> getTopPairs();
 }

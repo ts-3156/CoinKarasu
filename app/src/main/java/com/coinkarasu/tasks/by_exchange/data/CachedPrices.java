@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CachedPrices {
 
@@ -31,7 +32,7 @@ public class CachedPrices {
         this.isCache = isCache;
     }
 
-    public ArrayList<Price> getPrices() {
+    public List<Price> getPrices() {
         return prices;
     }
 

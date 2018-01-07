@@ -92,8 +92,8 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
         return coins.get(position);
     }
 
-    public ArrayList<Coin> getItems(Exchange exchange, CoinKind coinKind) {
-        ArrayList<Coin> filtered = new ArrayList<>();
+    public List<Coin> getItems(Exchange exchange, CoinKind coinKind) {
+        List<Coin> filtered = new ArrayList<>();
         for (Coin coin : coins) {
             if (coin.isSectionHeader()
                     || coin.isAdCoin()

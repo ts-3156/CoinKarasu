@@ -18,9 +18,9 @@ import com.coinkarasu.chart.CoinLineChart;
 import com.coinkarasu.tasks.GetMultipleHistoryDayTask;
 import com.github.mikephil.charting.charts.LineChart;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 public class CoinExchangesTabContentFragment extends Fragment implements GetMultipleHistoryDayTask.Listener {
 
@@ -97,7 +97,7 @@ public class CoinExchangesTabContentFragment extends Fragment implements GetMult
     }
 
     @Override
-    public void finished(HashMap<String, ArrayList<History>> map) {
+    public void finished(HashMap<String, List<History>> map) {
         if (isDetached() || getView() == null) {
             taskStarted = false;
             errorCount++;
@@ -114,7 +114,7 @@ public class CoinExchangesTabContentFragment extends Fragment implements GetMult
 
         if (map.isEmpty()) {
             Log.e("finished", "empty, " + errorCount);
-            drawChart(new HashMap<String, ArrayList<History>>());
+            drawChart(new HashMap<String, List<History>>());
             return;
         }
 
@@ -124,7 +124,7 @@ public class CoinExchangesTabContentFragment extends Fragment implements GetMult
         Log.d("UPDATED", map.size() + ", " + new Date().toString());
     }
 
-    private void drawChart(HashMap<String, ArrayList<History>> map) {
+    private void drawChart(HashMap<String, List<History>> map) {
         if (map.isEmpty()) {
             getView().findViewById(R.id.line_chart).setVisibility(View.GONE);
             Spanned text = Html.fromHtml(getString(R.string.exchange_warn_each_exchange, fromSymbol, toSymbol, "")); // TODO

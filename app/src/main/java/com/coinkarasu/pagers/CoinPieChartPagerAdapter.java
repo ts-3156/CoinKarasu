@@ -9,6 +9,7 @@ import com.coinkarasu.activities.CoinPieChartTabContentFragment;
 import com.coinkarasu.api.cryptocompare.data.TopPair;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CoinPieChartPagerAdapter extends FragmentPagerAdapter {
     ArrayList<Fragment> fragments;
@@ -17,7 +18,7 @@ public class CoinPieChartPagerAdapter extends FragmentPagerAdapter {
         super(manager);
     }
 
-    public CoinPieChartPagerAdapter(FragmentManager manager, String fromSymbol, String toSymbol, ArrayList<TopPair> pairs) {
+    public CoinPieChartPagerAdapter(FragmentManager manager, String fromSymbol, String toSymbol, List<TopPair> pairs) {
         super(manager);
         fragments = new ArrayList<>();
 

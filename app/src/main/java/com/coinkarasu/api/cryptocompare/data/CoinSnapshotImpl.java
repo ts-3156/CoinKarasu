@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CoinSnapshotImpl implements CoinSnapshot {
     private String algorithm;
@@ -98,7 +99,7 @@ public class CoinSnapshotImpl implements CoinSnapshot {
     }
 
     @Override
-    public ArrayList<SnapshotCoin> getSnapshotCoins() {
+    public List<SnapshotCoin> getSnapshotCoins() {
         return snapshotCoins;
     }
 

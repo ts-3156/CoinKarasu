@@ -20,6 +20,7 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.data.Trending;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class HomeTabCardFragment extends Fragment implements
@@ -78,7 +79,7 @@ public class HomeTabCardFragment extends Fragment implements
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         recyclerView.addItemDecoration(new HomeTabHorizontalSpaceItemDecoration(getActivity(), getResources().getDimensionPixelSize(R.dimen.home_tab_horizontal_gap)));
 
-        ArrayList<Coin> coins = new ArrayList<>();
+        List<Coin> coins = new ArrayList<>();
         Trending trending = Trending.restoreFromCache(getActivity(), kind);
         if (trending != null) {
             coins = trending.getCoins();

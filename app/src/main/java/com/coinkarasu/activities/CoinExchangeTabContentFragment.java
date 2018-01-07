@@ -26,6 +26,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class CoinExchangeTabContentFragment extends Fragment implements GetHistoryHourTask.Listener {
 
@@ -112,7 +113,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     }
 
     @Override
-    public void finished(ArrayList<History> records) {
+    public void finished(List<History> records) {
         if (isDetached() || getView() == null) {
             taskStarted = false;
             errorCount++;
@@ -139,7 +140,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         Log.d("UPDATED", exchange + ", " + records.size() + ", " + new Date().toString());
     }
 
-    private void drawChart(ArrayList<History> records) {
+    private void drawChart(List<History> records) {
         if (records.isEmpty()) {
             getView().findViewById(R.id.line_chart).setVisibility(View.GONE);
             Spanned text = Html.fromHtml(getString(R.string.exchange_warn_each_exchange, coin.getFromSymbol(), coin.getToSymbol(), exchange));

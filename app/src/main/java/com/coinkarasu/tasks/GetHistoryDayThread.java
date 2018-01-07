@@ -4,11 +4,12 @@ import com.coinkarasu.api.cryptocompare.Client;
 import com.coinkarasu.api.cryptocompare.data.History;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 public class GetHistoryDayThread extends Thread {
     private CountDownLatch latch;
-    private ArrayList<History> histories;
+    private List<History> histories;
 
     private Client client;
     private String fromSymbol;
@@ -43,7 +44,7 @@ public class GetHistoryDayThread extends Thread {
         return exchange;
     }
 
-    public ArrayList<History> getHistories() {
+    public List<History> getHistories() {
         return histories;
     }
 }

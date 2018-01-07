@@ -163,7 +163,7 @@ public class PricesImpl implements Prices {
     }
 
     @Override
-    public ArrayList<PriceMultiFullCoin> getCoins() {
+    public List<PriceMultiFullCoin> getCoins() {
         return coins;
     }
 

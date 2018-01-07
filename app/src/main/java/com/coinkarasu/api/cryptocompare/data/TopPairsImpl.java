@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TopPairsImpl implements TopPairs {
 
@@ -35,7 +36,7 @@ public class TopPairsImpl implements TopPairs {
     }
 
     @Override
-    public ArrayList<TopPair> getTopPairs() {
+    public List<TopPair> getTopPairs() {
         return topPairs;
     }
 }

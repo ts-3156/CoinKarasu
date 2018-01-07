@@ -14,17 +14,17 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.format.PriceFormat;
 import com.coinkarasu.format.TrendValueFormat;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class HomeTabRecyclerViewAdapter extends RecyclerView.Adapter<HomeTabRecyclerViewAdapter.ViewHolder> {
 
     private LayoutInflater inflater;
     private OnItemClickListener listener;
-    private ArrayList<Coin> coins;
+    private List<Coin> coins;
 
     private ResourceUtils resources;
 
-    public HomeTabRecyclerViewAdapter(Context context, ArrayList<Coin> coins) {
+    public HomeTabRecyclerViewAdapter(Context context, List<Coin> coins) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.coins = coins;
 

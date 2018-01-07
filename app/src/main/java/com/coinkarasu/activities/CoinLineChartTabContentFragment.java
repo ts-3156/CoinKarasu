@@ -18,6 +18,7 @@ import com.github.mikephil.charting.charts.LineChart;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class CoinLineChartTabContentFragment extends Fragment implements GetHistoryTaskBase.Listener {
 
@@ -87,7 +88,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     }
 
     @Override
-    public void finished(ArrayList<History> records) {
+    public void finished(List<History> records) {
         if (records.isEmpty()) {
             Log.e("finished", "empty, " + kind + ", " + errorCount);
             taskStarted = false;
@@ -108,7 +109,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         Log.d("UPDATED", kind + ", " + records.size() + ", " + new Date().toString());
     }
 
-    private void drawChart(ArrayList<History> records) {
+    private void drawChart(List<History> records) {
         chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart));
         chart.initialize(kind.name());
         chart.setData(records);

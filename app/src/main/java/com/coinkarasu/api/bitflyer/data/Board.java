@@ -100,7 +100,7 @@ public class Board {
         return under;
     }
 
-    public ArrayList<Row> getRows(double lowerPriceDiff, double upperPriceDiff) {
+    public List<Row> getRows(double lowerPriceDiff, double upperPriceDiff) {
         ArrayList<Row> rows = new ArrayList<>();
 
         double upperPrice = midPrice + upperPriceDiff;
@@ -131,7 +131,7 @@ public class Board {
         return Math.min(rows, size - 1);
     }
 
-    public ArrayList<Row> getRows(int askRows, int bidRows) {
+    public List<Row> getRows(int askRows, int bidRows) {
         ArrayList<Row> rows = new ArrayList<>();
 
         List<Data> tailAsks = asks.subList(tailIndex(askRows, asks.size()), asks.size());

@@ -6,11 +6,12 @@ import com.coinkarasu.api.cryptocompare.Client;
 import com.coinkarasu.api.cryptocompare.data.History;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GetHistoryTaskBase extends AsyncTask<Integer, Integer, Integer> {
     Listener listener;
     Client client;
-    ArrayList<History> histories;
+    List<History> histories;
     String fromSymbol;
     String toSymbol;
     String exchange;
@@ -92,6 +93,6 @@ public class GetHistoryTaskBase extends AsyncTask<Integer, Integer, Integer> {
     }
 
     public interface Listener {
-        void finished(ArrayList<History> histories);
+        void finished(List<History> histories);
     }
 }

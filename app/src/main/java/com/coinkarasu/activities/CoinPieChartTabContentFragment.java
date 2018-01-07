@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 public class CoinPieChartTabContentFragment extends Fragment implements
         GetTopPairsTask.Listener, GetCoinSnapshotTask.Listener {
@@ -110,7 +111,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     }
 
     @Override
-    public void finished(ArrayList<TopPair> pairs) {
+    public void finished(List<TopPair> pairs) {
         if (isDetached() || getView() == null) {
             taskStarted = false;
             errorCount++;
@@ -160,7 +161,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             return;
         }
 
-        ArrayList<SnapshotCoin> coins = snapshot.getSnapshotCoins();
+        List<SnapshotCoin> coins = snapshot.getSnapshotCoins();
         if (coins == null) {
             Log.e("finished", "null(retry), " + kind + ", " + errorCount);
             taskStarted = false;

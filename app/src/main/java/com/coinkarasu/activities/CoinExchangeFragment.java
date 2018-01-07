@@ -33,10 +33,10 @@ import com.coinkarasu.tasks.GetCoinSnapshotTask;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 
 
 public class CoinExchangeFragment extends Fragment implements
@@ -91,7 +91,7 @@ public class CoinExchangeFragment extends Fragment implements
         return view;
     }
 
-    private void createTabs(ArrayList<SnapshotCoin> coins) {
+    private void createTabs(List<SnapshotCoin> coins) {
         if (tabsCreated || getView() == null || getActivity() == null) {
             return;
         }
@@ -143,7 +143,7 @@ public class CoinExchangeFragment extends Fragment implements
         return view;
     }
 
-    public void updateTab(int position, ArrayList<History> records) {
+    public void updateTab(int position, List<History> records) {
         View container = getView();
         if (container == null) {
             return;
@@ -229,7 +229,7 @@ public class CoinExchangeFragment extends Fragment implements
             return;
         }
 
-        ArrayList<SnapshotCoin> coins = snapshot.getSnapshotCoins();
+        List<SnapshotCoin> coins = snapshot.getSnapshotCoins();
         if (coins == null) {
             Log.e("finished", "null(retry), " + kind + ", " + errorCount);
             taskStarted = false;

@@ -108,7 +108,7 @@ public class CoinListImpl implements CoinList {
     }
 
     @Override
-    public ArrayList<Coin> collectCoins(String[] fromSymbols) {
+    public List<Coin> collectCoins(String[] fromSymbols) {
         long start = System.currentTimeMillis();
         final ArrayList<Coin> coins = new ArrayList<>(fromSymbols.length);
 
@@ -156,12 +156,12 @@ public class CoinListImpl implements CoinList {
     }
 
     @Override
-    public ArrayList<String> getAllSymbols() {
+    public List<String> getAllSymbols() {
         return getAllSymbols(0, 3000);
     }
 
     @Override
-    public ArrayList<String> getAllSymbols(int offset, int limit) {
+    public List<String> getAllSymbols(int offset, int limit) {
         if (response == null || response.getData() == null) {
             return null;
         }

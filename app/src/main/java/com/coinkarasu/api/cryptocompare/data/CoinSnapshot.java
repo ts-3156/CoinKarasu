@@ -3,7 +3,7 @@ package com.coinkarasu.api.cryptocompare.data;
 import com.coinkarasu.coins.AggregatedSnapshotCoin;
 import com.coinkarasu.coins.SnapshotCoin;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface CoinSnapshot {
     String getAlgorithm();
@@ -18,7 +18,7 @@ public interface CoinSnapshot {
 
     AggregatedSnapshotCoin getAggregatedSnapshotCoin();
 
-    ArrayList<SnapshotCoin> getSnapshotCoins();
+    List<SnapshotCoin> getSnapshotCoins();
 
     double getNetHashesPerSecond();
 }

@@ -8,6 +8,7 @@ import com.coinkarasu.activities.CoinExchangeTabContentFragment;
 import com.coinkarasu.coins.SnapshotCoin;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CoinExchangePagerAdapter extends FragmentPagerAdapter {
     ArrayList<Fragment> fragments;
@@ -16,7 +17,7 @@ public class CoinExchangePagerAdapter extends FragmentPagerAdapter {
         super(manager);
     }
 
-    public CoinExchangePagerAdapter(FragmentManager manager, ArrayList<SnapshotCoin> coins) {
+    public CoinExchangePagerAdapter(FragmentManager manager, List<SnapshotCoin> coins) {
         super(manager);
         fragments = new ArrayList<>();
 
