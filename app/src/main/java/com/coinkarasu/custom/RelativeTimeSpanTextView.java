@@ -40,13 +40,13 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
 
     public void updateText() {
         if (DEBUG) logger.d(TAG, "updateText() is called.");
-        stopTimer();
+        stopTimer("updateText");
         time = System.currentTimeMillis();
-        startTimer();
+        startTimer("updateText");
     }
 
-    private void startTimer() {
-        if (DEBUG) logger.d(TAG, "startTimer() is called.");
+    private void startTimer(String caller) {
+        if (DEBUG) logger.d(TAG, "startTimer() is called from " + caller);
         if (timer != null) {
             return;
         }
@@ -67,8 +67,8 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
         }, 0, period);
     }
 
-    private void stopTimer() {
-        if (DEBUG) logger.d(TAG, "stopTimer() is called.");
+    private void stopTimer(String caller) {
+        if (DEBUG) logger.d(TAG, "stopTimer() is called from " + caller);
         if (timer != null) {
             timer.cancel();
             timer = null;
@@ -97,9 +97,9 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
     protected void onVisibilityChanged(View changedView, int visibility) {
         super.onVisibilityChanged(changedView, visibility);
         if (visibility == View.VISIBLE) {
-            startTimer(); // onResume
+            startTimer("onVisibilityChanged"); // onResume
         } else {
-            stopTimer(); // onPause
+            stopTimer("onVisibilityChanged"); // onPause
         }
     }
 
@@ -107,18 +107,19 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
     public void onWindowFocusChanged(boolean hasWindowFocus) {
         super.onWindowFocusChanged(hasWindowFocus);
         if (hasWindowFocus) {
-            startTimer(); // onResume
+            startTimer("onWindowFocusChanged"); // onResume
         } else {
-            stopTimer(); // onPause
+            stopTimer("onWindowFocusChanged"); // onPause
         }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        stopTimer(); // onDestroy
+        stopTimer("onDetachedFromWindow"); // onDestroy
     }
 
+    // TODO 今の実装では、ユニークなIDを持たないため呼ばれることはない。
     @Override
     public Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
@@ -127,6 +128,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
         return bundle;
     }
 
+    // TODO 今の実装では、ユニークなIDを持たないため呼ばれることはない。
     @Override
     public void onRestoreInstanceState(Parcelable state) {
         if (state instanceof Bundle) {
