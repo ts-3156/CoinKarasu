@@ -19,23 +19,23 @@ import com.coinkarasu.utils.volley.VolleyHelper;
 import java.util.HashMap;
 import java.util.List;
 
-class ResourceUtils {
+public class ResourceUtils {
 
-    ImageLoader imageLoader;
-    HashMap<String, Integer> symbolIconResIdMap;
-    SparseArray<String> headerNameResIdStringMap;
+    public ImageLoader imageLoader;
+    public HashMap<String, Integer> symbolIconResIdMap;
+    public SparseArray<String> headerNameResIdStringMap;
     private int trendUp;
     private int trendFlat;
     private int trendDown;
-    int priceUpFromColor;
-    int priceDownFromColor;
-    int priceToColor;
+    public int priceUpFromColor;
+    public int priceDownFromColor;
+    public int priceToColor;
 
-    PriceFormat priceFormatter;
-    SignedPriceFormat signedPriceFormatter;
+    public PriceFormat priceFormatter;
+    public SignedPriceFormat signedPriceFormatter;
     TrendValueFormat trendFormatter;
-    SurroundedTrendValueFormat surroundedTrendFormatter;
-    TrendIconFormat trendIconFormat;
+    public SurroundedTrendValueFormat surroundedTrendFormatter;
+    public TrendIconFormat trendIconFormat;
 
     ResourceUtils(Context context, List<Coin> coins) {
         symbolIconResIdMap = buildIconResIdMap(context, coins);
@@ -97,7 +97,7 @@ class ResourceUtils {
 
         priceUpFromColor = resources.getColor(R.color.colorPriceBgUp);
         priceDownFromColor = resources.getColor(R.color.colorPriceBgDown);
-        priceToColor = Color.WHITE;
+        priceToColor = resources.getColor(R.color.colorPriceDefault);
     }
 
     void toSymbolChanged(String symbol) {
@@ -105,7 +105,7 @@ class ResourceUtils {
         signedPriceFormatter = new SignedPriceFormat(symbol);
     }
 
-    int getTrendColor(double trend) {
+    public int getTrendColor(double trend) {
         int color;
 
         if (trend > 0.0) {
@@ -119,7 +119,7 @@ class ResourceUtils {
         return color;
     }
 
-    int getPriceColor(double price) {
+    public int getPriceColor(double price) {
         return getTrendColor(price);
     }
 }

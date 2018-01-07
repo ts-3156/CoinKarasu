@@ -1,6 +1,5 @@
 package com.coinkarasu.adapters.row;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -12,8 +11,8 @@ import com.coinkarasu.animator.PriceBgColorAnimator;
 import com.coinkarasu.animator.PriceDiffAnimator;
 import com.coinkarasu.animator.TrendAnimator;
 
-public final class ItemViewHolder extends RecyclerView.ViewHolder {
-    public View container;
+public final class ItemViewHolder extends CoinListViewHolder {
+    public View innerContainer;
     public NetworkImageView icon;
     public TextView name;
     public TextView symbol;
@@ -27,15 +26,15 @@ public final class ItemViewHolder extends RecyclerView.ViewHolder {
     public PriceBgColorAnimator priceBgColorAnimator = null;
     public TrendAnimator trendAnimator = null;
 
-    public ItemViewHolder(View view) {
-        super(view);
-        container = view.findViewById(R.id.inner_container);
-        icon = view.findViewById(R.id.icon);
-        name = view.findViewById(R.id.name);
-        symbol = view.findViewById(R.id.symbol);
-        price = view.findViewById(R.id.price);
-        price_diff = view.findViewById(R.id.price_diff);
-        trend = view.findViewById(R.id.trend);
-        trendIcon = view.findViewById(R.id.trend_icon);
+    public ItemViewHolder(View itemView, OnCoinClickListener listener) {
+        super(itemView, listener);
+        innerContainer = itemView.findViewById(R.id.inner_container);
+        icon = itemView.findViewById(R.id.icon);
+        name = itemView.findViewById(R.id.name);
+        symbol = itemView.findViewById(R.id.symbol);
+        price = itemView.findViewById(R.id.price);
+        price_diff = itemView.findViewById(R.id.price_diff);
+        trend = itemView.findViewById(R.id.trend);
+        trendIcon = itemView.findViewById(R.id.trend_icon);
     }
 }

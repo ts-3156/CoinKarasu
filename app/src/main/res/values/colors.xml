@@ -18,6 +18,7 @@
 
     <color name="colorPriceBgUp">#E8F5E9</color>
     <color name="colorPriceBgDown">#FFEBEE</color>
+    <color name="colorPriceDefault">#FFFFFFFF</color>
 
     <color name="colorNavDefault">#80000000</color>
     <color name="colorNavMain">#4CAF50</color>

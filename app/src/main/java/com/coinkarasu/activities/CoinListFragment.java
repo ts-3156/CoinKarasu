@@ -1,6 +1,5 @@
 package com.coinkarasu.activities;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -167,7 +166,7 @@ public class CoinListFragment extends Fragment implements
                             RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
                             RecyclerView.Adapter adapter = recyclerView.getAdapter();
                             if (adapter == null) {
-                                adapter = new CoinListAdapter(getActivity(), inCoins);
+                                adapter = new CoinListAdapter(getContext(), inCoins);
                                 initializeRecyclerView(recyclerView, (CoinListAdapter) adapter);
                             }
                         }
@@ -199,21 +198,6 @@ public class CoinListFragment extends Fragment implements
             }
         });
 
-        adapter.setOnItemClickListener(new CoinListAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(Coin coin, View view, int position) {
-                if (coin.isSectionHeader() || coin.isAdCoin()) {
-                    return;
-                }
-
-                if (updater != null) {
-                    updater.stop("onItemClick");
-                }
-                Intent intent = new Intent(view.getContext(), CoinActivity.class);
-                intent.putExtra(CoinActivity.KEY_COIN_JSON, coin.toJson().toString());
-                startActivity(intent);
-            }
-        });
         recyclerView.setAdapter(adapter);
 
         updateViewIfCacheExist(adapter);
@@ -326,7 +310,7 @@ public class CoinListFragment extends Fragment implements
 
     @Override
     public void finished(Exchange exchange, CoinKind coinKind, ArrayList<Price> prices) {
-        if (isDetached() || getActivity() == null) {
+        if (isDetached() || getActivity() == null || getActivity().isFinishing() || getView() == null) {
             if (updater != null) {
                 updater.stop("finished");
             }
@@ -364,6 +348,9 @@ public class CoinListFragment extends Fragment implements
     }
 
     private void hideProgressbarDelayed(Exchange exchange, CoinKind coinKind) {
+        if (getView() == null) {
+            return;
+        }
         AggressiveProgressbar progressbar = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-progressbar");
         if (progressbar != null) {
             progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION);
@@ -371,6 +358,9 @@ public class CoinListFragment extends Fragment implements
     }
 
     private void showProgressbar(Exchange exchange, CoinKind coinKind) {
+        if (getView() == null) {
+            return;
+        }
         AggressiveProgressbar progressbar = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-progressbar");
         if (progressbar != null) {
             progressbar.startAnimation();
@@ -378,6 +368,9 @@ public class CoinListFragment extends Fragment implements
     }
 
     private void updateRelativeTimeSpanText(Exchange exchange, CoinKind coinKind) {
+        if (getView() == null) {
+            return;
+        }
         View timeSpan = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-time_span");
         if (timeSpan != null) {
             ((RelativeTimeSpanTextView) timeSpan).updateText();

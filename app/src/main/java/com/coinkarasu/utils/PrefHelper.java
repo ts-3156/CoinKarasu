@@ -29,20 +29,20 @@ public class PrefHelper {
         return interval;
     }
 
-    public static boolean isAnimEnabled(Activity activity) {
-        SharedPreferences pref = getPref(activity);
+    public static boolean isAnimEnabled(Context context) {
+        SharedPreferences pref = getPref(context);
         if (pref == null) {
             return false;
         }
-        return pref.getBoolean("pref_enable_price_anim", activity.getResources().getBoolean(R.bool.enable_price_anim));
+        return pref.getBoolean("pref_enable_price_anim", context.getResources().getBoolean(R.bool.enable_price_anim));
     }
 
-    public static boolean isDownloadIconEnabled(Activity activity) {
-        SharedPreferences pref = getPref(activity);
+    public static boolean isDownloadIconEnabled(Context context) {
+        SharedPreferences pref = getPref(context);
         if (pref == null) {
             return false;
         }
-        return pref.getBoolean("pref_enable_download_icon", activity.getResources().getBoolean(R.bool.enable_download_icon));
+        return pref.getBoolean("pref_enable_download_icon", context.getResources().getBoolean(R.bool.enable_download_icon));
     }
 
     public static void saveToSymbol(Activity activity, String toSymbol) {
