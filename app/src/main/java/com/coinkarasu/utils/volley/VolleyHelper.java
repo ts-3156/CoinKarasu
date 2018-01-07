@@ -7,33 +7,27 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
+// https://developer.android.com/training/volley/requestqueue.html
 public class VolleyHelper {
-    private static VolleyHelper mInstance;
-    private RequestQueue mRequestQueue;
-    private ImageLoader mImageLoader;
-    private static Context mCtx;
+    private static VolleyHelper instance;
 
-    private VolleyHelper(Context context) {
-        mCtx = context;
-        mRequestQueue = getRequestQueue();
+    private RequestQueue requestQueue;
+    private ImageLoader imageLoader;
 
-        mImageLoader = new ImageLoader(mRequestQueue, new DiskCache(context));
+    private VolleyHelper(Context appContext) {
+        requestQueue = Volley.newRequestQueue(appContext);
+        imageLoader = new ImageLoader(requestQueue, new DiskCache(appContext.getCacheDir()));
     }
 
     public static synchronized VolleyHelper getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new VolleyHelper(context.getApplicationContext());
+        if (instance == null) {
+            instance = new VolleyHelper(context.getApplicationContext());
         }
-        return mInstance;
+        return instance;
     }
 
     public RequestQueue getRequestQueue() {
-        if (mRequestQueue == null) {
-            // getApplicationContext() is key, it keeps you from leaking the
-            // Activity or BroadcastReceiver if someone passes one in.
-            mRequestQueue = Volley.newRequestQueue(mCtx.getApplicationContext());
-        }
-        return mRequestQueue;
+        return requestQueue;
     }
 
     public <T> void addToRequestQueue(Request<T> req) {
@@ -41,7 +35,7 @@ public class VolleyHelper {
     }
 
     public ImageLoader getImageLoader() {
-        return mImageLoader;
+        return imageLoader;
     }
 
 }

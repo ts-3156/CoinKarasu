@@ -1,25 +1,29 @@
 package com.coinkarasu.utils.volley;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 
 import com.android.volley.toolbox.ImageLoader;
 
+import java.io.File;
+
 public class DiskCache implements ImageLoader.ImageCache {
     private MemoryCache memCache;
-    private Context context;
+    private File rootDir;
 
-    DiskCache(Context context) {
-        this.context = context;
+    DiskCache(File rootDir) {
+        this.rootDir = rootDir;
         this.memCache = new MemoryCache();
     }
 
     @Override
     public Bitmap getBitmap(String url) {
         Bitmap bitmap = memCache.getBitmap(url);
-        if (bitmap == null && IconDiskCacheHelper.exists(context, urlToFileName(url))) {
-            bitmap = IconDiskCacheHelper.read(context, urlToFileName(url));
+        if (bitmap == null) {
+            File file = new File(rootDir, urlToFileName(url));
+            if (file.exists()) {
+                bitmap = BitmapHelper.read(file);
+            }
         }
         return bitmap;
     }
@@ -29,8 +33,9 @@ public class DiskCache implements ImageLoader.ImageCache {
         if (memCache.getBitmap(url) == null) {
             memCache.putBitmap(url, bitmap);
         }
-        if (!IconDiskCacheHelper.exists(context, urlToFileName(url))) {
-            new WriteBitmapToDiskTask(context, url, bitmap).execute();
+        File file = new File(rootDir, urlToFileName(url));
+        if (!file.exists()) {
+            new WriteBitmapToDiskTask(file).execute(bitmap);
         }
     }
 
@@ -39,20 +44,16 @@ public class DiskCache implements ImageLoader.ImageCache {
         return fileName.substring(0, fileName.lastIndexOf('.'));
     }
 
-    private static class WriteBitmapToDiskTask extends AsyncTask<Void, Void, Void> {
-        private Context context;
-        private String url;
-        private Bitmap bitmap;
+    private static class WriteBitmapToDiskTask extends AsyncTask<Bitmap, Void, Void> {
+        private File file;
 
-        WriteBitmapToDiskTask(Context context, String url, Bitmap bitmap) {
-            this.context = context;
-            this.url = url;
-            this.bitmap = bitmap;
+        WriteBitmapToDiskTask(File file) {
+            this.file = file;
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
-            IconDiskCacheHelper.write(context, urlToFileName(url), bitmap);
+        protected Void doInBackground(Bitmap... params) {
+            BitmapHelper.write(file, params[0]);
             return null;
         }
     }
