@@ -20,7 +20,7 @@ public class DiskCache implements ImageLoader.ImageCache {
     public Bitmap getBitmap(String url) {
         Bitmap bitmap = memCache.getBitmap(url);
         if (bitmap == null) {
-            File file = new File(rootDir, urlToFileName(url));
+            File file = getFileForUrl(url);
             if (file.exists()) {
                 bitmap = BitmapHelper.read(file);
             }
@@ -33,7 +33,7 @@ public class DiskCache implements ImageLoader.ImageCache {
         if (memCache.getBitmap(url) == null) {
             memCache.putBitmap(url, bitmap);
         }
-        File file = new File(rootDir, urlToFileName(url));
+        File file = getFileForUrl(url);
         if (!file.exists()) {
             new WriteBitmapToDiskTask(file).execute(bitmap);
         }
@@ -42,6 +42,10 @@ public class DiskCache implements ImageLoader.ImageCache {
     private static String urlToFileName(String url) {
         String fileName = url.substring(url.lastIndexOf('/') + 1, url.length());
         return fileName.substring(0, fileName.lastIndexOf('.'));
+    }
+
+    private File getFileForUrl(String url) {
+        return new File(rootDir, urlToFileName(url));
     }
 
     private static class WriteBitmapToDiskTask extends AsyncTask<Bitmap, Void, Void> {

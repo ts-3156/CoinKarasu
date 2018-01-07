@@ -29,7 +29,7 @@ import com.coinkarasu.pagers.MainPagerAdapter;
 import com.coinkarasu.tasks.CollectCoinsTask;
 import com.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
 import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
-import com.coinkarasu.tasks.by_exchange.data.CachedPrices;
+import com.coinkarasu.tasks.by_exchange.data.PricesCache;
 import com.coinkarasu.tasks.by_exchange.data.Price;
 import com.coinkarasu.utils.Log;
 import com.coinkarasu.utils.PeriodicalUpdater;
@@ -209,12 +209,8 @@ public class CoinListFragment extends Fragment implements
     }
 
     private void updateViewIfCacheExist(Exchange exchange, CoinKind coinKind, CoinListAdapter adapter) {
-        if (!CachedPrices.isCacheExist(getActivity(), kind, exchange, coinKind)) {
-            return;
-        }
-
-        CachedPrices cachedPrices = CachedPrices.restoreFromCache(getActivity(), kind, exchange, coinKind);
-        if (cachedPrices == null || cachedPrices.getPrices() == null || cachedPrices.getPrices().isEmpty()) {
+        List<Price> prices = new PricesCache(getContext()).get(kind, exchange, coinKind);
+        if (prices == null || prices.isEmpty()) {
             return;
         }
 
@@ -223,7 +219,7 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
-        for (Price price : cachedPrices.getPrices()) {
+        for (Price price : prices) {
             for (Coin coin : coins) {
                 if (coin.getSymbol().equals(price.fromSymbol)) {
                     coin.setPrice(price.price);
@@ -322,7 +318,7 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
-        new CachedPrices(prices).saveToCache(getActivity(), kind, exchange, coinKind);
+        new PricesCache(getContext()).put(kind, exchange, coinKind, prices);
 
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         CoinListAdapter adapter = (CoinListAdapter) recyclerView.getAdapter();
