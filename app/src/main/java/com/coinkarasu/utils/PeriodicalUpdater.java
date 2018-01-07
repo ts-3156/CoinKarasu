@@ -49,6 +49,14 @@ public class PeriodicalUpdater {
         this.interval = interval;
     }
 
+    public long getLastUpdated() {
+        return lastUpdated;
+    }
+
+    public void setLastUpdated(long lastUpdated) {
+        this.lastUpdated = lastUpdated;
+    }
+
     public interface PeriodicallyRunnable {
         void startTask();
     }

@@ -66,9 +66,6 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public void notifyDataSetChanged() {
-        for (Fragment fragment : fragments) {
-            ((Listener) fragment).removeAllNestedFragments();
-        }
         fragments.clear();
         version = System.currentTimeMillis();
         super.notifyDataSetChanged();

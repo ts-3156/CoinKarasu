@@ -25,12 +25,11 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
 import com.coinkarasu.data.Toplist;
-import com.coinkarasu.pagers.MainPagerAdapter;
 import com.coinkarasu.tasks.CollectCoinsTask;
 import com.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
 import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
-import com.coinkarasu.tasks.by_exchange.data.PricesCache;
 import com.coinkarasu.tasks.by_exchange.data.Price;
+import com.coinkarasu.tasks.by_exchange.data.PricesCache;
 import com.coinkarasu.utils.Log;
 import com.coinkarasu.utils.PeriodicalUpdater;
 import com.coinkarasu.utils.PrefHelper;
@@ -43,12 +42,12 @@ import java.util.List;
 public class CoinListFragment extends Fragment implements
         GetPricesByExchangeTaskBase.Listener,
         SharedPreferences.OnSharedPreferenceChangeListener,
-        MainPagerAdapter.Listener,
         PeriodicalUpdater.PeriodicallyRunnable {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "CoinListFragment";
     private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
+    private static final String STATE_LAST_UPDATED_KEY = "lastUpdated";
 
     private PeriodicalUpdater updater;
     private NavigationKind kind;
@@ -84,15 +83,18 @@ public class CoinListFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_coin_list, container, false);
         logger = new Log(getActivity());
 
+        updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
+
         if (savedInstanceState != null) {
             isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
+            updater.setLastUpdated(savedInstanceState.getLong(STATE_LAST_UPDATED_KEY));
+            if (DEBUG) logger.d(TAG, "lastUpdated is restored " + kind.name() + " " + updater.getLastUpdated());
             isRecreated = true;
         } else {
             isVisibleToUser = isSelected; // TODO 最初に選択されているタブはホームタブなので、必要ないかもしれない。
             isRecreated = false;
         }
 
-        updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
         isStartTaskRequested = false;
         PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
@@ -424,6 +426,7 @@ public class CoinListFragment extends Fragment implements
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(STATE_IS_VISIBLE_TO_USER_KEY, isVisibleToUser);
+        savedInstanceState.putLong(STATE_LAST_UPDATED_KEY, updater.getLastUpdated());
         super.onSaveInstanceState(savedInstanceState);
     }
 
