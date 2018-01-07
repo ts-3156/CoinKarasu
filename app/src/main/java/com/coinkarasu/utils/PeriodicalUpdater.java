@@ -10,6 +10,7 @@ public class PeriodicalUpdater {
     private Timer timer;
     private PeriodicallyRunnable runnable;
     private int interval;
+    private long lastUpdated;
 
     public PeriodicalUpdater(PeriodicallyRunnable runnable, int interval) {
         this.runnable = runnable;
@@ -26,13 +27,15 @@ public class PeriodicalUpdater {
             return;
         }
 
+        long delay = Math.max(interval - (System.currentTimeMillis() - lastUpdated), 0);
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                lastUpdated = System.currentTimeMillis();
                 runnable.startTask();
             }
-        }, 0, interval);
+        }, delay, interval);
     }
 
     public void stop(String caller) {
