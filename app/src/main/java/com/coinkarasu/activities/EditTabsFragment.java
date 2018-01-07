@@ -13,13 +13,11 @@ import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.adapters.EditTabsItemDecoration;
 import com.coinkarasu.adapters.EditTabsRecyclerViewAdapter;
-import com.coinkarasu.pagers.MainPagerAdapter;
 import com.coinkarasu.utils.PrefHelper;
 
 
 public class EditTabsFragment extends Fragment implements
-        EditTabsRecyclerViewAdapter.OnItemClickListener,
-        MainPagerAdapter.Listener {
+        EditTabsRecyclerViewAdapter.OnItemClickListener {
 
     public EditTabsFragment() {
     }
@@ -78,9 +76,5 @@ public class EditTabsFragment extends Fragment implements
         }
 
         return str;
-    }
-
-    @Override
-    public void removeAllNestedFragments() {
     }
 }

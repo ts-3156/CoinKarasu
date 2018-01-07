@@ -19,7 +19,7 @@ import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.pagers.MainPagerAdapter;
 
 
-public class HomeTabFragment extends Fragment implements MainPagerAdapter.Listener {
+public class HomeTabFragment extends Fragment {
 
     private static final boolean DEBUG = true;
     private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
@@ -137,24 +137,5 @@ public class HomeTabFragment extends Fragment implements MainPagerAdapter.Listen
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(STATE_IS_VISIBLE_TO_USER_KEY, isVisibleToUser);
         super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
-    public void removeAllNestedFragments() {
-        if (!isAdded() || isDetached()) {
-            return;
-        }
-
-        FragmentManager manager = getChildFragmentManager();
-        FragmentTransaction transaction = manager.beginTransaction();
-
-        for (TrendingKind k : TrendingKind.values()) {
-            Fragment fragment = manager.findFragmentByTag(k.tag);
-            if (fragment != null) {
-                transaction.remove(fragment);
-            }
-        }
-
-        transaction.commitNowAllowingStateLoss();
     }
 }

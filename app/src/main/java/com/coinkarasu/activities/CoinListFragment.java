@@ -438,8 +438,4 @@ public class CoinListFragment extends Fragment implements
             }
         }
     }
-
-    @Override
-    public void removeAllNestedFragments() {
-    }
 }

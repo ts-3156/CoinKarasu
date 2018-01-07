@@ -83,8 +83,4 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     public int getCount() {
         return NavigationKind.visibleValues(context).size();
     }
-
-    public interface Listener {
-        void removeAllNestedFragments();
-    }
 }
