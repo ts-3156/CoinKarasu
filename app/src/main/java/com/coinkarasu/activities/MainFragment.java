@@ -155,9 +155,6 @@ public class MainFragment extends Fragment implements
     /**
      * 以前はonPageScrollStateChangedを使っていたが、TabLayout.Tabが渡される分こっちが便利なので変えた。
      * スクロールした時とタブをクリックしたときの両方で、onTabSelectedの方が先に呼ばれる。
-     * <p>
-     * onPageScrollStateChangedを使うと、タブを渡されないデメリットがあるが、タブの編集後に
-     * onTabSelectedが自動的に呼ばれないメリットもある。
      */
     @Override
     public void onTabSelected(TabLayout.Tab _tab) {
@@ -183,10 +180,16 @@ public class MainFragment extends Fragment implements
     }
 
     public void refreshTabVisibility(boolean isAdded) {
+        kind = NavigationKind.edit_tabs;
         ViewPager pager = getView().findViewById(R.id.view_pager);
+        tab = null;
+
         if (pager.getAdapter() != null) {
-            tab = null;
-            ((MainPagerAdapter) pager.getAdapter()).notifyTabChanged(kind, isAdded);
+            MainPagerAdapter adapter = (MainPagerAdapter) pager.getAdapter();
+            adapter.removeFragments(getChildFragmentManager(), pager);
+            adapter = new MainPagerAdapter(getChildFragmentManager(), getActivity(), kind);
+            pager.setAdapter(adapter);
+            adapter.notifyDataSetChanged(); // これを呼ばないと、古いpositionでonTabSelectedが呼ばれてしまう
         }
 
         int position = NavigationKind.visiblePosition(getActivity(), kind);

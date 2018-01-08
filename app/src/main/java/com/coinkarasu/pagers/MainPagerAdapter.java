@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 
 import com.coinkarasu.activities.CoinListFragment;
@@ -74,6 +76,25 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
         version = System.currentTimeMillis();
         visibleKindsCache = NavigationKind.visibleValues(context);
         super.notifyDataSetChanged();
+    }
+
+    /**
+     * タブの追加/削除を行う実装が、どうやっても帯に短したすきに長し状態になるので、
+     * fragmentのremoveを強制的に行うことで暫定的に解決している。
+     */
+    public void removeFragments(FragmentManager manager, ViewPager pager) {
+        int count = getCount();
+        FragmentTransaction transaction = manager.beginTransaction();
+        for (int i = 0; i < count; i++) {
+            String tag = "android:switcher:" + pager.getId() + ":" + getItemId(i);
+            Fragment fragment = manager.findFragmentByTag(tag);
+            if (fragment == null) {
+                // 内部実装を直接参照しているので、nullになることはないはず
+                throw new RuntimeException("fragment is null " + tag);
+            }
+            transaction.remove(fragment);
+        }
+        transaction.commit();
     }
 
     /**
