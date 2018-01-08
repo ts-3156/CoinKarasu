@@ -3,18 +3,13 @@ package com.coinkarasu.tasks.by_exchange.data;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
-import com.coinkarasu.utils.DiskCacheHelper2;
+import com.coinkarasu.utils.cache.StringArrayListCache;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PricesCache {
@@ -22,75 +17,72 @@ public class PricesCache {
     private static final boolean DEBUG = true;
     private static final String TAG = "PricesCache";
 
-    private Context context;
+    private StringArrayListCache cache;
 
     public PricesCache(Context context) {
-        this.context = context;
+        cache = new StringArrayListCache(context.getCacheDir());
     }
 
     public synchronized void put(NavigationKind kind, Exchange exchange, CoinKind coinKind, ArrayList<Price> prices) {
         if (prices == null || prices.isEmpty()) {
             return;
         }
-        new WriteCacheToDiskTask(getFileFor(kind, exchange, coinKind)).execute(prices);
+
+        String[] list = new String[prices.size()];
+        for (int i = 0; i < prices.size(); i++) {
+            list[i] = prices.get(i).toString();
+        }
+
+        new WriteCacheToDiskTask(cache, makeCacheName(kind, exchange, coinKind)).execute(list);
     }
 
     public synchronized List<Price> get(NavigationKind kind, Exchange exchange, CoinKind coinKind) {
-        String text = DiskCacheHelper2.read(getFileFor(kind, exchange, coinKind));
-        if (text == null) {
+        List<String> list = cache.get(makeCacheName(kind, exchange, coinKind));
+        if (list == null || list.isEmpty()) {
+            remove(kind, exchange, coinKind);
             return null;
         }
 
-        ArrayList<Price> prices = new ArrayList<>();
+        List<Price> prices = new ArrayList<>(list.size());
 
-        try {
-            JSONArray json = new JSONArray(text);
-            for (int i = 0; i < json.length(); i++) {
-                JSONObject attrs = json.getJSONObject(i);
-                prices.add(Price.buildByJson(attrs));
+        for (String str : list) {
+            Price price = Price.buildByString(str);
+            if (price == null) {
+                if (DEBUG) Log.e(TAG, "Price is null " + str);
+                continue;
             }
-        } catch (JSONException e) {
-            if (DEBUG) Log.e(TAG, e.getMessage());
-            prices = null;
+
+            prices.add(price);
         }
 
-        if (prices == null || prices.isEmpty()) {
+        if (prices.isEmpty()) {
             remove(kind, exchange, coinKind);
+            return null;
         }
 
         return prices;
     }
 
     private synchronized void remove(NavigationKind kind, Exchange exchange, CoinKind coinKind) {
-        if (!getFileFor(kind, exchange, coinKind).delete()) {
-            Log.d(TAG, "Could not delete cache file for "
-                    + kind.name() + ", " + exchange.name() + ", " + coinKind.name());
-        }
+        cache.remove(makeCacheName(kind, exchange, coinKind));
     }
 
     private static String makeCacheName(NavigationKind kind, Exchange exchange, CoinKind coinKind) {
         return "cached_prices_" + kind.name() + "_" + exchange.name() + "_" + coinKind.name() + ".json";
     }
 
-    private File getFileFor(NavigationKind kind, Exchange exchange, CoinKind coinKind) {
-        return new File(context.getCacheDir(), makeCacheName(kind, exchange, coinKind));
-    }
+    private static class WriteCacheToDiskTask extends AsyncTask<String, Void, Void> {
+        private StringArrayListCache cache;
+        private String key;
 
-
-    private static class WriteCacheToDiskTask extends AsyncTask<ArrayList<Price>, Void, Void> {
-        private File file;
-
-        WriteCacheToDiskTask(File file) {
-            this.file = file;
+        WriteCacheToDiskTask(StringArrayListCache cache, String key) {
+            this.cache = cache;
+            this.key = key;
         }
 
         @Override
-        protected Void doInBackground(ArrayList<Price>... params) {
-            JSONArray json = new JSONArray();
-            for (Price price : params[0]) {
-                json.put(price.toJson());
-            }
-            DiskCacheHelper2.write(file, json.toString());
+        protected Void doInBackground(String... params) {
+            cache.put(key, Arrays.asList(params));
             return null;
         }
     }

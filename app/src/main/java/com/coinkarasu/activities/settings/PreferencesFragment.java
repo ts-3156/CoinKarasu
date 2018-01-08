@@ -13,8 +13,8 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import com.coinkarasu.R;
-import com.coinkarasu.utils.DiskCacheHelper2;
 import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.cache.DiskBasedCache;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import java.io.File;
@@ -115,7 +115,7 @@ public class PreferencesFragment extends PreferenceFragment {
         @Override
         protected Void doInBackground(Void... params) {
             long start = System.currentTimeMillis();
-            DiskCacheHelper2.clear(file);
+            new DiskBasedCache(file).clear();
             if (DEBUG) android.util.Log.d(TAG, "Clear cache elapsed time: "
                     + (System.currentTimeMillis() - start) + "ms");
             return null;

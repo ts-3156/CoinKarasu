@@ -1,10 +1,8 @@
 package com.coinkarasu.tasks.by_exchange.data;
 
 import android.util.Log;
-
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,8 +11,8 @@ public class Price {
     private static final boolean DEBUG = true;
     private static final String TAG = "Price";
 
-    Exchange exchange;
-    CoinKind coinKind;
+    private Exchange exchange;
+    private CoinKind coinKind;
 
     public String fromSymbol;
     public String toSymbol;
@@ -55,6 +53,19 @@ public class Price {
         return price;
     }
 
+    public static Price buildByString(String data) {
+        Price price;
+
+        try {
+            price = buildByJson(new JSONObject(data));
+        } catch (JSONException e) {
+            if (DEBUG) Log.e(TAG, e.getMessage());
+            price = null;
+        }
+
+        return price;
+    }
+
     public JSONObject toJson() {
         JSONObject data = new JSONObject();
 
@@ -71,5 +82,9 @@ public class Price {
         }
 
         return data;
+    }
+
+    public String toString() {
+        return toJson().toString();
     }
 }
