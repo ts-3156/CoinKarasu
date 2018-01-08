@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ public class MainFragment extends Fragment implements
     private static final boolean DEBUG = true;
     private static final String TAG = "MainFragment";
     private static final String STATE_SELECTED_KIND_KEY = "kind";
+    private static final String STATE_PAGER_ADAPTER_VERSION = "pagerAdapterVersion";
 
     private OnFragmentInteractionListener listener;
 
@@ -54,15 +56,19 @@ public class MainFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         logger = new Log(getActivity());
 
+        MainPagerAdapter adapter = new MainPagerAdapter(getChildFragmentManager(), getActivity(), kind);
+
         if (savedInstanceState != null) {
             kind = NavigationKind.valueOf(savedInstanceState.getString(STATE_SELECTED_KIND_KEY));
             if (!kind.isVisible(getActivity())) {
                 kind = NavigationKind.home;
             }
+            adapter.setVersion(savedInstanceState.getLong(STATE_PAGER_ADAPTER_VERSION));
+            if (DEBUG) logger.d(TAG, "Set version to PagerAdapter " + adapter.getVersion());
         }
 
         ViewPager pager = view.findViewById(R.id.view_pager);
-        pager.setAdapter(new MainPagerAdapter(getChildFragmentManager(), getActivity(), kind));
+        pager.setAdapter(adapter);
         pager.addOnPageChangeListener(this);
         pager.setOffscreenPageLimit(NavigationKind.visibleValues(getActivity()).size());
 
@@ -137,6 +143,12 @@ public class MainFragment extends Fragment implements
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putString(STATE_SELECTED_KIND_KEY, kind.name());
+        if (getView() != null) {
+            PagerAdapter adapter = ((ViewPager) getView().findViewById(R.id.view_pager)).getAdapter();
+            if (adapter != null) {
+                savedInstanceState.putLong(STATE_PAGER_ADAPTER_VERSION, ((MainPagerAdapter) adapter).getVersion());
+            }
+        }
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -165,9 +177,11 @@ public class MainFragment extends Fragment implements
         }
     }
 
-    public void updateTabVisibility() {
+    public void updateTabVisibility(boolean isAdded) {
         ViewPager pager = getView().findViewById(R.id.view_pager);
-        pager.getAdapter().notifyDataSetChanged();
+        if (pager.getAdapter() != null) {
+            ((MainPagerAdapter) pager.getAdapter()).notifyTabChanged(kind, isAdded);
+        }
 
         TabLayout tabs = getActivity().findViewById(R.id.tab_layout);
         updateTabTitles(tabs);

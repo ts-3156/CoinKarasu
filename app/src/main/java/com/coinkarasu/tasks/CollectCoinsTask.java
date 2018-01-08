@@ -2,12 +2,10 @@ package com.coinkarasu.tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
-
 import com.coinkarasu.api.cryptocompare.data.CoinListImpl;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.services.UpdateCoinListIntentService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CollectCoinsTask extends AsyncTask<Integer, Integer, Integer> {

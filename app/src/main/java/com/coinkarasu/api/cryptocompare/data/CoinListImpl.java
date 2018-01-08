@@ -2,7 +2,6 @@ package com.coinkarasu.api.cryptocompare.data;
 
 import android.content.Context;
 import android.util.Log;
-
 import com.coinkarasu.api.cryptocompare.CoinListReader;
 import com.coinkarasu.api.cryptocompare.response.CoinListResponse;
 import com.coinkarasu.api.cryptocompare.response.CoinListResponseImpl;
@@ -11,7 +10,6 @@ import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.database.AppDatabase;
 import com.coinkarasu.database.CoinListCoin;
 import com.coinkarasu.services.UpdateCoinListIntentService;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,6 +20,7 @@ import java.util.List;
 public class CoinListImpl implements CoinList {
 
     private static final boolean DEBUG = true;
+    private static final String TAG = "CoinListImpl";
 
     private static CoinList instance;
     private CoinListResponse response;
@@ -41,7 +40,7 @@ public class CoinListImpl implements CoinList {
             try {
                 instance = CoinListImpl.restoreFromCache(context);
             } catch (Exception e) {
-                Log.e("getInstance1", e.getMessage());
+                Log.e(TAG, "getInstance1 " + e.getMessage());
             }
         }
 
@@ -50,7 +49,7 @@ public class CoinListImpl implements CoinList {
                 instance = CoinListImpl.buildByResponse(new JSONObject(CoinListReader.read(context)));
                 UpdateCoinListIntentService.start(context);
             } catch (JSONException e) {
-                Log.e("getInstance2", e.getMessage());
+                Log.e(TAG, "getInstance2 " + e.getMessage());
             }
         }
 
@@ -122,10 +121,11 @@ public class CoinListImpl implements CoinList {
         }
 
         if (fromSymbols.length != coins.size()) {
-            if (DEBUG) Log.e("collectCoins", "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
+            if (DEBUG) Log.d(TAG, "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
         }
 
-        if (DEBUG) Log.e("collectCoins", "Load from FILE " + coins.size() + " records " + (System.currentTimeMillis() - start) + " ms");
+        if (DEBUG) Log.d(TAG, "Load from FILE " + coins.size() + " coins "
+                + (System.currentTimeMillis() - start) + " ms");
 
         return coins;
     }
@@ -147,10 +147,11 @@ public class CoinListImpl implements CoinList {
         }
 
         if (fromSymbols.length != coins.size()) {
-            if (DEBUG) Log.e("collectCoins", "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
+            if (DEBUG) Log.d(TAG, "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
         }
 
-        if (DEBUG) Log.e("collectCoins", "Load from DB " + coins.size() + " records " + (System.currentTimeMillis() - start) + " ms");
+        if (DEBUG) Log.d(TAG, "Load from DB " + coins.size() + " coins "
+                + (System.currentTimeMillis() - start) + " ms");
 
         return coins;
     }

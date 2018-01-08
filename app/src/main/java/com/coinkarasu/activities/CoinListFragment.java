@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
@@ -54,7 +53,7 @@ public class CoinListFragment extends Fragment implements
     private boolean isVisibleToUser;
     private boolean isSelected;
     private boolean isStartTaskRequested;
-    private boolean isRecreated;
+    private boolean isCollectCoinsRequested;
     private Log logger;
 
     public CoinListFragment() {
@@ -76,6 +75,9 @@ public class CoinListFragment extends Fragment implements
             kind = NavigationKind.valueOf(getArguments().getString("kind"));
             isSelected = getArguments().getBoolean("isSelected");
         }
+
+        isCollectCoinsRequested = false;
+        isStartTaskRequested = false;
     }
 
     @Override
@@ -88,34 +90,41 @@ public class CoinListFragment extends Fragment implements
         if (savedInstanceState != null) {
             isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
             updater.setLastUpdated(savedInstanceState.getLong(STATE_LAST_UPDATED_KEY));
-            if (DEBUG) logger.d(TAG, "lastUpdated is restored " + kind.name() + " " + updater.getLastUpdated());
-            isRecreated = true;
+            if (DEBUG) logger.d(TAG, "lastUpdated is restored "
+                    + kind.name() + " " + updater.getLastUpdated());
         } else {
             isVisibleToUser = isSelected; // TODO 最初に選択されているタブはホームタブなので、必要ないかもしれない。
-            isRecreated = false;
         }
 
-        isStartTaskRequested = false;
         PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
         return view;
     }
 
-    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        // アクティビティの再作成後は、ページャーによってすぐに次の新しいインスタンスが作成される。
-        // その場合は、ここでは何もしない。そうすることで、後続の処理はすべて実行されなくなる。
-        if (isRecreated) {
-            return;
+        // collectCoinsはsetUserVisibleHintから呼ばれるが、fragmentの
+        // ライフサイクル外から呼ばれることも考慮して、念のためにここでも呼んでいる。
+        if (isCollectCoinsRequested) {
+            if (DEBUG) logger.e(TAG, "onActivityCreated() call collectCoins()");
+            collectCoins();
         }
-
-        collectCoins();
     }
 
     private void collectCoins() {
         if (getActivity() == null || getActivity().isFinishing()) {
+            return;
+        }
+
+        if (getView() == null) {
+            isCollectCoinsRequested = true;
+            return;
+        }
+
+        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
+        RecyclerView.Adapter adapter = recyclerView.getAdapter();
+        if (adapter != null) {
             return;
         }
 
@@ -124,6 +133,7 @@ public class CoinListFragment extends Fragment implements
     }
 
     private void addCoins(final ArrayList<Coin> inCoins, final Section section) {
+        final long start = System.currentTimeMillis();
         String[] fromSymbols = null;
 
         if (kind.isToplist()) {
@@ -162,6 +172,9 @@ public class CoinListFragment extends Fragment implements
                         if (indexOfSection == -1) {
                             throw new RuntimeException("Invalid section " + section.toString());
                         }
+
+                        if (DEBUG) logger.d(TAG, "addCoins() "
+                                + kind.name() + " " + (System.currentTimeMillis() - start) + " ms");
 
                         if (indexOfSection < kind.sections.length - 1) {
                             addCoins(inCoins, kind.sections[indexOfSection + 1]);
@@ -343,7 +356,7 @@ public class CoinListFragment extends Fragment implements
         updateRelativeTimeSpanText(exchange, coinKind);
         hideProgressbarDelayed(exchange, coinKind);
 
-        if (DEBUG) logger.d(TAG, "finished() " + exchange + ", " + coinKind);
+        if (DEBUG) logger.d(TAG, "finished() " + kind + ", " + exchange + ", " + coinKind);
     }
 
     private void hideProgressbarDelayed(Exchange exchange, CoinKind coinKind) {
@@ -381,7 +394,7 @@ public class CoinListFragment extends Fragment implements
         super.onResume();
 
         // フラグメントが破棄されずに再開された場合は、ここでオートアップデートを起動する。
-        if (!isRecreated && isVisibleToUser && updater != null) {
+        if (isVisibleToUser && updater != null) {
             updater.setInterval(PrefHelper.getSyncInterval(getActivity()));
             updater.start("onResume");
         }
@@ -411,6 +424,7 @@ public class CoinListFragment extends Fragment implements
         if (isVisibleToUser) {
             // フラグメントのライフサイクルと結びつかないイベントでオートアップデートを起動する。
             // 例) タブの初期化後に、タブのコンテンツを表示
+            collectCoins();
             if (updater != null) {
                 updater.start("setUserVisibleHint");
             }

@@ -11,14 +11,15 @@ import com.coinkarasu.activities.EditTabsFragment;
 import com.coinkarasu.activities.HomeTabFragment;
 import com.coinkarasu.activities.etc.NavigationKind;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
     private static final boolean DEBUG = false;
+    private static final String TAG = "MainPagerAdapter";
 
     private Context context;
     private NavigationKind defaultKind;
-    private ArrayList<Fragment> fragments;
+    private List<NavigationKind> visibleKindsCache;
     private long version;
 
     public MainPagerAdapter(FragmentManager manager) {
@@ -29,16 +30,16 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
         super(manager);
         this.context = context;
         this.defaultKind = defaultKind;
-        this.fragments = new ArrayList<>();
+        this.visibleKindsCache = NavigationKind.visibleValues(context);
         this.version = System.currentTimeMillis();
     }
 
     @Override
     public Fragment getItem(int position) {
-        NavigationKind selectedKind = NavigationKind.visibleValues(context).get(position);
-        Fragment fragment;
+        NavigationKind selectedKind = visibleKindsCache.get(position);
+        if (DEBUG) Log.d(TAG, "getItem() " + position + " " + selectedKind.name());
 
-        if (DEBUG) Log.e("getItem", "" + selectedKind);
+        Fragment fragment;
 
         switch (selectedKind) {
             case home:
@@ -54,30 +55,52 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
                 fragment = CoinListFragment.newInstance(selectedKind, defaultKind == selectedKind);
         }
 
-        fragments.add(fragment);
-
         return fragment;
     }
 
+    /**
+     * notifyDataSetChangedが呼ばれた後、すべてのアイテムに対してgetItemPositionが呼ばれ、
+     * その時にPOSITION_NONEが返されたobjectのみ、getItemIdとgetItemが順番に呼ばれる。
+     */
     @Override
     public int getItemPosition(Object object) {
+        if (DEBUG) Log.d(TAG, "getItemPosition() " + object.toString());
         return POSITION_NONE;
     }
 
-    @Override
-    public void notifyDataSetChanged() {
-        fragments.clear();
+    public void notifyTabChanged(NavigationKind kind, boolean isAdded) {
         version = System.currentTimeMillis();
+        visibleKindsCache = NavigationKind.visibleValues(context);
         super.notifyDataSetChanged();
     }
 
+    /**
+     * FragmentPagerAdapterの中で、Fragmentのタグに利用されている。
+     * getItemIdが変わった場合のみ、次にgetItemが呼ばれる。
+     * <p>
+     * 同じfragmentインスタンスを使い続ける場合、タグを変えることはできない。
+     * タグを変えないようにgetItemIdが同じ値を返すようにすると、今度はgetItemが呼ばれない。
+     * よって、タブの追加/削除を行う場合は、必ず新しいタグとfragmentインスタンスを作る必要がある。
+     **/
     @Override
     public long getItemId(int position) {
+        if (DEBUG) Log.d(TAG, "getItemId() " + position + " " + version);
         return position + version;
     }
 
+    /**
+     * 何もしていなくても呼ばれ続ける時があるため、キャッシュのサイズを返すようにしている。
+     */
     @Override
     public int getCount() {
-        return NavigationKind.visibleValues(context).size();
+        return visibleKindsCache.size();
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
     }
 }
