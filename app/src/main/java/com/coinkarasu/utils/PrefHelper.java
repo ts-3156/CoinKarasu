@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
-
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 
@@ -88,6 +87,16 @@ public class PrefHelper {
         boolean isVisible = PrefHelper.isVisibleTab(context, kind);
         PrefHelper.saveTabVisibility(context, kind, !isVisible);
         return !isVisible;
+    }
+
+    public static void clear(Context context) {
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return;
+        }
+        SharedPreferences.Editor edit = pref.edit();
+        edit.clear();
+        edit.apply();
     }
 
     public static SharedPreferences getPref(Context context) {

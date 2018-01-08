@@ -150,6 +150,9 @@
     <string name="pref_clear_cache_title">キャッシュを削除する</string>
     <string name="pref_clear_cache_summary">このデバイスに保存されたすべてのキャッシュを削除する</string>
     <string name="pref_clear_cache_dialog">このデバイスに保存されたすべてのキャッシュを削除してもよろしいですか？ 削除後、すべての最新データがサーバーから取得されます。</string>
+    <string name="pref_clear_config_title">設定を削除する</string>
+    <string name="pref_clear_config_summary">このデバイスに保存された設定を削除する</string>
+    <string name="pref_clear_config_dialog">このデバイスに保存された設定を削除してもよろしいですか？</string>
 
     <string name="pref_title">設定</string>
     <string name="pref_title_currency">表示する通貨</string>

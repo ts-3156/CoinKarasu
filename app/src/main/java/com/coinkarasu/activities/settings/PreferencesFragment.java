@@ -14,12 +14,13 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import com.coinkarasu.R;
 import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.cache.DiskBasedCache;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import java.io.File;
 
-public class PreferencesFragment extends PreferenceFragment {
+public class PreferencesFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
     private static final boolean DEBUG = true;
     private static final String TAG = "PreferencesFragment";
 
@@ -33,38 +34,46 @@ public class PreferencesFragment extends PreferenceFragment {
         logger = new Log(getActivity());
 
         Preference prefAppVersion = getPreferenceScreen().findPreference("pref_app_version");
-        prefAppVersion.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                showDialog(R.string.pref_app_version_up_to_date, false, null);
-
-                return true;
-            }
-        });
+        prefAppVersion.setOnPreferenceClickListener(this);
 
         Preference prefClearCache = getPreferenceScreen().findPreference("pref_clear_cache");
-        prefClearCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                showDialog(R.string.pref_clear_cache_dialog, true, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        new ClearCacheTask(getActivity().getCacheDir()).execute();
-                    }
-                });
+        prefClearCache.setOnPreferenceClickListener(this);
 
-                return true;
-            }
-        });
+        Preference prefClearConfig = getPreferenceScreen().findPreference("pref_clear_config");
+        prefClearConfig.setOnPreferenceClickListener(this);
 
         Preference prefOpenSourceLicenses = getPreferenceScreen().findPreference("pref_open_source_licenses");
-        prefOpenSourceLicenses.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                startActivity(new Intent(getActivity(), OssLicensesMenuActivity.class));
-                return true;
-            }
-        });
+        prefOpenSourceLicenses.setOnPreferenceClickListener(this);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         bindPreferenceSummaryToValue(prefs, "pref_sync_frequency");
         bindPreferenceSummaryToValue(prefs, "pref_currency");
+    }
+
+    @Override
+    public boolean onPreferenceClick(Preference preference) {
+        String key = preference.getKey();
+
+        if (key.equals("pref_app_version")) {
+            showDialog(R.string.pref_app_version_up_to_date, false, null);
+        } else if (key.equals("pref_clear_cache")) {
+            showDialog(R.string.pref_clear_cache_dialog, true, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    new ClearCacheTask(getActivity().getCacheDir()).execute();
+                }
+            });
+        } else if (key.equals("pref_clear_config")) {
+            showDialog(R.string.pref_clear_config_dialog, true, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    PrefHelper.clear(getActivity());
+                    getActivity().recreate();
+                }
+            });
+        } else if (key.equals("pref_open_source_licenses")) {
+            startActivity(new Intent(getActivity(), OssLicensesMenuActivity.class));
+        }
+
+        return true;
     }
 
     private void showDialog(int msgResId, boolean isNeedNegativeButton, DialogInterface.OnClickListener listener) {

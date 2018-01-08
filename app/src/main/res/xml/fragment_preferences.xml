@@ -55,12 +55,16 @@
             android:title="@string/pref_app_version_title" />
     </PreferenceCategory>
 
-
     <PreferenceCategory android:title="@string/pref_header_cache">
         <Preference
             android:key="pref_clear_cache"
             android:summary="@string/pref_clear_cache_summary"
             android:title="@string/pref_clear_cache_title" />
+
+        <Preference
+                android:key="pref_clear_config"
+                android:summary="@string/pref_clear_config_summary"
+                android:title="@string/pref_clear_config_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>
