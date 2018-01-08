@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ProgressBar;
+
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
@@ -85,6 +87,7 @@ public class CoinListFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_coin_list, container, false);
         logger = new Log(getActivity());
 
+        ((ProgressBar) view.findViewById(R.id.screen_wait)).setIndeterminateDrawable(getResources().getDrawable(kind.progressDrawableResId));
         updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
 
         if (savedInstanceState != null) {
@@ -93,7 +96,7 @@ public class CoinListFragment extends Fragment implements
             if (DEBUG) logger.d(TAG, "lastUpdated is restored "
                     + kind.name() + " " + updater.getLastUpdated());
         } else {
-            isVisibleToUser = isSelected; // TODO 最初に選択されているタブはホームタブなので、必要ないかもしれない。
+            isVisibleToUser = isSelected; // タブの追加/削除をする際に必要
         }
 
         PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
@@ -215,6 +218,7 @@ public class CoinListFragment extends Fragment implements
         });
 
         recyclerView.setAdapter(adapter);
+        getView().findViewById(R.id.screen_wait).setVisibility(View.GONE);
 
         updateViewIfCacheExist(adapter);
 

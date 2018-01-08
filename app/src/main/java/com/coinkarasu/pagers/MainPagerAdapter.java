@@ -18,7 +18,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     private static final String TAG = "MainPagerAdapter";
 
     private Context context;
-    private NavigationKind defaultKind;
+    private NavigationKind selectedKind;
     private List<NavigationKind> visibleKindsCache;
     private long version;
 
@@ -29,21 +29,22 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     public MainPagerAdapter(FragmentManager manager, Context context, NavigationKind defaultKind) {
         super(manager);
         this.context = context;
-        this.defaultKind = defaultKind;
+        this.selectedKind = defaultKind;
         this.visibleKindsCache = NavigationKind.visibleValues(context);
         this.version = System.currentTimeMillis();
     }
 
     @Override
     public Fragment getItem(int position) {
-        NavigationKind selectedKind = visibleKindsCache.get(position);
-        if (DEBUG) Log.d(TAG, "getItem() " + position + " " + selectedKind.name());
+        NavigationKind targetKind = visibleKindsCache.get(position);
+        if (DEBUG) Log.d(TAG, "getItem() " + position +
+                " selected=" + selectedKind.name() + " target=" + targetKind.name());
 
         Fragment fragment;
 
-        switch (selectedKind) {
+        switch (targetKind) {
             case home:
-                fragment = HomeTabFragment.newInstance(selectedKind);
+                fragment = HomeTabFragment.newInstance(null);
                 break;
 //            case assets:
 //                fragment = HomeTabFragment.newInstance(selectedKind);
@@ -52,7 +53,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
                 fragment = EditTabsFragment.newInstance();
                 break;
             default:
-                fragment = CoinListFragment.newInstance(selectedKind, defaultKind == selectedKind);
+                fragment = CoinListFragment.newInstance(targetKind, selectedKind == targetKind);
         }
 
         return fragment;
@@ -69,6 +70,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     }
 
     public void notifyTabChanged(NavigationKind kind, boolean isAdded) {
+        selectedKind = kind;
         version = System.currentTimeMillis();
         visibleKindsCache = NavigationKind.visibleValues(context);
         super.notifyDataSetChanged();

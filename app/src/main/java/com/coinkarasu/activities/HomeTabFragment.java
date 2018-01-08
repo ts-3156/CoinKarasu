@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import android.view.ViewGroup;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.TrendingKind;
-import com.coinkarasu.pagers.MainPagerAdapter;
 
 
 public class HomeTabFragment extends Fragment {
@@ -25,7 +23,6 @@ public class HomeTabFragment extends Fragment {
     private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
     public static final String ACTION_UPDATE_TRENDING = "updateTrending";
 
-    private NavigationKind kind;
     private boolean isVisibleToUser;
     private boolean isRecreated;
     private BroadcastReceiver receiver;
@@ -36,7 +33,6 @@ public class HomeTabFragment extends Fragment {
     public static HomeTabFragment newInstance(NavigationKind kind) {
         HomeTabFragment fragment = new HomeTabFragment();
         Bundle args = new Bundle();
-        args.putString("kind", kind.name());
         fragment.setArguments(args);
         return fragment;
     }
@@ -45,7 +41,6 @@ public class HomeTabFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = NavigationKind.valueOf(getArguments().getString("kind"));
         }
     }
 
@@ -114,7 +109,6 @@ public class HomeTabFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        kind = null;
         if (receiver != null) {
             LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(receiver);
             receiver = null;

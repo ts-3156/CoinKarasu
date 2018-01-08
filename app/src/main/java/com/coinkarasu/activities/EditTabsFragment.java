@@ -47,11 +47,11 @@ public class EditTabsFragment extends Fragment implements
             return;
         }
         if (item.kind == NavigationKind.bitflyer || item.kind == NavigationKind.zaif) {
-            Snackbar.make(getView(), getString(R.string.edit_tabs_is_not_available, getString(item.kind.tabStrResId)), Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view, getString(R.string.edit_tabs_is_not_available, getString(item.kind.tabStrResId)), Snackbar.LENGTH_SHORT).show();
             return;
         }
         if (item.kind == NavigationKind.home) {
-            Snackbar.make(getView(), getString(R.string.edit_tabs_is_always_be_displayed, getString(item.kind.tabStrResId)), Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(view, getString(R.string.edit_tabs_is_always_be_displayed, getString(item.kind.tabStrResId)), Snackbar.LENGTH_SHORT).show();
             return;
         }
 
@@ -65,10 +65,10 @@ public class EditTabsFragment extends Fragment implements
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         adapter.notifyItemChanged(position);
 
-        Snackbar.make(getView(), isAddedOrRemoved(item.kind, isAdded), Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(view, isAddedOrRemoved(item.kind, isAdded), Snackbar.LENGTH_SHORT).show();
 
         if (getParentFragment() != null) {
-            ((MainFragment) getParentFragment()).updateTabVisibility(isAdded);
+            ((MainFragment) getParentFragment()).refreshTabVisibility(isAdded);
         }
     }
 

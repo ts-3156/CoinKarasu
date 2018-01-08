@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 
 public class MainFragment extends Fragment implements
-        ViewPager.OnPageChangeListener {
+        TabLayout.OnTabSelectedListener {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "MainFragment";
@@ -69,22 +69,22 @@ public class MainFragment extends Fragment implements
 
         ViewPager pager = view.findViewById(R.id.view_pager);
         pager.setAdapter(adapter);
-        pager.addOnPageChangeListener(this);
-        pager.setOffscreenPageLimit(NavigationKind.visibleValues(getActivity()).size());
+        pager.setOffscreenPageLimit(NavigationKind.values().length);
 
         TabLayout tabs = getActivity().findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
-        updateTabTitles(tabs);
+        tabs.addOnTabSelectedListener(this);
+        refreshTabTitles(tabs);
 
         int position = NavigationKind.visiblePosition(getActivity(), kind);
         tab = tabs.getTabAt(position);
-        pager.setCurrentItem(position); // #setCurrentItem doesn't call #onPageScrollStateChanged.
+        pager.setCurrentItem(position, false); // #setCurrentItem doesn't call #onPageScrollStateChanged.
         listener.onPageChanged(kind);
 
         return view;
     }
 
-    public void updateTabTitles(TabLayout tabs) {
+    public void refreshTabTitles(TabLayout tabs) {
         if (tabs == null) {
             return;
         }
@@ -117,7 +117,7 @@ public class MainFragment extends Fragment implements
         }
         this.kind = kind;
         int position = NavigationKind.visiblePosition(getActivity(), kind);
-        ((ViewPager) getView().findViewById(R.id.view_pager)).setCurrentItem(position);
+        ((ViewPager) getView().findViewById(R.id.view_pager)).setCurrentItem(position, false);
         listener.onPageChanged(kind);
     }
 
@@ -152,43 +152,50 @@ public class MainFragment extends Fragment implements
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    /**
+     * 以前はonPageScrollStateChangedを使っていたが、TabLayout.Tabが渡される分こっちが便利なので変えた。
+     * スクロールした時とタブをクリックしたときの両方で、onTabSelectedの方が先に呼ばれる。
+     * <p>
+     * onPageScrollStateChangedを使うと、タブを渡されないデメリットがあるが、タブの編集後に
+     * onTabSelectedが自動的に呼ばれないメリットもある。
+     */
     @Override
-    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-    }
-
-    @Override
-    public void onPageSelected(int position) {
-    }
-
-    @Override
-    public void onPageScrollStateChanged(int state) {
-        if (state == ViewPager.SCROLL_STATE_SETTLING) {
-            if (getView() == null || getActivity() == null) {
-                return;
-            }
-
-            int position = ((ViewPager) getView().findViewById(R.id.view_pager)).getCurrentItem();
-
-            if (position != tab.getPosition()) {
-                kind = NavigationKind.visibleValues(getActivity()).get(position);
-                tab = ((TabLayout) getActivity().findViewById(R.id.tab_layout)).getTabAt(position);
-                listener.onPageChanged(kind);
-            }
+    public void onTabSelected(TabLayout.Tab _tab) {
+        if (DEBUG) logger.d(TAG, "onTabSelected " + _tab.getPosition()
+                + " ignore=" + (tab == null));
+        if (tab == null) {
+            return;
         }
+
+        tab = _tab;
+        int position = _tab.getPosition();
+        ((ViewPager) getView().findViewById(R.id.view_pager)).setCurrentItem(position, false);
+        kind = NavigationKind.visibleValues(getActivity()).get(position);
+        listener.onPageChanged(kind);
     }
 
-    public void updateTabVisibility(boolean isAdded) {
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
+    }
+
+    public void refreshTabVisibility(boolean isAdded) {
         ViewPager pager = getView().findViewById(R.id.view_pager);
         if (pager.getAdapter() != null) {
+            tab = null;
             ((MainPagerAdapter) pager.getAdapter()).notifyTabChanged(kind, isAdded);
         }
 
-        TabLayout tabs = getActivity().findViewById(R.id.tab_layout);
-        updateTabTitles(tabs);
-
         int position = NavigationKind.visiblePosition(getActivity(), kind);
+        TabLayout tabs = getActivity().findViewById(R.id.tab_layout);
+        tab = tabs.getTabAt(position);
+        refreshTabTitles(tabs);
+
         pager.setCurrentItem(position, false);
-        tabs.getTabAt(position).select();
+        tab.select(); // EditTabsを選択状態にする
         listener.onPageChanged(kind);
     }
 
