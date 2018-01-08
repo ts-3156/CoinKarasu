@@ -5,17 +5,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
-
 import com.coinkarasu.R;
-import com.coinkarasu.utils.DiskCacheHelper;
+import com.coinkarasu.utils.DiskCacheHelper2;
 import com.coinkarasu.utils.Log;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
+
+import java.io.File;
 
 public class PreferencesFragment extends PreferenceFragment {
     private static final boolean DEBUG = true;
@@ -44,10 +46,7 @@ public class PreferencesFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 showDialog(R.string.pref_clear_cache_dialog, true, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        long start = System.currentTimeMillis();
-                        DiskCacheHelper.clear(getActivity());
-                        if (DEBUG) logger.d(TAG, "Clear cache elapsed time: "
-                                + (System.currentTimeMillis() - start) + "ms");
+                        new ClearCacheTask(getActivity().getCacheDir()).execute();
                     }
                 });
 
@@ -106,4 +105,20 @@ public class PreferencesFragment extends PreferenceFragment {
         listener = null;
     }
 
+    private static class ClearCacheTask extends AsyncTask<Void, Void, Void> {
+        private File file;
+
+        ClearCacheTask(File file) {
+            this.file = file;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            long start = System.currentTimeMillis();
+            DiskCacheHelper2.clear(file);
+            if (DEBUG) android.util.Log.d(TAG, "Clear cache elapsed time: "
+                    + (System.currentTimeMillis() - start) + "ms");
+            return null;
+        }
+    }
 }

@@ -76,24 +76,6 @@ public class DiskCacheHelper {
         return file.exists();
     }
 
-    public static boolean remove(Context context, String name) {
-        File file = new File(context.getCacheDir(), name);
-        return file.delete();
-    }
-
-    private static boolean remove(File file) {
-        if (file.isDirectory()) {
-            for (File child : file.listFiles()) {
-                remove(child);
-            }
-        }
-        return file.delete();
-    }
-
-    public static boolean clear(Context context) {
-        return remove(context.getCacheDir());
-    }
-
     public static Date lastModified(Context context, String name) {
         File file = new File(context.getCacheDir(), name);
         return new Date(file.lastModified());
