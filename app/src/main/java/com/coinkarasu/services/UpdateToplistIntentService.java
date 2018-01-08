@@ -9,7 +9,7 @@ import com.coinkarasu.api.cryptocompare.Client;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.coins.PriceMultiFullCoin;
-import com.coinkarasu.data.Toplist;
+import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.utils.DiskCacheHelper;
 import com.coinkarasu.utils.Log;
 

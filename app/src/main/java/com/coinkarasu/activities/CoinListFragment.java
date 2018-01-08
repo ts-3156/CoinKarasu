@@ -23,7 +23,7 @@ import com.coinkarasu.coins.AdCoinImpl;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
-import com.coinkarasu.data.Toplist;
+import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.tasks.CollectCoinsTask;
 import com.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
 import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;

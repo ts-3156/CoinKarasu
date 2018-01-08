@@ -17,7 +17,7 @@ import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.coins.PriceMultiFullCoin;
-import com.coinkarasu.data.Trending;
+import com.coinkarasu.services.data.Trending;
 import com.coinkarasu.utils.DiskCacheHelper;
 import com.coinkarasu.utils.Log;
 

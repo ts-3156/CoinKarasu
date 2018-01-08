@@ -1,4 +1,4 @@
-package com.coinkarasu.data;
+package com.coinkarasu.services.data;
 
 import android.content.Context;
 

@@ -17,7 +17,7 @@ import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
 import com.coinkarasu.adapters.HomeTabRecyclerViewAdapter;
 import com.coinkarasu.coins.Coin;
-import com.coinkarasu.data.Trending;
+import com.coinkarasu.services.data.Trending;
 
 import java.util.ArrayList;
 import java.util.List;
