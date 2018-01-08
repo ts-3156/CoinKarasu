@@ -11,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
@@ -48,6 +49,9 @@ public class HomeTabFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_tab, container, false);
 
+        ((ProgressBar) view.findViewById(R.id.screen_wait))
+                .setIndeterminateDrawable(getResources().getDrawable(NavigationKind.home.progressDrawableResId));
+
         if (savedInstanceState != null) {
             isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
             isRecreated = true;
@@ -84,6 +88,8 @@ public class HomeTabFragment extends Fragment {
             transaction.replace(kind.containerId, HomeTabCardFragment.newInstance(kind), kind.tag);
         }
         transaction.commitNowAllowingStateLoss();
+
+        getView().findViewById(R.id.screen_wait).setVisibility(View.GONE);
     }
 
     private void initializeCards(TrendingKind kind) {
