@@ -7,12 +7,15 @@ import android.arch.persistence.room.PrimaryKey;
 import android.util.Log;
 
 import com.coinkarasu.coins.Coin;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 @Entity(tableName = "coin_list_coins", indices = {@Index(value = {"symbol"}, unique = true)})
 public class CoinListCoin {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinListCoin";
 
     public CoinListCoin() {
     }
@@ -43,7 +46,7 @@ public class CoinListCoin {
             json.put("Algorithm", algorithm);
             json.put("ProofType", proofType);
         } catch (JSONException e) {
-            Log.e("toJson", e.getMessage());
+            if (DEBUG) CKLog.e(TAG, e);
         }
 
         return json;

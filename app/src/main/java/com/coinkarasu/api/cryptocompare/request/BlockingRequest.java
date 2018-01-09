@@ -1,10 +1,10 @@
 package com.coinkarasu.api.cryptocompare.request;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.volley.VolleyHelper;
 
 import org.json.JSONObject;
@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import java.util.concurrent.ExecutionException;
 
 public class BlockingRequest extends RequestBase {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "BlockingRequest";
 
     public BlockingRequest(Context context, String url) {
         super(context, url);
@@ -27,14 +29,14 @@ public class BlockingRequest extends RequestBase {
         VolleyHelper.getInstance(getContext()).addToRequestQueue(request);
 
         JSONObject response = null;
-        Log.d("URL", getUrl());
+        if (DEBUG) CKLog.d(TAG, getUrl());
 
         try {
             response = future.get();
         } catch (InterruptedException e) {
-            Log.e("perform", e.getMessage() + ", " + getUrl());
+            if (DEBUG) CKLog.e(TAG, getUrl(), e);
         } catch (ExecutionException e) {
-            Log.e("perform", e.getMessage() + ", " + getUrl());
+            if (DEBUG) CKLog.e(TAG, getUrl(), e);
         }
 
         return response;

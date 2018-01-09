@@ -19,7 +19,7 @@ import com.coinkarasu.api.cryptocompare.response.HistoryResponseImpl;
 import com.coinkarasu.api.cryptocompare.response.PricesResponseImpl;
 import com.coinkarasu.api.cryptocompare.response.TopPairsResponse;
 import com.coinkarasu.api.cryptocompare.response.TopPairsResponseImpl;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.StringHelper;
 
 import org.json.JSONObject;
@@ -34,11 +34,11 @@ class ClientImpl implements Client {
     private static final String DEFAULT_EXCHANGE = "cccagg";
 
     private Context context;
-    private Log logger;
+    private CKLog logger;
 
     ClientImpl(Context context) {
         this.context = context;
-        this.logger = new Log(context);
+        this.logger = new CKLog(context);
     }
 
     @Override
@@ -171,7 +171,7 @@ class ClientImpl implements Client {
             }
         }
 
-        if (DEBUG) logger.d(TAG, "aggregate " + aggregate + ", records "
+        if (DEBUG) CKLog.d(TAG, "aggregate " + aggregate + ", records "
                 + records.size() + ", samples " + samples.size());
 
         return samples;

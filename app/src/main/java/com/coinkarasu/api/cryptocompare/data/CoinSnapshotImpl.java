@@ -7,6 +7,7 @@ import com.coinkarasu.coins.AggregatedSnapshotCoinImpl;
 import com.coinkarasu.coins.SnapshotCoin;
 import com.coinkarasu.coins.SnapshotCoinImpl;
 import com.coinkarasu.api.cryptocompare.response.CoinSnapshotResponse;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoinSnapshotImpl implements CoinSnapshot {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinSnapshotImpl";
+
     private String algorithm;
     private String proofOfType;
     private long blockNumber;
@@ -62,8 +66,7 @@ public class CoinSnapshotImpl implements CoinSnapshot {
                 }
             }
         } catch (JSONException e) {
-            Log.e("CoinSnapshotImpl", e.getMessage());
-            Log.e("CoinSnapshotImpl", response.toString());
+            if (DEBUG) CKLog.e(TAG, response.toString(), e);
         }
 
     }

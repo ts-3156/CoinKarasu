@@ -3,6 +3,7 @@ package com.coinkarasu.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.coinkarasu.BuildConfig;
@@ -11,46 +12,51 @@ import com.crashlytics.android.Crashlytics;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class Log {
+public class CKLog {
     private static final boolean DEBUG = BuildConfig.DEBUG;
 
     private Context context;
     private Queue<String> queue;
     private boolean isRunning;
 
-    public Log(Context context) {
+    public CKLog(Context context) {
 //        this.context = context.getApplicationContext();
         queue = new LinkedList<>();
         isRunning = false;
     }
 
-    public void d(String tag, String message) {
+    public static void d(String tag, String message) {
         if (!DEBUG) return;
-        android.util.Log.d(tag, message);
-        makeToast(tag, message);
+        Log.d(tag, message);
+//        makeToast(tag, message);
     }
 
-    public void i(String tag, String message) {
+    public static void i(String tag, String message) {
         if (!DEBUG) return;
-        android.util.Log.i(tag, message);
-        makeToast(tag, message);
+        Log.i(tag, message);
+//        makeToast(tag, message);
     }
 
-    public void w(String tag, String message) {
+    public static void w(String tag, String message) {
         if (!DEBUG) return;
-        android.util.Log.w(tag, message);
-        makeToast(tag, message);
+        Log.w(tag, message);
+//        makeToast(tag, message);
     }
 
-    public void e(String tag, String message) {
+    public static void e(String tag, String message) {
         if (!DEBUG) return;
-        android.util.Log.e(tag, message);
-        makeToast(tag, message);
+        Log.e(tag, message);
+//        makeToast(tag, message);
     }
 
-    public void e(String tag, Exception ex) {
+    public static void e(String tag, Exception ex) {
         Crashlytics.logException(ex);
-        if (DEBUG) android.util.Log.e(tag, ex.getMessage());
+        if (DEBUG) Log.e(tag, ex.getMessage());
+    }
+
+    public static void e(String tag, String message, Exception ex) {
+        Crashlytics.logException(ex);
+        if (DEBUG) Log.e(tag, message, ex);
     }
 
     void makeToast(String tag, String message) {

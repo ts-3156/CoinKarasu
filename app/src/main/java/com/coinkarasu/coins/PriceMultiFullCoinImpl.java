@@ -1,11 +1,14 @@
 package com.coinkarasu.coins;
 
-import android.util.Log;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class PriceMultiFullCoinImpl implements PriceMultiFullCoin {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "PriceMultiFullCoinImpl";
+
     private String market;
     private String fromSymbol;
     private String toSymbol;
@@ -63,7 +66,7 @@ public class PriceMultiFullCoinImpl implements PriceMultiFullCoin {
             totalVolume24hTo = attrs.getDouble("TOTALVOLUME24HTO");
 
         } catch (JSONException e) {
-            Log.e("PriceMultiFullCoinImpl", e.getMessage() + ", " + attrs.toString());
+            if (DEBUG) CKLog.e(TAG, attrs.toString(), e);
         }
     }
 
@@ -93,7 +96,7 @@ public class PriceMultiFullCoinImpl implements PriceMultiFullCoin {
             json.put("TOTALVOLUME24H", totalVolume24h);
             json.put("TOTALVOLUME24HTO", totalVolume24hTo);
         } catch (JSONException e) {
-            Log.e("toJson", e.getMessage());
+            if (DEBUG) CKLog.e(TAG, e);
         }
 
         return json;

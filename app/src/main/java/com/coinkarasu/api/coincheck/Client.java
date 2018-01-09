@@ -1,15 +1,17 @@
 package com.coinkarasu.api.coincheck;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.coinkarasu.api.coincheck.data.Rate;
 import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Client {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "Client";
 
     private Context context;
 
@@ -29,7 +31,7 @@ public class Client {
         try {
             rate.value = response.getDouble("rate");
         } catch (JSONException e) {
-            Log.e("getSalesRate", e.getMessage() + ", " + response.toString());
+            if (DEBUG) CKLog.e(TAG, response.toString(), e);
         }
 
         return rate;
@@ -48,7 +50,7 @@ public class Client {
         try {
             rate.value = response.getDouble("rate");
         } catch (JSONException e) {
-            Log.e("getTradingRate", e.getMessage() + ", " + response.toString());
+            if (DEBUG) CKLog.e(TAG, response.toString(), e);
         }
 
         return rate;

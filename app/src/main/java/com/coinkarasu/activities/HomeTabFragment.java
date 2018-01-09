@@ -17,7 +17,7 @@ import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.services.UpdateTrendingIntentService;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 
 
 public class HomeTabFragment extends Fragment {
@@ -94,7 +94,7 @@ public class HomeTabFragment extends Fragment {
             return;
         }
 
-        if (DEBUG) Log.e(TAG, "initializeCards()");
+        if (DEBUG) CKLog.d(TAG, "initializeCards()");
 
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         for (TrendingKind kind : TrendingKind.values()) {

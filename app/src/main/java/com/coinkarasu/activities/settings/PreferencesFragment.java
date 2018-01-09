@@ -13,7 +13,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import com.coinkarasu.R;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.cache.DiskBasedCache;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
@@ -25,13 +25,13 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
     private static final String TAG = "PreferencesFragment";
 
     private Preference.OnPreferenceChangeListener listener;
-    private Log logger;
+    private CKLog logger;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.fragment_preferences);
-        logger = new Log(getActivity());
+        logger = new CKLog(getActivity());
 
         Preference prefAppVersion = getPreferenceScreen().findPreference("pref_app_version");
         prefAppVersion.setOnPreferenceClickListener(this);

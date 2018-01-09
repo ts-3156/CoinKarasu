@@ -19,8 +19,8 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Trending;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.DiskCacheHelper;
-import com.coinkarasu.utils.Log;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,17 +43,21 @@ public class UpdateTrendingIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         for (TrendingKind kind : TrendingKind.values()) {
-            update(kind, Exchange.cccagg, "JPY");
+            try {
+                update(kind, Exchange.cccagg, "JPY");
+            } catch (Exception e) {
+                CKLog.e(TAG, e);
+            }
         }
     }
 
     private void update(TrendingKind kind, Exchange exchange, String toSymbol) {
         long start = System.currentTimeMillis();
-        Log logger = new Log(getApplicationContext());
+        CKLog logger = new CKLog(getApplicationContext());
         String logFile = logFile(kind, toSymbol, exchange.name());
 
         if (DiskCacheHelper.exists(this, logFile) && !DiskCacheHelper.isExpired(this, logFile, ONE_DAY)) {
-            if (DEBUG) logger.d(TAG, kind.name() + " " + exchange + " " + toSymbol + " is recently executed.");
+            if (DEBUG) CKLog.d(TAG, kind.name() + " " + exchange + " " + toSymbol + " is recently executed.");
             return;
         }
         DiskCacheHelper.touch(this, logFile);
@@ -103,7 +107,7 @@ public class UpdateTrendingIntentService extends IntentService {
         broadcastIntent.setAction(HomeTabFragment.ACTION_UPDATE_TRENDING);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
 
-        if (DEBUG) logger.d(TAG, kind.name() + " " + exchange.name() + " " + toSymbol + " trending updated, "
+        if (DEBUG) CKLog.d(TAG, kind.name() + " " + exchange.name() + " " + toSymbol + " trending updated, "
                 + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 

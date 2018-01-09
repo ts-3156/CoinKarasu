@@ -3,6 +3,7 @@ package com.coinkarasu.api.cryptocompare.data;
 import android.util.Log;
 
 import com.coinkarasu.api.cryptocompare.response.TopPairsResponse;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TopPairsImpl implements TopPairs {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "TopPairsImpl";
 
     private ArrayList<TopPair> topPairs;
 
@@ -31,7 +34,7 @@ public class TopPairsImpl implements TopPairs {
                 topPairs.add(new TopPairImpl(data.getJSONObject(i)));
             }
         } catch (JSONException e) {
-            Log.e("TopPairsImpl", e.getMessage());
+            if (DEBUG) CKLog.e(TAG, e);
         }
     }
 

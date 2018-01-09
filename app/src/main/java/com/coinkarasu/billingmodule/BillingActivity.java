@@ -25,7 +25,7 @@ import com.coinkarasu.billingmodule.skulist.CardsWithHeadersDecoration;
 import com.coinkarasu.billingmodule.skulist.SkusAdapter;
 import com.coinkarasu.billingmodule.skulist.row.SkuRowData;
 import com.coinkarasu.billingmodule.skulist.row.UiManager;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
     private SkusAdapter mAdapter;
     private TextView mErrorTextView;
     private View mScreenWait;
-    private Log logger;
+    private CKLog logger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +56,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
             bar.setTitle(R.string.billing_button_purchase);
         }
 
-        logger = new Log(this);
+        logger = new CKLog(this);
         mViewController = new MainViewController(this);
         mBillingManager = new BillingManager(this, mViewController.getUpdateListener());
 
@@ -113,7 +113,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
      * User clicked the "Buy Gas" button - show a purchase dialog with all available SKUs
      */
     public void onPurchaseButtonClicked(final View arg0) {
-        if (DEBUG) logger.d(TAG, "Purchase button clicked.");
+        if (DEBUG) CKLog.d(TAG, "Purchase button clicked.");
 
         if (mBillingManager != null
                 && mBillingManager.getBillingClientResponseCode() > BILLING_MANAGER_NOT_INITIALIZED) {
@@ -126,7 +126,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
 
     @Override
     public void onDestroy() {
-        if (DEBUG) logger.d(TAG, "Destroying helper.");
+        if (DEBUG) CKLog.d(TAG, "Destroying helper.");
         if (mBillingManager != null) {
             mBillingManager.destroy();
         }
@@ -194,7 +194,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
      */
     @UiThread
     private void updateUi() {
-        if (DEBUG) logger.d(TAG, "Updating the UI. Thread: " + Thread.currentThread().getName());
+        if (DEBUG) CKLog.d(TAG, "Updating the UI. Thread: " + Thread.currentThread().getName());
 
 //        // Update car's color to reflect premium status or lack thereof
 //        setImageResourceWithTestTag(mCarImageView, isPremiumPurchased() ? R.drawable.billpremium
@@ -210,7 +210,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
 
     private void displayAnErrorIfNeeded() {
         if (isFinishing()) {
-            if (DEBUG) logger.i(TAG, "No need to show an error - activity is finishing already");
+            if (DEBUG) CKLog.i(TAG, "No need to show an error - activity is finishing already");
             return;
         }
 
@@ -240,7 +240,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
         long startTime = System.currentTimeMillis();
 
         if (DEBUG)
-            logger.d(TAG, "querySkuDetails() got subscriptions and inApp SKU details lists for: "
+            CKLog.d(TAG, "querySkuDetails() got subscriptions and inApp SKU details lists for: "
                     + (System.currentTimeMillis() - startTime) + "ms");
 
         if (!isFinishing()) {
@@ -268,7 +268,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
             public void onSkuDetailsResponse(int responseCode, List<SkuDetails> skuDetailsList) {
 
                 if (responseCode != BillingResponse.OK) {
-                    if (DEBUG) logger.w(TAG, "Unsuccessful query for type: "
+                    if (DEBUG) CKLog.w(TAG, "Unsuccessful query for type: "
                             + billingType + ". Error code: " + responseCode);
                 } else if (skuDetailsList != null && skuDetailsList.size() > 0) {
                     // If we successfully got SKUs, add a header in front of the row
@@ -276,7 +276,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
                     inList.add(new SkuRowData(getString(stringRes)));
                     // Then fill all the other rows
                     for (SkuDetails details : skuDetailsList) {
-                        if (DEBUG) logger.i(TAG, "Adding sku: " + details.getSku());
+                        if (DEBUG) CKLog.i(TAG, "Adding sku: " + details.getSku());
                         inList.add(new SkuRowData(details, SkusAdapter.TYPE_NORMAL, billingType));
                     }
 

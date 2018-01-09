@@ -1,11 +1,14 @@
 package com.coinkarasu.coins;
 
-import android.util.Log;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SnapshotCoinImpl implements SnapshotCoin {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "SnapshotCoinImpl";
+
     private String market;
     private String fromSymbol;
     private String toSymbol;
@@ -35,8 +38,7 @@ public class SnapshotCoinImpl implements SnapshotCoin {
             low24Hour = response.getDouble("LOW24HOUR");
             lastVolumeTo = response.getDouble("LASTVOLUMETO");
         } catch (JSONException e) {
-            Log.e("SnapshotCoinImpl", e.getMessage());
-            Log.e("SnapshotCoinImpl", response.toString());
+            if (DEBUG) CKLog.e(TAG, response.toString(), e);
         }
     }
 
@@ -123,7 +125,7 @@ public class SnapshotCoinImpl implements SnapshotCoin {
             json.put("LOW24HOUR", low24Hour);
             json.put("LASTVOLUMETO", lastVolumeTo);
         } catch (JSONException e) {
-            Log.e("toJson", e.getMessage());
+            if (DEBUG) CKLog.e(TAG, e);
         }
 
         return json;

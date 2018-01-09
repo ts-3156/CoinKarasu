@@ -1,13 +1,15 @@
 package com.coinkarasu.coins;
 
-import android.util.Log;
-
 import com.coinkarasu.activities.etc.CoinKind;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CoinImpl implements Coin {
+
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinImpl";
 
     private static final int ICON_SIZE = 96;
     private static final int ICON_LARGE_SIZE = 96;
@@ -98,7 +100,7 @@ public class CoinImpl implements Coin {
 
             coinKind = null;
         } catch (JSONException e) {
-            Log.e("CoinImpl", e.getMessage() + ", " + attrs.toString());
+            if (DEBUG) CKLog.e(TAG, attrs.toString(), e);
         }
 
     }
@@ -115,6 +117,8 @@ public class CoinImpl implements Coin {
             attrs.put("FullName", fullName);
             attrs.put("ImageUrl", imageUrl);
         } catch (JSONException e) {
+            if (DEBUG) CKLog.e(TAG, coin.toJson().toString(), e);
+            return null;
         }
 
         return new CoinImpl(attrs);
@@ -431,7 +435,7 @@ public class CoinImpl implements Coin {
             json.put("prevPriceDiff", prevPriceDiff);
             json.put("prevTrend", prevTrend);
         } catch (JSONException e) {
-            Log.e("toJson", e.getMessage());
+            if (DEBUG) CKLog.e(TAG, e);
         }
 
         return json;

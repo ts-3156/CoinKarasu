@@ -5,6 +5,7 @@ import android.content.Context;
 import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.DiskCacheHelper;
 import com.crashlytics.android.Crashlytics;
 
@@ -16,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Trending {
+
+    private static final boolean DEBUG = true;
+    private static final String TAG = "Trending";
 
     private TrendingKind kind;
     private List<Coin> coins;
@@ -49,7 +53,7 @@ public class Trending {
                 coins.add(CoinImpl.buildByAttrs(attrs));
             }
         } catch (JSONException e) {
-            Crashlytics.logException(e);
+            if (DEBUG) CKLog.e(TAG, text, e);
         }
 
         return new Trending(coins, kind);

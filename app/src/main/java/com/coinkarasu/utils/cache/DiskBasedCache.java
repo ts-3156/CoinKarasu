@@ -1,9 +1,15 @@
 package com.coinkarasu.utils.cache;
 
 import android.text.TextUtils;
-import android.util.Log;
 
-import java.io.*;
+import com.coinkarasu.utils.CKLog;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class DiskBasedCache implements Cache {
 
@@ -38,14 +44,14 @@ public class DiskBasedCache implements Cache {
     @Override
     public void remove(String key) {
         if (!remove(getFileFor(key))) {
-            Log.d(TAG, "Could not delete cache file for " + key);
+            CKLog.d(TAG, "Could not delete cache file for " + key);
         }
     }
 
     @Override
     public void clear() {
         if (!remove(rootDir)) {
-            Log.d(TAG, "Could not clear cache dir " + rootDir.getPath());
+            CKLog.d(TAG, "Could not clear cache dir " + rootDir.getPath());
         }
     }
 
@@ -68,21 +74,21 @@ public class DiskBasedCache implements Cache {
                 writer.write(data.getBytes());
             }
         } catch (IOException e) {
-            if (DEBUG) Log.e(TAG, "write1 " + e.getMessage());
+            if (DEBUG) CKLog.e(TAG, "write1", e);
         } finally {
             try {
                 if (writer != null) {
                     writer.close();
                 }
             } catch (IOException e) {
-                if (DEBUG) Log.e(TAG, "write2 " + e.getMessage());
+                if (DEBUG) CKLog.e(TAG, "write2", e);
             }
         }
     }
 
     private static String read(File file) {
         if (!file.exists()) {
-            if (DEBUG) Log.e(TAG, file.getPath() + " does not exist.");
+            if (DEBUG) CKLog.e(TAG, file.getPath() + " does not exist.");
             return null;
         }
 
@@ -100,14 +106,14 @@ public class DiskBasedCache implements Cache {
 
             text = builder.toString();
         } catch (IOException e) {
-            if (DEBUG) Log.e(TAG, "read1 " + e.getMessage());
+            if (DEBUG) CKLog.e(TAG, "read1", e);
         } finally {
             try {
                 if (reader != null) {
                     reader.close();
                 }
             } catch (IOException e) {
-                if (DEBUG) Log.e(TAG, "read2 " + e.getMessage());
+                if (DEBUG) CKLog.e(TAG, "read2", e);
             }
         }
 

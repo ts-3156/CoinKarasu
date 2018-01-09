@@ -1,10 +1,11 @@
 package com.coinkarasu.api.cryptocompare.response;
 
 import android.content.Context;
-import android.util.Log;
+import android.text.TextUtils;
 
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.api.cryptocompare.data.HistoryImpl;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONArray;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HistoryResponseImpl implements HistoryResponse {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "HistoryResponseImpl";
 
     public enum Kind {
         minute(60 * 1000),
@@ -55,7 +58,7 @@ public class HistoryResponseImpl implements HistoryResponse {
     @Override
     public JSONArray getData() {
         if (response == null) {
-            Log.d("getData", "Response is null.");
+            if (DEBUG) CKLog.e(TAG, "getData() Response is null.");
             return null;
         }
 
@@ -64,7 +67,7 @@ public class HistoryResponseImpl implements HistoryResponse {
         try {
             data = response.getJSONArray("Data");
         } catch (JSONException e) {
-            Log.e("getData", e.getMessage() + ", " + response.toString());
+            if (DEBUG) CKLog.e(TAG, response.toString(), e);
         }
 
         return data;
@@ -74,7 +77,7 @@ public class HistoryResponseImpl implements HistoryResponse {
     public List<History> getHistories() {
         JSONArray data = getData();
         if (data == null) {
-            Log.d("getHistories", "null");
+            if (DEBUG) CKLog.d(TAG, "getHistories() null");
             return null;
         }
 
@@ -85,7 +88,7 @@ public class HistoryResponseImpl implements HistoryResponse {
                 histories.add(new HistoryImpl(data.getJSONObject(i), fromSymbol, toSymbol));
             }
         } catch (JSONException e) {
-            Log.e("getHistories", e.getMessage() + ", " + data.toString());
+            if (DEBUG) CKLog.e(TAG, data.toString(), e);
             histories = null;
         }
 
@@ -113,12 +116,16 @@ public class HistoryResponseImpl implements HistoryResponse {
 
     public static HistoryResponse restoreFromCache(Context context, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
         String text = DiskCacheHelper.read(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
+        if (TextUtils.isEmpty(text)) {
+            if (DEBUG) CKLog.e(TAG, "text is null.");
+            return null;
+        }
         JSONObject response = null;
 
         try {
             response = new JSONObject(text);
         } catch (JSONException e) {
-            Log.e("restoreFromCache", e.getMessage() + ", " + text);
+            if (DEBUG) CKLog.e(TAG, text, e);
         }
 
         if (response == null) {

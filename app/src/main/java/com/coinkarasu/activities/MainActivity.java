@@ -30,7 +30,7 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.settings.PreferencesActivity;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.services.UpdateToplistIntentService;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements
     public static final NavigationKind DEFAULT_KIND = NavigationKind.home;
     private static final String FRAGMENT_TAG = "fragment";
 
-    private Log logger;
+    private CKLog logger;
 
     public enum Currency {
         JPY(R.string.action_currency_switch_to_usd, R.string.action_currency_only_for_jpy),
@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
-        logger = new Log(this);
+        logger = new CKLog(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
-        if (DEBUG) logger.d("KeepScrOn", "" + value);
+        if (DEBUG) CKLog.d("KeepScrOn", "" + value);
     }
 
     private void setNavChecked(NavigationKind kind) {
@@ -343,13 +343,13 @@ public class MainActivity extends AppCompatActivity implements
                     int adHeight = AdSize.SMART_BANNER.getHeightInPixels(MainActivity.this);
                     findViewById(R.id.fragment_container).setPadding(0, 0, 0, adHeight);
 
-                    if (DEBUG) logger.d("onAdLoaded", "loaded");
+                    if (DEBUG) CKLog.d("onAdLoaded", "loaded");
                 }
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                if (DEBUG) logger.e(TAG, "onAdFailedToLoad() " + errorCode);
+                if (DEBUG) CKLog.e(TAG, "onAdFailedToLoad() " + errorCode);
             }
         });
         ad.loadAd(new AdRequest.Builder().build());

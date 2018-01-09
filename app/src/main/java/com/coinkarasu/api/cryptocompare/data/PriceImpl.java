@@ -1,15 +1,17 @@
 package com.coinkarasu.api.cryptocompare.data;
 
-import android.util.Log;
-
+import com.coinkarasu.api.cryptocompare.response.PricesResponse;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.coins.PriceMultiFullCoinImpl;
-import com.coinkarasu.api.cryptocompare.response.PricesResponse;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class PriceImpl implements Price {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "PriceImpl";
+
     private PriceMultiFullCoin coin;
     private String exchange;
 
@@ -18,7 +20,7 @@ public class PriceImpl implements Price {
 
         JSONObject raw = response.getRaw();
         if (raw == null) {
-            Log.e("PriceImpl", response.toString());
+            if (DEBUG) CKLog.e(TAG, "PriceImpl() " + response.toString());
             return;
         }
 
@@ -31,8 +33,7 @@ public class PriceImpl implements Price {
 
             coin = new PriceMultiFullCoinImpl(attrs);
         } catch (JSONException e) {
-            Log.e("PriceImpl", e.getMessage());
-            Log.e("PriceImpl", response.toString());
+            if (DEBUG) CKLog.e(TAG, response.toString(), e);
         }
     }
 

@@ -29,7 +29,7 @@ import com.coinkarasu.format.TrendIconFormat;
 import com.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
 import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
 import com.coinkarasu.tasks.by_exchange.data.Price;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PeriodicalUpdater;
 import com.coinkarasu.utils.PrefHelper;
 
@@ -47,7 +47,7 @@ public class PriceOverviewFragment extends Fragment implements
 
     private Coin coin;
     private PeriodicalUpdater updater;
-    private Log logger;
+    private CKLog logger;
 
     public PriceOverviewFragment() {
     }
@@ -63,7 +63,7 @@ public class PriceOverviewFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        logger = new Log(getActivity());
+        logger = new CKLog(getActivity());
 
         if (getArguments() != null) {
             String coinJson = getArguments().getString("coinJson");
@@ -71,7 +71,7 @@ public class PriceOverviewFragment extends Fragment implements
             try {
                 coin = CoinImpl.buildByAttrs(new JSONObject(coinJson));
             } catch (JSONException e) {
-                logger.e(TAG, e);
+                CKLog.e(TAG, e);
             }
         }
     }
@@ -124,7 +124,7 @@ public class PriceOverviewFragment extends Fragment implements
         coin.setTrend(price.trend);
         updateCard(getView(), coin, false);
 
-        if (DEBUG) logger.d(TAG, "finished()");
+        if (DEBUG) CKLog.d(TAG, "finished()");
     }
 
     private void updateCard(View view, Coin coin, boolean isFirstUpdate) {

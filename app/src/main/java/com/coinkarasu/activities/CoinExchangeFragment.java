@@ -29,6 +29,7 @@ import com.coinkarasu.format.TrendIconFormat;
 import com.coinkarasu.format.TrendValueFormat;
 import com.coinkarasu.pagers.CoinExchangePagerAdapter;
 import com.coinkarasu.tasks.GetCoinSnapshotTask;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +42,9 @@ import java.util.List;
 
 public class CoinExchangeFragment extends Fragment implements
         GetCoinSnapshotTask.Listener, ViewPager.OnPageChangeListener {
+
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinExchangeFragment";
 
     private String kind;
     private Coin coin;
@@ -72,7 +76,7 @@ public class CoinExchangeFragment extends Fragment implements
             try {
                 coin = CoinImpl.buildByAttrs(new JSONObject(coinJson));
             } catch (JSONException e) {
-                Log.e("onCreate", e.getMessage());
+                if (DEBUG) CKLog.e(TAG, e);
             }
         }
     }

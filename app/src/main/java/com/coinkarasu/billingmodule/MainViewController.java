@@ -7,7 +7,7 @@ import com.coinkarasu.billingmodule.billing.BillingManager;
 import com.coinkarasu.billingmodule.skulist.row.PremiumDelegate;
 import com.coinkarasu.billingmodule.skulist.row.TestItemDelegate;
 import com.coinkarasu.billingmodule.skulist.row.TestSubscriptionDelegate;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 
 import java.util.List;
 
@@ -38,19 +38,19 @@ public class MainViewController {
     // Current amount of gas in tank, in units
 //    private int mTank;
 
-    private Log logger;
+    private CKLog logger;
 
     public MainViewController(BillingActivity activity) {
         mUpdateListener = new UpdateListener();
         mActivity = activity;
-        logger = new Log(activity);
+        logger = new CKLog(activity);
         loadData();
     }
 
     public void useGas() {
 //        mTank--;
         saveData();
-//        if (DEBUG) logger.d(TAG, "Tank is now: " + mTank);
+//        if (DEBUG) CKLog.d(TAG, "Tank is now: " + mTank);
     }
 
     public UpdateListener getUpdateListener() {
@@ -94,7 +94,7 @@ public class MainViewController {
 
         @Override
         public void onConsumeFinished(String token, @BillingResponse int result) {
-            if (DEBUG) logger.d(TAG, "Consumption finished. Purchase token: "
+            if (DEBUG) CKLog.d(TAG, "Consumption finished. Purchase token: "
                     + token + ", result: " + result);
 
             // Note: We know this is the SKU_GAS, because it's the only one we consume, so we don't
@@ -107,7 +107,7 @@ public class MainViewController {
             if (result == BillingResponse.OK) {
                 // Successfully consumed, so we apply the effects of the item in our
                 // game world's logic, which in our case means filling the gas tank a bit
-                if (DEBUG) logger.d(TAG, "Consumption successful. Provisioning.");
+                if (DEBUG) CKLog.d(TAG, "Consumption successful. Provisioning.");
 //                mTank = mTank == TANK_MAX ? TANK_MAX : mTank + 1;
                 saveData();
 //                mActivity.alert(com.example.billingmodule.R.string.alert_fill_gas, mTank);
@@ -116,7 +116,7 @@ public class MainViewController {
             }
 
             mActivity.showRefreshedUi();
-            if (DEBUG) logger.d(TAG, "End consumption flow.");
+            if (DEBUG) CKLog.d(TAG, "End consumption flow.");
         }
 
         @Override
@@ -127,15 +127,15 @@ public class MainViewController {
             for (Purchase purchase : purchaseList) {
                 switch (purchase.getSku()) {
                     case PremiumDelegate.SKU_ID:
-                        if (DEBUG) logger.d(TAG, "You are Premium! Congratulations!!!");
+                        if (DEBUG) CKLog.d(TAG, "You are Premium! Congratulations!!!");
                         mIsPremium = true;
                         break;
                     case TestSubscriptionDelegate.SKU_ID:
-                        if (DEBUG) logger.d(TAG, "You have a TestSubscription! Congratulations!!!");
+                        if (DEBUG) CKLog.d(TAG, "You have a TestSubscription! Congratulations!!!");
                         mIsPremium = true;
                         break;
                     case TestItemDelegate.SKU_ID:
-                        if (DEBUG) logger.d(TAG, "We have a TestItem. Consuming it.");
+                        if (DEBUG) CKLog.d(TAG, "We have a TestItem. Consuming it.");
                         // We should consume the purchase and fill up the tank once it was consumed
                         mActivity.getBillingManager().consumeAsync(purchase.getPurchaseToken());
                         break;
@@ -164,12 +164,12 @@ public class MainViewController {
 //        SharedPreferences.Editor spe = mActivity.getPreferences(MODE_PRIVATE).edit();
 //        spe.putInt("tank", mTank);
 //        spe.apply();
-//        Log.d(TAG, "Saved data: tank = " + String.valueOf(mTank));
+//        CKLog.d(TAG, "Saved data: tank = " + String.valueOf(mTank));
     }
 
     private void loadData() {
 //        SharedPreferences sp = mActivity.getPreferences(MODE_PRIVATE);
 //        mTank = sp.getInt("tank", 2);
-//        Log.d(TAG, "Loaded data: tank = " + String.valueOf(mTank));
+//        CKLog.d(TAG, "Loaded data: tank = " + String.valueOf(mTank));
     }
 }

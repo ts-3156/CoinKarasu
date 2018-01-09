@@ -1,11 +1,14 @@
 package com.coinkarasu.coins;
 
-import android.util.Log;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AggregatedSnapshotCoinImpl implements AggregatedSnapshotCoin {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "AggregatedSnapshotCoinImpl";
+
     private String market;
     private String fromSymbol;
     private String toSymbol;
@@ -51,8 +54,7 @@ public class AggregatedSnapshotCoinImpl implements AggregatedSnapshotCoin {
 
             lastMarket = response.getString("LASTMARKET");
         } catch (JSONException e) {
-            Log.e("AggrSnapshotCoinImpl", e.getMessage());
-            Log.e("AggrSnapshotCoinImpl", response.toString());
+            if (DEBUG) CKLog.e(TAG, response.toString(), e);
         }
     }
 

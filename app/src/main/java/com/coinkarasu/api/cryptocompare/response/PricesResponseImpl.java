@@ -1,8 +1,8 @@
 package com.coinkarasu.api.cryptocompare.response;
 
 import android.content.Context;
-import android.util.Log;
 
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONArray;
@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class PricesResponseImpl implements PricesResponse {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "PricesResponseImpl";
 
     private JSONObject response;
 
@@ -43,7 +45,7 @@ public class PricesResponseImpl implements PricesResponse {
         try {
             raw = response.getJSONObject("RAW");
         } catch (JSONException e) {
-            Log.e("getRaw", e.getMessage() + ", " + response.toString());
+            if(DEBUG) CKLog.e(TAG, response.toString(), e);
         }
 
         return raw;
@@ -71,7 +73,7 @@ public class PricesResponseImpl implements PricesResponse {
             data.put("_toSymbol", toSymbol);
             data.put("_exchange", exchange);
         } catch (JSONException e) {
-            e.printStackTrace();
+            if(DEBUG) CKLog.e(TAG, response.toString(), e);
         }
 
         if (data == null) {
@@ -104,7 +106,7 @@ public class PricesResponseImpl implements PricesResponse {
             data.remove("_toSymbol");
             data.remove("_exchange");
         } catch (JSONException e) {
-            Log.e("restoreFromCache", e.getMessage());
+            if(DEBUG) CKLog.e(TAG, e);
             data = null;
         }
 

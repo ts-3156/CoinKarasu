@@ -1,8 +1,9 @@
 package com.coinkarasu.api.cryptocompare.response;
 
 import android.content.Context;
-import android.util.Log;
+import android.text.TextUtils;
 
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONArray;
@@ -10,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class TopPairsResponseImpl implements TopPairsResponse {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "TopPairsResponseImpl";
 
     private static final long THIRTY_MINUTES = 30 * 60 * 1000;
 
@@ -38,8 +41,7 @@ public class TopPairsResponseImpl implements TopPairsResponse {
         try {
             data = response.getJSONArray("Data");
         } catch (JSONException e) {
-            Log.e("getData", e.getMessage());
-            Log.e("getData", response.toString());
+            if (DEBUG) CKLog.e(TAG, response.toString(), e);
         }
 
         return data;
@@ -61,12 +63,16 @@ public class TopPairsResponseImpl implements TopPairsResponse {
 
     public static TopPairsResponse restoreFromCache(Context context, String fromSymbol) {
         String text = DiskCacheHelper.read(context, getCacheName(fromSymbol));
+        if (TextUtils.isEmpty(text)) {
+            if (DEBUG) CKLog.e(TAG, "text is null.");
+            return null;
+        }
         JSONObject response = null;
 
         try {
             response = new JSONObject(text);
         } catch (JSONException e) {
-            Log.e("restoreFromCache", e.getMessage() + ", " + text);
+            if (DEBUG) CKLog.e(TAG, text, e);
         }
 
         if (response == null) {

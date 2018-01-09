@@ -13,7 +13,8 @@ import java.util.Date;
 
 public class DiskCacheHelper {
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
+    private static final String TAG = "DiskCacheHelper";
 
     public static void write(Context context, String name, String text) {
         FileOutputStream writer = null;
@@ -26,12 +27,14 @@ public class DiskCacheHelper {
                 writer.write(text.getBytes());
             }
         } catch (IOException e) {
+            if (DEBUG) CKLog.e(TAG, "write1", e);
         } finally {
             try {
                 if (writer != null) {
                     writer.close();
                 }
             } catch (IOException e) {
+                if (DEBUG) CKLog.e(TAG, "write2", e);
             }
         }
     }
@@ -54,17 +57,17 @@ public class DiskCacheHelper {
 
                 text = builder.toString();
             } else {
-                if (DEBUG) Log.e("read", name + " does not exist.");
+                if (DEBUG) CKLog.e(TAG, name + " does not exist.");
             }
         } catch (IOException e) {
-            Log.e("read1", e.getMessage());
+            if (DEBUG) CKLog.e(TAG, "read1", e);
         } finally {
             try {
                 if (reader != null) {
                     reader.close();
                 }
             } catch (IOException e) {
-                Log.e("read2", e.getMessage());
+                if (DEBUG) CKLog.e(TAG, "read2", e);
             }
         }
 
@@ -90,6 +93,7 @@ public class DiskCacheHelper {
         try {
             file.createNewFile();
         } catch (IOException e) {
+            if (DEBUG) CKLog.e(TAG, "touch", e);
         }
         return file.setLastModified(System.currentTimeMillis());
     }

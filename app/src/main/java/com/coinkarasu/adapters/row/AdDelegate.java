@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.coins.Coin;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -18,10 +18,10 @@ public class AdDelegate implements UiManagingDelegate {
     private static final String TAG = "AdDelegate";
     public static final int TYPE = CoinListAdapter.TYPE_AD;
 
-    private Log logger;
+    private CKLog logger;
 
     public AdDelegate(Context context) {
-        logger = new Log(context);
+        logger = new CKLog(context);
     }
 
     @Override
@@ -38,13 +38,13 @@ public class AdDelegate implements UiManagingDelegate {
                 if (holder.ad != null && holder.ad.getParent() == null) {
                     holder.container.setVisibility(View.VISIBLE);
                     holder.container.addView(holder.ad);
-                    if (DEBUG) logger.d(TAG, "onAdLoaded()");
+                    if (DEBUG) CKLog.d(TAG, "onAdLoaded()");
                 }
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                if (DEBUG) logger.e(TAG, "onAdFailedToLoad() " + errorCode);
+                if (DEBUG) CKLog.e(TAG, "onAdFailedToLoad() " + errorCode);
             }
         });
         holder.ad.loadAd(new AdRequest.Builder().build());

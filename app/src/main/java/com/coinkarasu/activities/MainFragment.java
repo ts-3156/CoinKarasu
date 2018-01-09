@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.pagers.MainPagerAdapter;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 
 import java.util.ArrayList;
 
@@ -30,7 +30,7 @@ public class MainFragment extends Fragment implements
 
     private NavigationKind kind;
     private TabLayout.Tab tab;
-    private Log logger;
+    private CKLog logger;
 
     public MainFragment() {
     }
@@ -54,7 +54,7 @@ public class MainFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        logger = new Log(getActivity());
+        logger = new CKLog(getActivity());
 
         MainPagerAdapter adapter = new MainPagerAdapter(getChildFragmentManager(), getActivity(), kind);
 
@@ -64,7 +64,7 @@ public class MainFragment extends Fragment implements
                 kind = NavigationKind.home;
             }
             adapter.setVersion(savedInstanceState.getLong(STATE_PAGER_ADAPTER_VERSION));
-            if (DEBUG) logger.d(TAG, "Set version to PagerAdapter " + adapter.getVersion());
+            if (DEBUG) CKLog.d(TAG, "Set version to PagerAdapter " + adapter.getVersion());
         }
 
         ViewPager pager = view.findViewById(R.id.view_pager);
@@ -158,7 +158,7 @@ public class MainFragment extends Fragment implements
      */
     @Override
     public void onTabSelected(TabLayout.Tab _tab) {
-        if (DEBUG) logger.d(TAG, "onTabSelected " + _tab.getPosition()
+        if (DEBUG) CKLog.d(TAG, "onTabSelected " + _tab.getPosition()
                 + " ignore=" + (tab == null));
         if (tab == null) {
             return;

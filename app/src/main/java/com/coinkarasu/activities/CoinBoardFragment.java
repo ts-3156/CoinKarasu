@@ -148,7 +148,7 @@ public class CoinBoardFragment extends Fragment implements View.OnClickListener 
         addOverRow(board.getOver(8), columnAsk, columnPrice, columnBid, layoutParams);
 
         for (int i = 0; i < rows.size(); i++) {
-//            Log.d("ROW", row.askSize + ", " + row.price + ", " + row.bidSize);
+//            CKLog.d("ROW", row.askSize + ", " + row.price + ", " + row.bidSize);
 
             Board.Row row = rows.get(i);
             int priceColor = Color.BLACK;

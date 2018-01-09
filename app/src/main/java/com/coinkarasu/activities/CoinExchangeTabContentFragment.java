@@ -19,6 +19,7 @@ import com.coinkarasu.coins.SnapshotCoin;
 import com.coinkarasu.coins.SnapshotCoinImpl;
 import com.coinkarasu.tasks.GetHistoryHourTask;
 import com.coinkarasu.tasks.GetHistoryTaskBase;
+import com.coinkarasu.utils.CKLog;
 import com.github.mikephil.charting.charts.LineChart;
 
 import org.json.JSONException;
@@ -29,6 +30,8 @@ import java.util.Date;
 import java.util.List;
 
 public class CoinExchangeTabContentFragment extends Fragment implements GetHistoryHourTask.Listener {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinExchangeTabContentFragment";
 
     private SnapshotCoin coin;
     private String kind;
@@ -65,7 +68,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
             try {
                 coin = SnapshotCoinImpl.buildByJSONObject(new JSONObject(coinJson));
             } catch (JSONException e) {
-                Log.e("onCreate", e.getMessage());
+                if (DEBUG) CKLog.e(TAG, e);
             }
         }
     }

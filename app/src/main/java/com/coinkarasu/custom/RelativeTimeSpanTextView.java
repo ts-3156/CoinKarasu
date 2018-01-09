@@ -8,7 +8,7 @@ import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,7 +21,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
     private Timer timer;
     private long time;
     private long period;
-    private Log logger;
+    private CKLog logger;
 
     public RelativeTimeSpanTextView(Context context) {
         this(context, null);
@@ -33,20 +33,20 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
 
     public RelativeTimeSpanTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        logger = new Log(getContext());
+        logger = new CKLog(getContext());
         time = -1;
         period = DEFAULT_PERIOD;
     }
 
     public void updateText() {
-        if (DEBUG) logger.d(TAG, "updateText() is called.");
+        if (DEBUG) CKLog.d(TAG, "updateText() is called.");
         stopTimer("updateText");
         time = System.currentTimeMillis();
         startTimer("updateText");
     }
 
     private void startTimer(String caller) {
-        if (DEBUG) logger.d(TAG, "startTimer() is called from " + caller);
+        if (DEBUG) CKLog.d(TAG, "startTimer() is called from " + caller);
         if (timer != null) {
             return;
         }
@@ -68,7 +68,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
     }
 
     private void stopTimer(String caller) {
-        if (DEBUG) logger.d(TAG, "stopTimer() is called from " + caller);
+        if (DEBUG) CKLog.d(TAG, "stopTimer() is called from " + caller);
         if (timer != null) {
             timer.cancel();
             timer = null;

@@ -18,7 +18,7 @@ import com.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
 import com.coinkarasu.adapters.HomeTabRecyclerViewAdapter;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.services.data.Trending;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,7 +66,7 @@ public class HomeTabCardFragment extends Fragment implements
     }
 
     private void initializeRecyclerView(View view, TrendingKind kind) {
-        if (DEBUG) Log.e(TAG, "initializeRecyclerView() " + kind.name());
+        if (DEBUG) CKLog.d(TAG, "initializeRecyclerView() " + kind.name());
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));

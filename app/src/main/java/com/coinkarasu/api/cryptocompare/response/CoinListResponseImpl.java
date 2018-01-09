@@ -1,8 +1,10 @@
 package com.coinkarasu.api.cryptocompare.response;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.DiskCacheHelper;
 
 import org.json.JSONException;
@@ -11,6 +13,8 @@ import org.json.JSONObject;
 import java.util.Date;
 
 public class CoinListResponseImpl implements CoinListResponse {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinListResponseImpl";
 
     private static final String CACHE_NAME = "coin_list_response.json";
 
@@ -29,10 +33,10 @@ public class CoinListResponseImpl implements CoinListResponse {
             if (response.getString("Response").equals("Success")) {
                 this.response = response;
             } else {
-                Log.d("CoinListResponseImpl", response.toString());
+                if (DEBUG) CKLog.e(TAG, "CoinListResponseImpl() " + response.toString());
             }
         } catch (JSONException e) {
-            Log.d("CoinListResponseImpl", e.getMessage());
+            if (DEBUG) CKLog.e(TAG, response.toString(), e);
         }
     }
 
@@ -81,8 +85,8 @@ public class CoinListResponseImpl implements CoinListResponse {
     // @Override
     public static CoinListResponse restoreFromCache(Context context) {
         String text = DiskCacheHelper.read(context, CACHE_NAME);
-        if (text == null) {
-            Log.e("restoreFromCache", "the text is null.");
+        if (TextUtils.isEmpty(text)) {
+            if (DEBUG) CKLog.e(TAG, "text is null.");
             return null;
         }
         JSONObject response = null;
@@ -90,7 +94,7 @@ public class CoinListResponseImpl implements CoinListResponse {
         try {
             response = new JSONObject(text);
         } catch (JSONException e) {
-            Log.e("restoreFromCache", e.getMessage());
+            if (DEBUG) CKLog.e(TAG, text, e);
         }
 
         if (response == null) {

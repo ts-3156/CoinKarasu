@@ -10,8 +10,8 @@ import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Toplist;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.DiskCacheHelper;
-import com.coinkarasu.utils.Log;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,14 +32,22 @@ public class UpdateToplistIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        try {
+            update(intent);
+        } catch (Exception e) {
+            CKLog.e(TAG, e);
+        }
+    }
+
+    protected void update(Intent intent) {
         long start = System.currentTimeMillis();
-        Log logger = new Log(getApplicationContext());
+        CKLog logger = new CKLog(getApplicationContext());
         NavigationKind kind = NavigationKind.valueOf(intent.getAction());
         String symbol = kind.getToSymbol();
         String logFile = logFile(symbol);
 
         if (DiskCacheHelper.exists(this, logFile) && !DiskCacheHelper.isExpired(this, logFile, ONE_DAY)) {
-            if (DEBUG) logger.d(TAG, kind.name() + " is recently executed.");
+            if (DEBUG) CKLog.d(TAG, kind.name() + " is recently executed.");
             return;
         }
         DiskCacheHelper.touch(this, logFile);
@@ -80,7 +88,7 @@ public class UpdateToplistIntentService extends IntentService {
         Toplist toplist = new Toplist(coins, kind);
         toplist.saveToCache(this);
 
-        if (DEBUG) logger.d(TAG, symbol + " toplist updated, "
+        if (DEBUG) CKLog.d(TAG, symbol + " toplist updated, "
                 + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 

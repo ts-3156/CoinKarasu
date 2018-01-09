@@ -31,7 +31,7 @@ import com.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
 import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
 import com.coinkarasu.tasks.by_exchange.data.Price;
 import com.coinkarasu.tasks.by_exchange.data.PricesCache;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PeriodicalUpdater;
 import com.coinkarasu.utils.PrefHelper;
 
@@ -56,7 +56,7 @@ public class CoinListFragment extends Fragment implements
     private boolean isSelected;
     private boolean isStartTaskRequested;
     private boolean isCollectCoinsRequested;
-    private Log logger;
+    private CKLog logger;
 
     public CoinListFragment() {
     }
@@ -85,7 +85,7 @@ public class CoinListFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_list, container, false);
-        logger = new Log(getActivity());
+        logger = new CKLog(getActivity());
 
         ((ProgressBar) view.findViewById(R.id.screen_wait)).setIndeterminateDrawable(getResources().getDrawable(kind.progressDrawableResId));
         updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
@@ -93,7 +93,7 @@ public class CoinListFragment extends Fragment implements
         if (savedInstanceState != null) {
             isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
             updater.setLastUpdated(savedInstanceState.getLong(STATE_LAST_UPDATED_KEY));
-            if (DEBUG) logger.d(TAG, "lastUpdated is restored "
+            if (DEBUG) CKLog.d(TAG, "lastUpdated is restored "
                     + kind.name() + " " + updater.getLastUpdated());
         } else {
             isVisibleToUser = isSelected; // タブの追加/削除後に利用している
@@ -110,7 +110,7 @@ public class CoinListFragment extends Fragment implements
         // collectCoinsはsetUserVisibleHintから呼ばれるが、fragmentの
         // ライフサイクル外から呼ばれることも考慮して、念のためにここでも呼んでいる。
         if (isCollectCoinsRequested) {
-            if (DEBUG) logger.e(TAG, "onActivityCreated() call collectCoins()");
+            if (DEBUG) CKLog.e(TAG, "onActivityCreated() call collectCoins()");
             collectCoins();
         }
     }
@@ -176,7 +176,7 @@ public class CoinListFragment extends Fragment implements
                             throw new RuntimeException("Invalid section " + section.toString());
                         }
 
-                        if (DEBUG) logger.d(TAG, "addCoins() "
+                        if (DEBUG) CKLog.d(TAG, "addCoins() "
                                 + kind.name() + " " + (System.currentTimeMillis() - start) + " ms");
 
                         if (indexOfSection < kind.sections.length - 1) {
@@ -360,7 +360,7 @@ public class CoinListFragment extends Fragment implements
         updateRelativeTimeSpanText(exchange, coinKind);
         hideProgressbarDelayed(exchange, coinKind);
 
-        if (DEBUG) logger.d(TAG, "finished() " + kind + ", " + exchange + ", " + coinKind);
+        if (DEBUG) CKLog.d(TAG, "finished() " + kind + ", " + exchange + ", " + coinKind);
     }
 
     private void hideProgressbarDelayed(Exchange exchange, CoinKind coinKind) {

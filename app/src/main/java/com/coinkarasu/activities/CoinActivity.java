@@ -18,7 +18,7 @@ import com.coinkarasu.api.bitflyer.data.Board;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.tasks.GetBoardTask;
-import com.coinkarasu.utils.Log;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 
 import org.json.JSONException;
@@ -33,19 +33,19 @@ public class CoinActivity extends AppCompatActivity {
     public static final String KEY_COIN_JSON = "KEY_COIN_JSON";
 
     private Coin coin;
-    private Log logger;
+    private CKLog logger;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coin);
-        logger = new Log(this);
+        logger = new CKLog(this);
 
         Intent intent = getIntent();
         try {
             coin = CoinImpl.buildByAttrs(new JSONObject(intent.getStringExtra(KEY_COIN_JSON)));
         } catch (JSONException e) {
-            logger.e(TAG, e);
+            CKLog.e(TAG, e);
         }
 
         if (savedInstanceState == null) {
@@ -167,7 +167,7 @@ public class CoinActivity extends AppCompatActivity {
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(Tag.board.name());
                 if (fragment != null) {
                     ((CoinBoardFragment) fragment).updateView(board);
-                    if (DEBUG) logger.d(TAG, "drawBoardChart()");
+                    if (DEBUG) CKLog.d(TAG, "drawBoardChart()");
                 }
             }
         }).execute();

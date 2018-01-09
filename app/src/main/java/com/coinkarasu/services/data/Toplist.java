@@ -6,6 +6,7 @@ import android.util.Log;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.coins.PriceMultiFullCoinImpl;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.DiskCacheHelper;
 import com.crashlytics.android.Crashlytics;
 
@@ -19,6 +20,7 @@ import java.util.List;
 public class Toplist {
 
     private static final boolean DEBUG = true;
+    private static final String TAG = "Toplist";
 
     private NavigationKind kind;
     private ArrayList<PriceMultiFullCoin> coins;
@@ -40,7 +42,7 @@ public class Toplist {
     public static Toplist restoreFromCache(Context context, NavigationKind kind) {
         String text = DiskCacheHelper.read(context, getCacheName(kind));
         if (text == null) {
-            if (DEBUG) Log.e("restoreFromCache", "The " + kind.name() + " cache is null.");
+            if (DEBUG) CKLog.e(TAG, "The " + kind.name() + " cache is null.");
             return null;
         }
 
@@ -53,8 +55,7 @@ public class Toplist {
                 coins.add(new PriceMultiFullCoinImpl(attrs));
             }
         } catch (JSONException e) {
-            if (DEBUG) Log.e("restoreFromCache", e.getMessage());
-            Crashlytics.logException(e);
+            if (DEBUG) CKLog.e(TAG, text, e);
         }
 
         return new Toplist(coins, kind);
