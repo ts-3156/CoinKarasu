@@ -62,7 +62,11 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
         configs.isAnimPaused = true;
     }
 
-    public void restartAnimation() {
+    public boolean isAnimPaused() {
+        return configs.isAnimPaused;
+    }
+
+    public void resumeAnimation() {
         configs.isAnimPaused = false;
     }
 

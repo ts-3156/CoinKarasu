@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -139,11 +140,11 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
-        ArrayList<Coin> coins = new ArrayList<>();
+        List<Coin> coins = new ArrayList<>();
         addCoins(coins, kind.sections[0]);
     }
 
-    private void addCoins(final ArrayList<Coin> inCoins, final Section section) {
+    private void addCoins(final List<Coin> inCoins, final Section section) {
         final long start = System.currentTimeMillis();
         String[] fromSymbols = null;
 
@@ -279,7 +280,6 @@ public class CoinListFragment extends Fragment implements
         }
 
         adapter.notifyDataSetChanged();
-        adapter.restartAnimation();
     }
 
     public void startTask() {
@@ -334,7 +334,7 @@ public class CoinListFragment extends Fragment implements
     }
 
     @Override
-    public void finished(Exchange exchange, CoinKind coinKind, ArrayList<Price> prices) {
+    public void finished(final Exchange exchange, final CoinKind coinKind, final ArrayList<Price> prices) {
         if (isDetached() || getActivity() == null || getActivity().isFinishing() || getView() == null) {
             if (updater != null) {
                 updater.stop("finished");
@@ -349,27 +349,36 @@ public class CoinListFragment extends Fragment implements
         new PricesCache(getContext()).put(kind, exchange, coinKind, prices);
 
         RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
-        CoinListAdapter adapter = (CoinListAdapter) recyclerView.getAdapter();
+        final CoinListAdapter adapter = (CoinListAdapter) recyclerView.getAdapter();
 
-        List<Coin> coins = adapter.getItems(exchange, coinKind);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                List<Coin> coins = adapter.getItems(exchange, coinKind);
 
-        for (Price price : prices) {
-            for (Coin coin : coins) {
-                if (coin.getSymbol().equals(price.fromSymbol)) {
-                    coin.setPrice(price.price);
-                    coin.setPriceDiff(price.priceDiff);
-                    coin.setTrend(price.trend);
-                    break;
+                for (Price price : prices) {
+                    for (Coin coin : coins) {
+                        if (coin.getSymbol().equals(price.fromSymbol)) {
+                            coin.setPrice(price.price);
+                            coin.setPriceDiff(price.priceDiff);
+                            coin.setTrend(price.trend);
+                            break;
+                        }
+                    }
+
                 }
+
+                adapter.resumeAnimation();
+                adapter.notifyCoinsChanged(exchange, coinKind);
+                updateRelativeTimeSpanText(exchange, coinKind);
+                hideProgressbarDelayed(exchange, coinKind);
+
+                if (DEBUG) CKLog.d(TAG, "finished() " + kind + ", " + exchange + ", " + coinKind);
             }
+        };
 
-        }
-
-        adapter.notifyCoinsChanged(exchange, coinKind);
-        updateRelativeTimeSpanText(exchange, coinKind);
-        hideProgressbarDelayed(exchange, coinKind);
-
-        if (DEBUG) CKLog.d(TAG, "finished() " + kind + ", " + exchange + ", " + coinKind);
+        long delay = adapter.isAnimPaused() ? ValueAnimatorBase.DURATION : 0L;
+        new Handler().postDelayed(runnable, delay);
     }
 
     private void hideProgressbarDelayed(Exchange exchange, CoinKind coinKind) {
