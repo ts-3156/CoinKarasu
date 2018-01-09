@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
 import com.coinkarasu.activities.HomeTabFragment;
+import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.api.cryptocompare.Client;
@@ -26,6 +27,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class UpdateTrendingIntentService extends IntentService {
 
@@ -40,43 +42,34 @@ public class UpdateTrendingIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-//        ArrayList<String> toSymbols = new ArrayList<>();
-//        for (MainActivity.Currency currency : MainActivity.Currency.values()) {
-//            toSymbols.add(currency.name());
-//        }
-//
-//        ArrayList<String> exchanges = new ArrayList<>();
-//        for (Exchange exchange : Exchange.values()) {
-//
-//        }
-
         for (TrendingKind kind : TrendingKind.values()) {
-            update(kind, "JPY", "zaif");
+            update(kind, Exchange.cccagg, "JPY");
         }
     }
 
-    private void update(TrendingKind kind, String toSymbol, String exchange) {
+    private void update(TrendingKind kind, Exchange exchange, String toSymbol) {
         long start = System.currentTimeMillis();
         Log logger = new Log(getApplicationContext());
-        String logFile = logFile(kind, toSymbol, exchange);
+        String logFile = logFile(kind, toSymbol, exchange.name());
 
         if (DiskCacheHelper.exists(this, logFile) && !DiskCacheHelper.isExpired(this, logFile, ONE_DAY)) {
-            if (DEBUG) logger.d(TAG, kind.name() + " is recently executed.");
+            if (DEBUG) logger.d(TAG, kind.name() + " " + exchange + " " + toSymbol + " is recently executed.");
             return;
         }
         DiskCacheHelper.touch(this, logFile);
 
-        LinkedHashSet<String> uniqueSymbols = new LinkedHashSet<>();
+        Set<String> uniqueSymbols = new LinkedHashSet<>(); // 日本で取引できるコインの重複のない一覧
         String[] array = getResources().getStringArray(NavigationKind.japan.symbolsResId);
         Collections.addAll(uniqueSymbols, array);
 
-        Prices prices = ClientFactory.getInstance(this).getPrices(uniqueSymbols.toArray(new String[uniqueSymbols.size()]), toSymbol, exchange);
+        Prices prices = ClientFactory.getInstance(this)
+                .getPrices(uniqueSymbols.toArray(new String[uniqueSymbols.size()]), toSymbol, exchange.name());
         List<PriceMultiFullCoin> baseCoins = prices.getCoins();
-        ArrayList<Coin> coins = new ArrayList<>();
+        List<Coin> coins = new ArrayList<>();
         CoinList coinList = CoinListImpl.getInstance(this);
 
         for (PriceMultiFullCoin coin : baseCoins) {
-            List<History> records = getHistories(kind, coin.getFromSymbol(), coin.getToSymbol(), exchange);
+            List<History> records = getHistories(kind, coin.getFromSymbol(), coin.getToSymbol(), exchange.name());
             if (records.isEmpty()) {
                 continue;
             }
@@ -110,7 +103,7 @@ public class UpdateTrendingIntentService extends IntentService {
         broadcastIntent.setAction(HomeTabFragment.ACTION_UPDATE_TRENDING);
         LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
 
-        if (DEBUG) logger.d(TAG, kind.name() + " trending updated, "
+        if (DEBUG) logger.d(TAG, kind.name() + " " + exchange.name() + " " + toSymbol + " trending updated, "
                 + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 

@@ -46,7 +46,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
         switch (targetKind) {
             case home:
-                fragment = HomeTabFragment.newInstance(null);
+                fragment = HomeTabFragment.newInstance(selectedKind == targetKind);
                 break;
 //            case assets:
 //                fragment = HomeTabFragment.newInstance(selectedKind);

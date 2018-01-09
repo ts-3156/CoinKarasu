@@ -30,7 +30,6 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.settings.PreferencesActivity;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.services.UpdateToplistIntentService;
-import com.coinkarasu.services.UpdateTrendingIntentService;
 import com.coinkarasu.utils.Log;
 import com.coinkarasu.utils.PrefHelper;
 import com.crashlytics.android.Crashlytics;
@@ -111,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements
                 UpdateToplistIntentService.start(this, kind);
             }
         }
-        UpdateTrendingIntentService.start(this);
     }
 
     @Override

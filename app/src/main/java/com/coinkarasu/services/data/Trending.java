@@ -18,9 +18,9 @@ import java.util.List;
 public class Trending {
 
     private TrendingKind kind;
-    private ArrayList<Coin> coins;
+    private List<Coin> coins;
 
-    public Trending(ArrayList<Coin> coins, TrendingKind kind) {
+    public Trending(List<Coin> coins, TrendingKind kind) {
         this.coins = coins;
         this.kind = kind;
     }

@@ -18,6 +18,7 @@ import com.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
 import com.coinkarasu.adapters.HomeTabRecyclerViewAdapter;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.services.data.Trending;
+import com.coinkarasu.utils.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +27,10 @@ import java.util.List;
 public class HomeTabCardFragment extends Fragment implements
         View.OnClickListener, HomeTabRecyclerViewAdapter.OnItemClickListener, PopupMenu.OnMenuItemClickListener {
 
-    private static final String STATE_SELECTED_KIND_KEY = "kind";
+    private static final boolean DEBUG = true;
+    private static final String TAG = "HomeTabCardFragment";
 
     private TrendingKind kind;
-    private boolean isFilterChecked;
 
     public HomeTabCardFragment() {
     }
@@ -59,23 +60,15 @@ public class HomeTabCardFragment extends Fragment implements
         view.findViewById(R.id.popup_menu).setOnClickListener(this);
         view.findViewById(R.id.filter).setOnClickListener(this);
 
-        isFilterChecked = true;
+        initializeRecyclerView(view, kind);
 
         return view;
     }
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        initializeRecyclerView();
-    }
+    private void initializeRecyclerView(View view, TrendingKind kind) {
+        if (DEBUG) Log.e(TAG, "initializeRecyclerView() " + kind.name());
 
-    private void initializeRecyclerView() {
-        if (getView() == null) {
-            return;
-        }
-
-        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         recyclerView.addItemDecoration(new HomeTabHorizontalSpaceItemDecoration(getActivity(), getResources().getDimensionPixelSize(R.dimen.home_tab_horizontal_gap)));
 
@@ -87,8 +80,8 @@ public class HomeTabCardFragment extends Fragment implements
 
         if (coins.isEmpty()) {
             recyclerView.setVisibility(View.GONE);
-            ((TextView) getView().findViewById(R.id.warn_text)).setText(getString(R.string.home_tab_not_found));
-            getView().findViewById(R.id.warn_container).setVisibility(View.VISIBLE);
+            ((TextView) view.findViewById(R.id.warn_text)).setText(getString(R.string.home_tab_not_found));
+            view.findViewById(R.id.warn_container).setVisibility(View.VISIBLE);
         } else {
             HomeTabRecyclerViewAdapter adapter = new HomeTabRecyclerViewAdapter(getActivity(), coins);
             adapter.setOnItemClickListener(this);
@@ -103,12 +96,6 @@ public class HomeTabCardFragment extends Fragment implements
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putString(STATE_SELECTED_KIND_KEY, kind.name());
-        super.onSaveInstanceState(savedInstanceState);
-    }
-
-    @Override
     public void onItemClick(Coin coin, View view, int position) {
         Intent intent = new Intent(view.getContext(), CoinActivity.class);
         intent.putExtra(CoinActivity.KEY_COIN_JSON, coin.toJson().toString());
@@ -117,13 +104,13 @@ public class HomeTabCardFragment extends Fragment implements
 
     @Override
     public void onClick(View view) {
-        PopupMenu popup = new PopupMenu(getContext(), view);
+        PopupMenu popup = new PopupMenu(view.getContext(), view);
         popup.inflate(R.menu.trending_card);
-        popup.setOnMenuItemClickListener(this);
+//        popup.setOnMenuItemClickListener(this);
 
-        MenuItem item = popup.getMenu().findItem(R.id.action_filter);
-        item.setChecked(isFilterChecked);
-        item.setEnabled(false);
+//        MenuItem item = popup.getMenu().findItem(R.id.action_filter);
+//        item.setChecked(isFilterChecked);
+//        item.setEnabled(false);
 
         popup.show();
     }
@@ -131,12 +118,6 @@ public class HomeTabCardFragment extends Fragment implements
     @Override
     public boolean onMenuItemClick(MenuItem item) {
         if (item.getItemId() == R.id.action_filter) {
-            isFilterChecked = !item.isChecked();
-            item.setChecked(isFilterChecked);
-            if (item.isChecked()) {
-
-            } else {
-            }
         }
 
         return true;

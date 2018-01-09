@@ -96,7 +96,7 @@ public class CoinListFragment extends Fragment implements
             if (DEBUG) logger.d(TAG, "lastUpdated is restored "
                     + kind.name() + " " + updater.getLastUpdated());
         } else {
-            isVisibleToUser = isSelected; // タブの追加/削除をする際に必要
+            isVisibleToUser = isSelected; // タブの追加/削除後に利用している
         }
 
         PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
