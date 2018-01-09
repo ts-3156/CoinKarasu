@@ -276,7 +276,7 @@ public class BillingManager implements PurchasesUpdatedListener {
     public boolean areSubscriptionsSupported() {
         int responseCode = mBillingClient.isFeatureSupported(FeatureType.SUBSCRIPTIONS);
         if (responseCode != BillingResponse.OK) {
-            CKLog.w(TAG, "areSubscriptionsSupported() got an error response: " + responseCode);
+            if (DEBUG) CKLog.w(TAG, "areSubscriptionsSupported() got an error response: " + responseCode);
         }
         return responseCode == BillingResponse.OK;
     }

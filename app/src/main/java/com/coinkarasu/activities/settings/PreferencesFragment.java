@@ -11,9 +11,11 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.SwitchPreference;
 import android.support.v7.app.AlertDialog;
 
 import com.coinkarasu.R;
+import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.cache.DiskBasedCache;
@@ -41,10 +43,14 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        String value = prefs.getString("pref_sync_frequency", String.valueOf(PrefHelper.DEFAULT_SYNC_INTERVAL));
-        if (!PrefHelper.isPremium(getActivity()) && Integer.valueOf(value) < PrefHelper.MIN_SYNC_INTERVAL) {
+        String interval = prefs.getString("pref_sync_frequency", String.valueOf(PrefHelper.DEFAULT_SYNC_INTERVAL));
+        if (!PrefHelper.isPremium(getActivity()) && Integer.valueOf(interval) < PrefHelper.MIN_SYNC_INTERVAL) {
             PrefHelper.setDefaultSyncInterval(getActivity());
         }
+
+        SwitchPreference removeAds = (SwitchPreference) findPreference("pref_remove_ads");
+        removeAds.setChecked(PrefHelper.isPremium(getActivity()));
+        removeAds.setOnPreferenceClickListener(this);
 
         bindPreferenceSummaryToValue(prefs, "pref_sync_frequency");
         bindPreferenceSummaryToValue(prefs, "pref_currency");
@@ -71,6 +77,14 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
             });
         } else if (key.equals("pref_open_source_licenses")) {
             startActivity(new Intent(getActivity(), OssLicensesMenuActivity.class));
+        } else if (key.equals("pref_remove_ads")) {
+            if (PrefHelper.isPremium(getActivity())) {
+                ((SwitchPreference) preference).setChecked(true);
+                showDialog(R.string.pref_remove_ads_already_available, false, null);
+            } else {
+                Intent intent = new Intent(getActivity(), BillingActivity.class);
+                startActivity(intent);
+            }
         }
 
         return true;

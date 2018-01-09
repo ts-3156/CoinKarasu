@@ -175,7 +175,8 @@ public class CoinListFragment extends Fragment implements
                         inCoins.add(section.createSectionHeaderCoin());
                         inCoins.addAll(coins);
 
-                        if (kind.isToplist() && section.getExchange() == Exchange.cccagg && inCoins.size() >= 3) {
+                        if (!PrefHelper.isPremium(getActivity()) && kind.isToplist()
+                                && section.getExchange() == Exchange.cccagg && inCoins.size() >= 3) {
                             inCoins.add(2, new AdCoinImpl());
                         }
 

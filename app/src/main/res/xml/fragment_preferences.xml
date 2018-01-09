@@ -35,6 +35,15 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/pref_header_premium">
+        <SwitchPreference
+            android:defaultValue="@bool/remove_ads"
+            android:key="pref_remove_ads"
+            android:summary="@string/pref_description_remove_ads"
+            android:title="@string/pref_title_remove_ads" />
+
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_header_speeding_up">
         <SwitchPreference
             android:defaultValue="@bool/enable_price_anim"

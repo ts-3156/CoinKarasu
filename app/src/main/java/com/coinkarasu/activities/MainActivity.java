@@ -335,6 +335,10 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setupAdView() {
+        if (PrefHelper.isPremium(this)) {
+            return;
+        }
+
         final AdView ad = new AdView(this);
         ad.setAdSize(AdSize.SMART_BANNER);
         ad.setAdUnitId(BuildConfig.ADMOB_UNIT_ID);

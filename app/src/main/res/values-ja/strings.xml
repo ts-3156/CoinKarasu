@@ -139,6 +139,7 @@
     <string name="edit_tabs_is_always_be_displayed">%1$s は必ず表示されます</string>
 
     <string name="pref_header_general">全般</string>
+    <string name="pref_header_premium">プレミアム</string>
     <string name="pref_header_speeding_up">高速化</string>
     <string name="pref_header_about">概要</string>
     <string name="pref_header_cache">キャッシュ</string>
@@ -176,6 +177,9 @@
     </string-array>
     <string name="pref_title_keep_screen_on">スリープモードにしない</string>
     <string name="pref_description_keep_screen_on">価格一覧を見ている時は画面をスリープにしない</string>
+    <string name="pref_title_remove_ads">広告を表示しない</string>
+    <string name="pref_description_remove_ads">プレミアムユーザーのみ</string>
+    <string name="pref_remove_ads_already_available">あなたは既にプレミアムユーザーです。広告は表示されません！</string>
     <string name="pref_title_enable_price_anim">価格のアニメーションを有効化する</string>
     <string name="pref_description_enable_price_anim">この設定をオフにすると表示が高速化されます</string>
     <string name="pref_title_enable_download_icon">高解像度のアイコンをダウンロードする</string>
