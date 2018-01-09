@@ -34,19 +34,18 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
         addPreferencesFromResource(R.xml.fragment_preferences);
         logger = new CKLog(getActivity());
 
-        Preference prefAppVersion = getPreferenceScreen().findPreference("pref_app_version");
-        prefAppVersion.setOnPreferenceClickListener(this);
-
-        Preference prefClearCache = getPreferenceScreen().findPreference("pref_clear_cache");
-        prefClearCache.setOnPreferenceClickListener(this);
-
-        Preference prefClearConfig = getPreferenceScreen().findPreference("pref_clear_config");
-        prefClearConfig.setOnPreferenceClickListener(this);
-
-        Preference prefOpenSourceLicenses = getPreferenceScreen().findPreference("pref_open_source_licenses");
-        prefOpenSourceLicenses.setOnPreferenceClickListener(this);
+        findPreference("pref_app_version").setOnPreferenceClickListener(this);
+        findPreference("pref_clear_cache").setOnPreferenceClickListener(this);
+        findPreference("pref_clear_config").setOnPreferenceClickListener(this);
+        findPreference("pref_open_source_licenses").setOnPreferenceClickListener(this);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        String value = prefs.getString("pref_sync_frequency", String.valueOf(PrefHelper.DEFAULT_SYNC_INTERVAL));
+        if (!PrefHelper.isPremium(getActivity()) && Integer.valueOf(value) < PrefHelper.MIN_SYNC_INTERVAL) {
+            PrefHelper.setDefaultSyncInterval(getActivity());
+        }
+
         bindPreferenceSummaryToValue(prefs, "pref_sync_frequency");
         bindPreferenceSummaryToValue(prefs, "pref_currency");
     }

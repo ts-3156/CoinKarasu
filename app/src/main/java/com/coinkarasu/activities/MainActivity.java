@@ -29,6 +29,7 @@ import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.settings.PreferencesActivity;
 import com.coinkarasu.billingmodule.BillingActivity;
+import com.coinkarasu.billingmodule.billing.BillingManager;
 import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements
     private static final String STATE_SELECTED_KIND = "kind";
     public static final NavigationKind DEFAULT_KIND = NavigationKind.home;
     private static final String FRAGMENT_TAG = "fragment";
+
+    MainViewController viewController;
 
     private CKLog logger;
 
@@ -104,6 +107,9 @@ public class MainActivity extends AppCompatActivity implements
                     .replace(R.id.fragment_container, MainFragment.newInstance(DEFAULT_KIND), FRAGMENT_TAG)
                     .commit();
         }
+
+        viewController = new MainViewController(this);
+        new BillingManager(this, viewController.getUpdateListener());
 
         for (NavigationKind kind : NavigationKind.toplistValues()) {
             if (kind.isVisible(this)) {
@@ -353,5 +359,9 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
         ad.loadAd(new AdRequest.Builder().build());
+    }
+
+    public boolean isPremiumPurchased() {
+        return viewController.isPremiumPurchased();
     }
 }

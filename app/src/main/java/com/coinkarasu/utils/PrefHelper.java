@@ -9,8 +9,12 @@ import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 
 public class PrefHelper {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "PrefHelper";
 
-    private static final int DEFAULT_SYNC_INTERVAL = 30000;
+    public static final int DEFAULT_SYNC_INTERVAL = 60000;
+    public static final int MIN_SYNC_INTERVAL = 30000;
+    private static final int PREMIUM_MIN_SYNC_INTERVAL = 10000;
 
     private static boolean getAutoRefresh(Context context) {
         SharedPreferences pref = getPref(context);
@@ -33,12 +37,23 @@ public class PrefHelper {
         String value = pref.getString("pref_sync_frequency", String.valueOf(DEFAULT_SYNC_INTERVAL));
         int interval = Integer.valueOf(value);
 
-        if (interval < 5000) {
-            CKLog.d("INVALID_Interval", "" + interval);
-            interval = DEFAULT_SYNC_INTERVAL;
+        int min = isPremium(context) ? PREMIUM_MIN_SYNC_INTERVAL : MIN_SYNC_INTERVAL;
+        if (interval < min) {
+            if (DEBUG) CKLog.d(TAG, "getSyncInterval() Invalid value " + interval);
+            interval = min;
         }
 
         return interval;
+    }
+
+    public static void setDefaultSyncInterval(Context context) {
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return;
+        }
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString("pref_sync_frequency", String.valueOf(DEFAULT_SYNC_INTERVAL));
+        edit.commit();
     }
 
     public static boolean isAnimEnabled(Context context) {
@@ -109,6 +124,24 @@ public class PrefHelper {
         }
         SharedPreferences.Editor edit = pref.edit();
         edit.clear();
+        edit.apply();
+    }
+
+    public static boolean isPremium(Context context) {
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return false;
+        }
+        return pref.getBoolean("pref_is_premium", false);
+    }
+
+    public static void setPremium(Context context, boolean flag) {
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return;
+        }
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putBoolean("pref_is_premium", flag);
         edit.apply();
     }
 

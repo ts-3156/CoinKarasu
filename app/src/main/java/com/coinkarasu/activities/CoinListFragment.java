@@ -1,5 +1,6 @@
 package com.coinkarasu.activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.animator.ValueAnimatorBase;
+import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.coins.AdCoinImpl;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.AggressiveProgressbar;
@@ -477,8 +479,18 @@ public class CoinListFragment extends Fragment implements
         SwipeRefreshLayout refresh = getView().findViewById(R.id.refresh_layout);
         refresh.setRefreshing(false);
 
-        if (updater != null) {
-            updater.forceStart("onRefresh");
+        if (getActivity() == null) {
+            return;
         }
+
+        if (((MainActivity) getActivity()).isPremiumPurchased()) {
+            if (updater != null) {
+                updater.forceStart("onRefresh");
+            }
+        } else {
+            Intent intent = new Intent(getActivity(), BillingActivity.class);
+            startActivity(intent);
+        }
+
     }
 }

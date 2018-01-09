@@ -113,8 +113,8 @@ public class BillingManager implements PurchasesUpdatedListener {
             }
             mBillingUpdatesListener.onPurchasesUpdated(mPurchases);
         } else if (resultCode == BillingResponse.USER_CANCELED) {
-            if (DEBUG)
-                CKLog.i(TAG, "onPurchasesUpdated() - user cancelled the purchase flow - skipping");
+            if (DEBUG) CKLog.i(TAG, "onPurchasesUpdated() - user cancelled the purchase flow - skipping");
+
         } else {
             if (DEBUG) CKLog.w(TAG, "onPurchasesUpdated() got unknown resultCode: " + resultCode);
         }
@@ -305,15 +305,12 @@ public class BillingManager implements PurchasesUpdatedListener {
                     if (subscriptionResult.getResponseCode() == BillingResponse.OK) {
                         purchasesResult.getPurchasesList().addAll(subscriptionResult.getPurchasesList());
                     } else {
-                        if (DEBUG)
-                            CKLog.e(TAG, "Got an error response trying to query subscription purchases");
+                        if (DEBUG) CKLog.e(TAG, "Got an error response trying to query subscription purchases");
                     }
                 } else if (purchasesResult.getResponseCode() == BillingResponse.OK) {
-                    if (DEBUG)
-                        CKLog.i(TAG, "Skipped subscription purchases query since they are not supported");
+                    if (DEBUG) CKLog.i(TAG, "Skipped subscription purchases query since they are not supported");
                 } else {
-                    if (DEBUG)
-                        CKLog.w(TAG, "queryPurchases() got an error response code: " + purchasesResult.getResponseCode());
+                    if (DEBUG) CKLog.w(TAG, "queryPurchases() got an error response code: " + purchasesResult.getResponseCode());
                 }
                 onQueryPurchasesFinished(purchasesResult);
             }

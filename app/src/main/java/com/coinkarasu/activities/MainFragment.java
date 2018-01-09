@@ -78,7 +78,7 @@ public class MainFragment extends Fragment implements
 
         int position = NavigationKind.visiblePosition(getActivity(), kind);
         tab = tabs.getTabAt(position);
-        pager.setCurrentItem(position, false); // #setCurrentItem doesn't call #onPageScrollStateChanged.
+        pager.setCurrentItem(position, false); // 他のアクティビティから戻ってきた時のみ、onTabSelectedが呼ばれる
         listener.onPageChanged(kind);
 
         return view;
@@ -160,7 +160,7 @@ public class MainFragment extends Fragment implements
     public void onTabSelected(TabLayout.Tab _tab) {
         if (DEBUG) CKLog.d(TAG, "onTabSelected " + _tab.getPosition()
                 + " ignore=" + (tab == null));
-        if (tab == null) {
+        if (tab == null || getView() == null) {
             return;
         }
 

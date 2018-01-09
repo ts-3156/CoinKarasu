@@ -38,7 +38,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
     private static final boolean DEBUG = true;
 
     private BillingManager mBillingManager;
-    private MainViewController mViewController;
+    private BillingViewController mViewController;
 
     private RecyclerView mRecyclerView;
     private SkusAdapter mAdapter;
@@ -57,7 +57,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
         }
 
         logger = new CKLog(this);
-        mViewController = new MainViewController(this);
+        mViewController = new BillingViewController(this);
         mBillingManager = new BillingManager(this, mViewController.getUpdateListener());
 
         mErrorTextView = findViewById(R.id.error_textview);
@@ -177,7 +177,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
     }
 
     @VisibleForTesting
-    public MainViewController getViewController() {
+    public BillingViewController getViewController() {
         return mViewController;
     }
 

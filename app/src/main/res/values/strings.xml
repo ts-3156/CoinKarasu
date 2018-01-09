@@ -229,14 +229,14 @@
 
     <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
-        <item>5 seconds</item>
-        <item>10 seconds</item>
+        <item>10 seconds (available only to premium users)</item>
         <item>30 seconds</item>
+        <item>60 seconds</item>
     </string-array>
     <string-array name="pref_sync_frequency_values">
-        <item>5000</item>
         <item>10000</item>
         <item>30000</item>
+        <item>60000</item>
     </string-array>
 
     <string-array name="list_preference_entries">

@@ -1,5 +1,6 @@
 package com.coinkarasu.activities.settings;
 
+import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -12,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
 import com.coinkarasu.R;
+import com.coinkarasu.billingmodule.BillingActivity;
+import com.coinkarasu.utils.PrefHelper;
 
 public class PreferencesActivity extends AppCompatActivity implements Preference.OnPreferenceChangeListener {
 
@@ -38,6 +41,17 @@ public class PreferencesActivity extends AppCompatActivity implements Preference
             ListPreference listPreference = (ListPreference) preference;
             int index = listPreference.findIndexOfValue(stringValue);
 
+            if (listPreference.getKey().equals("pref_sync_frequency")) {
+                int interval = Integer.valueOf(stringValue);
+                if (!PrefHelper.isPremium(this) && interval < PrefHelper.MIN_SYNC_INTERVAL) {
+                    PrefHelper.setDefaultSyncInterval(this);
+
+                    Intent intent = new Intent(this, BillingActivity.class);
+                    startActivity(intent);
+                    return true;
+                }
+            }
+
             preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
 
         } else if (preference instanceof RingtonePreference) {
@@ -61,5 +75,4 @@ public class PreferencesActivity extends AppCompatActivity implements Preference
         }
         return true;
     }
-
 }

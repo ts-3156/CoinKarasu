@@ -8,15 +8,16 @@ import com.coinkarasu.billingmodule.skulist.row.PremiumDelegate;
 import com.coinkarasu.billingmodule.skulist.row.TestItemDelegate;
 import com.coinkarasu.billingmodule.skulist.row.TestSubscriptionDelegate;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.PrefHelper;
 
 import java.util.List;
 
 /**
  * Handles control logic of the BaseGamePlayActivity
  */
-public class MainViewController {
+public class BillingViewController {
     private static final boolean DEBUG = true;
-    private static final String TAG = "MainViewController";
+    private static final String TAG = "BillingViewController";
 
     // Graphics for the gas gauge
 //    private static int[] TANK_RES_IDS = {com.example.billingmodule.R.drawable.gas0, com.example.billingmodule.R.drawable.gas1, com.example.billingmodule.R.drawable.gas2,
@@ -40,7 +41,7 @@ public class MainViewController {
 
     private CKLog logger;
 
-    public MainViewController(BillingActivity activity) {
+    public BillingViewController(BillingActivity activity) {
         mUpdateListener = new UpdateListener();
         mActivity = activity;
         logger = new CKLog(activity);
@@ -145,6 +146,8 @@ public class MainViewController {
 //                    case GoldYearlyDelegate.SKU_ID:
 //                        mGoldYearly = true;
 //                        break;
+                    default:
+                        if (DEBUG) CKLog.e(TAG, "Not registered item " + purchase.getSku());
                 }
             }
 
@@ -161,15 +164,10 @@ public class MainViewController {
      * SharedPreferences.
      */
     private void saveData() {
-//        SharedPreferences.Editor spe = mActivity.getPreferences(MODE_PRIVATE).edit();
-//        spe.putInt("tank", mTank);
-//        spe.apply();
-//        CKLog.d(TAG, "Saved data: tank = " + String.valueOf(mTank));
+        PrefHelper.setPremium(mActivity, mIsPremium);
     }
 
     private void loadData() {
-//        SharedPreferences sp = mActivity.getPreferences(MODE_PRIVATE);
-//        mTank = sp.getInt("tank", 2);
-//        CKLog.d(TAG, "Loaded data: tank = " + String.valueOf(mTank));
+        mIsPremium = PrefHelper.isPremium(mActivity);
     }
 }

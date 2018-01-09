@@ -25,7 +25,7 @@ public class TestItemDelegate extends UiManagingDelegate {
         int textId = mBillingProvider.isPremiumPurchased() ? R.string.billing_button_own
                 : R.string.billing_button_buy;
         holder.button.setText(textId);
-        holder.skuIcon.setImageResource(R.drawable.billing_premium_icon);
+//        holder.skuIcon.setImageResource(R.drawable.ic_diamond);
     }
 
     @Override
