@@ -42,6 +42,11 @@ public class PeriodicalUpdater {
         }, delay, interval);
     }
 
+    public void forceStart(String caller) {
+        lastUpdated = System.currentTimeMillis();
+        runnable.startTask();
+    }
+
     public void stop(String caller) {
         if (timer != null) {
             timer.cancel();

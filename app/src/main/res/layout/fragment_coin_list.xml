@@ -14,12 +14,19 @@
         android:indeterminate="true"
         android:indeterminateDrawable="@anim/progress" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_view"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listheader="@layout/coin_list_header_item"
-        tools:listitem="@layout/coin_list_row_item" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listheader="@layout/coin_list_header_item"
+            tools:listitem="@layout/coin_list_row_item" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <!-- ここに要素を追加すると、縦スクロールの際、まずFrameLayoutがスクロールし、
      そのスクロールが完了後、RecyclerViewがスクロールするようになる。 -->

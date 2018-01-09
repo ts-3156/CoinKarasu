@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -42,6 +43,7 @@ import java.util.List;
 
 public class CoinListFragment extends Fragment implements
         GetPricesByExchangeTaskBase.Listener,
+        SwipeRefreshLayout.OnRefreshListener,
         SharedPreferences.OnSharedPreferenceChangeListener,
         PeriodicalUpdater.PeriodicallyRunnable {
 
@@ -89,6 +91,10 @@ public class CoinListFragment extends Fragment implements
 
         ((ProgressBar) view.findViewById(R.id.screen_wait)).setIndeterminateDrawable(getResources().getDrawable(kind.progressDrawableResId));
         updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
+
+        SwipeRefreshLayout refresh = view.findViewById(R.id.refresh_layout);
+        refresh.setOnRefreshListener(this);
+        refresh.setColorSchemeColors(getResources().getColor(R.color.colorRotate));
 
         if (savedInstanceState != null) {
             isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
@@ -457,6 +463,22 @@ public class CoinListFragment extends Fragment implements
             if (isVisibleToUser && updater != null) {
                 updater.restart("onSharedPreferenceChanged");
             }
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        if (getView() == null) {
+            return;
+        }
+
+        CKLog.d(TAG, "onRefresh() " + kind.name());
+
+        SwipeRefreshLayout refresh = getView().findViewById(R.id.refresh_layout);
+        refresh.setRefreshing(false);
+
+        if (updater != null) {
+            updater.forceStart("onRefresh");
         }
     }
 }
