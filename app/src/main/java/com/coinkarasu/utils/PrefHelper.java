@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
+
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 
@@ -12,16 +12,29 @@ public class PrefHelper {
 
     private static final int DEFAULT_SYNC_INTERVAL = 30000;
 
-    public static int getSyncInterval(Activity activity) {
-        SharedPreferences pref = getPref(activity);
+    private static boolean getAutoRefresh(Context context) {
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return false;
+        }
+        return pref.getBoolean("pref_auto_refresh", context.getResources().getBoolean(R.bool.auto_refresh));
+    }
+
+    public static int getSyncInterval(Context context) {
+        boolean isAutoRefreshEnabled = getAutoRefresh(context);
+        if (!isAutoRefreshEnabled) {
+            return -1;
+        }
+        SharedPreferences pref = getPref(context);
         if (pref == null) {
             return DEFAULT_SYNC_INTERVAL;
         }
+
         String value = pref.getString("pref_sync_frequency", String.valueOf(DEFAULT_SYNC_INTERVAL));
         int interval = Integer.valueOf(value);
 
         if (interval < 5000) {
-            Log.d("INVALID_Interval", "" + interval);
+            CKLog.d("INVALID_Interval", "" + interval);
             interval = DEFAULT_SYNC_INTERVAL;
         }
 

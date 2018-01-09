@@ -166,12 +166,13 @@
         <item>JPY</item>
         <item>USD</item>
     </string-array>
-    <string name="pref_title_sync_frequency">同期間隔</string>
+    <string name="pref_title_auto_refresh">自動更新</string>
+    <string name="pref_description_auto_refresh"></string>
+    <string name="pref_title_sync_frequency">更新間隔</string>
     <string-array name="pref_sync_frequency_titles">
         <item>5 秒</item>
         <item>10 秒</item>
         <item>30 秒</item>
-        <item>同期しない</item>
     </string-array>
     <string name="pref_title_keep_screen_on">スリープモードにしない</string>
     <string name="pref_description_keep_screen_on">価格一覧を見ている時は画面をスリープにしない</string>

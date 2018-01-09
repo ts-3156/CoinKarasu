@@ -27,6 +27,10 @@ public class PeriodicalUpdater {
             return;
         }
 
+        if (interval <= 0) {
+            return;
+        }
+
         long delay = Math.max(interval - (System.currentTimeMillis() - lastUpdated), 0);
         timer = new Timer();
         timer.schedule(new TimerTask() {

@@ -2,8 +2,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory android:title="@string/pref_header_general">
+        <SwitchPreference
+            android:defaultValue="@bool/auto_refresh"
+            android:key="pref_auto_refresh"
+            android:summary="@string/pref_description_auto_refresh"
+            android:title="@string/pref_title_auto_refresh" />
+
         <ListPreference
             android:defaultValue="30000"
+            android:dependency="pref_auto_refresh"
             android:entries="@array/pref_sync_frequency_titles"
             android:entryValues="@array/pref_sync_frequency_values"
             android:key="pref_sync_frequency"
@@ -62,9 +69,9 @@
             android:title="@string/pref_clear_cache_title" />
 
         <Preference
-                android:key="pref_clear_config"
-                android:summary="@string/pref_clear_config_summary"
-                android:title="@string/pref_clear_config_title" />
+            android:key="pref_clear_config"
+            android:summary="@string/pref_clear_config_summary"
+            android:title="@string/pref_clear_config_title" />
     </PreferenceCategory>
 
 </PreferenceScreen>
