@@ -62,9 +62,9 @@ public class UpdateTrendingIntentService extends IntentService {
         }
         DiskCacheHelper.touch(this, logFile);
 
-        Set<String> uniqueSymbols = new LinkedHashSet<>(); // 日本で取引できるコインの重複のない一覧
-        String[] array = getResources().getStringArray(NavigationKind.japan.symbolsResId);
-        Collections.addAll(uniqueSymbols, array);
+        Set<String> uniqueSymbols = new LinkedHashSet<>(); // 日本で取引できるコインとCoincheckのコインの重複のない一覧
+        Collections.addAll(uniqueSymbols, getResources().getStringArray(NavigationKind.japan.symbolsResId));
+        Collections.addAll(uniqueSymbols, getResources().getStringArray(NavigationKind.coincheck.symbolsResId));
 
         Prices prices = ClientFactory.getInstance(this)
                 .getPrices(uniqueSymbols.toArray(new String[uniqueSymbols.size()]), toSymbol, exchange.name());

@@ -10,6 +10,7 @@
     <string name="action_currency_switch_to_usd">Switch to USD</string>
     <string name="action_currency_only_for_jpy">Only for JPY</string>
     <string name="action_filter_available_in_japan">Coins available in Japan</string>
+    <string name="action_filter_coincheck">Coins available On Coincheck</string>
     <string name="action_filter_exchange">@string/header_name_cccagg</string>
 
     <string name="nav_home">Home</string>

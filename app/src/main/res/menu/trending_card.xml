@@ -3,12 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/action_filter"
+        android:id="@+id/action_filter_japan"
         android:checkable="true"
         android:checked="true"
         android:enabled="false"
         android:orderInCategory="100"
         android:title="@string/action_filter_available_in_japan"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_filter_coincheck"
+        android:checkable="true"
+        android:checked="true"
+        android:enabled="false"
+        android:orderInCategory="100"
+        android:title="@string/action_filter_coincheck"
         app:showAsAction="never" />
 
     <item

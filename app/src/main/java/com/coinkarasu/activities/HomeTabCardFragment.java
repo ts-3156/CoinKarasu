@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
-import com.coinkarasu.adapters.HomeTabRecyclerViewAdapter;
+import com.coinkarasu.adapters.HomeTabAdapter;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.services.data.Trending;
 import com.coinkarasu.utils.CKLog;
@@ -25,7 +25,7 @@ import java.util.List;
 
 
 public class HomeTabCardFragment extends Fragment implements
-        View.OnClickListener, HomeTabRecyclerViewAdapter.OnItemClickListener, PopupMenu.OnMenuItemClickListener {
+        View.OnClickListener, HomeTabAdapter.OnItemClickListener, PopupMenu.OnMenuItemClickListener {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "HomeTabCardFragment";
@@ -83,7 +83,7 @@ public class HomeTabCardFragment extends Fragment implements
             ((TextView) view.findViewById(R.id.warn_text)).setText(getString(R.string.home_tab_not_found));
             view.findViewById(R.id.warn_container).setVisibility(View.VISIBLE);
         } else {
-            HomeTabRecyclerViewAdapter adapter = new HomeTabRecyclerViewAdapter(getActivity(), coins);
+            HomeTabAdapter adapter = new HomeTabAdapter(getActivity(), coins);
             adapter.setOnItemClickListener(this);
             recyclerView.setAdapter(adapter);
         }
@@ -106,7 +106,7 @@ public class HomeTabCardFragment extends Fragment implements
     public void onClick(View view) {
         PopupMenu popup = new PopupMenu(view.getContext(), view);
         popup.inflate(R.menu.trending_card);
-//        popup.setOnMenuItemClickListener(this);
+        popup.setOnMenuItemClickListener(this);
 
 //        MenuItem item = popup.getMenu().findItem(R.id.action_filter);
 //        item.setChecked(isFilterChecked);
@@ -117,7 +117,7 @@ public class HomeTabCardFragment extends Fragment implements
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        if (item.getItemId() == R.id.action_filter) {
+        if (item.getItemId() == R.id.action_filter_japan) {
         }
 
         return true;

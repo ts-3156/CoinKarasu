@@ -16,7 +16,7 @@ import com.coinkarasu.format.TrendValueFormat;
 
 import java.util.List;
 
-public class HomeTabRecyclerViewAdapter extends RecyclerView.Adapter<HomeTabRecyclerViewAdapter.ViewHolder> {
+public class HomeTabAdapter extends RecyclerView.Adapter<HomeTabAdapter.ViewHolder> {
 
     private LayoutInflater inflater;
     private OnItemClickListener listener;
@@ -24,7 +24,7 @@ public class HomeTabRecyclerViewAdapter extends RecyclerView.Adapter<HomeTabRecy
 
     private ResourceUtils resources;
 
-    public HomeTabRecyclerViewAdapter(Context context, List<Coin> coins) {
+    public HomeTabAdapter(Context context, List<Coin> coins) {
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.coins = coins;
 
@@ -37,7 +37,7 @@ public class HomeTabRecyclerViewAdapter extends RecyclerView.Adapter<HomeTabRecy
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(inflater.inflate(R.layout.recycler_home_tab_row_item, parent, false));
+        return new ViewHolder(inflater.inflate(R.layout.home_tab_row_item, parent, false));
     }
 
     @Override

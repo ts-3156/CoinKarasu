@@ -72,7 +72,7 @@ public class HomeTabFragment extends Fragment {
             public void onReceive(Context context, Intent intent) {
                 if (isVisibleToUser) {
                     Bundle bundle = intent.getExtras();
-                    initializeCard(TrendingKind.valueOf(bundle.getString("kind")));
+                    refreshCard(TrendingKind.valueOf(bundle.getString("kind")));
                 }
             }
         };
@@ -89,6 +89,8 @@ public class HomeTabFragment extends Fragment {
             return;
         }
 
+        view.findViewById(R.id.screen_wait).setVisibility(View.GONE);
+
         Fragment fragment = getChildFragmentManager().findFragmentByTag(TrendingKind.values()[0].tag);
         if (fragment != null) {
             return;
@@ -101,14 +103,14 @@ public class HomeTabFragment extends Fragment {
             transaction.replace(kind.containerId, HomeTabCardFragment.newInstance(kind), kind.tag);
         }
         transaction.commit();
-
-        view.findViewById(R.id.screen_wait).setVisibility(View.GONE);
     }
 
-    private void initializeCard(TrendingKind kind) {
+    private void refreshCard(TrendingKind kind) {
         if (!isAdded() || isDetached() || getActivity() == null || getActivity().isFinishing()) {
             return;
         }
+
+        if (DEBUG) CKLog.d(TAG, "refreshCard() " + kind.name());
 
         getChildFragmentManager().beginTransaction()
                 .replace(kind.containerId, HomeTabCardFragment.newInstance(kind), kind.tag)

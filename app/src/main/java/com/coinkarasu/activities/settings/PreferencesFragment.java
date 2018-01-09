@@ -12,6 +12,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
+
 import com.coinkarasu.R;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
@@ -125,7 +126,7 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
         protected Void doInBackground(Void... params) {
             long start = System.currentTimeMillis();
             new DiskBasedCache(file).clear();
-            if (DEBUG) android.util.Log.d(TAG, "Clear cache elapsed time: "
+            if (DEBUG) CKLog.d(TAG, "Clear cache elapsed time: "
                     + (System.currentTimeMillis() - start) + "ms");
             return null;
         }
