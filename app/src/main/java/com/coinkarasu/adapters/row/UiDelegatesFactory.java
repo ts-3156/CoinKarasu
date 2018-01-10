@@ -5,6 +5,7 @@ import android.util.SparseArray;
 import android.view.View;
 
 import com.coinkarasu.activities.TimeProvider;
+import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.adapters.ConfigUtils;
 import com.coinkarasu.adapters.ResourceUtils;
 import com.coinkarasu.coins.Coin;
@@ -27,7 +28,7 @@ public class UiDelegatesFactory {
         uiDelegates.get(holder.getItemViewType()).onViewRecycled(holder);
     }
 
-    public void onCoinClicked(Coin coin, View view, CoinListViewHolder holder) {
-        uiDelegates.get(holder.getItemViewType()).onCoinClicked(coin, view, holder.getAdapterPosition());
+    public void onCoinClicked(Coin coin, View view, CoinListViewHolder holder, NavigationKind kind) {
+        uiDelegates.get(holder.getItemViewType()).onCoinClicked(coin, view, holder.getAdapterPosition(), kind);
     }
 }

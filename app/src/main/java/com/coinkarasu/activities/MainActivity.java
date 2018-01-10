@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity implements
         setSupportActionBar(toolbar);
 
         MobileAds.initialize(this, BuildConfig.ADMOB_APP_ID);
-        setupAdView();
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -115,6 +114,8 @@ public class MainActivity extends AppCompatActivity implements
                 UpdateToplistIntentService.start(this, kind);
             }
         }
+
+        setupAdView();
     }
 
     @Override

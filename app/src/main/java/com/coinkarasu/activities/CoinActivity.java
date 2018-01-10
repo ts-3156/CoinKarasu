@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.transition.Fade;
@@ -17,8 +19,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.api.bitflyer.data.Board;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
@@ -37,8 +42,10 @@ public class CoinActivity extends AppCompatActivity {
     private static final boolean DEBUG = true;
     private static final String TAG = "CoinActivity";
     public static final String KEY_COIN_JSON = "KEY_COIN_JSON";
+    public static final String KEY_KIND = "KEY_KIND";
 
     private Coin coin;
+    private NavigationKind kind;
     private CKLog logger;
 
     @Override
@@ -54,6 +61,8 @@ public class CoinActivity extends AppCompatActivity {
             CKLog.e(TAG, e);
         }
 
+        kind = NavigationKind.valueOf(intent.getStringExtra(KEY_KIND));
+
         if (savedInstanceState == null) {
             setupFragment();
             drawBoardChart();
@@ -62,7 +71,8 @@ public class CoinActivity extends AppCompatActivity {
 
     private void setupFragment() {
         String toSymbol = coin.getToSymbol();
-        updateToolbarTitle(toSymbol);
+        updateToolbarTitle(kind);
+        updateToolbarColor(kind);
 
         Fragment card = PriceOverviewFragment.newInstance(coin);
         Fragment lineChart = HistoricalPriceFragment.newInstance(coin.getSymbol(), toSymbol);
@@ -165,11 +175,25 @@ public class CoinActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void updateToolbarTitle(String symbol) {
+    private void updateToolbarTitle(NavigationKind kind) {
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setTitle(coin.getFullName());
-            bar.setSubtitle(symbol);
+            bar.setSubtitle(getString(kind.tabStrResId) + ", " + kind.getToSymbol());
+        }
+    }
+
+    private void updateToolbarColor(NavigationKind kind) {
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(kind.colorResId)));
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, kind.colorDarkResId));
         }
     }
 
@@ -207,18 +231,23 @@ public class CoinActivity extends AppCompatActivity {
         overridePendingTransition(R.anim.activity_enter_from_left, R.anim.activity_exit_to_right);
     }
 
-    public static void start(Context context, Coin coin) {
+    public static void start(Context context, Coin coin, NavigationKind kind) {
         Intent intent = new Intent(context, CoinActivity.class);
         intent.putExtra(CoinActivity.KEY_COIN_JSON, coin.toJson().toString());
+        intent.putExtra(CoinActivity.KEY_KIND, kind.name());
         context.startActivity(intent);
 
+        Activity activity = null;
         if (context instanceof Activity) {
-            ((Activity) context).overridePendingTransition(R.anim.activity_enter_from_right, R.anim.activity_exit_to_left);
+            activity = (Activity) context;
         } else if (context instanceof ContextWrapper) {
             Context ctx = ((ContextWrapper) context).getBaseContext();
             if (ctx instanceof Activity) {
-                ((Activity) ctx).overridePendingTransition(R.anim.activity_enter_from_right, R.anim.activity_exit_to_left);
+                activity = (Activity) ctx;
             }
+        }
+        if (activity != null) {
+            activity.overridePendingTransition(R.anim.activity_enter_from_right, R.anim.activity_exit_to_left);
         }
     }
 }

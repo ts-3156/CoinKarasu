@@ -3,6 +3,7 @@ package com.coinkarasu.adapters.row;
 import android.view.View;
 
 import com.coinkarasu.activities.TimeProvider;
+import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.adapters.ResourceUtils;
 import com.coinkarasu.coins.Coin;
@@ -41,7 +42,7 @@ public class HeaderDelegate implements UiManagingDelegate {
     }
 
     @Override
-    public void onCoinClicked(Coin coin, View view, int position) {
+    public void onCoinClicked(Coin coin, View view, int position, NavigationKind kind) {
     }
 }
 

@@ -73,9 +73,9 @@
     <string name="summary_main">メイン</string>
     <string name="summary_assets">あなたの保有しているコイン資産</string>
     <string name="summary_japan">日本で取引できるコイン</string>
-    <string name="summary_bitflyer">BitFlyerで取引/販売できるコイン <![CDATA[<font color=#FF0000>The api is not available.</font>]]></string>
+    <string name="summary_bitflyer">BitFlyerで取引/販売できるコイン <![CDATA[<font color=#FF0000>APIが不安定なため現在利用できません</font>]]></string>
     <string name="summary_coincheck">コインチェックで取引/販売できるコイン</string>
-    <string name="summary_zaif">Zaifで取引/販売できるコイン <![CDATA[<font color=#FF0000>The api is not available.</font>]]></string>
+    <string name="summary_zaif">Zaifで取引/販売できるコイン <![CDATA[<font color=#FF0000>APIが不安定なため現在利用できません</font>]]></string>
     <string name="summary_jpy_toplist">円建て取引量の多いコイン</string>
     <string name="summary_usd_toplist">米ドル建て取引量の多いコイン</string>
     <string name="summary_cny_toplist">人民元建て取引量の多いコイン</string>

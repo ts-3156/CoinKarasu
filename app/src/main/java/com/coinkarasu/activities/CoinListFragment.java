@@ -196,7 +196,7 @@ public class CoinListFragment extends Fragment implements
                             RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
                             RecyclerView.Adapter adapter = recyclerView.getAdapter();
                             if (adapter == null) {
-                                adapter = new CoinListAdapter(getContext(), CoinListFragment.this, inCoins);
+                                adapter = new CoinListAdapter(getContext(), CoinListFragment.this, kind, inCoins);
                                 initializeRecyclerView(recyclerView, (CoinListAdapter) adapter);
                             }
                         }

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.adapters.HomeTabAdapter;
 import com.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
@@ -96,7 +97,7 @@ public class HomeTabCardFragment extends Fragment implements
 
     @Override
     public void onItemClick(Coin coin, View view, int position) {
-        CoinActivity.start(view.getContext(), coin);
+        CoinActivity.start(view.getContext(), coin, NavigationKind.home);
     }
 
     @Override

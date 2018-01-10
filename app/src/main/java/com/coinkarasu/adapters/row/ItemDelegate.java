@@ -3,6 +3,7 @@ package com.coinkarasu.adapters.row;
 import android.view.View;
 
 import com.coinkarasu.activities.CoinActivity;
+import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.adapters.ConfigUtils;
 import com.coinkarasu.adapters.ResourceUtils;
@@ -92,8 +93,8 @@ public class ItemDelegate implements UiManagingDelegate {
     }
 
     @Override
-    public void onCoinClicked(Coin coin, View view, int position) {
-        CoinActivity.start(view.getContext(), coin);
+    public void onCoinClicked(Coin coin, View view, int position, NavigationKind kind) {
+        CoinActivity.start(view.getContext(), coin, kind);
     }
 }
 
