@@ -7,7 +7,6 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.DiskCacheHelper;
-import com.crashlytics.android.Crashlytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;

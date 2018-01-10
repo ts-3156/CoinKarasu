@@ -42,21 +42,23 @@ public class UpdateTrendingIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        boolean force = intent.getBooleanExtra("force", false);
+
         for (TrendingKind kind : TrendingKind.values()) {
             try {
-                update(kind, Exchange.cccagg, "JPY");
+                update(kind, Exchange.cccagg, "JPY", force);
             } catch (Exception e) {
                 CKLog.e(TAG, e);
             }
         }
     }
 
-    private void update(TrendingKind kind, Exchange exchange, String toSymbol) {
+    private void update(TrendingKind kind, Exchange exchange, String toSymbol, boolean force) {
         long start = System.currentTimeMillis();
         CKLog logger = new CKLog(getApplicationContext());
         String logFile = logFile(kind, toSymbol, exchange.name());
 
-        if (DiskCacheHelper.exists(this, logFile) && !DiskCacheHelper.isExpired(this, logFile, ONE_DAY)) {
+        if (!force && DiskCacheHelper.exists(this, logFile) && !DiskCacheHelper.isExpired(this, logFile, ONE_DAY)) {
             if (DEBUG) CKLog.d(TAG, kind.name() + " " + exchange + " " + toSymbol + " is recently executed.");
             return;
         }
@@ -140,8 +142,9 @@ public class UpdateTrendingIntentService extends IntentService {
         return UpdateTrendingIntentService.class.getSimpleName() + "-" + kind.name() + "-" + toSymbol + "-" + exchange + ".log";
     }
 
-    public static void start(Context context) {
+    public static void start(Context context, boolean force) {
         Intent intent = new Intent(context, UpdateTrendingIntentService.class);
+        intent.putExtra("force", force);
         context.startService(intent);
     }
 }

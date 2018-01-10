@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +17,12 @@ import android.widget.ProgressBar;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.TrendingKind;
+import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.services.UpdateTrendingIntentService;
 import com.coinkarasu.utils.CKLog;
 
 
-public class HomeTabFragment extends Fragment {
+public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "HomeTabFragment";
@@ -57,6 +59,10 @@ public class HomeTabFragment extends Fragment {
         ((ProgressBar) view.findViewById(R.id.screen_wait))
                 .setIndeterminateDrawable(getResources().getDrawable(NavigationKind.home.progressDrawableResId));
 
+        SwipeRefreshLayout refresh = view.findViewById(R.id.refresh_layout);
+        refresh.setOnRefreshListener(this);
+        refresh.setColorSchemeColors(getResources().getColor(R.color.colorRotate));
+
         if (savedInstanceState != null) {
             isVisibleToUser = savedInstanceState.getBoolean(STATE_IS_VISIBLE_TO_USER_KEY);
         } else {
@@ -79,7 +85,7 @@ public class HomeTabFragment extends Fragment {
         LocalBroadcastManager.getInstance(getActivity())
                 .registerReceiver(receiver, new IntentFilter(ACTION_UPDATE_TRENDING));
 
-        UpdateTrendingIntentService.start(getActivity());
+        UpdateTrendingIntentService.start(getActivity(), false);
 
         return view;
     }
@@ -142,5 +148,28 @@ public class HomeTabFragment extends Fragment {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(STATE_IS_VISIBLE_TO_USER_KEY, isVisibleToUser);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRefresh() {
+        if (getView() == null) {
+            return;
+        }
+
+        CKLog.d(TAG, "onRefresh() " + NavigationKind.home.name());
+
+        SwipeRefreshLayout refresh = getView().findViewById(R.id.refresh_layout);
+        refresh.setRefreshing(false);
+
+        if (getActivity() == null) {
+            return;
+        }
+
+        if (((MainActivity) getActivity()).isPremiumPurchased()) {
+            UpdateTrendingIntentService.start(getActivity(), true);
+        } else {
+            BillingActivity.start(getActivity(), R.string.billing_dialog_pull_to_refresh);
+        }
+
     }
 }
