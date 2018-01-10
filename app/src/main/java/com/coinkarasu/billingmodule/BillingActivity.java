@@ -4,23 +4,29 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.annotation.UiThread;
 import android.support.annotation.VisibleForTesting;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.android.billingclient.api.BillingClient;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.billingmodule.billing.BillingManager;
 import com.coinkarasu.billingmodule.billing.BillingProvider;
 import com.coinkarasu.billingmodule.skulist.CardsWithHeadersDecoration;
@@ -59,6 +65,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
         }
 
         showDialog();
+        updateToolbarColor();
 
         logger = new CKLog(this);
         mViewController = new BillingViewController(this);
@@ -320,6 +327,22 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
 
     protected UiManager createUiManager(SkusAdapter adapter, BillingProvider provider) {
         return new UiManager(adapter, provider);
+    }
+
+
+    private void updateToolbarColor() {
+        NavigationKind kind = NavigationKind.edit_tabs;
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(kind.colorResId)));
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, kind.colorDarkResId));
+        }
     }
 
     public static void start(Context context, int resId) {

@@ -1,17 +1,23 @@
 package com.coinkarasu.activities.settings;
 
+import android.graphics.drawable.ColorDrawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.RingtonePreference;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.utils.PrefHelper;
 
@@ -30,6 +36,8 @@ public class PreferencesActivity extends AppCompatActivity implements Preference
         getFragmentManager().beginTransaction()
                 .replace(R.id.content, new PreferencesFragment())
                 .commit();
+
+        updateToolbarColor();
     }
 
     @Override
@@ -72,5 +80,20 @@ public class PreferencesActivity extends AppCompatActivity implements Preference
             preference.setSummary(stringValue);
         }
         return true;
+    }
+
+    private void updateToolbarColor() {
+        NavigationKind kind = NavigationKind.edit_tabs;
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setBackgroundDrawable(new ColorDrawable(getResources().getColor(kind.colorResId)));
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(ContextCompat.getColor(this, kind.colorDarkResId));
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.coinkarasu.activities.etc;
 import android.content.Context;
 
 import com.coinkarasu.R;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
@@ -114,6 +115,7 @@ public enum NavigationKind {
             symbol = name().substring(0, 3).toUpperCase();
         } else {
             switch (this) {
+                case home:
                 case japan:
                 case bitflyer:
                 case coincheck:
@@ -121,7 +123,9 @@ public enum NavigationKind {
                     symbol = "JPY";
                     break;
                 default:
-                    throw new RuntimeException("Invalid kind " + name());
+                    RuntimeException e = new RuntimeException("Invalid kind " + name());
+                    CKLog.e("NavigationKind", e);
+                    throw e;
             }
         }
 

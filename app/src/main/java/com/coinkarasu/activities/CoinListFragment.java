@@ -1,6 +1,5 @@
 package com.coinkarasu.activities;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -355,6 +354,10 @@ public class CoinListFragment extends Fragment implements
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
+                if (getActivity() == null || getActivity().isFinishing()) {
+                    return;
+                }
+
                 List<Coin> coins = adapter.getItems(exchange, coinKind);
 
                 for (Price price : prices) {
