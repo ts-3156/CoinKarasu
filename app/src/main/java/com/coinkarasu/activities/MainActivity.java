@@ -223,12 +223,12 @@ public class MainActivity extends AppCompatActivity implements
         return ((MainFragment) fragment).getCurrentKind();
     }
 
-    private void setCurrentKind(NavigationKind kind) {
+    private void setCurrentKind(NavigationKind kind, boolean smoothScroll) {
         Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         if (fragment == null) {
             return;
         }
-        ((MainFragment) fragment).setCurrentKind(kind);
+        ((MainFragment) fragment).setCurrentKind(kind, smoothScroll);
     }
 
     @Override
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements
         } else {
             NavigationKind kind = getCurrentKind();
             if (kind != null && kind != DEFAULT_KIND) {
-                setCurrentKind(DEFAULT_KIND);
+                setCurrentKind(DEFAULT_KIND, true);
             } else {
                 super.onBackPressed();
             }
@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements
 
         NavigationKind kind = getCurrentKind();
         if (clickedKind != null && kind != null && clickedKind != kind) {
-            setCurrentKind(clickedKind);
+            setCurrentKind(clickedKind, false);
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, PreferencesActivity.class));
         }

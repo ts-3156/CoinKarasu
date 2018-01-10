@@ -111,13 +111,13 @@ public class MainFragment extends Fragment implements
         return kind;
     }
 
-    public void setCurrentKind(NavigationKind kind) {
+    public void setCurrentKind(NavigationKind kind, boolean smoothScroll) {
         if (getView() == null) {
             return;
         }
         this.kind = kind;
         int position = NavigationKind.visiblePosition(getActivity(), kind);
-        ((ViewPager) getView().findViewById(R.id.view_pager)).setCurrentItem(position, false);
+        ((ViewPager) getView().findViewById(R.id.view_pager)).setCurrentItem(position, smoothScroll);
         listener.onPageChanged(kind);
     }
 

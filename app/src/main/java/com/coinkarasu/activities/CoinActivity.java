@@ -104,7 +104,7 @@ public class CoinActivity extends AppCompatActivity {
                 .commit();
 
         SwipeDetector detector = new SwipeDetector(this);
-        detector.attach(findViewById(R.id.linear_layout), (ViewGroup) findViewById(R.id.scroll_view));
+        detector.attach(findViewById(R.id.linear_layout));
         detector.setOnSwipeListener(new SwipeDetector.OnSwipeListener() {
             @Override
             public void onSwipe(View view, int direction) {

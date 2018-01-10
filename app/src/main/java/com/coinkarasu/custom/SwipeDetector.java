@@ -22,7 +22,6 @@ public class SwipeDetector extends GestureDetector.SimpleOnGestureListener imple
     private GestureDetector gesture;
     private OnSwipeListener listener;
     private View view;
-    private ViewGroup parent;
 
     private boolean isSwiped;
     private boolean isScrolling;
@@ -35,9 +34,8 @@ public class SwipeDetector extends GestureDetector.SimpleOnGestureListener imple
         gesture = new GestureDetector(context, this);
     }
 
-    public void attach(View view, ViewGroup parent) {
+    public void attach(View view) {
         this.view = view;
-        this.parent = parent;
         view.setOnTouchListener(this);
     }
 
@@ -95,8 +93,8 @@ public class SwipeDetector extends GestureDetector.SimpleOnGestureListener imple
             isScrolling = true;
             scrollStartX = e1.getX();
             scrollDirection = distanceX > 0 ? TO_LEFT : TO_RIGHT;
-            if (parent != null) {
-                parent.requestDisallowInterceptTouchEvent(true);
+            if (view.getParent() != null) {
+                view.getParent().requestDisallowInterceptTouchEvent(true);
             }
         }
 
