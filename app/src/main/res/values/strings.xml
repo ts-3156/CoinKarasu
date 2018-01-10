@@ -162,6 +162,9 @@
     <string name="billing_content_description_title_image">80\'s Video Game Style Car Logo</string>
     <string name="billing_content_desc_gas_gauge_indicator">Gas gauge indicator</string>
     <string name="billing_content_desc_free_vs_premium_indicator">Free or Premium Image Indicator</string>
+    <string name="billing_dialog_pull_to_refresh">Pull-to-Refresh is available for Premium Users only</string>
+    <string name="billing_dialog_sync_interval">`Every 10 seconds` is available for Premium Users only</string>
+    <string name="billing_dialog_remove_ads">`Remove ads` is available for Premium Users only</string>
 
     <string name="pref_header_general">General</string>
     <string name="pref_header_premium">Premium</string>

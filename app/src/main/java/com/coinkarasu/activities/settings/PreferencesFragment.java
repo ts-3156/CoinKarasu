@@ -82,8 +82,7 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
                 ((SwitchPreference) preference).setChecked(true);
                 showDialog(R.string.pref_remove_ads_already_available, false, null);
             } else {
-                Intent intent = new Intent(getActivity(), BillingActivity.class);
-                startActivity(intent);
+                BillingActivity.start(getActivity(), R.string.billing_dialog_remove_ads);
             }
         }
 

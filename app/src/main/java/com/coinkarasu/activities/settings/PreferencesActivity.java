@@ -1,6 +1,5 @@
 package com.coinkarasu.activities.settings;
 
-import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -46,8 +45,7 @@ public class PreferencesActivity extends AppCompatActivity implements Preference
                 if (!PrefHelper.isPremium(this) && interval < PrefHelper.MIN_SYNC_INTERVAL) {
                     PrefHelper.setDefaultSyncInterval(this);
 
-                    Intent intent = new Intent(this, BillingActivity.class);
-                    startActivity(intent);
+                    BillingActivity.start(this, R.string.billing_dialog_sync_interval);
                     return true;
                 }
             }

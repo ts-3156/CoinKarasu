@@ -1,6 +1,8 @@
 package com.coinkarasu.billingmodule;
 
 import android.app.AlertDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Looper;
@@ -55,6 +57,8 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
         if (bar != null) {
             bar.setTitle(R.string.billing_button_purchase);
         }
+
+        showDialog();
 
         logger = new CKLog(this);
         mViewController = new BillingViewController(this);
@@ -131,6 +135,15 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
             mBillingManager.destroy();
         }
         super.onDestroy();
+    }
+
+    private void showDialog() {
+        Intent intent = getIntent();
+        int resId = intent.getIntExtra("resId", -1);
+        if (resId != -1) {
+            BillingDialogFragment.newInstance(getString(resId))
+                    .show(getSupportFragmentManager(), "dialog_tag");
+        }
     }
 
     /**
@@ -309,4 +322,9 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
         return new UiManager(adapter, provider);
     }
 
+    public static void start(Context context, int resId) {
+        Intent intent = new Intent(context, BillingActivity.class);
+        intent.putExtra("resId", resId);
+        context.startActivity(intent);
+    }
 }

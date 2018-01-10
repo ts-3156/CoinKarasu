@@ -499,8 +499,7 @@ public class CoinListFragment extends Fragment implements
                 updater.forceStart("onRefresh");
             }
         } else {
-            Intent intent = new Intent(getActivity(), BillingActivity.class);
-            startActivity(intent);
+            BillingActivity.start(getActivity(), R.string.billing_dialog_pull_to_refresh);
         }
 
     }
