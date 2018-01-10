@@ -1,5 +1,8 @@
 package com.coinkarasu.activities;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,11 +15,14 @@ import android.transition.TransitionSet;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.coinkarasu.R;
 import com.coinkarasu.api.bitflyer.data.Board;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
+import com.coinkarasu.custom.SwipeDetector;
 import com.coinkarasu.tasks.GetBoardTask;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
@@ -77,6 +83,24 @@ public class CoinActivity extends AppCompatActivity {
                 .replace(R.id.card_pie_chart, pieChart, Tag.pie.name())
                 .replace(R.id.card_board, board, Tag.board.name())
                 .commit();
+
+        SwipeDetector detector = new SwipeDetector(this);
+        detector.attach(findViewById(R.id.linear_layout), (ViewGroup) findViewById(R.id.scroll_view));
+        detector.setOnSwipeListener(new SwipeDetector.OnSwipeListener() {
+            @Override
+            public void onSwipe(View view, int direction) {
+                if (SwipeDetector.TO_RIGHT == direction) {
+                    finish();
+                    overridePendingTransition(R.anim.activity_enter_from_left, R.anim.activity_exit_to_right);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.activity_enter_from_left, R.anim.activity_exit_to_right);
     }
 
     private void setEnterTransition(Fragment fragment) {
@@ -171,5 +195,20 @@ public class CoinActivity extends AppCompatActivity {
                 }
             }
         }).execute();
+    }
+
+    public static void start(Context context, Coin coin) {
+        Intent intent = new Intent(context, CoinActivity.class);
+        intent.putExtra(CoinActivity.KEY_COIN_JSON, coin.toJson().toString());
+        context.startActivity(intent);
+
+        if (context instanceof Activity) {
+            ((Activity) context).overridePendingTransition(R.anim.activity_enter_from_right, R.anim.activity_exit_to_left);
+        } else if (context instanceof ContextWrapper) {
+            Context ctx = ((ContextWrapper) context).getBaseContext();
+            if (ctx instanceof Activity) {
+                ((Activity) ctx).overridePendingTransition(R.anim.activity_enter_from_right, R.anim.activity_exit_to_left);
+            }
+        }
     }
 }

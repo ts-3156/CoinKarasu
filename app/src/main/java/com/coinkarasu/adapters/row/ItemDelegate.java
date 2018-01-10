@@ -1,7 +1,5 @@
 package com.coinkarasu.adapters.row;
 
-import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 
 import com.coinkarasu.activities.CoinActivity;
@@ -95,9 +93,7 @@ public class ItemDelegate implements UiManagingDelegate {
 
     @Override
     public void onCoinClicked(Coin coin, View view, int position) {
-        Intent intent = new Intent(view.getContext(), CoinActivity.class);
-        intent.putExtra(CoinActivity.KEY_COIN_JSON, coin.toJson().toString());
-        view.getContext().startActivity(intent);
+        CoinActivity.start(view.getContext(), coin);
     }
 }
 

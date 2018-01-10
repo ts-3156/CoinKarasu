@@ -1,6 +1,5 @@
 package com.coinkarasu.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,8 +13,8 @@ import android.widget.TextView;
 
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.TrendingKind;
-import com.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
 import com.coinkarasu.adapters.HomeTabAdapter;
+import com.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.services.data.Trending;
 import com.coinkarasu.utils.CKLog;
@@ -97,9 +96,7 @@ public class HomeTabCardFragment extends Fragment implements
 
     @Override
     public void onItemClick(Coin coin, View view, int position) {
-        Intent intent = new Intent(view.getContext(), CoinActivity.class);
-        intent.putExtra(CoinActivity.KEY_COIN_JSON, coin.toJson().toString());
-        startActivity(intent);
+        CoinActivity.start(view.getContext(), coin);
     }
 
     @Override
