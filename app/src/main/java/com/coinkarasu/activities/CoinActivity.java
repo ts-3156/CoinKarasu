@@ -91,7 +91,6 @@ public class CoinActivity extends AppCompatActivity {
             public void onSwipe(View view, int direction) {
                 if (SwipeDetector.TO_RIGHT == direction) {
                     finish();
-                    overridePendingTransition(R.anim.activity_enter_from_left, R.anim.activity_exit_to_right);
                 }
             }
         });
@@ -147,6 +146,11 @@ public class CoinActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+
         if (id == R.id.action_currency) {
             if (item.getTitle().toString().equals(getString(MainActivity.Currency.USD.titleStrResId))) {
                 PrefHelper.saveToSymbol(this, MainActivity.Currency.JPY.name());
@@ -195,6 +199,12 @@ public class CoinActivity extends AppCompatActivity {
                 }
             }
         }).execute();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_enter_from_left, R.anim.activity_exit_to_right);
     }
 
     public static void start(Context context, Coin coin) {
