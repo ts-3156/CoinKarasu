@@ -17,11 +17,13 @@ import java.util.TimerTask;
 public class RelativeTimeSpanTextView extends AppCompatTextView {
     private static final boolean DEBUG = true;
     private static final String TAG = "RelativeTimeSpanTextView";
+    private static final long DEFAULT_DELAY = 0;
     private static final long DEFAULT_PERIOD = 5000;
-    private static final long LONG_PERIOD = 10000;
 
     private Timer timer;
     private long time;
+    private long delay;
+    private long period;
     private TimeProvider timeProvider;
     private CKLog logger;
 
@@ -38,6 +40,8 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
         if (DEBUG) CKLog.d(TAG, "RelativeTimeSpanTextView()");
         logger = new CKLog(getContext());
         time = -1;
+        delay = DEFAULT_DELAY;
+        period = DEFAULT_PERIOD;
         timeProvider = null;
     }
 
@@ -48,6 +52,8 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
     public void updateText() {
         if (DEBUG) CKLog.d(TAG, "updateText() is called.");
         stopTimer("updateText");
+        delay = DEFAULT_DELAY;
+        period = DEFAULT_PERIOD;
         startTimer("updateText");
     }
 
@@ -61,17 +67,17 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
         // すべてのタブでタイマーが動き続ける。タブが非表示になった時にタイマーを
         // 止めるのは簡単だが、表示された時にタイマーを動かすのは今の実装では単純にはできない。
 
-        if (timeProvider != null) {
-            time = timeProvider.getLastUpdated();
-        }
-        long period = getPeriod(time);
-        if (DEBUG) CKLog.d(TAG, "Current period " + period);
+        if (DEBUG) CKLog.d(TAG, "delay=" + delay + " period=" + period);
         timer = new Timer();
 
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                if (timeProvider != null) {
+                    time = timeProvider.getLastUpdated();
+                }
                 final String str = getRelativeTimeSpanString(time, System.currentTimeMillis());
+
                 if (DEBUG) CKLog.d(TAG, "time=" + time + " text=" + str);
                 post(new Runnable() {
                     @Override
@@ -79,8 +85,16 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
                         setText(str);
                     }
                 });
+
+                long newPeriod = getPeriod(time);
+                if (period != newPeriod) {
+                    period = newPeriod;
+                    delay = newPeriod;
+                    stopTimer("internal");
+                    startTimer("internal");
+                }
             }
-        }, 0, period);
+        }, delay, period);
     }
 
     private void stopTimer(String caller) {
@@ -99,8 +113,10 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
         long elapsed = System.currentTimeMillis() - time;
         if (elapsed < 30000) {
             return DEFAULT_PERIOD;
+        } else if (elapsed < 60000) {
+            return 10000;
         } else {
-            return LONG_PERIOD;
+            return 60000;
         }
     }
 

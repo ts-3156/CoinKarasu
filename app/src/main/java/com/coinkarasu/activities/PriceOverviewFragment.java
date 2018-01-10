@@ -40,7 +40,9 @@ import java.util.ArrayList;
 
 
 public class PriceOverviewFragment extends Fragment implements
-        PeriodicalUpdater.PeriodicallyRunnable, GetPricesByExchangeTaskBase.Listener {
+        PeriodicalUpdater.PeriodicallyRunnable,
+        GetPricesByExchangeTaskBase.Listener,
+        TimeProvider {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "PriceOverviewFragment";
@@ -80,6 +82,7 @@ public class PriceOverviewFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_price_overview, container, false);
 
+        ((RelativeTimeSpanTextView) view.findViewById(R.id.relative_time_span)).setTimeProvider(this);
         updateCard(view, coin, true);
         updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
         updater.start("onCreateView");
@@ -115,6 +118,7 @@ public class PriceOverviewFragment extends Fragment implements
             return;
         }
 
+        updater.setLastUpdated(System.currentTimeMillis());
         ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).stopAnimationDelayed(ValueAnimatorBase.DURATION);
         ((RelativeTimeSpanTextView) getView().findViewById(R.id.relative_time_span)).updateText();
 
@@ -173,5 +177,14 @@ public class PriceOverviewFragment extends Fragment implements
         super.onDetach();
         coin = null;
         updater = null;
+    }
+
+    @Override
+    public long getLastUpdated() {
+        if (updater != null) {
+            return updater.getLastUpdated();
+        } else {
+            return -1L;
+        }
     }
 }
