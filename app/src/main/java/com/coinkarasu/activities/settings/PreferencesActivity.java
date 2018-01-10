@@ -20,12 +20,20 @@ import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.utils.PrefHelper;
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
+
+import io.fabric.sdk.android.Fabric;
 
 public class PreferencesActivity extends AppCompatActivity implements Preference.OnPreferenceChangeListener {
+
+    private FirebaseAnalytics firebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_preferences);
 
         ActionBar bar = getSupportActionBar();

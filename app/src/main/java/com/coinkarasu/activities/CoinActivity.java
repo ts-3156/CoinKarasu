@@ -31,10 +31,13 @@ import com.coinkarasu.custom.SwipeDetector;
 import com.coinkarasu.tasks.GetBoardTask;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import io.fabric.sdk.android.Fabric;
 
 public class CoinActivity extends AppCompatActivity {
 
@@ -54,9 +57,10 @@ public class CoinActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_coin);
         logger = new CKLog(this);
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         Intent intent = getIntent();
         try {
@@ -65,6 +69,7 @@ public class CoinActivity extends AppCompatActivity {
             CKLog.e(TAG, e);
         }
 
+        logEvent(coin);
         kind = NavigationKind.valueOf(intent.getStringExtra(KEY_KIND));
 
         if (savedInstanceState == null) {
@@ -229,6 +234,16 @@ public class CoinActivity extends AppCompatActivity {
         }).execute();
     }
 
+    private void logEvent(Coin coin) {
+        if (firebaseAnalytics != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, coin.getSymbol());
+            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, coin.getSymbol());
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "coin");
+            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+        }
+    }
+
     @Override
     public void finish() {
         super.finish();
@@ -248,17 +263,6 @@ public class CoinActivity extends AppCompatActivity {
             Context ctx = ((ContextWrapper) context).getBaseContext();
             if (ctx instanceof Activity) {
                 activity = (Activity) ctx;
-            }
-        }
-
-        if (activity != null && activity instanceof MainActivity) {
-            FirebaseAnalytics analytics = ((MainActivity) activity).getFirebaseAnalytics();
-            if (analytics != null) {
-                Bundle bundle = new Bundle();
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, coin.getSymbol());
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, coin.getSymbol());
-                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "coin");
-                analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
             }
         }
 

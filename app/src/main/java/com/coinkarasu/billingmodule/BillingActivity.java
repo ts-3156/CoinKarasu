@@ -34,9 +34,13 @@ import com.coinkarasu.billingmodule.skulist.SkusAdapter;
 import com.coinkarasu.billingmodule.skulist.row.SkuRowData;
 import com.coinkarasu.billingmodule.skulist.row.UiManager;
 import com.coinkarasu.utils.CKLog;
+import com.crashlytics.android.Crashlytics;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.fabric.sdk.android.Fabric;
 
 import static com.android.billingclient.api.BillingClient.BillingResponse;
 import static com.coinkarasu.billingmodule.billing.BillingManager.BILLING_MANAGER_NOT_INITIALIZED;
@@ -54,9 +58,13 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
     private View mScreenWait;
     private CKLog logger;
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Fabric.with(this, new Crashlytics());
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_billing);
 
         ActionBar bar = getSupportActionBar();

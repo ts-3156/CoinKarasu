@@ -76,8 +76,8 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        logger = new CKLog(this);
         setContentView(R.layout.activity_main);
+        logger = new CKLog(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
