@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import com.coinkarasu.activities.TimeProvider;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.adapters.row.CoinListViewHolder;
@@ -26,10 +27,10 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
     private ResourceUtils resources;
     private ConfigUtils configs;
 
-    public CoinListAdapter(Context context, List<Coin> coins) {
+    public CoinListAdapter(Context context, TimeProvider timeProvider, List<Coin> coins) {
         resources = new ResourceUtils(context, coins);
         configs = new ConfigUtils(context);
-        uiManager = new UiManager(context, this, resources, configs);
+        uiManager = new UiManager(context, this, timeProvider, resources, configs);
 
         setHasStableIds(true);
 

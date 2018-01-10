@@ -2,6 +2,7 @@ package com.coinkarasu.adapters.row;
 
 import android.view.View;
 
+import com.coinkarasu.activities.TimeProvider;
 import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.adapters.ResourceUtils;
 import com.coinkarasu.coins.Coin;
@@ -9,9 +10,11 @@ import com.coinkarasu.coins.Coin;
 public class HeaderDelegate implements UiManagingDelegate {
     public static final int TYPE = CoinListAdapter.TYPE_HEADER;
 
+    private TimeProvider timeProvider;
     private ResourceUtils resources;
 
-    public HeaderDelegate(ResourceUtils resources) {
+    public HeaderDelegate(TimeProvider timeProvider, ResourceUtils resources) {
+        this.timeProvider = timeProvider;
         this.resources = resources;
     }
 
@@ -22,6 +25,7 @@ public class HeaderDelegate implements UiManagingDelegate {
         holder.header.setText(resources.headerNameResIdStringMap.get(coin.getHeaderNameResId()));
         holder.progressbar.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-progressbar");
         holder.timeSpan.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-time_span");
+        holder.timeSpan.setTimeProvider(timeProvider);
 
         if (holder.getAdapterPosition() == 0) {
             holder.divider.setVisibility(View.GONE);

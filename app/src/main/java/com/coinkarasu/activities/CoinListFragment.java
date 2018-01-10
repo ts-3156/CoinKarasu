@@ -48,7 +48,8 @@ public class CoinListFragment extends Fragment implements
         GetPricesByExchangeTaskBase.Listener,
         SwipeRefreshLayout.OnRefreshListener,
         SharedPreferences.OnSharedPreferenceChangeListener,
-        PeriodicalUpdater.PeriodicallyRunnable {
+        PeriodicalUpdater.PeriodicallyRunnable,
+        TimeProvider {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "CoinListFragment";
@@ -195,7 +196,7 @@ public class CoinListFragment extends Fragment implements
                             RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
                             RecyclerView.Adapter adapter = recyclerView.getAdapter();
                             if (adapter == null) {
-                                adapter = new CoinListAdapter(getContext(), inCoins);
+                                adapter = new CoinListAdapter(getContext(), CoinListFragment.this, inCoins);
                                 initializeRecyclerView(recyclerView, (CoinListAdapter) adapter);
                             }
                         }
@@ -365,12 +366,12 @@ public class CoinListFragment extends Fragment implements
                             break;
                         }
                     }
-
                 }
 
+                updater.setLastUpdated(System.currentTimeMillis());
                 adapter.resumeAnimation();
                 adapter.notifyCoinsChanged(exchange, coinKind);
-                updateRelativeTimeSpanText(exchange, coinKind);
+                refreshRelativeTime(exchange, coinKind);
                 hideProgressbarDelayed(exchange, coinKind);
 
                 if (DEBUG) CKLog.d(TAG, "finished() " + kind + ", " + exchange + ", " + coinKind);
@@ -401,7 +402,7 @@ public class CoinListFragment extends Fragment implements
         }
     }
 
-    private void updateRelativeTimeSpanText(Exchange exchange, CoinKind coinKind) {
+    private void refreshRelativeTime(Exchange exchange, CoinKind coinKind) {
         if (getView() == null) {
             return;
         }
@@ -502,5 +503,14 @@ public class CoinListFragment extends Fragment implements
             startActivity(intent);
         }
 
+    }
+
+    @Override
+    public long getLastUpdated() {
+        if (updater != null) {
+            return updater.getLastUpdated();
+        } else {
+            return -1L;
+        }
     }
 }

@@ -36,14 +36,12 @@ public class PeriodicalUpdater {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                lastUpdated = System.currentTimeMillis();
                 runnable.startTask();
             }
         }, delay, interval);
     }
 
     public void forceStart(String caller) {
-        lastUpdated = System.currentTimeMillis();
         runnable.startTask();
     }
 

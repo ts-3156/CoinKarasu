@@ -3,6 +3,7 @@ package com.coinkarasu.custom;
 import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
@@ -41,5 +42,29 @@ public class AggressiveProgressbar extends AppCompatImageView {
                 stopAnimation();
             }
         }, delay);
+    }
+
+    @Override
+    protected void onVisibilityChanged(View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        if (visibility == View.VISIBLE) {
+        } else {
+            stopAnimation(); // onPause
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        if (hasWindowFocus) {
+        } else {
+            stopAnimation(); // onPause
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        stopAnimation(); // onDestroy
     }
 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.coinkarasu.R;
+import com.coinkarasu.activities.TimeProvider;
 import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.adapters.ConfigUtils;
 import com.coinkarasu.adapters.ResourceUtils;
@@ -15,9 +16,9 @@ public class UiManager implements CoinListViewHolder.OnCoinClickListener {
     private final RowDataProvider rowDataProvider;
     private final UiDelegatesFactory delegatesFactory;
 
-    public UiManager(Context context, RowDataProvider rowDataProvider, ResourceUtils resources, ConfigUtils configs) {
+    public UiManager(Context context, RowDataProvider rowDataProvider, TimeProvider timeProvider, ResourceUtils resources, ConfigUtils configs) {
         this.rowDataProvider = rowDataProvider;
-        delegatesFactory = new UiDelegatesFactory(context, resources, configs);
+        delegatesFactory = new UiDelegatesFactory(context, timeProvider, resources, configs);
     }
 
     public final CoinListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
