@@ -5,10 +5,19 @@ import android.view.View;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.coins.Coin;
 
-public interface UiManagingDelegate {
-    void onBindViewHolder(Coin coin, CoinListViewHolder holder);
+public abstract class UiManagingDelegate {
+    void onBindViewHolder(Coin coin, final CoinListViewHolder holder, final OnCoinClickListener listener) {
+        if (holder.container != null) {
+            holder.container.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    listener.onCoinClicked(view, holder);
+                }
+            });
+        }
+    }
 
-    void onViewRecycled(CoinListViewHolder holder);
+    abstract void onViewRecycled(CoinListViewHolder holder);
 
-    void onCoinClicked(Coin coin, View view, int position, NavigationKind kind);
+    abstract void onCoinClicked(Coin coin, View view, int position, NavigationKind kind);
 }

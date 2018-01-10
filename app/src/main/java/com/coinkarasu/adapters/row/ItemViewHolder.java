@@ -26,8 +26,8 @@ public final class ItemViewHolder extends CoinListViewHolder {
     public PriceBgColorAnimator priceBgColorAnimator = null;
     public TrendAnimator trendAnimator = null;
 
-    public ItemViewHolder(View itemView, OnCoinClickListener listener) {
-        super(itemView, listener);
+    public ItemViewHolder(View itemView) {
+        super(itemView);
         innerContainer = itemView.findViewById(R.id.inner_container);
         icon = itemView.findViewById(R.id.icon);
         name = itemView.findViewById(R.id.name);

@@ -7,8 +7,8 @@ import com.google.android.gms.ads.AdView;
 public final class AdViewHolder extends CoinListViewHolder {
     public AdView ad;
 
-    public AdViewHolder(View itemView, OnCoinClickListener listener) {
-        super(itemView, listener);
+    public AdViewHolder(View itemView) {
+        super(itemView);
         ad = null;
     }
 }

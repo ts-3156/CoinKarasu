@@ -8,7 +8,7 @@ import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.adapters.ResourceUtils;
 import com.coinkarasu.coins.Coin;
 
-public class HeaderDelegate implements UiManagingDelegate {
+public class HeaderDelegate extends UiManagingDelegate {
     public static final int TYPE = CoinListAdapter.TYPE_HEADER;
 
     private TimeProvider timeProvider;
@@ -20,7 +20,9 @@ public class HeaderDelegate implements UiManagingDelegate {
     }
 
     @Override
-    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder) {
+    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder, OnCoinClickListener listener) {
+        super.onBindViewHolder(coin, _holder, listener);
+
         HeaderViewHolder holder = (HeaderViewHolder) _holder;
 
         holder.header.setText(resources.headerNameResIdStringMap.get(coin.getHeaderNameResId()));

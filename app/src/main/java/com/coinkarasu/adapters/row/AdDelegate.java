@@ -14,7 +14,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
-public class AdDelegate implements UiManagingDelegate {
+public class AdDelegate extends UiManagingDelegate {
     private static final boolean DEBUG = true;
     private static final String TAG = "AdDelegate";
     public static final int TYPE = CoinListAdapter.TYPE_AD;
@@ -26,7 +26,9 @@ public class AdDelegate implements UiManagingDelegate {
     }
 
     @Override
-    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder) {
+    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder, OnCoinClickListener listener) {
+        super.onBindViewHolder(coin, _holder, listener);
+
         final AdViewHolder holder = (AdViewHolder) _holder;
 
         holder.ad = new AdView(holder.itemView.getContext());

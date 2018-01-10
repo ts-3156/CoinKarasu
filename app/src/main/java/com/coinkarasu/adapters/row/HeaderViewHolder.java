@@ -13,8 +13,8 @@ public final class HeaderViewHolder extends CoinListViewHolder {
     public AggressiveProgressbar progressbar;
     public RelativeTimeSpanTextView timeSpan;
 
-    public HeaderViewHolder(View itemView, OnCoinClickListener listener) {
-        super(itemView, listener);
+    public HeaderViewHolder(View itemView) {
+        super(itemView);
         header = itemView.findViewById(R.id.text_separator);
         divider = itemView.findViewById(R.id.divider);
         progressbar = itemView.findViewById(R.id.progressbar);

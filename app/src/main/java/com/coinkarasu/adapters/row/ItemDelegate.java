@@ -13,7 +13,7 @@ import com.coinkarasu.animator.PriceDiffAnimator;
 import com.coinkarasu.animator.TrendAnimator;
 import com.coinkarasu.coins.Coin;
 
-public class ItemDelegate implements UiManagingDelegate {
+public class ItemDelegate extends UiManagingDelegate {
     public static final int TYPE = CoinListAdapter.TYPE_ITEM;
 
     private ResourceUtils resources;
@@ -25,7 +25,9 @@ public class ItemDelegate implements UiManagingDelegate {
     }
 
     @Override
-    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder) {
+    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder, OnCoinClickListener listener) {
+        super.onBindViewHolder(coin, _holder, listener);
+
         ItemViewHolder holder = (ItemViewHolder) _holder;
 
         holder.icon.setDefaultImageResId(resources.symbolIconResIdMap.get(coin.getSymbol()));

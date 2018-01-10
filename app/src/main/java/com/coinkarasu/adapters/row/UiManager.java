@@ -13,7 +13,7 @@ import com.coinkarasu.adapters.ConfigUtils;
 import com.coinkarasu.adapters.ResourceUtils;
 import com.coinkarasu.coins.Coin;
 
-public class UiManager implements CoinListViewHolder.OnCoinClickListener {
+public class UiManager implements OnCoinClickListener {
     private final RowDataProvider rowDataProvider;
     private final UiDelegatesFactory delegatesFactory;
     private NavigationKind kind;
@@ -28,18 +28,18 @@ public class UiManager implements CoinListViewHolder.OnCoinClickListener {
     public final CoinListViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if (viewType == CoinListAdapter.TYPE_HEADER) {
             View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.coin_list_header_item, parent, false);
-            return new HeaderViewHolder(item, this);
+            return new HeaderViewHolder(item);
         } else if (viewType == CoinListAdapter.TYPE_AD) {
             View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.coin_list_ad_item, parent, false);
-            return new AdViewHolder(item, this);
+            return new AdViewHolder(item);
         } else {
             View item = LayoutInflater.from(parent.getContext()).inflate(R.layout.coin_list_row_item, parent, false);
-            return new ItemViewHolder(item, this);
+            return new ItemViewHolder(item);
         }
     }
 
     public void onBindViewHolder(Coin coin, CoinListViewHolder holder) {
-        delegatesFactory.onBindViewHolder(coin, holder);
+        delegatesFactory.onBindViewHolder(coin, holder, this);
     }
 
     public void onViewRecycled(CoinListViewHolder holder) {
