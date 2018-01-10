@@ -39,6 +39,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -52,7 +53,8 @@ public class MainActivity extends AppCompatActivity implements
     public static final NavigationKind DEFAULT_KIND = NavigationKind.home;
     private static final String FRAGMENT_TAG = "fragment";
 
-    MainViewController viewController;
+    private FirebaseAnalytics firebaseAnalytics;
+    private MainViewController viewController;
 
     private CKLog logger;
 
@@ -73,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         logger = new CKLog(this);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -363,6 +366,10 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
         ad.loadAd(new AdRequest.Builder().build());
+    }
+
+    public FirebaseAnalytics getFirebaseAnalytics() {
+        return firebaseAnalytics;
     }
 
     public boolean isPremiumPurchased() {

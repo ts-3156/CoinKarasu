@@ -31,6 +31,7 @@ import com.coinkarasu.custom.SwipeDetector;
 import com.coinkarasu.tasks.GetBoardTask;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,11 +49,14 @@ public class CoinActivity extends AppCompatActivity {
     private NavigationKind kind;
     private CKLog logger;
 
+    private FirebaseAnalytics firebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coin);
         logger = new CKLog(this);
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         Intent intent = getIntent();
         try {
@@ -246,6 +250,18 @@ public class CoinActivity extends AppCompatActivity {
                 activity = (Activity) ctx;
             }
         }
+
+        if (activity != null && activity instanceof MainActivity) {
+            FirebaseAnalytics analytics = ((MainActivity) activity).getFirebaseAnalytics();
+            if (analytics != null) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, coin.getSymbol());
+                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, coin.getSymbol());
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "coin");
+                analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+            }
+        }
+
         if (activity != null) {
             activity.overridePendingTransition(R.anim.activity_enter_from_right, R.anim.activity_exit_to_left);
         }
