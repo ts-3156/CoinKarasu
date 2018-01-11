@@ -59,7 +59,8 @@ public class PreferencesActivity extends AppCompatActivity implements Preference
             if (listPreference.getKey().equals("pref_sync_frequency")) {
                 int interval = Integer.valueOf(stringValue);
                 if (!PrefHelper.isPremium(this) && interval < PrefHelper.MIN_SYNC_INTERVAL) {
-                    PrefHelper.setDefaultSyncInterval(this);
+                    interval = PrefHelper.setDefaultSyncInterval(this);
+                    listPreference.setValueIndex(listPreference.findIndexOfValue(String.valueOf(interval)));
 
                     BillingActivity.start(this, R.string.billing_dialog_sync_interval);
                     return true;

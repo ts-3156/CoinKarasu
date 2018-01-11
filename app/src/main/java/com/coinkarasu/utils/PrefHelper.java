@@ -46,14 +46,15 @@ public class PrefHelper {
         return interval;
     }
 
-    public static void setDefaultSyncInterval(Context context) {
+    public static int setDefaultSyncInterval(Context context) {
         SharedPreferences pref = getPref(context);
         if (pref == null) {
-            return;
+            return DEFAULT_SYNC_INTERVAL;
         }
         SharedPreferences.Editor edit = pref.edit();
         edit.putString("pref_sync_frequency", String.valueOf(DEFAULT_SYNC_INTERVAL));
         edit.commit();
+        return DEFAULT_SYNC_INTERVAL;
     }
 
     public static boolean isAnimEnabled(Context context) {

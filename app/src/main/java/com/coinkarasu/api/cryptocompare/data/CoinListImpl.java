@@ -125,7 +125,7 @@ public class CoinListImpl implements CoinList {
             if (DEBUG) CKLog.d(TAG, "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
         }
 
-        if (DEBUG) CKLog.d(TAG, "Load from FILE " + coins.size() + " coins "
+        if (DEBUG) CKLog.d(TAG, "collectCoins() from FILE " + coins.size() + " coins "
                 + (System.currentTimeMillis() - start) + " ms");
 
         return coins;
@@ -151,7 +151,7 @@ public class CoinListImpl implements CoinList {
             if (DEBUG) CKLog.d(TAG, "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
         }
 
-        if (DEBUG) CKLog.d(TAG, "Load from DB " + coins.size() + " coins "
+        if (DEBUG) CKLog.d(TAG, "collectCoins() from DB " + coins.size() + " coins "
                 + (System.currentTimeMillis() - start) + " ms");
 
         return coins;

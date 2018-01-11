@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -52,17 +53,12 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
         findPreference("pref_clear_cache").setOnPreferenceClickListener(this);
         findPreference("pref_clear_config").setOnPreferenceClickListener(this);
         findPreference("pref_open_source_licenses").setOnPreferenceClickListener(this);
+        findPreference("pref_remove_ads").setOnPreferenceClickListener(this);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        String interval = prefs.getString("pref_sync_frequency", String.valueOf(PrefHelper.DEFAULT_SYNC_INTERVAL));
-        if (!PrefHelper.isPremium(getActivity()) && Integer.valueOf(interval) < PrefHelper.MIN_SYNC_INTERVAL) {
-            PrefHelper.setDefaultSyncInterval(getActivity());
-        }
-
-        SwitchPreference removeAds = (SwitchPreference) findPreference("pref_remove_ads");
-        removeAds.setChecked(PrefHelper.isPremium(getActivity()));
-        removeAds.setOnPreferenceClickListener(this);
+        setDefaultSyncFrequencyIfNeeded();
+        ((SwitchPreference) findPreference("pref_remove_ads")).setChecked(PrefHelper.isPremium(getActivity()));
 
         bindPreferenceSummaryToValue(prefs, "pref_sync_frequency");
         bindPreferenceSummaryToValue(prefs, "pref_currency");
@@ -116,6 +112,25 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
         Preference pref = findPreference(key);
         pref.setOnPreferenceChangeListener(listener);
         listener.onPreferenceChange(pref, prefs.getString(key, ""));
+    }
+
+    private void setDefaultSyncFrequencyIfNeeded() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        String stringValue = prefs.getString("pref_sync_frequency", String.valueOf(PrefHelper.DEFAULT_SYNC_INTERVAL));
+        if (!PrefHelper.isPremium(getActivity()) && Integer.valueOf(stringValue) < PrefHelper.MIN_SYNC_INTERVAL) {
+            int interval = PrefHelper.setDefaultSyncInterval(getActivity());
+            ListPreference listPreference = (ListPreference) findPreference("pref_sync_frequency");
+            listPreference.setValueIndex(listPreference.findIndexOfValue(String.valueOf(interval)));
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        setDefaultSyncFrequencyIfNeeded();
+        ((SwitchPreference) findPreference("pref_remove_ads")).setChecked(PrefHelper.isPremium(getActivity()));
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.coinkarasu.services.data;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.coins.Coin;
@@ -38,8 +39,9 @@ public class Trending {
     }
 
     public static Trending restoreFromCache(Context context, TrendingKind kind) {
+        long start = System.currentTimeMillis();
         String text = DiskCacheHelper.read(context, getCacheName(kind));
-        if (text == null) {
+        if (TextUtils.isEmpty(text)) {
             return null;
         }
 
@@ -54,6 +56,9 @@ public class Trending {
         } catch (JSONException e) {
             if (DEBUG) CKLog.e(TAG, text, e);
         }
+
+        if (DEBUG) CKLog.d(TAG, "restoreFromCache(" + kind.name() + ") elapsed time: "
+                + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
 
         return new Trending(coins, kind);
     }

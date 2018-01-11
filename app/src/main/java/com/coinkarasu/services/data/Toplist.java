@@ -1,14 +1,13 @@
 package com.coinkarasu.services.data;
 
 import android.content.Context;
-import android.util.Log;
+import android.text.TextUtils;
 
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.coins.PriceMultiFullCoinImpl;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.DiskCacheHelper;
-import com.crashlytics.android.Crashlytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,8 +39,9 @@ public class Toplist {
     }
 
     public static Toplist restoreFromCache(Context context, NavigationKind kind) {
+        long start = System.currentTimeMillis();
         String text = DiskCacheHelper.read(context, getCacheName(kind));
-        if (text == null) {
+        if (TextUtils.isEmpty(text)) {
             if (DEBUG) CKLog.e(TAG, "The " + kind.name() + " cache is null.");
             return null;
         }
@@ -57,6 +57,9 @@ public class Toplist {
         } catch (JSONException e) {
             if (DEBUG) CKLog.e(TAG, text, e);
         }
+
+        if (DEBUG) CKLog.d(TAG, "restoreFromCache(" + kind.name() + ") elapsed time: "
+                + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
 
         return new Toplist(coins, kind);
     }
