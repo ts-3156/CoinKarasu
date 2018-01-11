@@ -41,7 +41,6 @@ public class UpdateToplistIntentService extends IntentService {
 
     protected void update(Intent intent) {
         long start = System.currentTimeMillis();
-        CKLog logger = new CKLog(getApplicationContext());
         NavigationKind kind = NavigationKind.valueOf(intent.getAction());
         String symbol = kind.getToSymbol();
         String logFile = logFile(symbol);

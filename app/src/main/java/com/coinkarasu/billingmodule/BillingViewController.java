@@ -39,12 +39,9 @@ public class BillingViewController {
     // Current amount of gas in tank, in units
 //    private int mTank;
 
-    private CKLog logger;
-
     public BillingViewController(BillingActivity activity) {
         mUpdateListener = new UpdateListener();
         mActivity = activity;
-        logger = new CKLog(activity);
         loadData();
     }
 

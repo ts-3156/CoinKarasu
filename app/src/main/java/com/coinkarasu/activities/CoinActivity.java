@@ -18,7 +18,6 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -50,7 +49,6 @@ public class CoinActivity extends AppCompatActivity {
 
     private Coin coin;
     private NavigationKind kind;
-    private CKLog logger;
 
     private FirebaseAnalytics firebaseAnalytics;
 
@@ -60,7 +58,7 @@ public class CoinActivity extends AppCompatActivity {
         Fabric.with(this, new Crashlytics());
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_coin);
-        logger = new CKLog(this);
+        CKLog.setContext(this);
 
         Intent intent = getIntent();
         try {
@@ -248,6 +246,12 @@ public class CoinActivity extends AppCompatActivity {
     public void finish() {
         super.finish();
         overridePendingTransition(R.anim.activity_enter_from_left, R.anim.activity_exit_to_right);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CKLog.releaseContext();
     }
 
     public static void start(Context context, Coin coin, NavigationKind kind) {

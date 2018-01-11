@@ -57,8 +57,6 @@ public class BillingManager implements PurchasesUpdatedListener {
 
     private int mBillingClientResponseCode = BILLING_MANAGER_NOT_INITIALIZED;
 
-    private CKLog logger;
-
     /**
      * Listener to the updates that happen when purchases list was updated or consumption of the
      * item was finished
@@ -79,7 +77,6 @@ public class BillingManager implements PurchasesUpdatedListener {
     }
 
     public BillingManager(Activity activity, final BillingUpdatesListener updatesListener) {
-        logger = new CKLog(activity);
         if (DEBUG) CKLog.d(TAG, "Creating Billing client.");
         mActivity = activity;
         mBillingUpdatesListener = updatesListener;

@@ -56,8 +56,6 @@ public class MainActivity extends AppCompatActivity implements
     private FirebaseAnalytics firebaseAnalytics;
     private MainViewController viewController;
 
-    private CKLog logger;
-
     public enum Currency {
         JPY(R.string.action_currency_switch_to_usd, R.string.action_currency_only_for_jpy),
         USD(R.string.action_currency_switch_to_jpy, -1);
@@ -77,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements
         Fabric.with(this, new Crashlytics());
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_main);
-        logger = new CKLog(this);
+        CKLog.setContext(this);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -368,11 +366,13 @@ public class MainActivity extends AppCompatActivity implements
         ad.loadAd(new AdRequest.Builder().build());
     }
 
-    public FirebaseAnalytics getFirebaseAnalytics() {
-        return firebaseAnalytics;
-    }
-
     public boolean isPremiumPurchased() {
         return viewController.isPremiumPurchased();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        CKLog.releaseContext();
     }
 }

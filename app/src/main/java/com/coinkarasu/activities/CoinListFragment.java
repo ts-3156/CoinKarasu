@@ -61,7 +61,6 @@ public class CoinListFragment extends Fragment implements
     private boolean isSelected;
     private boolean isStartTaskRequested;
     private boolean isCollectCoinsRequested;
-    private CKLog logger;
 
     public CoinListFragment() {
     }
@@ -90,7 +89,6 @@ public class CoinListFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_list, container, false);
-        logger = new CKLog(getActivity());
 
         ((ProgressBar) view.findViewById(R.id.screen_wait)).setIndeterminateDrawable(getResources().getDrawable(kind.progressDrawableResId));
         updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));

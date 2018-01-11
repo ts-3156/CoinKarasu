@@ -56,7 +56,6 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
     private SkusAdapter mAdapter;
     private TextView mErrorTextView;
     private View mScreenWait;
-    private CKLog logger;
 
     private FirebaseAnalytics firebaseAnalytics;
 
@@ -75,7 +74,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
         showDialog();
         updateToolbarColor();
 
-        logger = new CKLog(this);
+        CKLog.setContext(this);
         mViewController = new BillingViewController(this);
         mBillingManager = new BillingManager(this, mViewController.getUpdateListener());
 
@@ -150,6 +149,7 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
             mBillingManager.destroy();
         }
         super.onDestroy();
+        CKLog.releaseContext();
     }
 
     private void showDialog() {

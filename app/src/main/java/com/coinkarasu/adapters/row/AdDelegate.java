@@ -19,10 +19,7 @@ public class AdDelegate extends UiManagingDelegate {
     private static final String TAG = "AdDelegate";
     public static final int TYPE = CoinListAdapter.TYPE_AD;
 
-    private CKLog logger;
-
     public AdDelegate(Context context) {
-        logger = new CKLog(context);
     }
 
     @Override

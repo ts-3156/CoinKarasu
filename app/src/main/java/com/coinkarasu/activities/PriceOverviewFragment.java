@@ -49,7 +49,6 @@ public class PriceOverviewFragment extends Fragment implements
 
     private Coin coin;
     private PeriodicalUpdater updater;
-    private CKLog logger;
 
     public PriceOverviewFragment() {
     }
@@ -65,7 +64,6 @@ public class PriceOverviewFragment extends Fragment implements
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        logger = new CKLog(getActivity());
 
         if (getArguments() != null) {
             String coinJson = getArguments().getString("coinJson");

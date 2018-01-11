@@ -42,7 +42,6 @@ public class UpdateCoinListIntentService extends IntentService {
     }
 
     protected void update() {
-        CKLog logger = new CKLog(getApplicationContext());
         if (DiskCacheHelper.exists(this, LOG) && !DiskCacheHelper.isExpired(this, LOG, THIRTY_MINUTES)) {
             if (DEBUG) CKLog.d(TAG, "Recently executed.");
             return;

@@ -55,7 +55,6 @@ public class UpdateTrendingIntentService extends IntentService {
 
     private void update(TrendingKind kind, Exchange exchange, String toSymbol, boolean force) {
         long start = System.currentTimeMillis();
-        CKLog logger = new CKLog(getApplicationContext());
         String logFile = logFile(kind, toSymbol, exchange.name());
 
         if (!force && DiskCacheHelper.exists(this, logFile) && !DiskCacheHelper.isExpired(this, logFile, ONE_DAY)) {

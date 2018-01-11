@@ -34,11 +34,9 @@ class ClientImpl implements Client {
     private static final String DEFAULT_EXCHANGE = "cccagg";
 
     private Context context;
-    private CKLog logger;
 
     ClientImpl(Context context) {
         this.context = context;
-        this.logger = new CKLog(context);
     }
 
     @Override

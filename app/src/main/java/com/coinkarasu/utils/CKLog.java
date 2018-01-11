@@ -1,6 +1,5 @@
 package com.coinkarasu.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
@@ -14,39 +13,48 @@ import java.util.Queue;
 
 public class CKLog {
     private static final boolean DEBUG = BuildConfig.DEBUG;
+    private static final String TAG = "CKLog";
 
-    private Context context;
-    private Queue<String> queue;
-    private boolean isRunning;
+    private static Context context;
+    private static Queue<String> queue;
+    private static boolean isRunning;
 
-    public CKLog(Context context) {
-//        this.context = context.getApplicationContext();
-        queue = new LinkedList<>();
-        isRunning = false;
+    public static synchronized void setContext(Context context) {
+        if (CKLog.context == null) {
+            Log.d(TAG, "setContext()");
+            CKLog.context = context.getApplicationContext();
+            queue = new LinkedList<>();
+            isRunning = false;
+        }
+    }
+
+    public static void releaseContext() {
+        Log.d(TAG, "releaseContext()");
+        context = null;
     }
 
     public static void d(String tag, String message) {
         if (!DEBUG) return;
         Log.d(tag, message);
-//        makeToast(tag, message);
+        makeToast(tag, message);
     }
 
     public static void i(String tag, String message) {
         if (!DEBUG) return;
         Log.i(tag, message);
-//        makeToast(tag, message);
+        makeToast(tag, message);
     }
 
     public static void w(String tag, String message) {
         if (!DEBUG) return;
         Log.w(tag, message);
-//        makeToast(tag, message);
+        makeToast(tag, message);
     }
 
     public static void e(String tag, String message) {
         if (!DEBUG) return;
         Log.e(tag, message);
-//        makeToast(tag, message);
+        makeToast(tag, message);
     }
 
     public static void e(String tag, Exception ex) {
@@ -59,23 +67,17 @@ public class CKLog {
         if (DEBUG) Log.e(tag, message, ex);
     }
 
-    void makeToast(String tag, String message) {
+    private static void makeToast(String tag, String message) {
         if (context == null) {
             return;
         }
 
         queue.offer(tag + ": " + message);
+
         if (isRunning) {
             return;
         }
         isRunning = true;
-
-        final Listener listener = new Listener() {
-            @Override
-            public void finished() {
-                isRunning = false;
-            }
-        };
 
         final Handler handler = new Handler(context.getMainLooper());
 
@@ -84,17 +86,15 @@ public class CKLog {
             public void run() {
                 while (!queue.isEmpty()) {
                     if (context == null) {
-                        break;
-                    }
-
-                    if (context instanceof Activity && ((Activity) context).isFinishing()) {
-                        context = null;
+                        isRunning = false;
                         break;
                     }
 
                     handler.post(new Runnable() {
                         public void run() {
-                            Toast.makeText(context, queue.poll(), Toast.LENGTH_SHORT).show();
+                            if (context != null) {
+                                Toast.makeText(context, queue.poll(), Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
 
@@ -105,13 +105,9 @@ public class CKLog {
                     }
                 }
 
-                listener.finished();
+                isRunning = false;
             }
         };
         thread.start();
-    }
-
-    private interface Listener {
-        void finished();
     }
 }

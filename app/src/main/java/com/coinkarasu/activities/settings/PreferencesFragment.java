@@ -41,13 +41,11 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
     private static final String TAG = "PreferencesFragment";
 
     private Preference.OnPreferenceChangeListener listener;
-    private CKLog logger;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.fragment_preferences);
-        logger = new CKLog(getActivity());
 
         findPreference("pref_app_version").setOnPreferenceClickListener(this);
         findPreference("pref_clear_cache").setOnPreferenceClickListener(this);
