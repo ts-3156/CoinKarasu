@@ -38,7 +38,7 @@ public class SnapshotCoinImpl implements SnapshotCoin {
             low24Hour = response.getDouble("LOW24HOUR");
             lastVolumeTo = response.getDouble("LASTVOLUMETO");
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, response.toString(), e);
+            CKLog.e(TAG, response.toString(), e);
         }
     }
 
@@ -125,7 +125,7 @@ public class SnapshotCoinImpl implements SnapshotCoin {
             json.put("LOW24HOUR", low24Hour);
             json.put("LASTVOLUMETO", lastVolumeTo);
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, e);
+            CKLog.e(TAG, e);
         }
 
         return json;

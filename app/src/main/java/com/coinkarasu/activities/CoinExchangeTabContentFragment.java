@@ -66,7 +66,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
             try {
                 coin = SnapshotCoinImpl.buildByJSONObject(new JSONObject(coinJson));
             } catch (JSONException e) {
-                if (DEBUG) CKLog.e(TAG, e);
+                CKLog.e(TAG, e);
             }
         }
     }

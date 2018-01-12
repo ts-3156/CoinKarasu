@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 
 import com.coinkarasu.activities.CoinListFragment;
 import com.coinkarasu.activities.EditTabsFragment;
@@ -37,7 +36,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         NavigationKind targetKind = visibleKinds.get(position);
-        if (DEBUG) Log.d(TAG, "getItem() " + position +
+        if (DEBUG) CKLog.d(TAG, "getItem() " + position +
                 " selected=" + selectedKind.name() + " target=" + targetKind.name());
 
         Fragment fragment;
@@ -65,7 +64,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
      */
     @Override
     public int getItemPosition(Object object) {
-        if (DEBUG) Log.d(TAG, "getItemPosition() " + object.toString());
+        if (DEBUG) CKLog.d(TAG, "getItemPosition() " + object.toString());
         return POSITION_NONE;
     }
 
@@ -94,18 +93,18 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
      * FragmentPagerAdapterの中で、Fragmentのタグに利用されている。
      * getItemIdが変わった場合のみ、次にgetItemが呼ばれる。
      * <p>
-     * 同じfragmentインスタンスを使い続ける場合、タグを変えることはできない。
+     * 同じfragmentインスタンスを使い続ける場合、タグを変えると例外が起きる。
      * タグを変えないようにgetItemIdが同じ値を返すようにすると、今度はgetItemが呼ばれない。
      * よって、タブの追加/削除を行う場合は、必ず新しいタグとfragmentインスタンスを作る必要がある。
      **/
     @Override
     public long getItemId(int position) {
-        if (DEBUG) Log.d(TAG, "getItemId() " + position + " " + version);
+        if (DEBUG) CKLog.d(TAG, "getItemId() " + position + " " + version);
         return position + version;
     }
 
     /**
-     * 何もしていなくても呼ばれ続ける時があるため、キャッシュのサイズを返すようにしている。
+     * 何もしていなくても呼ばれ続ける時がある。
      */
     @Override
     public int getCount() {

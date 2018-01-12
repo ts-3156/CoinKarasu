@@ -36,7 +36,7 @@ public class CoinListResponseImpl implements CoinListResponse {
                 if (DEBUG) CKLog.e(TAG, "CoinListResponseImpl() " + response.toString());
             }
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, response.toString(), e);
+            CKLog.e(TAG, response.toString(), e);
         }
     }
 
@@ -51,7 +51,7 @@ public class CoinListResponseImpl implements CoinListResponse {
         try {
             data = response.getJSONObject("Data");
         } catch (JSONException e) {
-            Log.d("getData", e.getMessage());
+            CKLog.e(TAG, response.toString(), e);
         }
 
         return data;
@@ -94,7 +94,7 @@ public class CoinListResponseImpl implements CoinListResponse {
         try {
             response = new JSONObject(text);
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, text, e);
+            CKLog.e(TAG, text, e);
         }
 
         if (response == null) {

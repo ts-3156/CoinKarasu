@@ -34,7 +34,7 @@ public class TopPairsImpl implements TopPairs {
                 topPairs.add(new TopPairImpl(data.getJSONObject(i)));
             }
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, e);
+            CKLog.e(TAG, e);
         }
     }
 

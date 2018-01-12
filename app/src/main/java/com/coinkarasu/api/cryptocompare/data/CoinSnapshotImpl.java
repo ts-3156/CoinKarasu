@@ -66,7 +66,7 @@ public class CoinSnapshotImpl implements CoinSnapshot {
                 }
             }
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, response.toString(), e);
+            CKLog.e(TAG, response.toString(), e);
         }
 
     }

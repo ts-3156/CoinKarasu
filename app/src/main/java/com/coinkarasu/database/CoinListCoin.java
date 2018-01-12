@@ -46,7 +46,7 @@ public class CoinListCoin {
             json.put("Algorithm", algorithm);
             json.put("ProofType", proofType);
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, e);
+            CKLog.e(TAG, e);
         }
 
         return json;

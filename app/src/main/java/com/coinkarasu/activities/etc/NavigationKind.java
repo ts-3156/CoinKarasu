@@ -95,9 +95,9 @@ public enum NavigationKind {
                     symbol = "JPY";
                     break;
                 default:
-                    RuntimeException e = new RuntimeException("Invalid kind " + name());
-                    CKLog.e("NavigationKind", e);
-                    throw e;
+                    RuntimeException ex = new RuntimeException("Invalid kind " + name());
+                    CKLog.e("NavigationKind", ex);
+                    throw ex;
             }
         }
 

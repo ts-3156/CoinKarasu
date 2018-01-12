@@ -55,7 +55,7 @@ public class Toplist {
                 coins.add(new PriceMultiFullCoinImpl(attrs));
             }
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, text, e);
+            CKLog.e(TAG, text, e);
         }
 
         if (DEBUG) CKLog.d(TAG, "restoreFromCache(" + kind.name() + ") elapsed time: "

@@ -41,7 +41,7 @@ public class TopPairsResponseImpl implements TopPairsResponse {
         try {
             data = response.getJSONArray("Data");
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, response.toString(), e);
+            CKLog.e(TAG, response.toString(), e);
         }
 
         return data;
@@ -72,7 +72,7 @@ public class TopPairsResponseImpl implements TopPairsResponse {
         try {
             response = new JSONObject(text);
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, text, e);
+            CKLog.e(TAG, text, e);
         }
 
         if (response == null) {

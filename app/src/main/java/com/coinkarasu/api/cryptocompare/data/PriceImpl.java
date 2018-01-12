@@ -33,7 +33,7 @@ public class PriceImpl implements Price {
 
             coin = new PriceMultiFullCoinImpl(attrs);
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, response.toString(), e);
+            CKLog.e(TAG, response.toString(), e);
         }
     }
 

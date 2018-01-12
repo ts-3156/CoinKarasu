@@ -100,7 +100,7 @@ public class CoinImpl implements Coin {
 
             coinKind = null;
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, attrs.toString(), e);
+            CKLog.e(TAG, attrs.toString(), e);
         }
 
     }
@@ -117,7 +117,7 @@ public class CoinImpl implements Coin {
             attrs.put("FullName", fullName);
             attrs.put("ImageUrl", imageUrl);
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, coin.toJson().toString(), e);
+            CKLog.e(TAG, coin.toJson().toString(), e);
             return null;
         }
 
@@ -435,7 +435,7 @@ public class CoinImpl implements Coin {
             json.put("prevPriceDiff", prevPriceDiff);
             json.put("prevTrend", prevTrend);
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, e);
+            CKLog.e(TAG, e);
         }
 
         return json;

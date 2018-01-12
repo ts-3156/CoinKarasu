@@ -41,7 +41,7 @@ public class CoinListImpl implements CoinList {
             try {
                 instance = CoinListImpl.restoreFromCache(context);
             } catch (Exception e) {
-                if (DEBUG) CKLog.e(TAG, "getInstance1", e);
+                CKLog.e(TAG, "getInstance1", e);
             }
         }
 
@@ -50,7 +50,7 @@ public class CoinListImpl implements CoinList {
                 instance = CoinListImpl.buildByResponse(new JSONObject(CoinListReader.read(context)));
                 UpdateCoinListIntentService.start(context);
             } catch (JSONException e) {
-                if (DEBUG) CKLog.e(TAG, "getInstance2", e);
+                CKLog.e(TAG, "getInstance2", e);
             }
         }
 
@@ -74,7 +74,7 @@ public class CoinListImpl implements CoinList {
             JSONObject attrs = response.getData().getJSONObject(symbol);
             coin = CoinImpl.buildByAttrs(attrs);
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, e);
+            CKLog.e(TAG, e);
         }
 
         return coin;
@@ -101,7 +101,7 @@ public class CoinListImpl implements CoinList {
                 }
             }
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, e);
+            CKLog.e(TAG, e);
         }
 
         return coin;

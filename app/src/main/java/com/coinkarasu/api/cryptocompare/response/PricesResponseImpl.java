@@ -45,7 +45,7 @@ public class PricesResponseImpl implements PricesResponse {
         try {
             raw = response.getJSONObject("RAW");
         } catch (JSONException e) {
-            if(DEBUG) CKLog.e(TAG, response.toString(), e);
+            CKLog.e(TAG, response.toString(), e);
         }
 
         return raw;
@@ -73,7 +73,7 @@ public class PricesResponseImpl implements PricesResponse {
             data.put("_toSymbol", toSymbol);
             data.put("_exchange", exchange);
         } catch (JSONException e) {
-            if(DEBUG) CKLog.e(TAG, response.toString(), e);
+            CKLog.e(TAG, response.toString(), e);
         }
 
         if (data == null) {
@@ -106,7 +106,7 @@ public class PricesResponseImpl implements PricesResponse {
             data.remove("_toSymbol");
             data.remove("_exchange");
         } catch (JSONException e) {
-            if(DEBUG) CKLog.e(TAG, e);
+            CKLog.e(TAG, e);
             data = null;
         }
 

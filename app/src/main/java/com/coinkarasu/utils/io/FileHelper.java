@@ -24,14 +24,14 @@ public class FileHelper {
                 writer.write(text.getBytes());
             }
         } catch (IOException e) {
-            if (DEBUG) CKLog.e(TAG, "write1", e);
+            CKLog.e(TAG, "write1", e);
         } finally {
             try {
                 if (writer != null) {
                     writer.close();
                 }
             } catch (IOException e) {
-                if (DEBUG) CKLog.e(TAG, "write2", e);
+                CKLog.e(TAG, "write2", e);
             }
         }
     }
@@ -55,14 +55,14 @@ public class FileHelper {
                 if (DEBUG) CKLog.e(TAG, file.getPath() + " does not exist.");
             }
         } catch (IOException e) {
-            if (DEBUG) CKLog.e(TAG, "read1", e);
+            CKLog.e(TAG, "read1", e);
         } finally {
             try {
                 if (reader != null) {
                     reader.close();
                 }
             } catch (IOException e) {
-                if (DEBUG) CKLog.e(TAG, "read2", e);
+                CKLog.e(TAG, "read2", e);
             }
         }
 
@@ -74,7 +74,7 @@ public class FileHelper {
         try {
             file.createNewFile();
         } catch (IOException e) {
-            if (DEBUG) CKLog.e(TAG, "touch", e);
+            CKLog.e(TAG, "touch()", e);
         }
         return file.setLastModified(System.currentTimeMillis());
     }

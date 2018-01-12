@@ -76,7 +76,7 @@ public class CoinExchangeFragment extends Fragment implements
             try {
                 coin = CoinImpl.buildByAttrs(new JSONObject(coinJson));
             } catch (JSONException e) {
-                if (DEBUG) CKLog.e(TAG, e);
+                CKLog.e(TAG, e);
             }
         }
     }

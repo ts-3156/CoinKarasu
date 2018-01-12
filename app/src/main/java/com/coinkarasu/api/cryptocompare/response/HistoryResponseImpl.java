@@ -67,7 +67,7 @@ public class HistoryResponseImpl implements HistoryResponse {
         try {
             data = response.getJSONArray("Data");
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, response.toString(), e);
+            CKLog.e(TAG, response.toString(), e);
         }
 
         return data;
@@ -88,7 +88,7 @@ public class HistoryResponseImpl implements HistoryResponse {
                 histories.add(new HistoryImpl(data.getJSONObject(i), fromSymbol, toSymbol));
             }
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, data.toString(), e);
+            CKLog.e(TAG, data.toString(), e);
             histories = null;
         }
 
@@ -125,7 +125,7 @@ public class HistoryResponseImpl implements HistoryResponse {
         try {
             response = new JSONObject(text);
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, text, e);
+            CKLog.e(TAG, text, e);
         }
 
         if (response == null) {

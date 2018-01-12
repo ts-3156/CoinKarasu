@@ -34,9 +34,9 @@ public class BlockingRequest extends RequestBase {
         try {
             response = future.get();
         } catch (InterruptedException e) {
-            if (DEBUG) CKLog.e(TAG, getUrl(), e);
+            CKLog.e(TAG, getUrl(), e);
         } catch (ExecutionException e) {
-            if (DEBUG) CKLog.e(TAG, getUrl(), e);
+            CKLog.e(TAG, getUrl(), e);
         }
 
         return response;

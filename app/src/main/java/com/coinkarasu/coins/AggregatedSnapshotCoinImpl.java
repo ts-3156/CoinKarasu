@@ -54,7 +54,7 @@ public class AggregatedSnapshotCoinImpl implements AggregatedSnapshotCoin {
 
             lastMarket = response.getString("LASTMARKET");
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, response.toString(), e);
+            CKLog.e(TAG, response.toString(), e);
         }
     }
 

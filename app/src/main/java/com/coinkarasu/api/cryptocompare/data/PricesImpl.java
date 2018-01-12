@@ -64,7 +64,7 @@ public class PricesImpl implements Prices {
                 coins.add(new PriceMultiFullCoinImpl(attrs));
             }
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, e);
+            CKLog.e(TAG, e);
         }
     }
 
@@ -94,7 +94,7 @@ public class PricesImpl implements Prices {
             data.put("_exchange", exchange);
             data.put("_coins", array);
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, e);
+            CKLog.e(TAG, e);
         }
 
         CacheFileHelper.write(context, getCacheName(tag), data.toString());
@@ -123,7 +123,7 @@ public class PricesImpl implements Prices {
             }
             exchange = data.getString("_exchange");
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, e);
+            CKLog.e(TAG, e);
             data = null;
         }
 

@@ -71,7 +71,7 @@ public class Client {
         try {
             rate.value = response.getDouble("rate");
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, url + " " + response.toString(), e);
+            CKLog.e(TAG, url + " " + response.toString(), e);
         }
 
         return rate;
@@ -102,7 +102,7 @@ public class Client {
         try {
             rate.value = response.getDouble("rate");
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, url + " " + response.toString(), e);
+            CKLog.e(TAG, url + " " + response.toString(), e);
         }
 
         return rate;

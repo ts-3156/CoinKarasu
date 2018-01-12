@@ -66,7 +66,7 @@ public class PriceMultiFullCoinImpl implements PriceMultiFullCoin {
             totalVolume24hTo = attrs.getDouble("TOTALVOLUME24HTO");
 
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, attrs.toString(), e);
+            CKLog.e(TAG, attrs.toString(), e);
         }
     }
 
@@ -96,7 +96,7 @@ public class PriceMultiFullCoinImpl implements PriceMultiFullCoin {
             json.put("TOTALVOLUME24H", totalVolume24h);
             json.put("TOTALVOLUME24HTO", totalVolume24hTo);
         } catch (JSONException e) {
-            if (DEBUG) CKLog.e(TAG, e);
+            CKLog.e(TAG, e);
         }
 
         return json;
