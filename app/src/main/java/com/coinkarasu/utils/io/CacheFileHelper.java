@@ -1,15 +1,17 @@
-package com.coinkarasu.utils;
+package com.coinkarasu.utils.io;
 
 import android.content.Context;
+
+import com.coinkarasu.utils.CKLog;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-public class DiskCacheHelper {
+public class CacheFileHelper {
 
     private static final boolean DEBUG = true;
-    private static final String TAG = "DiskCacheHelper";
+    private static final String TAG = "CacheFileHelper";
 
     public static void write(Context context, String name, String text) {
         FileHelper.write(new File(context.getCacheDir(), name), text);

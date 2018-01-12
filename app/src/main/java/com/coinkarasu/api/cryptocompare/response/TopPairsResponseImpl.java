@@ -4,7 +4,7 @@ import android.content.Context;
 import android.text.TextUtils;
 
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.DiskCacheHelper;
+import com.coinkarasu.utils.io.CacheFileHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,12 +57,12 @@ public class TopPairsResponseImpl implements TopPairsResponse {
             return false;
         }
 
-        DiskCacheHelper.write(context, getCacheName(fromSymbol), response.toString());
+        CacheFileHelper.write(context, getCacheName(fromSymbol), response.toString());
         return true;
     }
 
     public static TopPairsResponse restoreFromCache(Context context, String fromSymbol) {
-        String text = DiskCacheHelper.read(context, getCacheName(fromSymbol));
+        String text = CacheFileHelper.read(context, getCacheName(fromSymbol));
         if (TextUtils.isEmpty(text)) {
             if (DEBUG) CKLog.e(TAG, "text is null.");
             return null;
@@ -83,12 +83,12 @@ public class TopPairsResponseImpl implements TopPairsResponse {
     }
 
     public static boolean isCacheExist(Context context, String fromSymbol) {
-        boolean exists = DiskCacheHelper.exists(context, getCacheName(fromSymbol));
+        boolean exists = CacheFileHelper.exists(context, getCacheName(fromSymbol));
         if (!exists) {
             return false;
         }
 
-        return !DiskCacheHelper.isExpired(context, getCacheName(fromSymbol), THIRTY_MINUTES);
+        return !CacheFileHelper.isExpired(context, getCacheName(fromSymbol), THIRTY_MINUTES);
     }
 
     @Override

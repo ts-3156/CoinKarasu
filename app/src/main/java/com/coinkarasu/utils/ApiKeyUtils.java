@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.coinkarasu.BuildConfig;
+import com.coinkarasu.utils.io.FileHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;

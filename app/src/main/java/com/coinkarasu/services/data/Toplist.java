@@ -7,7 +7,7 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.coins.PriceMultiFullCoinImpl;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.DiskCacheHelper;
+import com.coinkarasu.utils.io.CacheFileHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,12 +35,12 @@ public class Toplist {
             data.put(coin.toJson());
         }
 
-        DiskCacheHelper.write(context, getCacheName(kind), data.toString());
+        CacheFileHelper.write(context, getCacheName(kind), data.toString());
     }
 
     public static Toplist restoreFromCache(Context context, NavigationKind kind) {
         long start = System.currentTimeMillis();
-        String text = DiskCacheHelper.read(context, getCacheName(kind));
+        String text = CacheFileHelper.read(context, getCacheName(kind));
         if (TextUtils.isEmpty(text)) {
             if (DEBUG) CKLog.e(TAG, "The " + kind.name() + " cache is null.");
             return null;

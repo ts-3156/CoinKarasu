@@ -6,7 +6,7 @@ import android.text.TextUtils;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.api.cryptocompare.data.HistoryImpl;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.DiskCacheHelper;
+import com.coinkarasu.utils.io.CacheFileHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -105,7 +105,7 @@ public class HistoryResponseImpl implements HistoryResponse {
             return false;
         }
 
-        DiskCacheHelper.write(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange), response.toString());
+        CacheFileHelper.write(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange), response.toString());
         return true;
     }
 
@@ -115,7 +115,7 @@ public class HistoryResponseImpl implements HistoryResponse {
     }
 
     public static HistoryResponse restoreFromCache(Context context, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
-        String text = DiskCacheHelper.read(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
+        String text = CacheFileHelper.read(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
         if (TextUtils.isEmpty(text)) {
             if (DEBUG) CKLog.e(TAG, "text is null.");
             return null;
@@ -136,12 +136,12 @@ public class HistoryResponseImpl implements HistoryResponse {
     }
 
     public static boolean isCacheExist(Context context, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
-        boolean exists = DiskCacheHelper.exists(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
+        boolean exists = CacheFileHelper.exists(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
         if (!exists) {
             return false;
         }
 
-        return !DiskCacheHelper.isExpired(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange), kind.expires);
+        return !CacheFileHelper.isExpired(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange), kind.expires);
     }
 
     @Override

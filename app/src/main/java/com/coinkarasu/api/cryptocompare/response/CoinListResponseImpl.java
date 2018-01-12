@@ -5,7 +5,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.DiskCacheHelper;
+import com.coinkarasu.utils.io.CacheFileHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,7 +68,7 @@ public class CoinListResponseImpl implements CoinListResponse {
             return false;
         }
 
-        DiskCacheHelper.write(context, CACHE_NAME, response.toString());
+        CacheFileHelper.write(context, CACHE_NAME, response.toString());
         return true;
     }
 
@@ -84,7 +84,7 @@ public class CoinListResponseImpl implements CoinListResponse {
 
     // @Override
     public static CoinListResponse restoreFromCache(Context context) {
-        String text = DiskCacheHelper.read(context, CACHE_NAME);
+        String text = CacheFileHelper.read(context, CACHE_NAME);
         if (TextUtils.isEmpty(text)) {
             if (DEBUG) CKLog.e(TAG, "text is null.");
             return null;
@@ -107,11 +107,11 @@ public class CoinListResponseImpl implements CoinListResponse {
     // @Override
     public static boolean cacheExists(Context context) {
         // TODO Check timestamp
-        return DiskCacheHelper.exists(context, CACHE_NAME);
+        return CacheFileHelper.exists(context, CACHE_NAME);
     }
 
     // @Override
     public static Date lastModified(Context context) {
-        return DiskCacheHelper.lastModified(context, CACHE_NAME);
+        return CacheFileHelper.lastModified(context, CACHE_NAME);
     }
 }

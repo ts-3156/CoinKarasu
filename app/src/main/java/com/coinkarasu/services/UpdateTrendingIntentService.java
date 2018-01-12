@@ -20,7 +20,7 @@ import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Trending;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.DiskCacheHelper;
+import com.coinkarasu.utils.io.CacheFileHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,11 +57,11 @@ public class UpdateTrendingIntentService extends IntentService {
         long start = System.currentTimeMillis();
         String logFile = logFile(kind, toSymbol, exchange.name());
 
-        if (!force && DiskCacheHelper.exists(this, logFile) && !DiskCacheHelper.isExpired(this, logFile, ONE_DAY)) {
+        if (!force && CacheFileHelper.exists(this, logFile) && !CacheFileHelper.isExpired(this, logFile, ONE_DAY)) {
             if (DEBUG) CKLog.d(TAG, kind.name() + " " + exchange + " " + toSymbol + " is recently executed.");
             return;
         }
-        DiskCacheHelper.touch(this, logFile);
+        CacheFileHelper.touch(this, logFile);
 
         Set<String> uniqueSymbols = new LinkedHashSet<>(); // 日本で取引できるコインとCoincheckのコインの重複のない一覧
         Collections.addAll(uniqueSymbols, getResources().getStringArray(NavigationKind.japan.symbolsResId));

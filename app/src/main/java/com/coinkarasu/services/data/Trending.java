@@ -7,7 +7,7 @@ import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.DiskCacheHelper;
+import com.coinkarasu.utils.io.CacheFileHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,12 +35,12 @@ public class Trending {
             data.put(coin.toJson());
         }
 
-        DiskCacheHelper.write(context, getCacheName(kind), data.toString());
+        CacheFileHelper.write(context, getCacheName(kind), data.toString());
     }
 
     public static Trending restoreFromCache(Context context, TrendingKind kind) {
         long start = System.currentTimeMillis();
-        String text = DiskCacheHelper.read(context, getCacheName(kind));
+        String text = CacheFileHelper.read(context, getCacheName(kind));
         if (TextUtils.isEmpty(text)) {
             return null;
         }

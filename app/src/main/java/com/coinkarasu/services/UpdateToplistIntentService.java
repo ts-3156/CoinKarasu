@@ -11,7 +11,7 @@ import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.DiskCacheHelper;
+import com.coinkarasu.utils.io.CacheFileHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,11 +45,11 @@ public class UpdateToplistIntentService extends IntentService {
         String symbol = kind.getToSymbol();
         String logFile = logFile(symbol);
 
-        if (DiskCacheHelper.exists(this, logFile) && !DiskCacheHelper.isExpired(this, logFile, ONE_DAY)) {
+        if (CacheFileHelper.exists(this, logFile) && !CacheFileHelper.isExpired(this, logFile, ONE_DAY)) {
             if (DEBUG) CKLog.d(TAG, kind.name() + " is recently executed.");
             return;
         }
-        DiskCacheHelper.touch(this, logFile);
+        CacheFileHelper.touch(this, logFile);
 
         String[] symbols = getResources().getStringArray(kind.symbolsResId);
         ArrayList<PriceMultiFullCoin> coins = new ArrayList<>(symbols.length);

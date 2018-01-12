@@ -3,6 +3,8 @@ package com.coinkarasu.utils;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.coinkarasu.utils.io.FileHelper;
+
 import java.io.File;
 import java.util.UUID;
 

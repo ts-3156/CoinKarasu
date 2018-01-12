@@ -8,7 +8,7 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.coins.PriceMultiFullCoinImpl;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.DiskCacheHelper;
+import com.coinkarasu.utils.io.CacheFileHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,7 +97,7 @@ public class PricesImpl implements Prices {
             if (DEBUG) CKLog.e(TAG, e);
         }
 
-        DiskCacheHelper.write(context, getCacheName(tag), data.toString());
+        CacheFileHelper.write(context, getCacheName(tag), data.toString());
         return true;
     }
 
@@ -108,7 +108,7 @@ public class PricesImpl implements Prices {
 
     // @Override
     public static Prices restoreFromCache(Context context, String tag) {
-        String text = DiskCacheHelper.read(context, getCacheName(tag));
+        String text = CacheFileHelper.read(context, getCacheName(tag));
         JSONObject data;
         ArrayList<PriceMultiFullCoin> coins = new ArrayList<>();
         String exchange = null;
@@ -135,7 +135,7 @@ public class PricesImpl implements Prices {
     }
 
     public static boolean isCacheExist(Context context, String tag) {
-        return DiskCacheHelper.exists(context, getCacheName(tag));
+        return CacheFileHelper.exists(context, getCacheName(tag));
     }
 
     @Override

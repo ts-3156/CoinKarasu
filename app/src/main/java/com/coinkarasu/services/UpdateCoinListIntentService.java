@@ -12,7 +12,7 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.database.AppDatabase;
 import com.coinkarasu.database.CoinListCoin;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.DiskCacheHelper;
+import com.coinkarasu.utils.io.CacheFileHelper;
 
 import org.json.JSONObject;
 
@@ -42,11 +42,11 @@ public class UpdateCoinListIntentService extends IntentService {
     }
 
     protected void update() {
-        if (DiskCacheHelper.exists(this, LOG) && !DiskCacheHelper.isExpired(this, LOG, THIRTY_MINUTES)) {
+        if (CacheFileHelper.exists(this, LOG) && !CacheFileHelper.isExpired(this, LOG, THIRTY_MINUTES)) {
             if (DEBUG) CKLog.d(TAG, "Recently executed.");
             return;
         }
-        DiskCacheHelper.touch(this, LOG);
+        CacheFileHelper.touch(this, LOG);
 
         long start = System.currentTimeMillis();
         String url = "https://www.cryptocompare.com/api/data/coinlist/";
