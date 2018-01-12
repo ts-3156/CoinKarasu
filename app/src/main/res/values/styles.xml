@@ -19,8 +19,13 @@
 
     <style name="AppTheme.FlatButton" parent="Widget.AppCompat.Button.Borderless" />
 
+    <style name="TitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">16sp</item>
+    </style>
+
     <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
         <item name="textAllCaps">false</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textAllCaps">false</item>
     </style>
 

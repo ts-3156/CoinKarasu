@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final boolean DEBUG = true;
     private static final String TAG = "MainActivity";
-    private static final String STATE_SELECTED_KIND = "kind";
     private static final String FRAGMENT_TAG = "fragment";
 
     private FirebaseAnalytics firebaseAnalytics;
@@ -202,12 +201,6 @@ public class MainActivity extends AppCompatActivity implements
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putString(STATE_SELECTED_KIND, "Saved");
-        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override

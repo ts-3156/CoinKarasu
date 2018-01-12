@@ -39,7 +39,7 @@ public class MainFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        NavigationKind kind = NavigationKind.getDefault();
+        kind = NavigationKind.getDefault();
         if (savedInstanceState != null) {
             NavigationKind savedKind = NavigationKind.valueOf(savedInstanceState.getString(STATE_SELECTED_KIND_KEY, kind.name()));
             if (kind != savedKind && savedKind.isVisible(getActivity())) {

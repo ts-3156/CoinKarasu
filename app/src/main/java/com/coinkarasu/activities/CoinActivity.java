@@ -51,7 +51,6 @@ public class CoinActivity extends AppCompatActivity implements
     public static final String KEY_KIND = "KEY_KIND";
 
     private Coin coin;
-    private NavigationKind kind;
 
     private FirebaseAnalytics firebaseAnalytics;
 
@@ -68,7 +67,9 @@ public class CoinActivity extends AppCompatActivity implements
             CKLog.e(TAG, e);
         }
 
-        kind = NavigationKind.valueOf(intent.getStringExtra(KEY_KIND));
+        NavigationKind kind = NavigationKind.valueOf(intent.getStringExtra(KEY_KIND));
+        updateToolbarTitle(kind);
+        updateToolbarColor(kind);
 
         if (savedInstanceState == null) {
             setupFragment();
@@ -85,8 +86,6 @@ public class CoinActivity extends AppCompatActivity implements
 
     private void setupFragment() {
         String toSymbol = coin.getToSymbol();
-        updateToolbarTitle(kind);
-        updateToolbarColor(kind);
 
         Fragment card = PriceOverviewFragment.newInstance(coin);
         Fragment lineChart = HistoricalPriceFragment.newInstance(coin.getSymbol(), toSymbol);
