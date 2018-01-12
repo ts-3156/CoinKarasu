@@ -60,7 +60,7 @@ android {
         buildConfigField "String", "ADMOB_UNIT_ID", "\"${admobProps.getProperty("dummyAdUnitId")}\""
         buildConfigField "String", "CK_TMP_KEY", "\"${coinkarasuProps.getProperty("key")}\""
         buildConfigField "String", "CK_TMP_SECRET", "\"${coinkarasuProps.getProperty("secret")}\""
-        buildConfigField "String", "CK_HOST", "\"http://10.0.2.2:3000\""
+        buildConfigField "String", "CK_HOST", "\"${coinkarasuProps.getProperty("host")}\""
     }
     buildTypes {
         debug {
