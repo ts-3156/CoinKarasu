@@ -96,6 +96,7 @@ public class CoinListFragment extends Fragment implements
         loadingIndicator = view.findViewById(R.id.screen_wait);
         loadingIndicator.setIndeterminateDrawable(getResources().getDrawable(kind.progressDrawableResId));
         recyclerView = view.findViewById(R.id.recycler_view);
+        recyclerView.getRecycledViewPool().setMaxRecycledViews(CoinListAdapter.TYPE_HEADER, 0);
 
         updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
 
