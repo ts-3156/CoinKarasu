@@ -33,7 +33,8 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
 
         threads.add(new GetCoincheckTradingRateThread(context, "sell").setLatch(latch));
         threads.add(new GetCoincheckTradingRateThread(context, "buy").setLatch(latch));
-        threads.add(new GetCccaggPricesThread(context, new String[]{"BTC"}, "JPY", exchange.name()).setLatch(latch));
+        threads.add(new GetCoinkarasuTradingRateThread(context).setLatch(latch));
+//        threads.add(new GetCccaggPricesThread(context, new String[]{"BTC"}, "JPY", exchange.name()).setLatch(latch));
 
 
         for (Thread thread : threads) {
@@ -63,11 +64,17 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
             double avg = (sellRate.value + buyRate.value) / 2.0;
             Price price = new Price(exchange, coinKind, sellRate.fromSymbol, sellRate.toSymbol, avg);
 
-            Prices prices = ((GetCccaggPricesThread) threads.get(2)).getPrices();
-            if (!prices.getCoins().isEmpty()) {
-                PriceMultiFullCoin coin = prices.getCoins().get(0);
-                price.priceDiff = coin.getChange24Hour();
-                price.trend = coin.getChangePct24Hour() / 100.0;
+//            Prices prices = ((GetCccaggPricesThread) threads.get(2)).getPrices();
+//            if (!prices.getCoins().isEmpty()) {
+//                PriceMultiFullCoin coin = prices.getCoins().get(0);
+//                price.priceDiff = coin.getChange24Hour();
+//                price.trend = coin.getChangePct24Hour() / 100.0;
+//            }
+
+            Rate rate = ((GetCoinkarasuTradingRateThread) threads.get(2)).getRate();
+            if (rate != null && rate.value != 0.0) {
+                price.priceDiff = price.price - rate.value;
+                price.trend = price.priceDiff / rate.value;
             }
 
             ArrayList<Price> pricesArray = new ArrayList<>();

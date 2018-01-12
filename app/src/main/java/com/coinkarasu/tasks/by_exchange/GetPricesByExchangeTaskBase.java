@@ -7,7 +7,7 @@ import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.tasks.by_exchange.data.Price;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Integer, Integer> {
     protected Listener listener;
@@ -79,7 +79,7 @@ public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Int
     public interface Listener {
         void started(Exchange exchange, CoinKind coinKind);
 
-        void finished(Exchange exchange, CoinKind coinKind, ArrayList<Price> prices);
+        void finished(Exchange exchange, CoinKind coinKind, List<Price> prices);
     }
 
 }

@@ -36,7 +36,7 @@ import com.coinkarasu.utils.PrefHelper;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class PriceOverviewFragment extends Fragment implements
@@ -108,7 +108,7 @@ public class PriceOverviewFragment extends Fragment implements
     }
 
     @Override
-    public void finished(Exchange exchange, CoinKind coinKind, ArrayList<Price> prices) {
+    public void finished(Exchange exchange, CoinKind coinKind, List<Price> prices) {
         if (isDetached() || getActivity() == null || getView() == null) {
             if (updater != null) {
                 updater.stop("finished");

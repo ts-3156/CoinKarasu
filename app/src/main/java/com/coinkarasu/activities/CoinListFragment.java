@@ -332,7 +332,7 @@ public class CoinListFragment extends Fragment implements
     }
 
     @Override
-    public void finished(final Exchange exchange, final CoinKind coinKind, final ArrayList<Price> prices) {
+    public void finished(final Exchange exchange, final CoinKind coinKind, final List<Price> prices) {
         if (isDetached() || getActivity() == null || getActivity().isFinishing() || getView() == null) {
             if (updater != null) {
                 updater.stop("finished");

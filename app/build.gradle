@@ -37,6 +37,13 @@ try {
     throw new GradleException(e.getMessage())
 }
 
+Properties coinkarasuProps = new Properties()
+try {
+    coinkarasuProps.load(file('coinkarasu.properties').newDataInputStream())
+} catch (Exception e) {
+    throw new GradleException(e.getMessage())
+}
+
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -51,6 +58,9 @@ android {
         buildConfigField "String", "PK2", "\"${billingProps.getProperty("pkey2")}\""
         buildConfigField "String", "ADMOB_APP_ID", "\"${admobProps.getProperty("dummyAppId")}\""
         buildConfigField "String", "ADMOB_UNIT_ID", "\"${admobProps.getProperty("dummyAdUnitId")}\""
+        buildConfigField "String", "CK_TMP_KEY", "\"${coinkarasuProps.getProperty("key")}\""
+        buildConfigField "String", "CK_TMP_SECRET", "\"${coinkarasuProps.getProperty("secret")}\""
+        buildConfigField "String", "CK_HOST", "\"http://10.0.2.2:3000\""
     }
     buildTypes {
         debug {
@@ -58,6 +68,7 @@ android {
         release {
             buildConfigField "String", "ADMOB_APP_ID", "\"${admobProps.getProperty("appId")}\""
             buildConfigField "String", "ADMOB_UNIT_ID", "\"${admobProps.getProperty("adUnitId")}\""
+            buildConfigField "String", "CK_HOST", "\"http://coinkarasu.com\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             lintOptions {

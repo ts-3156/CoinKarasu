@@ -23,7 +23,7 @@ public class PricesCache {
         cache = new StringArrayListCache(context.getCacheDir());
     }
 
-    public synchronized void put(NavigationKind kind, Exchange exchange, CoinKind coinKind, ArrayList<Price> prices) {
+    public synchronized void put(NavigationKind kind, Exchange exchange, CoinKind coinKind, List<Price> prices) {
         if (prices == null || prices.isEmpty()) {
             return;
         }

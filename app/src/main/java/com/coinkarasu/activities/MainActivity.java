@@ -31,6 +31,8 @@ import com.coinkarasu.activities.settings.PreferencesActivity;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.billingmodule.billing.BillingManager;
 import com.coinkarasu.services.UpdateToplistIntentService;
+import com.coinkarasu.tasks.GetApiKeyTask;
+import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 import com.crashlytics.android.Crashlytics;
@@ -99,6 +101,10 @@ public class MainActivity extends AppCompatActivity implements
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (!ApiKeyUtils.exists(this)) {
+            new GetApiKeyTask(this).execute();
+        }
 
         if (savedInstanceState != null) {
         } else {
