@@ -146,6 +146,14 @@ public class PrefHelper {
         edit.apply();
     }
 
+    public static boolean isDebugToastEnabled(Context context) {
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return false;
+        }
+        return pref.getBoolean("pref_make_toast", context.getResources().getBoolean(R.bool.make_toast));
+    }
+
     public static SharedPreferences getPref(Context context) {
         if (context == null) {
             return null;

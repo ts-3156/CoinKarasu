@@ -68,7 +68,7 @@ public class CKLog {
     }
 
     private static void makeToast(String tag, String message) {
-        if (context == null) {
+        if (context == null || !BuildConfig.DEBUG || !PrefHelper.isDebugToastEnabled(context)) {
             return;
         }
 

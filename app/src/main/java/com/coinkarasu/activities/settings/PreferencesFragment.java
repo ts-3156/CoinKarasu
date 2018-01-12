@@ -22,6 +22,7 @@ import android.preference.SwitchPreference;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 
+import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
 import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.coinkarasu.billingmodule.BillingActivity;
@@ -52,6 +53,10 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
         findPreference("pref_clear_config").setOnPreferenceClickListener(this);
         findPreference("pref_open_source_licenses").setOnPreferenceClickListener(this);
         findPreference("pref_remove_ads").setOnPreferenceClickListener(this);
+
+        if (!BuildConfig.DEBUG) {
+            getPreferenceScreen().removePreference(findPreference("pref_category_debug"));
+        }
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 

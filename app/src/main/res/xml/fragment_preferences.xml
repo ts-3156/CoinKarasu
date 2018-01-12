@@ -27,12 +27,6 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_currency" />
 
-        <SwitchPreference
-            android:defaultValue="@bool/keep_screen_on"
-            android:key="pref_keep_screen_on"
-            android:summary="@string/pref_description_keep_screen_on"
-            android:title="@string/pref_title_keep_screen_on" />
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_header_premium">
@@ -81,6 +75,23 @@
             android:key="pref_clear_config"
             android:summary="@string/pref_clear_config_summary"
             android:title="@string/pref_clear_config_title" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="pref_category_debug"
+        android:title="@string/pref_header_debug">
+
+        <SwitchPreference
+            android:defaultValue="@bool/keep_screen_on"
+            android:key="pref_keep_screen_on"
+            android:summary="@string/pref_description_keep_screen_on"
+            android:title="@string/pref_title_keep_screen_on" />
+
+        <SwitchPreference
+            android:defaultValue="@bool/make_toast"
+            android:key="pref_make_toast"
+            android:summary="@string/pref_description_make_toast"
+            android:title="@string/pref_title_make_toast" />
     </PreferenceCategory>
 
 </PreferenceScreen>

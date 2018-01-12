@@ -5,4 +5,5 @@
     <bool name="remove_ads">false</bool>
     <bool name="enable_price_anim">false</bool>
     <bool name="enable_download_icon">true</bool>
+    <bool name="make_toast">true</bool>
 </resources>
