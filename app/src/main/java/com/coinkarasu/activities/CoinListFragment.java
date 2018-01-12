@@ -28,6 +28,7 @@ import com.coinkarasu.coins.AdCoinImpl;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
+import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.tasks.CollectCoinsTask;
 import com.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
@@ -421,6 +422,10 @@ public class CoinListFragment extends Fragment implements
         if (isVisibleToUser && updater != null) {
             updater.setInterval(PrefHelper.getSyncInterval(getActivity()));
             updater.start("onResume");
+        }
+
+        if (isVisibleToUser && kind != null && kind.isToplist() && getActivity() != null) {
+            UpdateToplistIntentService.start(getActivity(), kind);
         }
     }
 

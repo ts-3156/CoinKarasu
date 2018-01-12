@@ -22,6 +22,7 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.Currency;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.api.bitflyer.data.Board;
 import com.coinkarasu.coins.Coin;
@@ -169,10 +170,10 @@ public class CoinActivity extends AppCompatActivity {
         }
 
         if (id == R.id.action_currency) {
-            if (item.getTitle().toString().equals(getString(MainActivity.Currency.USD.titleStrResId))) {
-                PrefHelper.saveToSymbol(this, MainActivity.Currency.JPY.name());
+            if (item.getTitle().toString().equals(getString(Currency.USD.titleStrResId))) {
+                PrefHelper.saveToSymbol(this, Currency.JPY.name());
             } else {
-                PrefHelper.saveToSymbol(this, MainActivity.Currency.USD.name());
+                PrefHelper.saveToSymbol(this, Currency.USD.name());
             }
             setupFragment();
 
@@ -212,10 +213,10 @@ public class CoinActivity extends AppCompatActivity {
 
         String symbol = PrefHelper.getToSymbol(this);
 
-        if (symbol != null && symbol.equals(MainActivity.Currency.JPY.name())) {
-            item.setTitle(MainActivity.Currency.JPY.titleStrResId);
+        if (symbol != null && symbol.equals(Currency.JPY.name())) {
+            item.setTitle(Currency.JPY.titleStrResId);
         } else {
-            item.setTitle(MainActivity.Currency.USD.titleStrResId);
+            item.setTitle(Currency.USD.titleStrResId);
         }
     }
 

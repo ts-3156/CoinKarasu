@@ -22,6 +22,7 @@ public class GetApiKeyTask extends AsyncTask<Integer, Integer, Integer> {
         if (result != null) {
             ApiKeyUtils.save(context, result.first, result.second);
         }
+        context = null;
 
         return 200;
     }

@@ -3,6 +3,7 @@ package com.coinkarasu.activities;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -26,11 +27,11 @@ import android.view.WindowManager;
 
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.Currency;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.settings.PreferencesActivity;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.billingmodule.billing.BillingManager;
-import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.tasks.GetApiKeyTask;
 import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKLog;
@@ -58,30 +59,14 @@ public class MainActivity extends AppCompatActivity implements
     private FirebaseAnalytics firebaseAnalytics;
     private MainViewController viewController;
 
-    public enum Currency {
-        JPY(R.string.action_currency_switch_to_usd, R.string.action_currency_only_for_jpy),
-        USD(R.string.action_currency_switch_to_jpy, -1);
-
-        int titleStrResId;
-        int disabledTitleStrResId;
-
-        Currency(int titleStrResId, int disabledTitleStrResId) {
-            this.titleStrResId = titleStrResId;
-            this.disabledTitleStrResId = disabledTitleStrResId;
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main); // ここで 180ms, onCreate全体で 230ms
         CKLog.setContext(this);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        MobileAds.initialize(this, BuildConfig.ADMOB_APP_ID);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -94,17 +79,13 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        if (!ApiKeyUtils.exists(this)) {
-            new GetApiKeyTask(this).execute();
-        }
 
         if (savedInstanceState != null) {
         } else {
@@ -116,13 +97,15 @@ public class MainActivity extends AppCompatActivity implements
         viewController = new MainViewController(this);
         new BillingManager(this, viewController.getUpdateListener());
 
-        for (NavigationKind kind : NavigationKind.toplistValues()) {
-            if (kind.isVisible(this)) {
-                UpdateToplistIntentService.start(this, kind);
+        new initializeThirdPartyAppsTask(this, new Runnable() {
+            @Override
+            public void run() {
+                setupAdView();
             }
+        }).execute();
+        if (!ApiKeyUtils.exists(this)) {
+            new GetApiKeyTask(this).execute();
         }
-
-        setupAdView();
     }
 
     @Override
@@ -380,5 +363,39 @@ public class MainActivity extends AppCompatActivity implements
     protected void onDestroy() {
         super.onDestroy();
         CKLog.releaseContext();
+    }
+
+    public void setFirebaseAnalytics(FirebaseAnalytics firebaseAnalytics) {
+        this.firebaseAnalytics = firebaseAnalytics;
+    }
+
+    private static class initializeThirdPartyAppsTask extends AsyncTask<Void, Void, Void> {
+        private MainActivity activity;
+        private Runnable runnable;
+
+        initializeThirdPartyAppsTask(MainActivity activity, Runnable runnable) {
+            this.activity = activity;
+            this.runnable = runnable;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            long start = System.currentTimeMillis();
+            Fabric.with(activity, new Crashlytics());
+            activity.setFirebaseAnalytics(FirebaseAnalytics.getInstance(activity));
+            MobileAds.initialize(activity, BuildConfig.ADMOB_APP_ID);
+            if (DEBUG) CKLog.d(TAG, "initializeThirdPartyAppsTask() " + (System.currentTimeMillis() - start));
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            if (runnable != null) {
+                runnable.run();
+            }
+            activity = null;
+            runnable = null;
+        }
     }
 }
