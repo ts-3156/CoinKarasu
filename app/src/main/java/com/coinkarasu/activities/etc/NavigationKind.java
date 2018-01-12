@@ -6,6 +6,9 @@ import com.coinkarasu.R;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 
+import java.util.Arrays;
+import java.util.List;
+
 public enum NavigationKind {
     home(R.string.nav_home, R.string.header_home, R.string.tab_home, R.string.summary_home, R.id.nav_home, R.color.colorNavHome, R.color.colorNavHomeDark, R.color.state_nav_home, -1, new Exchange[]{}, new Section[]{}, R.drawable.ic_nav_home, R.anim.progress_home, true),
     //    assets(R.string.nav_assets, R.string.header_assets, R.string.tab_assets, R.string.summary_assets, R.id.nav_assets, R.color.colorNavAssets, R.color.colorNavAssetsDark, R.color.state_nav_assets, -1, new Exchange[]{}, new Section[]{}, R.drawable.ic_nav_assets, R.anim.progress_assets, true),
@@ -30,7 +33,7 @@ public enum NavigationKind {
     public int colorStateResId;
     public int symbolsResId;
     public Exchange[] exchanges;
-    public Section[] sections;
+    public List<Section> sections;
     public int iconResId;
     public int progressDrawableResId;
     public boolean defaultVisibility;
@@ -49,7 +52,7 @@ public enum NavigationKind {
         this.colorStateResId = colorStateResId;
         this.symbolsResId = symbolsResId;
         this.exchanges = exchanges;
-        this.sections = sections;
+        this.sections = Arrays.asList(sections);
         this.iconResId = iconResId;
         this.progressDrawableResId = progressDrawableResId;
         this.defaultVisibility = defaultVisibility;

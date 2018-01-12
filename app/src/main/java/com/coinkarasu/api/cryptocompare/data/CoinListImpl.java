@@ -110,11 +110,12 @@ public class CoinListImpl implements CoinList {
     @Override
     public List<Coin> collectCoins(String[] fromSymbols) {
         long start = System.currentTimeMillis();
-        final ArrayList<Coin> coins = new ArrayList<>(fromSymbols.length);
+        List<Coin> coins = new ArrayList<>(fromSymbols.length);
 
         for (String coinSymbol : fromSymbols) {
             Coin coin = getCoinBySymbol(coinSymbol);
             if (coin == null) {
+                if (DEBUG) CKLog.w(TAG, "collectCoins() Coin for " + coinSymbol + " is null.");
                 continue;
             }
 
@@ -122,7 +123,7 @@ public class CoinListImpl implements CoinList {
         }
 
         if (fromSymbols.length != coins.size()) {
-            if (DEBUG) CKLog.d(TAG, "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
+            if (DEBUG) CKLog.w(TAG, "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
         }
 
         if (DEBUG) CKLog.d(TAG, "collectCoins() from FILE " + coins.size() + " coins "
@@ -131,9 +132,9 @@ public class CoinListImpl implements CoinList {
         return coins;
     }
 
-    public static ArrayList<Coin> collectCoins(Context context, String[] fromSymbols) {
+    public static List<Coin> collectCoins(Context context, String[] fromSymbols) {
         long start = System.currentTimeMillis();
-        ArrayList<Coin> coins = new ArrayList<>(fromSymbols.length);
+        List<Coin> coins = new ArrayList<>(fromSymbols.length);
         AppDatabase db = AppDatabase.getAppDatabase(context);
 
         List<CoinListCoin> coinListCoins = db.coinListCoinDao().findBySymbols(fromSymbols);
@@ -148,7 +149,7 @@ public class CoinListImpl implements CoinList {
         }
 
         if (fromSymbols.length != coins.size()) {
-            if (DEBUG) CKLog.d(TAG, "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
+            if (DEBUG) CKLog.w(TAG, "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
         }
 
         if (DEBUG) CKLog.d(TAG, "collectCoins() from DB " + coins.size() + " coins "

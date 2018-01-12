@@ -40,8 +40,9 @@ import com.coinkarasu.utils.PeriodicalUpdater;
 import com.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 public class CoinListFragment extends Fragment implements
@@ -61,7 +62,9 @@ public class CoinListFragment extends Fragment implements
     private boolean isVisibleToUser;
     private boolean isSelected;
     private boolean isStartTaskRequested;
-    private boolean isCollectCoinsRequested;
+    private ProgressBar loadingIndicator;
+    private RecyclerView recyclerView;
+    private SwipeRefreshLayout refresh;
 
     public CoinListFragment() {
     }
@@ -83,7 +86,6 @@ public class CoinListFragment extends Fragment implements
             isSelected = getArguments().getBoolean("isSelected");
         }
 
-        isCollectCoinsRequested = false;
         isStartTaskRequested = false;
     }
 
@@ -91,10 +93,13 @@ public class CoinListFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_list, container, false);
 
-        ((ProgressBar) view.findViewById(R.id.screen_wait)).setIndeterminateDrawable(getResources().getDrawable(kind.progressDrawableResId));
+        loadingIndicator = view.findViewById(R.id.screen_wait);
+        loadingIndicator.setIndeterminateDrawable(getResources().getDrawable(kind.progressDrawableResId));
+        recyclerView = view.findViewById(R.id.recycler_view);
+
         updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
 
-        SwipeRefreshLayout refresh = view.findViewById(R.id.refresh_layout);
+        refresh = view.findViewById(R.id.refresh_layout);
         refresh.setOnRefreshListener(this);
         refresh.setColorSchemeColors(getResources().getColor(R.color.colorRotate));
 
@@ -112,35 +117,18 @@ public class CoinListFragment extends Fragment implements
         return view;
     }
 
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        // collectCoinsはsetUserVisibleHintから呼ばれるが、fragmentの
-        // ライフサイクル外から呼ばれることも考慮して、念のためにここでも呼んでいる。
-        if (isCollectCoinsRequested) {
-            if (DEBUG) CKLog.e(TAG, "onActivityCreated() call collectCoins()");
-            collectCoins();
-        }
-    }
-
     private void collectCoins() {
         if (getActivity() == null || getActivity().isFinishing()) {
             return;
         }
 
-        if (getView() == null) {
-            isCollectCoinsRequested = true;
-            return;
-        }
-
-        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         if (adapter != null) {
             return;
         }
 
         List<Coin> coins = new ArrayList<>();
-        addCoins(coins, kind.sections[0]);
+        addCoins(coins, kind.sections.get(0));
     }
 
     private void addCoins(final List<Coin> inCoins, final Section section) {
@@ -165,6 +153,10 @@ public class CoinListFragment extends Fragment implements
                 .setListener(new CollectCoinsTask.Listener() {
                     @Override
                     public void coinsCollected(List<Coin> coins) {
+                        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
+                            return;
+                        }
+
                         String toSymbol = kind.getToSymbol();
                         for (Coin coin : coins) {
                             coin.setToSymbol(toSymbol);
@@ -175,26 +167,27 @@ public class CoinListFragment extends Fragment implements
                         inCoins.add(section.createSectionHeaderCoin());
                         inCoins.addAll(coins);
 
-                        if (!PrefHelper.isPremium(getActivity()) && kind.isToplist()
-                                && section.getExchange() == Exchange.cccagg && inCoins.size() >= 3) {
-                            inCoins.add(2, new AdCoinImpl());
-                        }
-
-                        int indexOfSection = Arrays.asList(kind.sections).indexOf(section);
+                        int indexOfSection = kind.sections.indexOf(section);
                         if (indexOfSection == -1) {
-                            throw new RuntimeException("Invalid section " + section.toString());
+                            RuntimeException ex = new RuntimeException("Invalid section " + section.toString());
+                            CKLog.e(TAG, ex);
+                            throw ex;
                         }
 
                         if (DEBUG) CKLog.d(TAG, "addCoins() "
                                 + kind.name() + " " + (System.currentTimeMillis() - start) + " ms");
 
-                        if (indexOfSection < kind.sections.length - 1) {
-                            addCoins(inCoins, kind.sections[indexOfSection + 1]);
+                        if (indexOfSection < kind.sections.size() - 1) {
+                            addCoins(inCoins, kind.sections.get(indexOfSection + 1));
                         } else {
-                            RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
+                            if (!PrefHelper.isPremium(getActivity()) && kind.isToplist()
+                                    && section.getExchange() == Exchange.cccagg && inCoins.size() >= 3) {
+                                inCoins.add(2, new AdCoinImpl());
+                            }
+
                             RecyclerView.Adapter adapter = recyclerView.getAdapter();
                             if (adapter == null) {
-                                adapter = new CoinListAdapter(getContext(), CoinListFragment.this, kind, inCoins);
+                                adapter = new CoinListAdapter(getActivity(), CoinListFragment.this, kind, inCoins);
                                 initializeRecyclerView(recyclerView, (CoinListAdapter) adapter);
                             }
                         }
@@ -204,7 +197,7 @@ public class CoinListFragment extends Fragment implements
     }
 
     private void initializeRecyclerView(RecyclerView recyclerView, CoinListAdapter adapter) {
-        if (getActivity() == null || getView() == null) {
+        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
             return;
         }
 
@@ -227,7 +220,7 @@ public class CoinListFragment extends Fragment implements
         });
 
         recyclerView.setAdapter(adapter);
-        getView().findViewById(R.id.screen_wait).setVisibility(View.GONE);
+        loadingIndicator.setVisibility(View.GONE);
 
         updateViewIfCacheExist(adapter);
 
@@ -236,16 +229,18 @@ public class CoinListFragment extends Fragment implements
         }
     }
 
-    private void updateViewIfCacheExist(Exchange exchange, CoinKind coinKind, CoinListAdapter adapter) {
-        List<Price> prices = new PricesCache(getContext()).get(kind, exchange, coinKind);
+    private boolean updateViewIfCacheExist(Exchange exchange, CoinKind coinKind, CoinListAdapter adapter) {
+        List<Price> prices = new PricesCache(getActivity()).get(kind, exchange, coinKind);
         if (prices == null || prices.isEmpty()) {
-            return;
+            return false;
         }
 
         List<Coin> coins = adapter.getItems(exchange, coinKind);
         if (coins.isEmpty()) {
-            return;
+            return false;
         }
+
+        boolean updated = false;
 
         for (Price price : prices) {
             for (Coin coin : coins) {
@@ -253,42 +248,38 @@ public class CoinListFragment extends Fragment implements
                     coin.setPrice(price.price);
                     coin.setPriceDiff(price.priceDiff);
                     coin.setTrend(price.trend);
+                    updated = true;
                     break;
                 }
             }
-
         }
+
+        return updated;
     }
 
     private void updateViewIfCacheExist(CoinListAdapter adapter) {
-        if (isDetached() || getView() == null) {
+        if (isDetached()) {
             return;
         }
 
         adapter.pauseAnimation();
+        Set<Boolean> result = new HashSet<>();
 
-        if (kind == NavigationKind.japan) {
-            for (Exchange exchange : kind.exchanges) {
-                updateViewIfCacheExist(exchange, CoinKind.none, adapter);
-            }
-        } else if (kind == NavigationKind.coincheck) {
-            updateViewIfCacheExist(kind.exchanges[0], CoinKind.trading, adapter);
-            updateViewIfCacheExist(kind.exchanges[0], CoinKind.sales, adapter);
-        } else {
-            updateViewIfCacheExist(kind.exchanges[0], CoinKind.none, adapter);
+        for (Section section : kind.sections) {
+            result.add(updateViewIfCacheExist(section.getExchange(), section.getCoinKind(), adapter));
         }
 
-        adapter.notifyDataSetChanged();
+        if (result.contains(true)) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     public void startTask() {
-        if (!isAdded() || getActivity() == null || isDetached() || getView() == null) {
+        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
             return;
         }
 
-        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         CoinListAdapter adapter = (CoinListAdapter) recyclerView.getAdapter();
-
         if (adapter == null) {
             isStartTaskRequested = true;
             return;
@@ -334,7 +325,7 @@ public class CoinListFragment extends Fragment implements
 
     @Override
     public void finished(final Exchange exchange, final CoinKind coinKind, final List<Price> prices) {
-        if (isDetached() || getActivity() == null || getActivity().isFinishing() || getView() == null) {
+        if (isDetached() || getActivity() == null || getActivity().isFinishing()) {
             if (updater != null) {
                 updater.stop("finished");
             }
@@ -347,7 +338,6 @@ public class CoinListFragment extends Fragment implements
 
         new PricesCache(getContext()).put(kind, exchange, coinKind, prices);
 
-        RecyclerView recyclerView = getView().findViewById(R.id.recycler_view);
         final CoinListAdapter adapter = (CoinListAdapter) recyclerView.getAdapter();
 
         Runnable runnable = new Runnable() {
@@ -475,9 +465,9 @@ public class CoinListFragment extends Fragment implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences pref, String key) {
-        if (key.equals("pref_currency") && isVisibleToUser && getActivity() != null && getView() != null) {
+        if (key.equals("pref_currency") && isVisibleToUser && getActivity() != null) {
             Animation anim = AnimationUtils.loadAnimation(getActivity(), R.anim.enter);
-            getView().findViewById(R.id.recycler_view).startAnimation(anim);
+            recyclerView.startAnimation(anim);
 
             if (isVisibleToUser && updater != null) {
                 updater.restart("onSharedPreferenceChanged");
@@ -487,23 +477,16 @@ public class CoinListFragment extends Fragment implements
 
     @Override
     public void onRefresh() {
-        if (getView() == null) {
-            return;
-        }
+        if (DEBUG) CKLog.d(TAG, "onRefresh() " + kind.name());
 
-        CKLog.d(TAG, "onRefresh() " + kind.name());
-
-        SwipeRefreshLayout refresh = getView().findViewById(R.id.refresh_layout);
         refresh.setRefreshing(false);
 
-        if (getActivity() == null) {
+        if (getActivity() == null || getActivity().isFinishing()) {
             return;
         }
 
-        if (((MainActivity) getActivity()).isPremiumPurchased()) {
-            if (updater != null) {
-                updater.forceStart("onRefresh");
-            }
+        if (((MainActivity) getActivity()).isPremiumPurchased() && updater != null) {
+            updater.forceStart("onRefresh");
         } else {
             BillingActivity.start(getActivity(), R.string.billing_dialog_pull_to_refresh);
         }

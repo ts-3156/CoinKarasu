@@ -22,9 +22,9 @@ public class Toplist {
     private static final String TAG = "Toplist";
 
     private NavigationKind kind;
-    private ArrayList<PriceMultiFullCoin> coins;
+    private List<PriceMultiFullCoin> coins;
 
-    public Toplist(ArrayList<PriceMultiFullCoin> coins, NavigationKind kind) {
+    public Toplist(List<PriceMultiFullCoin> coins, NavigationKind kind) {
         this.coins = coins;
         this.kind = kind;
     }
@@ -42,11 +42,11 @@ public class Toplist {
         long start = System.currentTimeMillis();
         String text = CacheFileHelper.read(context, getCacheName(kind));
         if (TextUtils.isEmpty(text)) {
-            if (DEBUG) CKLog.e(TAG, "The " + kind.name() + " cache is null.");
+            if (DEBUG) CKLog.w(TAG, "restoreFromCache() " + kind.name() + " cache is null.");
             return null;
         }
 
-        ArrayList<PriceMultiFullCoin> coins = new ArrayList<>();
+        List<PriceMultiFullCoin> coins = new ArrayList<>();
 
         try {
             JSONArray data = new JSONArray(text);

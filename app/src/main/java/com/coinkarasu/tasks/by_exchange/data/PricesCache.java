@@ -48,7 +48,7 @@ public class PricesCache {
         for (String str : list) {
             Price price = Price.buildByString(str);
             if (price == null) {
-                if (DEBUG) Log.e(TAG, "Price is null " + str);
+                if (DEBUG) Log.w(TAG, "get() Price is null " + str);
                 continue;
             }
 

@@ -7,15 +7,20 @@ import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.tasks.by_exchange.data.Price;
+import com.coinkarasu.utils.CKLog;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
-    private ArrayList<GetCccaggPricesThread> threads;
+    private static final boolean DEBUG = true;
+    private static final String TAG = "GetCccaggPricesTask";
+
+    private List<GetCccaggPricesThread> threads;
     private String[] fromSymbols;
     private String toSymbol;
     private String exchangeStr;
@@ -69,10 +74,15 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
     @Override
     protected void onPostExecute(Integer integer) {
         if (listener != null) {
-            ArrayList<Price> pricesArray = new ArrayList<>();
+            List<Price> pricesArray = new ArrayList<>();
 
             for (GetCccaggPricesThread thread : threads) {
                 Prices prices = thread.getPrices();
+                if (prices == null || prices.getCoins() == null || prices.getCoins().isEmpty()) {
+                    if (DEBUG) CKLog.w(TAG, "prices is blank " + exchangeStr + " "
+                            + Arrays.toString(fromSymbols) + " " + toSymbol);
+                    continue;
+                }
 
                 for (PriceMultiFullCoin coin : prices.getCoins()) {
                     Price price = new Price(exchange, coinKind, coin.getFromSymbol(), coin.getToSymbol(), coin.getPrice());

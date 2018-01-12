@@ -1,16 +1,10 @@
 package com.coinkarasu.api.cryptocompare.data;
 
-import android.content.Context;
-import android.util.Log;
-
 import com.coinkarasu.api.cryptocompare.response.PricesResponse;
-import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.coins.PriceMultiFullCoinImpl;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.io.CacheFileHelper;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -23,33 +17,19 @@ public class PricesImpl implements Prices {
     private static final String TAG = "PricesImpl";
 
     private String exchange;
-    private boolean isCache;
 
-    private ArrayList<PriceMultiFullCoin> coins;
-
-    public PricesImpl(String exchange) {
-        this.exchange = exchange;
-        this.coins = new ArrayList<>();
-        this.isCache = false;
-    }
-
-    private PricesImpl(String exchange, ArrayList<PriceMultiFullCoin> coins, boolean isCache) {
-        this.exchange = exchange;
-        this.coins = coins;
-        this.isCache = isCache;
-    }
+    private List<PriceMultiFullCoin> coins;
 
     public PricesImpl(PricesResponse response) {
         this.exchange = response.getExchange();
         this.coins = new ArrayList<>();
-        this.isCache = false;
         extract(response);
     }
 
     private void extract(PricesResponse response) {
         JSONObject raw = response.getRaw();
         if (raw == null) {
-            Log.e("extract", response.toString());
+            if (DEBUG) CKLog.e(TAG, "extract() " + response.toString());
             return;
         }
 
@@ -65,104 +45,6 @@ public class PricesImpl implements Prices {
             }
         } catch (JSONException e) {
             CKLog.e(TAG, e);
-        }
-    }
-
-    @Override
-    public void merge(Prices prices) {
-        coins.addAll(prices.getCoins());
-    }
-
-    private static String getCacheName(String tag) {
-        return "prices_" + tag + ".json";
-    }
-
-    @Override
-    public boolean saveToCache(Context context) {
-        return saveToCache(context, "default_tag");
-    }
-
-    @Override
-    public boolean saveToCache(Context context, String tag) {
-        JSONArray array = new JSONArray();
-        for (PriceMultiFullCoin coin : coins) {
-            array.put(coin.toJson());
-        }
-
-        JSONObject data = new JSONObject();
-        try {
-            data.put("_exchange", exchange);
-            data.put("_coins", array);
-        } catch (JSONException e) {
-            CKLog.e(TAG, e);
-        }
-
-        CacheFileHelper.write(context, getCacheName(tag), data.toString());
-        return true;
-    }
-
-    @Override
-    public boolean isCache() {
-        return isCache;
-    }
-
-    // @Override
-    public static Prices restoreFromCache(Context context, String tag) {
-        String text = CacheFileHelper.read(context, getCacheName(tag));
-        JSONObject data;
-        ArrayList<PriceMultiFullCoin> coins = new ArrayList<>();
-        String exchange = null;
-
-        try {
-            data = new JSONObject(text);
-
-            JSONArray array = data.getJSONArray("_coins");
-            for (int i = 0; i < array.length(); i++) {
-                JSONObject attrs = array.getJSONObject(i);
-                coins.add(new PriceMultiFullCoinImpl(attrs));
-            }
-            exchange = data.getString("_exchange");
-        } catch (JSONException e) {
-            CKLog.e(TAG, e);
-            data = null;
-        }
-
-        if (data == null) {
-            return null;
-        } else {
-            return new PricesImpl(exchange, coins, true);
-        }
-    }
-
-    public static boolean isCacheExist(Context context, String tag) {
-        return CacheFileHelper.exists(context, getCacheName(tag));
-    }
-
-    @Override
-    public void copyAttrsToCoin(Coin coin) {
-        if (coin.isSectionHeader() || coin.isAdCoin()) {
-            return;
-        }
-
-        for (PriceMultiFullCoin c : coins) {
-            if (coin.getSymbol().equals(c.getFromSymbol())) {
-                coin.setPrice(c.getPrice());
-                coin.setPriceDiff(c.getChange24Hour());
-                coin.setTrend(c.getChangePct24Hour() / 100.0);
-
-                if (exchange != null) {
-                    coin.setExchange(exchange);
-                }
-
-                break;
-            }
-        }
-    }
-
-    @Override
-    public void copyAttrsToCoins(List<Coin> coins) {
-        for (Coin coin : coins) {
-            copyAttrsToCoin(coin);
         }
     }
 
