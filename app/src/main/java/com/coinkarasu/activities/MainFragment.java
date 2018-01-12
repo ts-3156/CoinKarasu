@@ -29,55 +29,44 @@ public class MainFragment extends Fragment implements
     private OnFragmentInteractionListener listener;
 
     private NavigationKind kind;
-    private TabLayout.Tab tab;
+    private ViewPager pager;
+    private boolean areTabsBeingModified;
 
     public MainFragment() {
-    }
-
-    public static MainFragment newInstance(NavigationKind kind) {
-        MainFragment fragment = new MainFragment();
-        Bundle args = new Bundle();
-        args.putString("kind", kind.name());
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            kind = NavigationKind.valueOf(getArguments().getString("kind"));
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        MainPagerAdapter adapter = new MainPagerAdapter(getChildFragmentManager(), getActivity(), kind);
+        NavigationKind kind = NavigationKind.getDefault();
+        if (savedInstanceState != null) {
+            NavigationKind savedKind = NavigationKind.valueOf(savedInstanceState.getString(STATE_SELECTED_KIND_KEY, kind.name()));
+            if (kind != savedKind && savedKind.isVisible(getActivity())) {
+                kind = savedKind;
+            }
+        }
+
+        MainPagerAdapter adapter = new MainPagerAdapter(getChildFragmentManager(), listener.getVisibleKinds(), kind);
 
         if (savedInstanceState != null) {
-            kind = NavigationKind.valueOf(savedInstanceState.getString(STATE_SELECTED_KIND_KEY));
-            if (!kind.isVisible(getActivity())) {
-                kind = NavigationKind.home;
-            }
-            adapter.setVersion(savedInstanceState.getLong(STATE_PAGER_ADAPTER_VERSION));
+            adapter.setVersion(savedInstanceState.getLong(STATE_PAGER_ADAPTER_VERSION, System.currentTimeMillis()));
             if (DEBUG) CKLog.d(TAG, "Set version to PagerAdapter " + adapter.getVersion());
         }
 
-        ViewPager pager = view.findViewById(R.id.view_pager);
+        pager = view.findViewById(R.id.view_pager);
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(NavigationKind.values().length);
 
-        TabLayout tabs = getActivity().findViewById(R.id.tab_layout);
+        areTabsBeingModified = false;
+        TabLayout tabs = listener.getTabLayout();
         tabs.setupWithViewPager(pager);
         tabs.addOnTabSelectedListener(this);
         refreshTabTitles(tabs);
 
-        int position = NavigationKind.visiblePosition(getActivity(), kind);
-        tab = tabs.getTabAt(position);
+        int position = listener.getVisibleKinds().indexOf(kind);
         pager.setCurrentItem(position, false); // 他のアクティビティから戻ってきた時のみ、onTabSelectedが呼ばれる
-        listener.onPageChanged(kind);
+        listener.requestRefreshUi(kind);
 
         return view;
     }
@@ -87,7 +76,7 @@ public class MainFragment extends Fragment implements
             return;
         }
 
-        List<NavigationKind> values = NavigationKind.visibleValues(getActivity());
+        List<NavigationKind> values = listener.getVisibleKinds();
         for (int i = 0; i < values.size(); i++) {
             TabLayout.Tab tab = tabs.getTabAt(i);
 
@@ -109,20 +98,12 @@ public class MainFragment extends Fragment implements
         return kind;
     }
 
+    // バックボタンが押された時、NavigationDrawerがクリックされた時
     public void setCurrentKind(NavigationKind kind, boolean smoothScroll) {
-        if (getView() == null) {
-            return;
-        }
         this.kind = kind;
-        int position = NavigationKind.visiblePosition(getActivity(), kind);
-        ((ViewPager) getView().findViewById(R.id.view_pager)).setCurrentItem(position, smoothScroll);
-        listener.onPageChanged(kind);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        listener.onPageChanged(kind);
+        int position = listener.getVisibleKinds().indexOf(kind);
+        pager.setCurrentItem(position, smoothScroll);
+        listener.requestRefreshUi(kind);
     }
 
     @Override
@@ -141,11 +122,9 @@ public class MainFragment extends Fragment implements
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putString(STATE_SELECTED_KIND_KEY, kind.name());
-        if (getView() != null) {
-            PagerAdapter adapter = ((ViewPager) getView().findViewById(R.id.view_pager)).getAdapter();
-            if (adapter != null) {
-                savedInstanceState.putLong(STATE_PAGER_ADAPTER_VERSION, ((MainPagerAdapter) adapter).getVersion());
-            }
+        PagerAdapter adapter = pager.getAdapter();
+        if (adapter != null) {
+            savedInstanceState.putLong(STATE_PAGER_ADAPTER_VERSION, ((MainPagerAdapter) adapter).getVersion());
         }
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -155,18 +134,16 @@ public class MainFragment extends Fragment implements
      * スクロールした時とタブをクリックしたときの両方で、onTabSelectedの方が先に呼ばれる。
      */
     @Override
-    public void onTabSelected(TabLayout.Tab _tab) {
-        if (DEBUG) CKLog.d(TAG, "onTabSelected " + _tab.getPosition()
-                + " ignore=" + (tab == null));
-        if (tab == null || getView() == null) {
+    public void onTabSelected(TabLayout.Tab tab) {
+        if (DEBUG) CKLog.d(TAG, "onTabSelected " + tab.getPosition());
+        if (areTabsBeingModified) {
             return;
         }
 
-        tab = _tab;
-        int position = _tab.getPosition();
-        ((ViewPager) getView().findViewById(R.id.view_pager)).setCurrentItem(position, false);
-        kind = NavigationKind.visibleValues(getActivity()).get(position);
-        listener.onPageChanged(kind);
+        int position = tab.getPosition();
+        pager.setCurrentItem(position, false);
+        kind = listener.getVisibleKinds().get(position);
+        listener.requestRefreshUi(kind);
     }
 
     @Override
@@ -178,29 +155,34 @@ public class MainFragment extends Fragment implements
     }
 
     public void refreshTabVisibility(boolean isAdded) {
-        kind = NavigationKind.edit_tabs;
-        ViewPager pager = getView().findViewById(R.id.view_pager);
-        tab = null;
+        NavigationKind kind = NavigationKind.edit_tabs; // タブを変更した時は必ずこのタブにいる
+        this.kind = kind;
+        areTabsBeingModified = true;
 
         if (pager.getAdapter() != null) {
             MainPagerAdapter adapter = (MainPagerAdapter) pager.getAdapter();
             adapter.removeFragments(getChildFragmentManager(), pager);
-            adapter = new MainPagerAdapter(getChildFragmentManager(), getActivity(), kind);
+            adapter = new MainPagerAdapter(getChildFragmentManager(), listener.getVisibleKinds(), kind);
             pager.setAdapter(adapter);
             adapter.notifyDataSetChanged(); // これを呼ばないと、古いpositionでonTabSelectedが呼ばれてしまう
         }
 
-        int position = NavigationKind.visiblePosition(getActivity(), kind);
-        TabLayout tabs = getActivity().findViewById(R.id.tab_layout);
-        tab = tabs.getTabAt(position);
+        TabLayout tabs = listener.getTabLayout();
         refreshTabTitles(tabs);
 
-        pager.setCurrentItem(position, false);
-        tab.select(); // EditTabsを選択状態にする
-        listener.onPageChanged(kind);
+        areTabsBeingModified = false;
+        TabLayout.Tab tab = tabs.getTabAt(listener.getVisibleKinds().indexOf(kind));
+        if (tab != null) {
+            tab.select(); // EditTabsを選択状態にする
+        }
+        listener.requestRefreshUi(kind);
     }
 
     public interface OnFragmentInteractionListener {
-        void onPageChanged(NavigationKind kind);
+        void requestRefreshUi(NavigationKind kind);
+
+        List<NavigationKind> getVisibleKinds();
+
+        TabLayout getTabLayout();
     }
 }

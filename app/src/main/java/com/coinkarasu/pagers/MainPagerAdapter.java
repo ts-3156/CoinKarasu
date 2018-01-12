@@ -1,6 +1,5 @@
 package com.coinkarasu.pagers;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,6 +11,7 @@ import com.coinkarasu.activities.CoinListFragment;
 import com.coinkarasu.activities.EditTabsFragment;
 import com.coinkarasu.activities.HomeTabFragment;
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.utils.CKLog;
 
 import java.util.List;
 
@@ -19,26 +19,24 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     private static final boolean DEBUG = false;
     private static final String TAG = "MainPagerAdapter";
 
-    private Context context;
     private NavigationKind selectedKind;
-    private List<NavigationKind> visibleKindsCache;
+    private List<NavigationKind> visibleKinds;
     private long version;
 
     public MainPagerAdapter(FragmentManager manager) {
         super(manager);
     }
 
-    public MainPagerAdapter(FragmentManager manager, Context context, NavigationKind defaultKind) {
+    public MainPagerAdapter(FragmentManager manager, List<NavigationKind> visibleKinds, NavigationKind defaultKind) {
         super(manager);
-        this.context = context;
         this.selectedKind = defaultKind;
-        this.visibleKindsCache = NavigationKind.visibleValues(context);
+        this.visibleKinds = visibleKinds;
         this.version = System.currentTimeMillis();
     }
 
     @Override
     public Fragment getItem(int position) {
-        NavigationKind targetKind = visibleKindsCache.get(position);
+        NavigationKind targetKind = visibleKinds.get(position);
         if (DEBUG) Log.d(TAG, "getItem() " + position +
                 " selected=" + selectedKind.name() + " target=" + targetKind.name());
 
@@ -71,13 +69,6 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
         return POSITION_NONE;
     }
 
-    public void notifyTabChanged(NavigationKind kind, boolean isAdded) {
-        selectedKind = kind;
-        version = System.currentTimeMillis();
-        visibleKindsCache = NavigationKind.visibleValues(context);
-        super.notifyDataSetChanged();
-    }
-
     /**
      * タブの追加/削除を行う実装が、どうやっても帯に短したすきに長し状態になるので、
      * fragmentのremoveを強制的に行うことで暫定的に解決している。
@@ -90,7 +81,9 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
             Fragment fragment = manager.findFragmentByTag(tag);
             if (fragment == null) {
                 // 内部実装を直接参照しているので、nullになることはないはず
-                throw new RuntimeException("fragment is null " + tag);
+                RuntimeException ex = new RuntimeException("removeFragments() fragment is null " + tag);
+                CKLog.e(TAG, ex);
+                throw ex;
             }
             transaction.remove(fragment);
         }
@@ -116,7 +109,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
      */
     @Override
     public int getCount() {
-        return visibleKindsCache.size();
+        return visibleKinds.size();
     }
 
     public long getVersion() {

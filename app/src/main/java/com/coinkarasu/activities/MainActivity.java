@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -34,6 +35,8 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
+
+import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
 
@@ -82,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements
         if (savedInstanceState != null) {
             fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         } else {
-            fragment = MainFragment.newInstance(NavigationKind.getDefault());
+            fragment = new MainFragment();
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, fragment, FRAGMENT_TAG)
                     .commit();
@@ -208,8 +211,8 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onPageChanged(NavigationKind kind) {
-        viewController.onPageChanged(kind);
+    public void requestRefreshUi(NavigationKind kind) {
+        viewController.requestRefreshUi(kind);
     }
 
     private void setupAdView() {
@@ -245,6 +248,16 @@ public class MainActivity extends AppCompatActivity implements
 
     public boolean isPremiumPurchased() {
         return viewController.isPremiumPurchased();
+    }
+
+    @Override
+    public List<NavigationKind> getVisibleKinds() {
+        return viewController.getVisibleKinds();
+    }
+
+    @Override
+    public TabLayout getTabLayout() {
+        return findViewById(R.id.tab_layout);
     }
 
     @Override

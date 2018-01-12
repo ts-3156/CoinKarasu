@@ -88,7 +88,7 @@ public class PrefHelper {
         if (pref == null) {
             return false;
         }
-        return pref.getBoolean("pref_is_visible_tab_" + kind.name(), kind.defaultVisibility());
+        return pref.getBoolean("pref_is_visible_tab_" + kind.name(), kind.defaultVisibility);
     }
 
     private static void saveTabVisibility(Context context, NavigationKind kind, boolean flag) {
@@ -101,7 +101,7 @@ public class PrefHelper {
         }
         SharedPreferences.Editor edit = pref.edit();
         edit.putBoolean("pref_is_visible_tab_" + kind.name(), flag);
-        edit.apply();
+        edit.commit();
     }
 
     public static boolean toggleTabVisibility(Context context, NavigationKind kind) {

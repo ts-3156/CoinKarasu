@@ -22,6 +22,7 @@ import com.coinkarasu.billingmodule.skulist.row.TestItemDelegate;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainViewController implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -31,6 +32,7 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
     private final UpdateListener updateListener;
     private MainActivity activity;
     private boolean isPremium;
+    private List<NavigationKind> visibleKinds;
 
     public MainViewController(MainActivity activity) {
         updateListener = new UpdateListener();
@@ -55,14 +57,14 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
         }
     }
 
-    public void onPageChanged(NavigationKind kind) {
-        setNavChecked(kind);
+    public void requestRefreshUi(NavigationKind kind) {
+        updateNavigationDrawer(kind);
         updateToolbarTitle(kind);
         updateTabColor(kind);
         updateTabIconAlpha(kind);
     }
 
-    private void setNavChecked(NavigationKind kind) {
+    private void updateNavigationDrawer(NavigationKind kind) {
         NavigationView view = activity.findViewById(R.id.nav_view);
         Menu menu = view.getMenu();
 
@@ -135,6 +137,9 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
                 activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             }
             if (DEBUG) CKLog.d(TAG, "keepScreenOn " + isKeepScreenOn);
+        } else if (key.startsWith("pref_is_visible_tab_")) {
+            visibleKinds.clear();
+            if (DEBUG) CKLog.d(TAG, "tabVisibility " + key);
         }
     }
 
@@ -144,6 +149,18 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
 
     public boolean isPremiumPurchased() {
         return isPremium;
+    }
+
+    public List<NavigationKind> getVisibleKinds() {
+        if (visibleKinds == null || visibleKinds.isEmpty()) {
+            visibleKinds = new ArrayList<>();
+            for (NavigationKind kind : NavigationKind.values()) {
+                if (kind.isVisible(activity)) {
+                    visibleKinds.add(kind);
+                }
+            }
+        }
+        return visibleKinds;
     }
 
     public void onDestroy() {
