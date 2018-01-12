@@ -36,7 +36,7 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
     }
 
     @Override
-    protected Integer doInBackground(Integer... params) {
+    protected List<Price> doInBackground(Integer... params) {
         publishProgress(0);
 
         for (int i = 0; i < fromSymbols.length; i += 20) {
@@ -68,32 +68,33 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
 
         executor.shutdown();
 
-        return 200;
+        List<Price> result = new ArrayList<>();
+
+        for (GetCccaggPricesThread thread : threads) {
+            Prices prices = thread.getPrices();
+            if (prices == null || prices.getCoins() == null || prices.getCoins().isEmpty()) {
+                if (DEBUG) CKLog.w(TAG, "prices is blank " + exchangeStr + " "
+                        + Arrays.toString(fromSymbols) + " " + toSymbol);
+                continue;
+            }
+
+            for (PriceMultiFullCoin coin : prices.getCoins()) {
+                Price price = new Price(exchange, coinKind, coin.getFromSymbol(), coin.getToSymbol(), coin.getPrice());
+                price.priceDiff = coin.getChange24Hour();
+                price.trend = coin.getChangePct24Hour() / 100.0;
+                result.add(price);
+            }
+        }
+
+        return result;
     }
 
     @Override
-    protected void onPostExecute(Integer integer) {
+    protected void onPostExecute(List<Price> prices) {
         if (listener != null) {
-            List<Price> pricesArray = new ArrayList<>();
-
-            for (GetCccaggPricesThread thread : threads) {
-                Prices prices = thread.getPrices();
-                if (prices == null || prices.getCoins() == null || prices.getCoins().isEmpty()) {
-                    if (DEBUG) CKLog.w(TAG, "prices is blank " + exchangeStr + " "
-                            + Arrays.toString(fromSymbols) + " " + toSymbol);
-                    continue;
-                }
-
-                for (PriceMultiFullCoin coin : prices.getCoins()) {
-                    Price price = new Price(exchange, coinKind, coin.getFromSymbol(), coin.getToSymbol(), coin.getPrice());
-                    price.priceDiff = coin.getChange24Hour();
-                    price.trend = coin.getChangePct24Hour() / 100.0;
-                    pricesArray.add(price);
-                }
-            }
-
-            listener.finished(exchange, coinKind, pricesArray);
+            listener.finished(exchange, coinKind, prices);
         }
+        context = null;
     }
 
     public GetCccaggPricesTask setFromSymbols(String[] fromSymbols) {

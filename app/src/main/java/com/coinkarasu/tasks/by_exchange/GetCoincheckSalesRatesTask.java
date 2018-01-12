@@ -6,6 +6,7 @@ import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.api.coincheck.data.Rate;
 import com.coinkarasu.tasks.by_exchange.data.Price;
+import com.coinkarasu.utils.CKLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GetCoincheckSalesRatesTask extends GetPricesByExchangeTaskBase {
-    private ArrayList<GetCoincheckSalesRateThread> threads;
-    private ArrayList<GetCoinkarasuSalesRateThread> threads2;
+    private static final boolean DEBUG = true;
+    private static final String TAG = "GetCoincheckSalesRatesTask";
+
+    private List<GetCoincheckSalesRateThread> threads;
+    private List<GetCoinkarasuSalesRateThread> threads2;
     private String[] fromSymbols;
     private Context context;
 
@@ -28,7 +32,7 @@ public class GetCoincheckSalesRatesTask extends GetPricesByExchangeTaskBase {
     }
 
     @Override
-    protected Integer doInBackground(Integer... params) {
+    protected List<Price> doInBackground(Integer... params) {
         publishProgress(0);
 
         for (String fromSymbol : fromSymbols) {
@@ -55,34 +59,41 @@ public class GetCoincheckSalesRatesTask extends GetPricesByExchangeTaskBase {
 
         executor.shutdown();
 
-        return 200;
+        List<Price> result = new ArrayList<>();
+
+        for (GetCoincheckSalesRateThread thread : threads) {
+            Rate rate = thread.getRate();
+            if (rate == null) {
+                if (DEBUG) CKLog.w(TAG, "GetCoincheckSalesRateThread#getRate() is null");
+                continue;
+            }
+            Price price = new Price(exchange, coinKind, rate.fromSymbol, rate.toSymbol, rate.value);
+
+            for (GetCoinkarasuSalesRateThread t : threads2) {
+                Rate r = t.getRate();
+                if (r == null) {
+                    if (DEBUG) CKLog.w(TAG, "GetCoinkarasuSalesRateThread#getRate() is null");
+                    continue;
+                }
+
+                if (r.value != 0.0 && r.fromSymbol.equals(rate.fromSymbol) && r.toSymbol.equals(rate.toSymbol)) {
+                    price.priceDiff = price.price - r.value;
+                    price.trend = price.priceDiff / r.value;
+                    break;
+                }
+            }
+
+            result.add(price);
+        }
+
+        return result;
     }
 
     @Override
-    protected void onPostExecute(Integer integer) {
+    protected void onPostExecute(List<Price> prices) {
         if (listener != null) {
-            List<Price> prices = new ArrayList<>();
-
-            for (GetCoincheckSalesRateThread thread : threads) {
-                Rate rate = thread.getRate();
-                if (rate == null) {
-                    continue;
-                }
-                Price price = new Price(exchange, coinKind, rate.fromSymbol, rate.toSymbol, rate.value);
-
-                for (GetCoinkarasuSalesRateThread t : threads2) {
-                    Rate r = t.getRate();
-                    if (r != null && r.value != 0.0 && r.fromSymbol.equals(rate.fromSymbol) && r.toSymbol.equals(rate.toSymbol)) {
-                        price.priceDiff = price.price - r.value;
-                        price.trend = price.priceDiff / r.value;
-                        break;
-                    }
-                }
-
-                prices.add(price);
-            }
-
             listener.finished(exchange, coinKind, prices);
         }
+        context = null;
     }
 }

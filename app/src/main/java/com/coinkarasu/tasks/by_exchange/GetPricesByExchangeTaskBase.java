@@ -9,7 +9,7 @@ import com.coinkarasu.tasks.by_exchange.data.Price;
 
 import java.util.List;
 
-public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Integer, Integer> {
+public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Integer, List<Price>> {
     protected Listener listener;
     protected Exchange exchange;
     protected CoinKind coinKind;
@@ -21,7 +21,7 @@ public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Int
     }
 
     @Override
-    protected Integer doInBackground(Integer... params) {
+    protected List<Price> doInBackground(Integer... params) {
         throw new RuntimeException("Stub");
     }
 
@@ -33,7 +33,7 @@ public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Int
     }
 
     @Override
-    protected void onPostExecute(Integer integer) {
+    protected void onPostExecute(List<Price> prices) {
         throw new RuntimeException("Stub");
     }
 

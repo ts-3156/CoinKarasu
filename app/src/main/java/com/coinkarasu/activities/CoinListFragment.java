@@ -332,7 +332,8 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
-        if (prices == null) {
+        if (prices == null || prices.isEmpty()) {
+            if (DEBUG) CKLog.w(TAG, "finished() prices is null");
             return;
         }
 
@@ -366,7 +367,7 @@ public class CoinListFragment extends Fragment implements
                 refreshRelativeTime(exchange, coinKind);
                 hideProgressbarDelayed(exchange, coinKind);
 
-                if (DEBUG) CKLog.d(TAG, "finished() " + kind + ", " + exchange + ", " + coinKind);
+                if (DEBUG) CKLog.d(TAG, "finished() " + kind + " " + exchange + " " + coinKind);
             }
         };
 

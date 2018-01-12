@@ -5,17 +5,20 @@ import android.content.Context;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.api.coincheck.data.Rate;
-import com.coinkarasu.api.cryptocompare.data.Prices;
-import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.tasks.by_exchange.data.Price;
+import com.coinkarasu.utils.CKLog;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
-    private ArrayList<Thread> threads;
+    private static final boolean DEBUG = true;
+    private static final String TAG = "GetCoincheckTradingRatesTask";
+
+    private List<Thread> threads;
     private Context context;
 
     protected GetCoincheckTradingRatesTask(Context context, CoinKind coinKind) {
@@ -25,7 +28,7 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
     }
 
     @Override
-    protected Integer doInBackground(Integer... params) {
+    protected List<Price> doInBackground(Integer... params) {
         publishProgress(0);
 
         ExecutorService executor = Executors.newFixedThreadPool(2);
@@ -48,21 +51,17 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
 
         executor.shutdown();
 
-        return 200;
-    }
+        List<Price> result = new ArrayList<>();
 
-    @Override
-    protected void onPostExecute(Integer integer) {
-        if (listener != null) {
-            Rate sellRate = ((GetCoincheckTradingRateThread) threads.get(0)).getRate();
-            Rate buyRate = ((GetCoincheckTradingRateThread) threads.get(1)).getRate();
-            if (sellRate == null || buyRate == null) {
-                listener.finished(exchange, coinKind, null);
-                return;
-            }
+        Rate sellRate = ((GetCoincheckTradingRateThread) threads.get(0)).getRate();
+        Rate buyRate = ((GetCoincheckTradingRateThread) threads.get(1)).getRate();
+        if (sellRate == null || buyRate == null) {
+            if (DEBUG) CKLog.w(TAG, "sellRate is null or buyRate is null");
+            return result;
+        }
 
-            double avg = (sellRate.value + buyRate.value) / 2.0;
-            Price price = new Price(exchange, coinKind, sellRate.fromSymbol, sellRate.toSymbol, avg);
+        double avg = (sellRate.value + buyRate.value) / 2.0;
+        Price price = new Price(exchange, coinKind, sellRate.fromSymbol, sellRate.toSymbol, avg);
 
 //            Prices prices = ((GetCccaggPricesThread) threads.get(2)).getPrices();
 //            if (!prices.getCoins().isEmpty()) {
@@ -71,16 +70,26 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
 //                price.trend = coin.getChangePct24Hour() / 100.0;
 //            }
 
-            Rate rate = ((GetCoinkarasuTradingRateThread) threads.get(2)).getRate();
-            if (rate != null && rate.value != 0.0) {
+        Rate rate = ((GetCoinkarasuTradingRateThread) threads.get(2)).getRate();
+        if (rate == null) {
+            if (DEBUG) CKLog.w(TAG, "rate is null");
+        } else {
+            if (rate.value != 0.0) {
                 price.priceDiff = price.price - rate.value;
                 price.trend = price.priceDiff / rate.value;
             }
-
-            ArrayList<Price> pricesArray = new ArrayList<>();
-            pricesArray.add(price);
-
-            listener.finished(exchange, coinKind, pricesArray);
         }
+
+        result.add(price);
+
+        return result;
+    }
+
+    @Override
+    protected void onPostExecute(List<Price> prices) {
+        if (listener != null) {
+            listener.finished(exchange, coinKind, prices);
+        }
+        context = null;
     }
 }
