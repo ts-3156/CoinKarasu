@@ -29,6 +29,7 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.custom.SwipeDetector;
 import com.coinkarasu.tasks.GetBoardTask;
+import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 import com.crashlytics.android.Crashlytics;
@@ -39,7 +40,8 @@ import org.json.JSONObject;
 
 import io.fabric.sdk.android.Fabric;
 
-public class CoinActivity extends AppCompatActivity {
+public class CoinActivity extends AppCompatActivity implements
+        InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
 
     public enum Tag {card, line, exchange, pie, board}
 
@@ -56,8 +58,6 @@ public class CoinActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_coin);
         CKLog.setContext(this);
 
@@ -68,13 +68,19 @@ public class CoinActivity extends AppCompatActivity {
             CKLog.e(TAG, e);
         }
 
-        logEvent(coin);
         kind = NavigationKind.valueOf(intent.getStringExtra(KEY_KIND));
 
         if (savedInstanceState == null) {
             setupFragment();
             drawBoardChart();
         }
+
+        new InitializeActivityTask(this, this, new Runnable() {
+            @Override
+            public void run() {
+                logEvent(coin);
+            }
+        }).execute();
     }
 
     private void setupFragment() {
@@ -273,6 +279,27 @@ public class CoinActivity extends AppCompatActivity {
 
         if (activity != null) {
             activity.overridePendingTransition(R.anim.activity_enter_from_right, R.anim.activity_exit_to_left);
+        }
+    }
+
+    @Override
+    public void setFirebaseAnalytics(FirebaseAnalytics firebaseAnalytics) {
+        this.firebaseAnalytics = firebaseAnalytics;
+    }
+
+    private static class InitializeActivityTask extends InitializeThirdPartyAppsTask {
+        InitializeActivityTask(Context context, FirebaseAnalyticsReceiver receiver, Runnable runnable) {
+            super(context, receiver, runnable);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            long start = System.currentTimeMillis();
+            Fabric.with(context, new Crashlytics());
+            receiver.setFirebaseAnalytics(FirebaseAnalytics.getInstance(context));
+            if (DEBUG) CKLog.d(TAG, "InitializeThirdPartyAppsTask() " + (System.currentTimeMillis() - start));
+
+            return null;
         }
     }
 }

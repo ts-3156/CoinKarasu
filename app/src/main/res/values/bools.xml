@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <bool name="premium">false</bool>
     <bool name="auto_refresh">true</bool>
     <bool name="keep_screen_on">false</bool>
     <bool name="remove_ads">false</bool>

@@ -131,4 +131,8 @@ public enum NavigationKind {
 
         return symbol;
     }
+
+    public static NavigationKind getDefault() {
+        return home;
+    }
 }

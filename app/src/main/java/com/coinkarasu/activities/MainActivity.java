@@ -1,20 +1,12 @@
 package com.coinkarasu.activities;
 
+import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,8 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
@@ -33,6 +23,7 @@ import com.coinkarasu.activities.settings.PreferencesActivity;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.billingmodule.billing.BillingManager;
 import com.coinkarasu.tasks.GetApiKeyTask;
+import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
 import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
@@ -48,16 +39,17 @@ import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        MainFragment.OnFragmentInteractionListener {
+        MainFragment.OnFragmentInteractionListener,
+        InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "MainActivity";
     private static final String STATE_SELECTED_KIND = "kind";
-    public static final NavigationKind DEFAULT_KIND = NavigationKind.home;
     private static final String FRAGMENT_TAG = "fragment";
 
     private FirebaseAnalytics firebaseAnalytics;
     private MainViewController viewController;
+    private MainFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,16 +80,18 @@ public class MainActivity extends AppCompatActivity implements
         navigationView.setNavigationItemSelectedListener(this);
 
         if (savedInstanceState != null) {
+            fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
         } else {
+            fragment = MainFragment.newInstance(NavigationKind.getDefault());
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, MainFragment.newInstance(DEFAULT_KIND), FRAGMENT_TAG)
+                    .replace(R.id.fragment_container, fragment, FRAGMENT_TAG)
                     .commit();
         }
 
         viewController = new MainViewController(this);
         new BillingManager(this, viewController.getUpdateListener());
 
-        new initializeThirdPartyAppsTask(this, new Runnable() {
+        new InitializeActivityTask(this, this, new Runnable() {
             @Override
             public void run() {
                 setupAdView();
@@ -108,85 +102,13 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        applyKeepScreenOn();
-    }
-
-    private void applyKeepScreenOn() {
-        boolean value = PreferenceManager
-                .getDefaultSharedPreferences(getApplicationContext())
-                .getBoolean("pref_keep_screen_on", getResources().getBoolean(R.bool.keep_screen_on));
-
-        if (value) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        } else {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-
-        if (DEBUG) CKLog.d("KeepScrOn", "" + value);
-    }
-
-    private void setNavChecked(NavigationKind kind) {
-        NavigationView view = findViewById(R.id.nav_view);
-        Menu menu = view.getMenu();
-
-        for (int i = 0; i < menu.size(); i++) {
-            MenuItem item = menu.getItem(i);
-
-            for (NavigationKind k : NavigationKind.values()) {
-                if (item.getItemId() == k.navResId) {
-                    item.setVisible(k.isVisible(this));
-
-                    if (k == kind) {
-                        item.setChecked(true);
-                        ColorStateList list = getResources().getColorStateList(k.colorStateResId);
-                        view.setItemTextColor(list);
-                        view.setItemIconTintList(list);
-                    }
-
-                    break;
-                }
-            }
-        }
-    }
-
-    private void updateToolbarTitle(NavigationKind kind) {
-        ActionBar bar = getSupportActionBar();
-        if (bar == null) {
-            return;
-        }
-
-        bar.setTitle(kind.headerStrResId);
-
-//        NavigationKind currentKind = getCurrentKind();
-//        if (currentKind != null && currentKind == NavigationKind.japan) {
-//            bar.setSubtitle(Currency.JPY.disabledTitleStrResId);
-//        } else {
-//            bar.setSubtitle(null);
-//        }
-    }
-
-    private void updateTabColor(NavigationKind kind) {
-        findViewById(R.id.tab_layout).setBackgroundColor(getResources().getColor(kind.colorResId));
-        findViewById(R.id.toolbar).setBackgroundColor(getResources().getColor(kind.colorResId));
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(ContextCompat.getColor(this, kind.colorDarkResId));
-        }
-    }
-
     private void switchCurrencyMenuTitle(Menu menu) {
         MenuItem item = menu.findItem(R.id.action_currency);
         if (item == null) {
             return;
         }
 
-        NavigationKind kind = getCurrentKind();
+        NavigationKind kind = viewController.getCurrentKind();
         if (kind != null && kind == NavigationKind.japan) {
             item.setEnabled(false);
             item.setTitle(Currency.JPY.disabledTitleStrResId);
@@ -202,20 +124,8 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private NavigationKind getCurrentKind() {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        if (fragment == null) {
-            return null;
-        }
-        return ((MainFragment) fragment).getCurrentKind();
-    }
-
-    private void setCurrentKind(NavigationKind kind, boolean smoothScroll) {
-        Fragment fragment = getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
-        if (fragment == null) {
-            return;
-        }
-        ((MainFragment) fragment).setCurrentKind(kind, smoothScroll);
+    public MainFragment getFragment() {
+        return fragment;
     }
 
     @Override
@@ -224,9 +134,9 @@ public class MainActivity extends AppCompatActivity implements
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            NavigationKind kind = getCurrentKind();
-            if (kind != null && kind != DEFAULT_KIND) {
-                setCurrentKind(DEFAULT_KIND, true);
+            NavigationKind kind = viewController.getCurrentKind();
+            if (kind != null && kind != NavigationKind.getDefault()) {
+                viewController.setCurrentKind(NavigationKind.getDefault(), true);
             } else {
                 super.onBackPressed();
             }
@@ -279,9 +189,9 @@ public class MainActivity extends AppCompatActivity implements
         int id = item.getItemId();
         NavigationKind clickedKind = NavigationKind.valueByNavResId(id);
 
-        NavigationKind kind = getCurrentKind();
+        NavigationKind kind = viewController.getCurrentKind();
         if (clickedKind != null && kind != null && clickedKind != kind) {
-            setCurrentKind(clickedKind, false);
+            viewController.setCurrentKind(clickedKind, false);
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, PreferencesActivity.class));
         }
@@ -299,29 +209,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onPageChanged(NavigationKind kind) {
-        setNavChecked(kind);
-        updateToolbarTitle(kind);
-        updateTabColor(kind);
-        updateTabIconAlpha(kind);
-    }
-
-    private void updateTabIconAlpha(NavigationKind kind) {
-        TabLayout tabs = findViewById(R.id.tab_layout);
-        TabLayout.Tab tab = tabs.getTabAt(NavigationKind.edit_tabs.ordinal());
-        if (tab == null) {
-            return;
-        }
-
-        Drawable icon = tab.getIcon();
-        if (icon == null) {
-            return;
-        }
-
-        if (kind == NavigationKind.edit_tabs) {
-            icon.setAlpha(255);
-        } else {
-            icon.setAlpha(204); // 80%
-        }
+        viewController.onPageChanged(kind);
     }
 
     private void setupAdView() {
@@ -362,6 +250,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        viewController.onDestroy();
         CKLog.releaseContext();
     }
 
@@ -369,33 +258,20 @@ public class MainActivity extends AppCompatActivity implements
         this.firebaseAnalytics = firebaseAnalytics;
     }
 
-    private static class initializeThirdPartyAppsTask extends AsyncTask<Void, Void, Void> {
-        private MainActivity activity;
-        private Runnable runnable;
-
-        initializeThirdPartyAppsTask(MainActivity activity, Runnable runnable) {
-            this.activity = activity;
-            this.runnable = runnable;
+    private static class InitializeActivityTask extends InitializeThirdPartyAppsTask {
+        InitializeActivityTask(Context context, FirebaseAnalyticsReceiver receiver, Runnable runnable) {
+            super(context, receiver, runnable);
         }
 
         @Override
         protected Void doInBackground(Void... params) {
             long start = System.currentTimeMillis();
-            Fabric.with(activity, new Crashlytics());
-            activity.setFirebaseAnalytics(FirebaseAnalytics.getInstance(activity));
-            MobileAds.initialize(activity, BuildConfig.ADMOB_APP_ID);
-            if (DEBUG) CKLog.d(TAG, "initializeThirdPartyAppsTask() " + (System.currentTimeMillis() - start));
+            Fabric.with(context, new Crashlytics());
+            receiver.setFirebaseAnalytics(FirebaseAnalytics.getInstance(context));
+            MobileAds.initialize(context, BuildConfig.ADMOB_APP_ID);
+            if (DEBUG) CKLog.d(TAG, "InitializeThirdPartyAppsTask() " + (System.currentTimeMillis() - start));
 
             return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void v) {
-            if (runnable != null) {
-                runnable.run();
-            }
-            activity = null;
-            runnable = null;
         }
     }
 }

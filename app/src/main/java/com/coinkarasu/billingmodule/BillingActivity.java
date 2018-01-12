@@ -33,6 +33,7 @@ import com.coinkarasu.billingmodule.skulist.CardsWithHeadersDecoration;
 import com.coinkarasu.billingmodule.skulist.SkusAdapter;
 import com.coinkarasu.billingmodule.skulist.row.SkuRowData;
 import com.coinkarasu.billingmodule.skulist.row.UiManager;
+import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
 import com.coinkarasu.utils.CKLog;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -45,7 +46,9 @@ import io.fabric.sdk.android.Fabric;
 import static com.android.billingclient.api.BillingClient.BillingResponse;
 import static com.coinkarasu.billingmodule.billing.BillingManager.BILLING_MANAGER_NOT_INITIALIZED;
 
-public class BillingActivity extends AppCompatActivity implements BillingProvider {
+public class BillingActivity extends AppCompatActivity implements
+        BillingProvider, InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
+
     private static final String TAG = "BaseGamePlayActivity";
     private static final boolean DEBUG = true;
 
@@ -83,6 +86,8 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
         mScreenWait = findViewById(R.id.billing_screen_wait);
 
         onPurchaseButtonClicked(null);
+
+        new InitializeActivityTask(this, this, null).execute();
     }
 
     @Override
@@ -357,5 +362,26 @@ public class BillingActivity extends AppCompatActivity implements BillingProvide
         Intent intent = new Intent(context, BillingActivity.class);
         intent.putExtra("resId", resId);
         context.startActivity(intent);
+    }
+
+    @Override
+    public void setFirebaseAnalytics(FirebaseAnalytics firebaseAnalytics) {
+        this.firebaseAnalytics = firebaseAnalytics;
+    }
+
+    private static class InitializeActivityTask extends InitializeThirdPartyAppsTask {
+        InitializeActivityTask(Context context, FirebaseAnalyticsReceiver receiver, Runnable runnable) {
+            super(context, receiver, runnable);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            long start = System.currentTimeMillis();
+            Fabric.with(context, new Crashlytics());
+            receiver.setFirebaseAnalytics(FirebaseAnalytics.getInstance(context));
+            if (DEBUG) CKLog.d(TAG, "InitializeThirdPartyAppsTask() " + (System.currentTimeMillis() - start));
+
+            return null;
+        }
     }
 }

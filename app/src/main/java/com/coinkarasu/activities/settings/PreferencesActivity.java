@@ -1,5 +1,6 @@
 package com.coinkarasu.activities.settings;
 
+import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -19,21 +20,25 @@ import android.view.WindowManager;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.billingmodule.BillingActivity;
+import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import io.fabric.sdk.android.Fabric;
 
-public class PreferencesActivity extends AppCompatActivity implements Preference.OnPreferenceChangeListener {
+public class PreferencesActivity extends AppCompatActivity implements
+        Preference.OnPreferenceChangeListener, InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
+
+    private static final boolean DEBUG = true;
+    private static final String TAG = "PreferencesActivity";
 
     private FirebaseAnalytics firebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_preferences);
 
         ActionBar bar = getSupportActionBar();
@@ -46,6 +51,8 @@ public class PreferencesActivity extends AppCompatActivity implements Preference
                 .commit();
 
         updateToolbarColor();
+
+        new InitializeActivityTask(this, this, null).execute();
     }
 
     @Override
@@ -103,6 +110,26 @@ public class PreferencesActivity extends AppCompatActivity implements Preference
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(ContextCompat.getColor(this, kind.colorDarkResId));
+        }
+    }
+
+    public void setFirebaseAnalytics(FirebaseAnalytics firebaseAnalytics) {
+        this.firebaseAnalytics = firebaseAnalytics;
+    }
+
+    private static class InitializeActivityTask extends InitializeThirdPartyAppsTask {
+        InitializeActivityTask(Context context, FirebaseAnalyticsReceiver receiver, Runnable runnable) {
+            super(context, receiver, runnable);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            long start = System.currentTimeMillis();
+            Fabric.with(context, new Crashlytics());
+            receiver.setFirebaseAnalytics(FirebaseAnalytics.getInstance(context));
+            if (DEBUG) CKLog.d(TAG, "InitializeThirdPartyAppsTask() " + (System.currentTimeMillis() - start));
+
+            return null;
         }
     }
 }

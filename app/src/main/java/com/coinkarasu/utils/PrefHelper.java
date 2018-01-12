@@ -58,19 +58,11 @@ public class PrefHelper {
     }
 
     public static boolean isAnimEnabled(Context context) {
-        SharedPreferences pref = getPref(context);
-        if (pref == null) {
-            return false;
-        }
-        return pref.getBoolean("pref_enable_price_anim", context.getResources().getBoolean(R.bool.enable_price_anim));
+        return isEnabled(context, "pref_enable_price_anim", R.bool.enable_price_anim);
     }
 
     public static boolean isDownloadIconEnabled(Context context) {
-        SharedPreferences pref = getPref(context);
-        if (pref == null) {
-            return false;
-        }
-        return pref.getBoolean("pref_enable_download_icon", context.getResources().getBoolean(R.bool.enable_download_icon));
+        return isEnabled(context, "pref_enable_download_icon", R.bool.enable_download_icon);
     }
 
     public static void saveToSymbol(Activity activity, String toSymbol) {
@@ -129,11 +121,7 @@ public class PrefHelper {
     }
 
     public static boolean isPremium(Context context) {
-        SharedPreferences pref = getPref(context);
-        if (pref == null) {
-            return false;
-        }
-        return pref.getBoolean("pref_is_premium", false);
+        return isEnabled(context, "pref_is_premium", R.bool.premium);
     }
 
     public static void setPremium(Context context, boolean flag) {
@@ -147,11 +135,16 @@ public class PrefHelper {
     }
 
     public static boolean isDebugToastEnabled(Context context) {
+        return isEnabled(context, "pref_make_toast", R.bool.make_toast);
+    }
+
+    public static boolean isKeepScreenOnEnabled(Context context) {
+        return isEnabled(context, "pref_keep_screen_on", R.bool.keep_screen_on);
+    }
+
+    private static boolean isEnabled(Context context, String key, int defResId) {
         SharedPreferences pref = getPref(context);
-        if (pref == null) {
-            return false;
-        }
-        return pref.getBoolean("pref_make_toast", context.getResources().getBoolean(R.bool.make_toast));
+        return pref != null && pref.getBoolean(key, context.getResources().getBoolean(defResId));
     }
 
     public static SharedPreferences getPref(Context context) {
