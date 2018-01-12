@@ -15,7 +15,7 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.pagers.MainPagerAdapter;
 import com.coinkarasu.utils.CKLog;
 
-import java.util.ArrayList;
+import java.util.List;
 
 
 public class MainFragment extends Fragment implements
@@ -87,7 +87,7 @@ public class MainFragment extends Fragment implements
             return;
         }
 
-        ArrayList<NavigationKind> values = NavigationKind.visibleValues(getActivity());
+        List<NavigationKind> values = NavigationKind.visibleValues(getActivity());
         for (int i = 0; i < values.size(); i++) {
             TabLayout.Tab tab = tabs.getTabAt(i);
 

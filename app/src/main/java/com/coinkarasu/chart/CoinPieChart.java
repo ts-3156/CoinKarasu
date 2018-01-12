@@ -19,6 +19,7 @@ import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CoinPieChart {
 
@@ -73,8 +74,8 @@ public class CoinPieChart {
 
     }
 
-    public void setData(ArrayList<Double> values, ArrayList<String> labels) {
-        ArrayList<PieEntry> entries = new ArrayList<>();
+    public void setData(List<Double> values, List<String> labels) {
+        List<PieEntry> entries = new ArrayList<>();
 
         for (int i = 0; i < values.size(); i++) {
             entries.add(new PieEntry(values.get(i).floatValue(), labels.get(i)));
@@ -92,7 +93,7 @@ public class CoinPieChart {
 
         // add a lot of colors
 
-        ArrayList<Integer> colors = new ArrayList<>();
+        List<Integer> colors = new ArrayList<>();
 
 //        for (int c : ColorTemplate.VORDIPLOM_COLORS)
 //            colors.add(c);

@@ -3,7 +3,6 @@ package com.coinkarasu.activities;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,13 +13,14 @@ import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.chart.CoinLineChart;
 import com.coinkarasu.tasks.GetHistoryTaskBase;
+import com.coinkarasu.utils.CKLog;
 import com.github.mikephil.charting.charts.LineChart;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class CoinLineChartTabContentFragment extends Fragment implements GetHistoryTaskBase.Listener {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinLineChartTabContentFragment";
 
     private HistoricalPriceKind kind;
     private String fromSymbol;
@@ -90,7 +90,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     @Override
     public void finished(List<History> records) {
         if (records.isEmpty()) {
-            Log.e("finished", "empty, " + kind + ", " + errorCount);
+            if (DEBUG) CKLog.w(TAG, "finished() empty " + kind + " " + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
@@ -106,7 +106,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         drawChart(records);
         ((HistoricalPriceFragment) getParentFragment()).updateTab(kind.ordinal(), records);
 
-        Log.d("UPDATED", kind + ", " + records.size() + ", " + new Date().toString());
+        if (DEBUG) CKLog.d(TAG, "finished() " + kind + " " + records.size());
     }
 
     private void drawChart(List<History> records) {

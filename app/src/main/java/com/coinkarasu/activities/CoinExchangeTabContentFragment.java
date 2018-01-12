@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class CoinExchangeTabContentFragment extends Fragment implements GetHistoryHourTask.Listener {
@@ -124,7 +122,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         }
 
         if (records == null) {
-            Log.e("finished", "null(retry), " + exchange + ", " + errorCount);
+            if (DEBUG) CKLog.w(TAG, "finished() null(retry) " + exchange + " " + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
@@ -132,7 +130,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         }
 
         if (records.isEmpty()) {
-            Log.e("finished", "empty, " + exchange + ", " + errorCount);
+            if (DEBUG) CKLog.w(TAG, "finished() empty " + exchange + " " + errorCount);
             drawChart(new ArrayList<History>());
             return;
         }
@@ -140,7 +138,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         drawChart(records);
         ((CoinExchangeFragment) getParentFragment()).updateTab(position, records);
 
-        Log.d("UPDATED", exchange + ", " + records.size() + ", " + new Date().toString());
+        if (DEBUG) CKLog.d(TAG, "finished() " + exchange + " " + records.size());
     }
 
     private void drawChart(List<History> records) {

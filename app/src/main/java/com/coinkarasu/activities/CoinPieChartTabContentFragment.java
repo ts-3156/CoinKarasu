@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,18 +19,20 @@ import com.coinkarasu.chart.CoinPieChart;
 import com.coinkarasu.coins.SnapshotCoin;
 import com.coinkarasu.tasks.GetCoinSnapshotTask;
 import com.coinkarasu.tasks.GetTopPairsTask;
+import com.coinkarasu.utils.CKLog;
 import com.github.mikephil.charting.charts.PieChart;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
 public class CoinPieChartTabContentFragment extends Fragment implements
         GetTopPairsTask.Listener, GetCoinSnapshotTask.Listener {
 
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinPieChartTabContentFragment";
     public static final double GROUP_SMALL_SLICES_PCT = 0.05;
 
     private CoinPieChartFragment.Kind kind;
@@ -119,18 +120,18 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         }
 
         if (pairs == null) {
-            Log.e("finished", "null(retry), " + kind + ", " + errorCount);
+            if (DEBUG) CKLog.w(TAG, "finished() null(retry) " + kind + " " + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
             return;
         }
 
-        ArrayList<Double> values = new ArrayList<>();
-        ArrayList<String> labels = new ArrayList<>();
+        List<Double> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
 
         if (pairs.isEmpty()) {
-            Log.e("finished", "empty, " + kind + ", " + errorCount);
+            if (DEBUG) CKLog.w(TAG, "finished() empty " + kind + " " + errorCount);
             drawChart(values, labels);
             return;
         }
@@ -150,7 +151,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         groupSmallSlices(values, labels);
         drawChart(values, labels);
 
-        Log.d("UPDATED", kind + ", " + new Date().toString());
+        if (DEBUG) CKLog.d(TAG, "finished() " + kind);
     }
 
     @Override
@@ -163,7 +164,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
         List<SnapshotCoin> coins = snapshot.getSnapshotCoins();
         if (coins == null) {
-            Log.e("finished", "null(retry), " + kind + ", " + errorCount);
+            if (DEBUG) CKLog.w(TAG, "finished() null(retry) " + kind + " " + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
@@ -182,7 +183,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         ArrayList<String> labels = new ArrayList<>();
 
         if (coins.isEmpty()) {
-            Log.e("finished", "empty, " + kind + ", " + errorCount);
+            if (DEBUG) CKLog.w(TAG, "finished() empty " + kind + " " + errorCount);
             drawChart(values, labels);
             return;
         }
@@ -202,10 +203,10 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         groupSmallSlices(values, labels);
         drawChart(values, labels);
 
-        Log.d("UPDATED", kind + ", " + new Date().toString());
+        if (DEBUG) CKLog.d(TAG, "finished() " + kind);
     }
 
-    private void drawChart(ArrayList<Double> values, ArrayList<String> labels) {
+    private void drawChart(List<Double> values, List<String> labels) {
         if (values.isEmpty()) {
             getView().findViewById(R.id.pie_chart).setVisibility(View.GONE);
             Spanned text = Html.fromHtml(getString(R.string.pie_chart_exchange_warn, fromSymbol, toSymbol));
@@ -226,7 +227,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         chart.invalidate();
     }
 
-    private void groupSmallSlices(ArrayList<Double> values, ArrayList<String> labels) {
+    private void groupSmallSlices(List<Double> values, List<String> labels) {
         double sum = 0.0;
         for (double value : values) {
             sum += value;
@@ -234,8 +235,8 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         double threshold = sum * GROUP_SMALL_SLICES_PCT;
 
         double others = 0.0;
-        ArrayList<Double> newValues = new ArrayList<>();
-        ArrayList<String> newLabels = new ArrayList<>();
+        List<Double> newValues = new ArrayList<>();
+        List<String> newLabels = new ArrayList<>();
 
         for (int i = 0; i < values.size(); i++) {
             double value = values.get(i);

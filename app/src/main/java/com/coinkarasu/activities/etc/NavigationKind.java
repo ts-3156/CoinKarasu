@@ -67,8 +67,8 @@ public enum NavigationKind {
         return !isHideable() || (isShowable() && PrefHelper.isVisibleTab(context, this));
     }
 
-    public static ArrayList<NavigationKind> visibleValues(Context context) {
-        ArrayList<NavigationKind> values = new ArrayList<>();
+    public static List<NavigationKind> visibleValues(Context context) {
+        List<NavigationKind> values = new ArrayList<>();
         for (NavigationKind kind : values()) {
             if (kind.isVisible(context)) {
                 values.add(kind);
