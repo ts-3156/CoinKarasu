@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
@@ -77,6 +78,7 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
 
                     if (k == kind) {
                         item.setChecked(true);
+                        view.setCheckedItem(item.getItemId());
                         ColorStateList list = activity.getResources().getColorStateList(k.colorStateResId);
                         view.setItemTextColor(list);
                         view.setItemIconTintList(list);
@@ -196,7 +198,7 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
                         saveData();
                         break;
                     default:
-                        if (DEBUG) CKLog.e(TAG, "Not registered item " + purchase.getSku());
+                        if (DEBUG) CKLog.w(TAG, "Not registered item " + purchase.getSku());
                 }
             }
         }

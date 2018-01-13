@@ -66,7 +66,6 @@ public class MainFragment extends Fragment implements
 
         int position = listener.getVisibleKinds().indexOf(kind);
         pager.setCurrentItem(position, false); // 他のアクティビティから戻ってきた時のみ、onTabSelectedが呼ばれる
-        listener.requestRefreshUi(kind);
 
         return view;
     }
@@ -103,6 +102,14 @@ public class MainFragment extends Fragment implements
         this.kind = kind;
         int position = listener.getVisibleKinds().indexOf(kind);
         pager.setCurrentItem(position, smoothScroll);
+        listener.requestRefreshUi(kind);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // onCreateViewの中で実行すると、古い端末で正しく動作しないことがある
         listener.requestRefreshUi(kind);
     }
 
