@@ -210,6 +210,9 @@
     <string name="pref_title_make_toast">Make toast</string>
     <string name="pref_description_make_toast"></string>
 
+    <string name="pref_title_become_premium">Become premium</string>
+    <string name="pref_description_become_premium"></string>
+
     <string name="pref_title_display_name">Display name</string>
     <string name="pref_default_display_name">John Smith</string>
 

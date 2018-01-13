@@ -192,4 +192,6 @@
     <string name="pref_description_enable_download_icon">この設定をオフにすると表示が高速化されます</string>
     <string name="pref_title_make_toast">トーストを表示する</string>
     <string name="pref_description_make_toast"></string>
+    <string name="pref_title_become_premium">プレミアムになる</string>
+    <string name="pref_description_become_premium"></string>
 </resources>

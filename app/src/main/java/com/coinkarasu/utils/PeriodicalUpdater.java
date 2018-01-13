@@ -88,6 +88,7 @@ public class PeriodicalUpdater {
     }
 
     public void setInterval(int interval) {
+        if (DEBUG) CKLog.d(TAG, "setInterval() " + interval);
         this.interval = interval;
     }
 

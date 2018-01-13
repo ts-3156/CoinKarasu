@@ -36,7 +36,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
 
     public RelativeTimeSpanTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        if (DEBUG) CKLog.d(TAG, "RelativeTimeSpanTextView()");
+        if (DEBUG) CKLog.d(TAG, "constructor()");
         time = -1;
         delay = DEFAULT_DELAY;
         period = DEFAULT_PERIOD;

@@ -181,7 +181,7 @@ public class CoinListFragment extends Fragment implements
                         if (indexOfSection < kind.sections.size() - 1) {
                             addCoins(inCoins, kind.sections.get(indexOfSection + 1));
                         } else {
-                            if (!PrefHelper.isPremium(getActivity()) && kind.isToplist()
+                            if (!((MainActivity) getActivity()).isPremiumPurchased() && kind.isToplist()
                                     && section.getExchange() == Exchange.cccagg && inCoins.size() >= 3) {
                                 inCoins.add(2, new AdCoinImpl());
                             }

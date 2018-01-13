@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void setupAdView() {
-        if (PrefHelper.isPremium(this)) {
+        if (isPremiumPurchased()) {
             return;
         }
 

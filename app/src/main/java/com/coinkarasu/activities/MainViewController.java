@@ -4,7 +4,6 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
@@ -16,6 +15,7 @@ import android.view.WindowManager;
 
 import com.android.billingclient.api.BillingClient.BillingResponse;
 import com.android.billingclient.api.Purchase;
+import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.billingmodule.billing.BillingManager;
@@ -132,7 +132,7 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
     @Override
     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
         if (key.equals("pref_keep_screen_on")) {
-            boolean isKeepScreenOn = prefs.getBoolean(key, activity.getResources().getBoolean(R.bool.keep_screen_on));
+            boolean isKeepScreenOn = PrefHelper.isKeepScreenOnEnabled(activity);
             if (isKeepScreenOn) {
                 activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             } else {
@@ -175,7 +175,7 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
     }
 
     private void loadData() {
-        isPremium = PrefHelper.isPremium(activity);
+        isPremium = BuildConfig.DEBUG && PrefHelper.isDebugPremium(activity) || PrefHelper.isPremium(activity);
     }
 
     private class UpdateListener implements BillingManager.BillingUpdatesListener {

@@ -92,6 +92,12 @@
             android:key="pref_make_toast"
             android:summary="@string/pref_description_make_toast"
             android:title="@string/pref_title_make_toast" />
+
+        <SwitchPreference
+            android:defaultValue="@bool/become_premium"
+            android:key="pref_become_premium"
+            android:summary="@string/pref_description_become_premium"
+            android:title="@string/pref_title_become_premium" />
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 
@@ -135,11 +136,15 @@ public class PrefHelper {
     }
 
     public static boolean isDebugToastEnabled(Context context) {
-        return isEnabled(context, "pref_make_toast", R.bool.make_toast);
+        return BuildConfig.DEBUG && isEnabled(context, "pref_make_toast", R.bool.make_toast);
     }
 
     public static boolean isKeepScreenOnEnabled(Context context) {
-        return isEnabled(context, "pref_keep_screen_on", R.bool.keep_screen_on);
+        return BuildConfig.DEBUG && isEnabled(context, "pref_keep_screen_on", R.bool.keep_screen_on);
+    }
+
+    public static boolean isDebugPremium(Context context) {
+        return BuildConfig.DEBUG && isEnabled(context, "pref_become_premium", R.bool.become_premium);
     }
 
     private static boolean isEnabled(Context context, String key, int defResId) {
