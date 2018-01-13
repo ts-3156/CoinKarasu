@@ -6,15 +6,21 @@ import java.util.TimerTask;
 public class PeriodicalUpdater {
     private static final boolean DEBUG = true;
     private static final String TAG = "PeriodicalUpdater";
+    private static final long FORCE_UPDATE_INTERVAL = 3000;
 
     private Timer timer;
     private PeriodicallyRunnable runnable;
     private int interval;
     private long lastUpdated;
+    private long forceUpdated;
+    private Timer beingUpdatedTimer;
+    private boolean isBeingUpdated;
 
     public PeriodicalUpdater(PeriodicallyRunnable runnable, int interval) {
         this.runnable = runnable;
         this.interval = interval;
+        forceUpdated = -1;
+        isBeingUpdated = false;
     }
 
     public void restart(String caller) {
@@ -23,6 +29,7 @@ public class PeriodicalUpdater {
     }
 
     public void start(String caller) {
+        if (DEBUG) CKLog.d(TAG, "start() is called from " + caller);
         if (timer != null) {
             return;
         }
@@ -36,20 +43,48 @@ public class PeriodicalUpdater {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                runnable.startTask();
+                if (!isBeingUpdated) {
+                    setBeingUpdatedTimer();
+                    runnable.startTask();
+                }
             }
         }, delay, interval);
     }
 
     public void forceStart(String caller) {
-        runnable.startTask();
+        long now = System.currentTimeMillis();
+        if (!isBeingUpdated && forceUpdated <= now - FORCE_UPDATE_INTERVAL) {
+            forceUpdated = now;
+            setBeingUpdatedTimer();
+            runnable.startTask();
+        }
     }
 
     public void stop(String caller) {
+        if (DEBUG) CKLog.d(TAG, "stop() is called from " + caller);
         if (timer != null) {
             timer.cancel();
             timer = null;
         }
+    }
+
+    private void setBeingUpdatedTimer() {
+        if (isBeingUpdated) {
+            return;
+        }
+
+        isBeingUpdated = true;
+        beingUpdatedTimer = new Timer();
+        beingUpdatedTimer.schedule(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        isBeingUpdated = false;
+                        beingUpdatedTimer = null;
+                    }
+                },
+                10000
+        );
     }
 
     public void setInterval(int interval) {
@@ -60,8 +95,15 @@ public class PeriodicalUpdater {
         return lastUpdated;
     }
 
-    public void setLastUpdated(long lastUpdated) {
+    // startTaskが1回だったとしても、タブによっては複数回コールバックされる
+    public synchronized void setLastUpdated(long lastUpdated) {
         this.lastUpdated = lastUpdated;
+        isBeingUpdated = false;
+        if (beingUpdatedTimer != null) {
+            beingUpdatedTimer.cancel();
+            beingUpdatedTimer = null;
+        }
+        restart("setLastUpdated");
     }
 
     public interface PeriodicallyRunnable {

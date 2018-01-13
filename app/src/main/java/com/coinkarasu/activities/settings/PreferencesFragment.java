@@ -119,12 +119,16 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
 
     private void setDefaultSyncFrequencyIfNeeded() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String key = "pref_sync_frequency";
 
-        String stringValue = prefs.getString("pref_sync_frequency", String.valueOf(PrefHelper.DEFAULT_SYNC_INTERVAL));
+        String stringValue = prefs.getString(key, String.valueOf(PrefHelper.DEFAULT_SYNC_INTERVAL));
         if (!PrefHelper.isPremium(getActivity()) && Integer.valueOf(stringValue) < PrefHelper.MIN_SYNC_INTERVAL) {
             int interval = PrefHelper.setDefaultSyncInterval(getActivity());
-            ListPreference listPreference = (ListPreference) findPreference("pref_sync_frequency");
-            listPreference.setValueIndex(listPreference.findIndexOfValue(String.valueOf(interval)));
+            ListPreference pref = (ListPreference) findPreference(key);
+            pref.setValueIndex(pref.findIndexOfValue(String.valueOf(interval)));
+            if (listener != null) {
+                listener.onPreferenceChange(pref, String.valueOf(interval));
+            }
         }
     }
 

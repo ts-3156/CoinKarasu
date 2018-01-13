@@ -32,6 +32,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private boolean isSelected;
     private boolean isVisibleToUser;
     private BroadcastReceiver receiver;
+    SwipeRefreshLayout refresh;
 
     public HomeTabFragment() {
     }
@@ -59,7 +60,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
         ((ProgressBar) view.findViewById(R.id.screen_wait))
                 .setIndeterminateDrawable(getResources().getDrawable(NavigationKind.home.progressDrawableResId));
 
-        SwipeRefreshLayout refresh = view.findViewById(R.id.refresh_layout);
+        refresh = view.findViewById(R.id.refresh_layout);
         refresh.setOnRefreshListener(this);
         refresh.setColorSchemeColors(getResources().getColor(R.color.colorRotate));
 
@@ -152,16 +153,11 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Override
     public void onRefresh() {
-        if (getView() == null) {
-            return;
-        }
+        if (DEBUG) CKLog.d(TAG, "onRefresh() " + NavigationKind.home.name());
 
-        CKLog.d(TAG, "onRefresh() " + NavigationKind.home.name());
-
-        SwipeRefreshLayout refresh = getView().findViewById(R.id.refresh_layout);
         refresh.setRefreshing(false);
 
-        if (getActivity() == null) {
+        if (getActivity() == null || getActivity().isFinishing()) {
             return;
         }
 
