@@ -212,6 +212,20 @@
     <string name="pref_title_make_toast">Make toast</string>
     <string name="pref_description_make_toast"></string>
 
+    <string name="pref_title_toast_level">Toast level</string>
+    <string-array name="pref_toast_level_titles">
+        <item>Debug</item>
+        <item>Info</item>
+        <item>Warn</item>
+        <item>Error</item>
+    </string-array>
+    <string-array name="pref_toast_level_values">
+        <item>debug</item>
+        <item>info</item>
+        <item>warn</item>
+        <item>error</item>
+    </string-array>
+
     <string name="pref_title_become_premium">Become premium</string>
     <string name="pref_description_become_premium"></string>
 

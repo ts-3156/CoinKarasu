@@ -26,13 +26,15 @@ public class CKLog {
     private static final boolean DEBUG = BuildConfig.DEBUG;
     private static final String TAG = "CKLog";
 
+    private enum Level {debug, info, warn, error}
+
     private static Context context;
     private static Queue<LogItem> queue;
     private static boolean isRunning;
 
     public static synchronized void setContext(Context context) {
+        Log.d(TAG, "setContext()");
         if (CKLog.context == null) {
-            Log.d(TAG, "setContext()");
             CKLog.context = context.getApplicationContext();
             queue = new LinkedList<>();
             isRunning = false;
@@ -47,25 +49,25 @@ public class CKLog {
     public static void d(String tag, String message) {
         if (!DEBUG) return;
         Log.d(tag, message);
-        makeToast(tag, message);
+        makeToast(tag, message, Level.debug);
     }
 
     public static void i(String tag, String message) {
         if (!DEBUG) return;
         Log.i(tag, message);
-        makeToast(tag, message);
+        makeToast(tag, message, Level.info);
     }
 
     public static void w(String tag, String message) {
         if (!DEBUG) return;
         Log.w(tag, message);
-        makeToast(tag, message);
+        makeToast(tag, message, Level.warn);
     }
 
     public static void e(String tag, String message) {
         if (!DEBUG) return;
         Log.e(tag, message);
-        makeToast(tag, message);
+        makeToast(tag, message, Level.error);
     }
 
     public static void e(String tag, Exception ex) {
@@ -78,7 +80,7 @@ public class CKLog {
         if (DEBUG) Log.e(tag, message, ex);
     }
 
-    private synchronized static void makeToast(String tag, String message) {
+    private synchronized static void makeToast(String tag, String message, final Level level) {
         if (context == null || !BuildConfig.DEBUG || !PrefHelper.isDebugToastEnabled(context)) {
             return;
         }
@@ -92,13 +94,17 @@ public class CKLog {
 
         final Handler handler = new Handler(context.getMainLooper());
 
-        Thread thread = new Thread() {
+        final Thread thread = new Thread() {
             @Override
             public void run() {
                 while (!queue.isEmpty()) {
                     if (context == null) {
                         isRunning = false;
                         break;
+                    }
+                    if (level.ordinal() < Level.valueOf(PrefHelper.getDebugToastLevel(CKLog.context)).ordinal()) {
+                        queue.poll();
+                        continue;
                     }
 
                     handler.post(new Runnable() {
@@ -133,7 +139,7 @@ public class CKLog {
 
     private static String makeText(LogItem item) {
         createNotification(item);
-        return getTime(item.time) + " " + item.tag + "\n" + item.message;
+        return getTime(item.time) + " " + item.tag + "\n" + item.message.substring(0, Math.min(item.message.length(), 100));
     }
 
     private static void createNotification(LogItem item) {

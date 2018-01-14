@@ -150,6 +150,17 @@ public class PrefHelper {
         return BuildConfig.DEBUG && isEnabled(context, "pref_make_toast", R.bool.make_toast);
     }
 
+    public static String getDebugToastLevel(Context context) {
+        if (!BuildConfig.DEBUG) {
+            throw new UnsupportedOperationException();
+        }
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return null;
+        }
+        return pref.getString("pref_toast_level", "debug");
+    }
+
     public static boolean isKeepScreenOnEnabled(Context context) {
         return BuildConfig.DEBUG && isEnabled(context, "pref_keep_screen_on", R.bool.keep_screen_on);
     }

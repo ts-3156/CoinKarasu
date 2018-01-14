@@ -72,6 +72,8 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
             ckHost.setValueIndex(index < 0 ? 0 : index);
             bindPreferenceSummaryToValue(prefs, "pref_change_ck_host");
 
+            bindPreferenceSummaryToValue(prefs, "pref_toast_level");
+
             Preference uuidFile = findPreference("pref_uuid_file_exists");
             uuidFile.setSummary(UuidUtils.exists(getActivity()) ? UuidUtils.get(getActivity()) : "No");
 
