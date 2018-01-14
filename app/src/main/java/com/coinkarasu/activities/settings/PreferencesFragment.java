@@ -26,8 +26,10 @@ import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
 import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.coinkarasu.billingmodule.BillingActivity;
+import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
+import com.coinkarasu.utils.UuidUtils;
 import com.coinkarasu.utils.cache.DiskBasedCache;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
@@ -66,8 +68,15 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
             ckHost.setEntries(entries);
             ckHost.setEntryValues(entryValues);
             ckHost.setDefaultValue(entryValues[0]);
-            ckHost.setValueIndex(Arrays.asList(entryValues).indexOf(PrefHelper.getCkHost(getActivity())));
+            int index = Arrays.asList(entryValues).indexOf(PrefHelper.getCkHost(getActivity(), BuildConfig.CK_HOST));
+            ckHost.setValueIndex(index < 0 ? 0 : index);
             bindPreferenceSummaryToValue(prefs, "pref_change_ck_host");
+
+            Preference uuidFile = findPreference("pref_uuid_file_exists");
+            uuidFile.setSummary(UuidUtils.exists(getActivity()) ? UuidUtils.get(getActivity()) : "No");
+
+            Preference tokenFile = findPreference("pref_token_file_exists");
+            tokenFile.setSummary(ApiKeyUtils.exists(getActivity()) ? ApiKeyUtils.get(getActivity()).toString() : ApiKeyUtils.dummy().toString());
         } else {
             getPreferenceScreen().removePreference(findPreference("pref_category_debug"));
         }

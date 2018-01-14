@@ -39,6 +39,10 @@ public class Toplist {
     }
 
     public static Toplist restoreFromCache(Context context, NavigationKind kind) {
+        if (!CacheFileHelper.exists(context, getCacheName(kind))) {
+            return null;
+        }
+
         long start = System.currentTimeMillis();
         String text = CacheFileHelper.read(context, getCacheName(kind));
         if (TextUtils.isEmpty(text)) {

@@ -108,6 +108,16 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_change_ck_host" />
 
+        <Preference
+            android:key="pref_uuid_file_exists"
+            android:summary=""
+            android:title="@string/pref_uuid_file_exists_title" />
+
+        <Preference
+            android:key="pref_token_file_exists"
+            android:summary=""
+            android:title="@string/pref_token_file_exists_title" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

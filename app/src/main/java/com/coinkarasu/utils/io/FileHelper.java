@@ -52,7 +52,7 @@ public class FileHelper {
 
                 text = builder.toString();
             } else {
-                if (DEBUG) CKLog.e(TAG, file.getPath() + " does not exist.");
+                if (DEBUG) CKLog.w(TAG, file.getPath() + " does not exist.");
             }
         } catch (IOException e) {
             CKLog.e(TAG, "read1", e);

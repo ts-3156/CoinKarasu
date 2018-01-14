@@ -2,7 +2,6 @@ package com.coinkarasu.utils;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Pair;
 
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.utils.io.FileHelper;
@@ -17,7 +16,7 @@ public class ApiKeyUtils {
     private static final String TAG = "ApiKeyUtils";
     private static final String NAME = "token";
 
-    public static Pair<String, String> get(Context context) {
+    public static Token get(Context context) {
         String text = FileHelper.read(new File(context.getFilesDir(), NAME));
         String key = null, secret = null;
         try {
@@ -27,18 +26,19 @@ public class ApiKeyUtils {
         } catch (JSONException e) {
             CKLog.e(TAG, e);
         }
-        return Pair.create(key, secret);
+        return new Token(key, secret);
     }
 
-    public static Pair<String, String> dummy() {
-        return Pair.create(BuildConfig.CK_TMP_KEY, BuildConfig.CK_TMP_SECRET);
+    public static Token dummy() {
+        return new Token(BuildConfig.CK_TMP_KEY, BuildConfig.CK_TMP_SECRET);
     }
 
-    public static void save(Context context, String key, String secret) {
+    public static void save(Context context, Token token) {
+        if (DEBUG) CKLog.d(TAG, "save() " + token.toString());
         JSONObject json = new JSONObject();
         try {
-            json.put("key", key);
-            json.put("secret", secret);
+            json.put("key", token.getKey());
+            json.put("secret", token.getSecret());
         } catch (JSONException e) {
             CKLog.e(TAG, e);
         }

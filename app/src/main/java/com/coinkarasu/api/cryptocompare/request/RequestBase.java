@@ -43,7 +43,7 @@ public abstract class RequestBase implements Request {
     @Override
     public abstract void perform(Listener listener);
 
-    private static final int CK_TIMEOUT_MS = BuildConfig.DEBUG ? 100 : 1000;
+    private static final int CK_TIMEOUT_MS = BuildConfig.DEBUG ? 500 : 1000;
     private static final int CK_MAX_RETRIES = BuildConfig.DEBUG ? 0 : 1;
     private static final float CK_BACKOFF_MULT = 1f;
 

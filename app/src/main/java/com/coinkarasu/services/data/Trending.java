@@ -39,6 +39,10 @@ public class Trending {
     }
 
     public static Trending restoreFromCache(Context context, TrendingKind kind) {
+        if (!CacheFileHelper.exists(context, getCacheName(kind))) {
+            return null;
+        }
+
         long start = System.currentTimeMillis();
         String text = CacheFileHelper.read(context, getCacheName(kind));
         if (TextUtils.isEmpty(text)) {

@@ -84,7 +84,7 @@ public class PrefHelper {
         return pref.getString("pref_currency", "JPY");
     }
 
-    public static String getCkHost(Context context) {
+    public static String getCkHost(Context context, String defaultValue) {
         if (!BuildConfig.DEBUG) {
             throw new UnsupportedOperationException();
         }
@@ -92,7 +92,7 @@ public class PrefHelper {
         if (pref == null) {
             return null;
         }
-        return pref.getString("pref_change_ck_host", "default");
+        return pref.getString("pref_change_ck_host", defaultValue);
     }
 
     public static boolean isVisibleTab(Context context, NavigationKind kind) {

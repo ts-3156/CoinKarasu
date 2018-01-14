@@ -181,6 +181,8 @@
     <string name="pref_app_version_up_to_date">This app is up to date.</string>
     <string name="pref_app_version_please_update">This app is not the latest version. Please update to a latest version.</string>
     <string name="pref_clear_cache_title">Clear cache</string>
+    <string name="pref_uuid_file_exists_title">Uuid file</string>
+    <string name="pref_token_file_exists_title">Token file</string>
     <string name="pref_clear_cache_summary">Clear all cached data on the device</string>
     <string name="pref_clear_cache_dialog">Clear all cached data on the device? Fresh data will be retrieved from the server.</string>
     <string name="pref_clear_config_title">Clear config</string>

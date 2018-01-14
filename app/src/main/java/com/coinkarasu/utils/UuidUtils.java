@@ -14,6 +14,10 @@ public class UuidUtils {
     private static final String NAME = "uuid";
 
     public static String get(Context context) {
+        return FileHelper.read(new File(context.getFilesDir(), NAME));
+    }
+
+    public static String getOrGenerateIfBlank(Context context) {
         File file = new File(context.getFilesDir(), NAME);
         if (!file.exists()) {
             FileHelper.touch(file);

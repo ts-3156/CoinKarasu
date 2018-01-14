@@ -2,7 +2,6 @@ package com.coinkarasu.api.coinkarasu;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Pair;
 
 import com.android.volley.Request;
 import com.coinkarasu.BuildConfig;
@@ -10,6 +9,7 @@ import com.coinkarasu.api.coincheck.data.Rate;
 import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
+import com.coinkarasu.utils.Token;
 import com.coinkarasu.utils.volley.RequestQueueWrapper;
 import com.coinkarasu.utils.volley.VolleyHelper;
 
@@ -44,7 +44,7 @@ public class Client {
         this.requestQueue = VolleyHelper.getInstance(context).getWrappedRequestQueue();
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
-        this.host = BuildConfig.DEBUG ? PrefHelper.getCkHost(context) : HOST;
+        this.host = BuildConfig.DEBUG ? PrefHelper.getCkHost(context, HOST) : HOST;
     }
 
     public Rate getSalesRate(String fromSymbol, String toSymbol) {
@@ -89,10 +89,11 @@ public class Client {
         return rate;
     }
 
-    public Pair<String, String> requestApiKey(String uuid) {
+    public Token requestApiKey(String uuid) {
         String url = host + "/apps?uuid=" + uuid;
         JSONObject response = requestByUrl(url, Request.Method.POST);
         if (response == null) {
+            if (DEBUG) CKLog.w(TAG, "requestApiKey() response is null " + uuid);
             return null;
         }
 
@@ -105,10 +106,14 @@ public class Client {
         }
 
         if (TextUtils.isEmpty(key) || TextUtils.isEmpty(secret)) {
+            if (DEBUG) CKLog.w(TAG, "requestApiKey() key or secret is null " + response.toString());
             return null;
         }
 
-        return Pair.create(key, secret);
+        Token token = new Token(key, secret);
+        if (DEBUG) CKLog.d(TAG, "requestApiKey() " + uuid + " " + token.toString());
+
+        return token;
     }
 
     private Map<String, String> createHeader(String url) {
