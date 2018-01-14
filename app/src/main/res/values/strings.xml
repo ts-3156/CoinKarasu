@@ -213,6 +213,18 @@
     <string name="pref_title_become_premium">Become premium</string>
     <string name="pref_description_become_premium"></string>
 
+    <string name="pref_title_change_ck_host">Change ck host</string>
+    <string-array name="pref_change_ck_host_titles">
+        <item>default</item>
+        <item>10.0.2.2:3000</item>
+        <item>coinkarasu.com</item>
+    </string-array>
+    <string-array name="pref_change_ck_host_values">
+        <item>default</item>
+        <item>http://10.0.2.2:3000</item>
+        <item>http://coinkarasu.com</item>
+    </string-array>
+
     <string name="pref_title_display_name">Display name</string>
     <string name="pref_default_display_name">John Smith</string>
 

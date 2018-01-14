@@ -84,6 +84,17 @@ public class PrefHelper {
         return pref.getString("pref_currency", "JPY");
     }
 
+    public static String getCkHost(Context context) {
+        if (!BuildConfig.DEBUG) {
+            throw new UnsupportedOperationException();
+        }
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return null;
+        }
+        return pref.getString("pref_change_ck_host", "default");
+    }
+
     public static boolean isVisibleTab(Context context, NavigationKind kind) {
         SharedPreferences pref = getPref(context);
         if (pref == null) {

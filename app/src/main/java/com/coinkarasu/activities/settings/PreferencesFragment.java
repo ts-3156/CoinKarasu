@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 public class PreferencesFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
@@ -54,11 +55,22 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
         findPreference("pref_open_source_licenses").setOnPreferenceClickListener(this);
         findPreference("pref_remove_ads").setOnPreferenceClickListener(this);
 
-        if (!BuildConfig.DEBUG) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        if (BuildConfig.DEBUG) {
+            ListPreference ckHost = (ListPreference) findPreference("pref_change_ck_host");
+            CharSequence[] entries = ckHost.getEntries();
+            entries[0] = BuildConfig.CK_HOST.substring(7) + " (default)";
+            CharSequence[] entryValues = ckHost.getEntryValues();
+            entryValues[0] = BuildConfig.CK_HOST;
+            ckHost.setEntries(entries);
+            ckHost.setEntryValues(entryValues);
+            ckHost.setDefaultValue(entryValues[0]);
+            ckHost.setValueIndex(Arrays.asList(entryValues).indexOf(PrefHelper.getCkHost(getActivity())));
+            bindPreferenceSummaryToValue(prefs, "pref_change_ck_host");
+        } else {
             getPreferenceScreen().removePreference(findPreference("pref_category_debug"));
         }
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         setDefaultSyncFrequencyIfNeeded();
         ((SwitchPreference) findPreference("pref_remove_ads")).setChecked(PrefHelper.isPremium(getActivity()));

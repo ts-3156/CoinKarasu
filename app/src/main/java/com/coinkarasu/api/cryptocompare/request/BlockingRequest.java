@@ -55,8 +55,8 @@ public class BlockingRequest extends RequestBase {
             long start = System.currentTimeMillis();
             try {
                 response = future.get();
-                requestQueue.addResult(request, true);
                 if (DEBUG) CKLog.d(TAG, "fetch " + url + " " + (System.currentTimeMillis() - start) + "ms");
+                requestQueue.addResult(request, true);
 
             } catch (InterruptedException e) {
                 requestQueue.addResult(request, false);

@@ -9,6 +9,7 @@ import com.coinkarasu.BuildConfig;
 import com.coinkarasu.api.coincheck.data.Rate;
 import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.volley.RequestQueueWrapper;
 import com.coinkarasu.utils.volley.VolleyHelper;
 
@@ -33,23 +34,21 @@ public class Client {
     private RequestQueueWrapper requestQueue;
     private String apiKey;
     private String apiSecret;
+    private String host;
 
     public Client(Context context) {
-        this(VolleyHelper.getInstance(context).getWrappedRequestQueue(), "", "");
+        this(context, "", "");
     }
 
     public Client(Context context, String apiKey, String apiSecret) {
-        this(VolleyHelper.getInstance(context).getWrappedRequestQueue(), apiKey, apiSecret);
-    }
-
-    public Client(RequestQueueWrapper queue, String apiKey, String apiSecret) {
-        this.requestQueue = queue;
+        this.requestQueue = VolleyHelper.getInstance(context).getWrappedRequestQueue();
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
+        this.host = BuildConfig.DEBUG ? PrefHelper.getCkHost(context) : HOST;
     }
 
     public Rate getSalesRate(String fromSymbol, String toSymbol) {
-        String url = HOST + "/coincheck/sales_rates?"
+        String url = host + "/coincheck/sales_rates?"
                 + "time=" + ((System.currentTimeMillis() / 1000) - ONE_DAY)
                 + "&from_symbol=" + fromSymbol
                 + "&to_symbol=" + toSymbol;
@@ -70,7 +69,7 @@ public class Client {
     }
 
     public Rate getTradingRate(String fromSymbol, String toSymbol) {
-        String url = HOST + "/coincheck/trading_rates?"
+        String url = host + "/coincheck/trading_rates?"
                 + "time=" + ((System.currentTimeMillis() / 1000) - ONE_DAY)
                 + "&from_symbol=" + fromSymbol
                 + "&to_symbol=" + toSymbol;
@@ -91,7 +90,7 @@ public class Client {
     }
 
     public Pair<String, String> requestApiKey(String uuid) {
-        String url = HOST + "/apps?uuid=" + uuid;
+        String url = host + "/apps?uuid=" + uuid;
         JSONObject response = requestByUrl(url, Request.Method.POST);
         if (response == null) {
             return null;
