@@ -12,10 +12,12 @@ public class VolleyHelper {
     private static VolleyHelper instance;
 
     private RequestQueue requestQueue;
+    private RequestQueueWrapper requestQueueWrapper;
     private ImageLoader imageLoader;
 
     private VolleyHelper(Context appContext) {
         requestQueue = Volley.newRequestQueue(appContext);
+        requestQueueWrapper = new RequestQueueWrapper(requestQueue);
         imageLoader = new ImageLoader(requestQueue, new DiskCache(appContext.getCacheDir()));
     }
 
@@ -30,6 +32,10 @@ public class VolleyHelper {
         return requestQueue;
     }
 
+    public RequestQueueWrapper getWrappedRequestQueue() {
+        return requestQueueWrapper;
+    }
+
     public <T> void addToRequestQueue(Request<T> req) {
         getRequestQueue().add(req);
     }
@@ -37,5 +43,4 @@ public class VolleyHelper {
     public ImageLoader getImageLoader() {
         return imageLoader;
     }
-
 }

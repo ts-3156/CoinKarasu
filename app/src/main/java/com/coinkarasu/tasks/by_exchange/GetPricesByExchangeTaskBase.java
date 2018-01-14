@@ -79,7 +79,7 @@ public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Int
     public interface Listener {
         void started(Exchange exchange, CoinKind coinKind);
 
-        void finished(Exchange exchange, CoinKind coinKind, List<Price> prices);
+        void finished(Exchange exchange, CoinKind coinKind, List<Price> prices, boolean withWarning);
     }
 
 }

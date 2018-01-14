@@ -6,7 +6,6 @@ import android.util.Log;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.coinkarasu.utils.volley.VolleyHelper;
 
 import org.json.JSONObject;
 
@@ -19,7 +18,7 @@ public class NonBlockingRequest extends RequestBase {
     @Override
     public void perform(final Listener listener) {
         // TODO Bug fix
-        JsonObjectRequest request = new JsonObjectRequest(com.android.volley.Request.Method.GET, getUrl(), null,
+        JsonObjectRequest request = new JsonObjectRequest(url, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -32,7 +31,7 @@ public class NonBlockingRequest extends RequestBase {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d("onErrRes", getUrl());
+                        Log.d("onErrRes", url);
                         VolleyError e = new VolleyError(new String(error.networkResponse.data));
                         throw new RuntimeException(e.getMessage());
                     }
@@ -40,7 +39,17 @@ public class NonBlockingRequest extends RequestBase {
                 });
 
         request.setShouldCache(true);
-        request.setRetryPolicy(getRetryPolicy());
-        VolleyHelper.getInstance(getContext()).addToRequestQueue(request);
+        request.setRetryPolicy(getDefaultRetryPolicy());
+        requestQueue.add(request);
+    }
+
+    @Override
+    public JSONObject perform() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public JSONObject perform(int method) {
+        throw new UnsupportedOperationException();
     }
 }

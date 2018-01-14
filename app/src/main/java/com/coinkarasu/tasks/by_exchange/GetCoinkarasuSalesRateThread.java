@@ -22,7 +22,7 @@ public class GetCoinkarasuSalesRateThread extends Thread {
 
         Pair<String, String> token =
                 ApiKeyUtils.exists(context) ? ApiKeyUtils.get(context) : ApiKeyUtils.dummy();
-        this.client = new Client(token.first, token.second);
+        this.client = new Client(context, token.first, token.second);
 
         this.fromSymbol = fromSymbol;
         this.toSymbol = "JPY";

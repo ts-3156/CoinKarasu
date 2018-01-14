@@ -18,7 +18,7 @@ public class GetApiKeyTask extends AsyncTask<Integer, Integer, Integer> {
     @Override
     protected Integer doInBackground(Integer... params) {
         String uuid = UuidUtils.get(context);
-        Pair<String, String> result = new Client().requestApiKey(uuid);
+        Pair<String, String> result = new Client(context).requestApiKey(uuid);
         if (result != null) {
             ApiKeyUtils.save(context, result.first, result.second);
         }

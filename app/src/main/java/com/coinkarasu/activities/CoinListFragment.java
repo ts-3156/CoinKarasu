@@ -325,7 +325,7 @@ public class CoinListFragment extends Fragment implements
     }
 
     @Override
-    public void finished(final Exchange exchange, final CoinKind coinKind, final List<Price> prices) {
+    public void finished(final Exchange exchange, final CoinKind coinKind, final List<Price> prices, final boolean withWarning) {
         if (isDetached() || getActivity() == null || getActivity().isFinishing()) {
             if (updater != null) {
                 updater.stop("finished");
@@ -334,7 +334,9 @@ public class CoinListFragment extends Fragment implements
         }
 
         if (prices == null || prices.isEmpty()) {
-            if (DEBUG) CKLog.w(TAG, "finished() prices is null");
+            if (DEBUG) CKLog.w(TAG, "finished() prices is null " + exchange + " " + coinKind);
+            refreshRelativeTime(exchange, coinKind);
+            hideProgressbarWithError(exchange, coinKind);
             return;
         }
 
@@ -366,7 +368,7 @@ public class CoinListFragment extends Fragment implements
                 adapter.resumeAnimation();
                 adapter.notifyCoinsChanged(exchange, coinKind);
                 refreshRelativeTime(exchange, coinKind);
-                hideProgressbarDelayed(exchange, coinKind);
+                hideProgressbarDelayed(exchange, coinKind, withWarning);
 
                 if (DEBUG) CKLog.d(TAG, "finished() " + kind + " " + exchange + " " + coinKind);
             }
@@ -376,34 +378,56 @@ public class CoinListFragment extends Fragment implements
         new Handler().postDelayed(runnable, delay);
     }
 
-    private void hideProgressbarDelayed(Exchange exchange, CoinKind coinKind) {
+    private void hideProgressbarDelayed(Exchange exchange, CoinKind coinKind, boolean withWarning) {
         if (getView() == null) {
             return;
         }
-        AggressiveProgressbar progressbar = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-progressbar");
-        if (progressbar != null) {
-            progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION);
+        AggressiveProgressbar progressbar = getView().findViewWithTag(makeProgressbarTag(exchange, coinKind));
+        if (progressbar == null) {
+            if (DEBUG) CKLog.w(TAG, "hideProgressbarDelayed() Being recycled");
+            return;
         }
+        progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION, withWarning);
+    }
+
+    private void hideProgressbarWithError(Exchange exchange, CoinKind coinKind) {
+        if (getView() == null) {
+            return;
+        }
+        AggressiveProgressbar progressbar = getView().findViewWithTag(makeProgressbarTag(exchange, coinKind));
+        if (progressbar == null) {
+            if (DEBUG) CKLog.w(TAG, "hideProgressbarWithError() Being recycled");
+            return;
+        }
+        progressbar.stopAnimationWithError();
     }
 
     private void showProgressbar(Exchange exchange, CoinKind coinKind) {
         if (getView() == null) {
             return;
         }
-        AggressiveProgressbar progressbar = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-progressbar");
-        if (progressbar != null) {
-            progressbar.startAnimation();
+        AggressiveProgressbar progressbar = getView().findViewWithTag(makeProgressbarTag(exchange, coinKind));
+        if (progressbar == null) {
+            if (DEBUG) CKLog.w(TAG, "showProgressbar() Being recycled");
+            return;
         }
+        progressbar.startAnimation();
     }
 
     private void refreshRelativeTime(Exchange exchange, CoinKind coinKind) {
         if (getView() == null) {
             return;
         }
-        View timeSpan = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-time_span");
-        if (timeSpan != null) {
-            ((RelativeTimeSpanTextView) timeSpan).updateText();
+        RelativeTimeSpanTextView timeSpan = getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-time_span");
+        if (timeSpan == null) {
+            if (DEBUG) CKLog.w(TAG, "refreshRelativeTime() Being recycled");
+            return;
         }
+        timeSpan.updateText();
+    }
+
+    private String makeProgressbarTag(Exchange exchange, CoinKind coinKind) {
+        return exchange.name() + "-" + coinKind.name() + "-progressbar";
     }
 
     @Override

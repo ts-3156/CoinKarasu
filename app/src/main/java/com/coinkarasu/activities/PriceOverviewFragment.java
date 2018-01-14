@@ -108,7 +108,7 @@ public class PriceOverviewFragment extends Fragment implements
     }
 
     @Override
-    public void finished(Exchange exchange, CoinKind coinKind, List<Price> prices) {
+    public void finished(Exchange exchange, CoinKind coinKind, List<Price> prices, boolean withWarning) {
         if (isDetached() || getActivity() == null || getView() == null) {
             if (updater != null) {
                 updater.stop("finished");
@@ -117,7 +117,7 @@ public class PriceOverviewFragment extends Fragment implements
         }
 
         updater.setLastUpdated(System.currentTimeMillis());
-        ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).stopAnimationDelayed(ValueAnimatorBase.DURATION);
+        ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).stopAnimationDelayed(ValueAnimatorBase.DURATION, withWarning);
         ((RelativeTimeSpanTextView) getView().findViewById(R.id.relative_time_span)).updateText();
 
         Price price = prices.get(0);

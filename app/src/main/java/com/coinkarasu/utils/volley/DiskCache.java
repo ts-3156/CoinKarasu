@@ -22,7 +22,7 @@ public class DiskCache implements ImageLoader.ImageCache {
         if (bitmap == null) {
             File file = getFileForUrl(url);
             if (file.exists()) {
-                bitmap = BitmapHelper.read(file);
+                bitmap = BitmapUtils.read(file);
             }
         }
         return bitmap;
@@ -57,7 +57,7 @@ public class DiskCache implements ImageLoader.ImageCache {
 
         @Override
         protected Void doInBackground(Bitmap... params) {
-            BitmapHelper.write(file, params[0]);
+            BitmapUtils.write(file, params[0]);
             return null;
         }
     }

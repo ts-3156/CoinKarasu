@@ -20,11 +20,13 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
 
     private List<Thread> threads;
     private Context context;
+    private boolean hasWarning;
 
     protected GetCoincheckTradingRatesTask(Context context, CoinKind coinKind) {
         super(Exchange.coincheck, coinKind);
         this.context = context;
         this.threads = new ArrayList<>();
+        this.hasWarning = false;
     }
 
     @Override
@@ -73,6 +75,7 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
         Rate rate = ((GetCoinkarasuTradingRateThread) threads.get(2)).getRate();
         if (rate == null) {
             if (DEBUG) CKLog.w(TAG, "rate is null");
+            hasWarning = true;
         } else {
             if (rate.value != 0.0) {
                 price.priceDiff = price.price - rate.value;
@@ -88,7 +91,7 @@ public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
     @Override
     protected void onPostExecute(List<Price> prices) {
         if (listener != null) {
-            listener.finished(exchange, coinKind, prices);
+            listener.finished(exchange, coinKind, prices, hasWarning);
         }
         context = null;
     }

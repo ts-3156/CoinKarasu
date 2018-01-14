@@ -23,6 +23,7 @@ public class GetZaifTradingRatesTask extends GetPricesByExchangeTaskBase {
     private String[] fromSymbols;
     private String toSymbol;
     private Context context;
+    private boolean hasWarning;
 
     public GetZaifTradingRatesTask(Context context, CoinKind coinKind) {
         super(Exchange.zaif, CoinKind.none);
@@ -30,6 +31,7 @@ public class GetZaifTradingRatesTask extends GetPricesByExchangeTaskBase {
         this.fromSymbols = context.getResources().getStringArray(exchange.tradingSymbolsResId);
         this.toSymbol = "JPY";
         this.context = context;
+        this.hasWarning = false;
     }
 
     @Override
@@ -59,6 +61,7 @@ public class GetZaifTradingRatesTask extends GetPricesByExchangeTaskBase {
             Prices prices = thread.getPrices();
             if (prices == null || prices.getCoins() == null || prices.getCoins().isEmpty()) {
                 CKLog.w(TAG, "prices is blank");
+                hasWarning = true;
                 continue;
             }
 
@@ -76,7 +79,7 @@ public class GetZaifTradingRatesTask extends GetPricesByExchangeTaskBase {
     @Override
     protected void onPostExecute(List<Price> prices) {
         if (listener != null) {
-            listener.finished(exchange, coinKind, prices);
+            listener.finished(exchange, coinKind, prices, hasWarning);
         }
         context = null;
     }

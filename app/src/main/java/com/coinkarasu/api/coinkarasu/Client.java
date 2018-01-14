@@ -1,26 +1,23 @@
 package com.coinkarasu.api.coinkarasu;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import com.android.volley.Request;
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.api.coincheck.data.Rate;
+import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.coinkarasu.utils.CKLog;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpHeaders;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.apache.ApacheHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
+import com.coinkarasu.utils.volley.RequestQueueWrapper;
+import com.coinkarasu.utils.volley.VolleyHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,15 +30,20 @@ public class Client {
     private static final String HOST = BuildConfig.CK_HOST;
     private static final long ONE_DAY = 60 * 60 * 24;
 
+    private RequestQueueWrapper requestQueue;
     private String apiKey;
     private String apiSecret;
 
-    public Client() {
-        this.apiKey = "";
-        this.apiSecret = "";
+    public Client(Context context) {
+        this(VolleyHelper.getInstance(context).getWrappedRequestQueue(), "", "");
     }
 
-    public Client(String apiKey, String apiSecret) {
+    public Client(Context context, String apiKey, String apiSecret) {
+        this(VolleyHelper.getInstance(context).getWrappedRequestQueue(), apiKey, apiSecret);
+    }
+
+    public Client(RequestQueueWrapper queue, String apiKey, String apiSecret) {
+        this.requestQueue = queue;
         this.apiKey = apiKey;
         this.apiSecret = apiSecret;
     }
@@ -52,17 +54,7 @@ public class Client {
                 + "&from_symbol=" + fromSymbol
                 + "&to_symbol=" + toSymbol;
 
-        String jsonString = requestByUrlWithHeader(url, "GET", createHeader(url));
-        if (TextUtils.isEmpty(jsonString)) {
-            return null;
-        }
-
-        JSONObject response = null;
-        try {
-            response = new JSONObject(jsonString);
-        } catch (JSONException e) {
-            CKLog.e(TAG, e);
-        }
+        JSONObject response = requestByUrlWithHeader(url, Request.Method.GET, createHeader(url));
         if (response == null) {
             return null;
         }
@@ -83,17 +75,7 @@ public class Client {
                 + "&from_symbol=" + fromSymbol
                 + "&to_symbol=" + toSymbol;
 
-        String jsonString = requestByUrlWithHeader(url, "GET", createHeader(url));
-        if (TextUtils.isEmpty(jsonString)) {
-            return null;
-        }
-
-        JSONObject response = null;
-        try {
-            response = new JSONObject(jsonString);
-        } catch (JSONException e) {
-            CKLog.e(TAG, e);
-        }
+        JSONObject response = requestByUrlWithHeader(url, Request.Method.GET, createHeader(url));
         if (response == null) {
             return null;
         }
@@ -110,22 +92,20 @@ public class Client {
 
     public Pair<String, String> requestApiKey(String uuid) {
         String url = HOST + "/apps?uuid=" + uuid;
-        String jsonString = requestByUrl(url, "POST");
-        if (TextUtils.isEmpty(jsonString)) {
+        JSONObject response = requestByUrl(url, Request.Method.POST);
+        if (response == null) {
             return null;
         }
 
-        JSONObject response = null;
         String key = null, secret = null;
         try {
-            response = new JSONObject(jsonString);
             key = response.getString("key");
             secret = response.getString("secret");
         } catch (JSONException e) {
             CKLog.e(TAG, url, e);
         }
 
-        if (response == null || TextUtils.isEmpty(key) || TextUtils.isEmpty(secret)) {
+        if (TextUtils.isEmpty(key) || TextUtils.isEmpty(secret)) {
             return null;
         }
 
@@ -146,45 +126,12 @@ public class Client {
         return HMAC_SHA256Encode(apiSecret, message);
     }
 
-    private static String requestByUrlWithHeader(String url, String method, final Map<String, String> headers) {
-        CKLog.d(TAG, url);
-
-        ApacheHttpTransport transport = new ApacheHttpTransport();
-        HttpRequestFactory factory = transport.createRequestFactory(new HttpRequestInitializer() {
-            public void initialize(final HttpRequest request) throws IOException {
-                request.setConnectTimeout(0);
-                request.setReadTimeout(0);
-                request.setParser(new JacksonFactory().createJsonObjectParser());
-
-                final HttpHeaders httpHeaders = new HttpHeaders();
-                for (Map.Entry<String, String> e : headers.entrySet()) {
-                    httpHeaders.set(e.getKey(), e.getValue());
-                }
-                request.setHeaders(httpHeaders);
-            }
-        });
-
-        String jsonString;
-        try {
-            HttpRequest request;
-            if (method.equals("POST")) {
-                request = factory.buildPostRequest(new GenericUrl(url), null);
-            } else {
-                request = factory.buildGetRequest(new GenericUrl(url));
-            }
-
-            HttpResponse response = request.execute();
-            jsonString = response.parseAsString();
-        } catch (IOException e) {
-            CKLog.e(TAG, url, e);
-            jsonString = null;
-        }
-
-        return jsonString;
+    private JSONObject requestByUrlWithHeader(String url, int method, final Map<String, String> headers) {
+        return new BlockingRequest(requestQueue, url, headers).perform(method);
     }
 
-    private static String requestByUrl(String url, String method) {
-        return requestByUrlWithHeader(url, method, new HashMap<String, String>());
+    private JSONObject requestByUrl(String url, int method) {
+        return requestByUrlWithHeader(url, method, Collections.<String, String>emptyMap());
     }
 
     private static String HMAC_SHA256Encode(String secretKey, String message) {

@@ -7,7 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class BitmapHelper {
+public class BitmapUtils {
 
     private static final boolean DEBUG = false;
 

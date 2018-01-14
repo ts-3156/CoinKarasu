@@ -2,6 +2,7 @@ package com.coinkarasu.api.cryptocompare;
 
 import android.content.Context;
 
+import com.android.volley.RequestQueue;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshotImpl;
 import com.coinkarasu.api.cryptocompare.data.History;
@@ -21,6 +22,8 @@ import com.coinkarasu.api.cryptocompare.response.TopPairsResponse;
 import com.coinkarasu.api.cryptocompare.response.TopPairsResponseImpl;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.StringHelper;
+import com.coinkarasu.utils.volley.RequestQueueWrapper;
+import com.coinkarasu.utils.volley.VolleyHelper;
 
 import org.json.JSONObject;
 
@@ -34,9 +37,11 @@ class ClientImpl implements Client {
     private static final String DEFAULT_EXCHANGE = "cccagg";
 
     private Context context;
+    private RequestQueueWrapper requestQueue;
 
     ClientImpl(Context context) {
         this.context = context;
+        this.requestQueue = VolleyHelper.getInstance(context).getWrappedRequestQueue();
     }
 
     @Override
@@ -46,7 +51,7 @@ class ClientImpl implements Client {
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
 
-        JSONObject response = new BlockingRequest(context, url).perform();
+        JSONObject response = performGet(url);
         return new PriceImpl(new PricesResponseImpl(response, new String[]{fromSymbol}, toSymbol, exchange));
     }
 
@@ -56,7 +61,7 @@ class ClientImpl implements Client {
                 + "&fsyms=" + StringHelper.join(",", fromSymbols)
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
-        JSONObject response = new BlockingRequest(context, url).perform();
+        JSONObject response = performGet(url);
         return new PricesImpl(new PricesResponseImpl(response, fromSymbols, toSymbol, exchange));
     }
 
@@ -70,7 +75,7 @@ class ClientImpl implements Client {
         if (HistoryResponseImpl.isCacheExist(context, fromSymbol, toSymbol, kind, limit, exchange)) {
             historyResponse = HistoryResponseImpl.restoreFromCache(context, fromSymbol, toSymbol, kind, limit, exchange);
         } else {
-            JSONObject response = new BlockingRequest(context, url).perform();
+            JSONObject response = performGet(url);
             historyResponse = new HistoryResponseImpl(response, fromSymbol, toSymbol, kind, limit, exchange);
             historyResponse.saveToCache(context);
         }
@@ -137,7 +142,7 @@ class ClientImpl implements Client {
     public CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol) {
         String url = "https://www.cryptocompare.com/api/data/coinsnapshot/?fsym=" + fromSymbol + "&tsym=" + toSymbol;
 
-        JSONObject response = new BlockingRequest(context, url).perform();
+        JSONObject response = performGet(url);
         CoinSnapshotResponse snapshotResponse = new CoinSnapshotResponseImpl(response, fromSymbol, toSymbol);
         return new CoinSnapshotImpl(snapshotResponse);
     }
@@ -151,7 +156,7 @@ class ClientImpl implements Client {
         if (TopPairsResponseImpl.isCacheExist(context, fromSymbol)) {
             topPairsResponse = TopPairsResponseImpl.restoreFromCache(context, fromSymbol);
         } else {
-            JSONObject response = new BlockingRequest(context, url).perform();
+            JSONObject response = performGet(url);
             topPairsResponse = new TopPairsResponseImpl(response, fromSymbol);
             topPairsResponse.saveToCache(context);
         }
@@ -173,5 +178,9 @@ class ClientImpl implements Client {
                 + records.size() + ", samples " + samples.size());
 
         return samples;
+    }
+
+    private JSONObject performGet(String url) {
+        return new BlockingRequest(requestQueue, url).perform();
     }
 }

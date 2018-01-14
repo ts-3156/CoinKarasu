@@ -22,11 +22,13 @@ public class GetBitflyerTradingRatesTask extends GetPricesByExchangeTaskBase {
 
     private List<Thread> threads;
     private Context context;
+    private boolean hasWarning;
 
     protected GetBitflyerTradingRatesTask(Context context) {
         super(Exchange.bitflyer, CoinKind.none);
         this.context = context;
         this.threads = new ArrayList<>();
+        this.hasWarning = false;
     }
 
     @Override
@@ -55,6 +57,7 @@ public class GetBitflyerTradingRatesTask extends GetPricesByExchangeTaskBase {
         Board board = ((GetBitflyerBoardThread) threads.get(0)).getBoard();
         if (board == null) {
             if (DEBUG) CKLog.w(TAG, "board is null");
+            hasWarning = true;
             return result;
         }
         Price price = new Price(exchange, coinKind, "BTC", "JPY", board.getMidPrice());
@@ -62,6 +65,7 @@ public class GetBitflyerTradingRatesTask extends GetPricesByExchangeTaskBase {
         Prices prices = ((GetCccaggPricesThread) threads.get(1)).getPrices();
         if (prices == null || prices.getCoins() == null || prices.getCoins().isEmpty()) {
             if (DEBUG) CKLog.w(TAG, "prices is null");
+            hasWarning = true;
             return result;
         }
 
@@ -77,7 +81,7 @@ public class GetBitflyerTradingRatesTask extends GetPricesByExchangeTaskBase {
     @Override
     protected void onPostExecute(List<Price> prices) {
         if (listener != null) {
-            listener.finished(exchange, coinKind, prices);
+            listener.finished(exchange, coinKind, prices, hasWarning);
         }
         context = null;
     }

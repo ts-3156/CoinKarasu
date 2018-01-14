@@ -22,6 +22,7 @@ public class GetCoincheckSalesRatesTask extends GetPricesByExchangeTaskBase {
     private List<GetCoinkarasuSalesRateThread> threads2;
     private String[] fromSymbols;
     private Context context;
+    private boolean hasWarning;
 
     protected GetCoincheckSalesRatesTask(Context context) {
         super(Exchange.coincheck, CoinKind.sales);
@@ -29,6 +30,7 @@ public class GetCoincheckSalesRatesTask extends GetPricesByExchangeTaskBase {
         this.context = context;
         this.threads = new ArrayList<>();
         this.threads2 = new ArrayList<>();
+        this.hasWarning = false;
     }
 
     @Override
@@ -65,6 +67,7 @@ public class GetCoincheckSalesRatesTask extends GetPricesByExchangeTaskBase {
             Rate rate = thread.getRate();
             if (rate == null) {
                 if (DEBUG) CKLog.w(TAG, "GetCoincheckSalesRateThread#getRate() is null");
+                hasWarning = true;
                 continue;
             }
             Price price = new Price(exchange, coinKind, rate.fromSymbol, rate.toSymbol, rate.value);
@@ -73,6 +76,7 @@ public class GetCoincheckSalesRatesTask extends GetPricesByExchangeTaskBase {
                 Rate r = t.getRate();
                 if (r == null) {
                     if (DEBUG) CKLog.w(TAG, "GetCoinkarasuSalesRateThread#getRate() is null");
+                    hasWarning = true;
                     continue;
                 }
 
@@ -92,7 +96,7 @@ public class GetCoincheckSalesRatesTask extends GetPricesByExchangeTaskBase {
     @Override
     protected void onPostExecute(List<Price> prices) {
         if (listener != null) {
-            listener.finished(exchange, coinKind, prices);
+            listener.finished(exchange, coinKind, prices, hasWarning);
         }
         context = null;
     }

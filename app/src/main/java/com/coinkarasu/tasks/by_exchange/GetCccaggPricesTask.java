@@ -25,6 +25,7 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
     private String toSymbol;
     private String exchangeStr;
     private Context context;
+    private boolean hasWarning;
 
     public GetCccaggPricesTask(Context context, Exchange exchange) {
         super(exchange, CoinKind.none);
@@ -33,6 +34,7 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
         this.toSymbol = null;
         this.exchangeStr = null;
         this.context = context;
+        this.hasWarning = false;
     }
 
     @Override
@@ -75,6 +77,7 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
             if (prices == null || prices.getCoins() == null || prices.getCoins().isEmpty()) {
                 if (DEBUG) CKLog.w(TAG, "prices is blank " + exchangeStr + " "
                         + Arrays.toString(fromSymbols) + " " + toSymbol);
+                hasWarning = true;
                 continue;
             }
 
@@ -92,7 +95,7 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
     @Override
     protected void onPostExecute(List<Price> prices) {
         if (listener != null) {
-            listener.finished(exchange, coinKind, prices);
+            listener.finished(exchange, coinKind, prices, hasWarning);
         }
         context = null;
     }
