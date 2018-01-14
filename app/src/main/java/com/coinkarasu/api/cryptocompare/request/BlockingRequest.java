@@ -66,6 +66,8 @@ public class BlockingRequest extends RequestBase {
                 requestQueue.addResult(request, false);
                 if (e.getMessage() != null && e.getMessage().equals("com.android.volley.TimeoutError")) {
                     CKLog.e(TAG, new RuntimeException("Timeout " + url));
+                } else if (e.getMessage() != null && e.getMessage().startsWith("com.android.volley.NoConnectionError")) {
+                    CKLog.e(TAG, new RuntimeException("NoConnectionError " + url));
                 } else {
                     CKLog.e(TAG, "ExecutionException " + url, e);
                 }

@@ -1,22 +1,33 @@
 package com.coinkarasu.utils;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.coinkarasu.BuildConfig;
+import com.coinkarasu.R;
+import com.coinkarasu.activities.MainActivity;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 
 public class CKLog {
     private static final boolean DEBUG = BuildConfig.DEBUG;
     private static final String TAG = "CKLog";
 
     private static Context context;
-    private static Queue<String> queue;
+    private static Queue<LogItem> queue;
     private static boolean isRunning;
 
     public static synchronized void setContext(Context context) {
@@ -67,12 +78,12 @@ public class CKLog {
         if (DEBUG) Log.e(tag, message, ex);
     }
 
-    private static void makeToast(String tag, String message) {
+    private synchronized static void makeToast(String tag, String message) {
         if (context == null || !BuildConfig.DEBUG || !PrefHelper.isDebugToastEnabled(context)) {
             return;
         }
 
-        queue.offer(tag + ": " + message);
+        queue.offer(new LogItem(System.currentTimeMillis(), tag, message));
 
         if (isRunning) {
             return;
@@ -93,7 +104,16 @@ public class CKLog {
                     handler.post(new Runnable() {
                         public void run() {
                             if (context != null) {
-                                Toast.makeText(context, queue.poll(), Toast.LENGTH_SHORT).show();
+                                StringBuilder builder = new StringBuilder();
+                                int pollCount = 0;
+                                while (!queue.isEmpty() && pollCount <= 5) {
+                                    if (pollCount != 0) {
+                                        builder.append("\n\n");
+                                    }
+                                    builder.append(makeText(queue.poll()));
+                                    pollCount++;
+                                }
+                                Toast.makeText(context, builder.toString(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -109,5 +129,54 @@ public class CKLog {
             }
         };
         thread.start();
+    }
+
+    private static String makeText(LogItem item) {
+        createNotification(item);
+        return getTime(item.time) + " " + item.tag + "\n" + item.message;
+    }
+
+    private static void createNotification(LogItem item) {
+        NotificationCompat.Builder builder =
+                new NotificationCompat.Builder(context, "debug")
+                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setContentTitle(item.tag)
+                        .setContentText(item.message)
+                        .setTicker(item.message);
+
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(new Intent(context, MainActivity.class));
+
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(resultPendingIntent);
+
+        NotificationManager manager =
+                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (manager.getNotificationChannel("debug") == null) {
+                NotificationChannel channel = new
+                        NotificationChannel("debug", "Debug", NotificationManager.IMPORTANCE_DEFAULT);
+                manager.createNotificationChannel(channel);
+            }
+        }
+        manager.notify(new Random().nextInt(100000), builder.build());
+    }
+
+    private static String getTime(long time) {
+        return DateUtils.getRelativeTimeSpanString(time, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL).toString();
+    }
+
+    private static class LogItem {
+        long time;
+        String tag;
+        String message;
+
+        public LogItem(long time, String tag, String message) {
+            this.time = time;
+            this.tag = tag;
+            this.message = message;
+        }
     }
 }

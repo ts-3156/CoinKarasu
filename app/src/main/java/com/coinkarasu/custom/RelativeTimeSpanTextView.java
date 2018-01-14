@@ -47,15 +47,19 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
         this.timeProvider = timeProvider;
     }
 
-    public void updateText() {
+    public void updateText(boolean restart) {
         if (DEBUG) CKLog.d(TAG, "updateText() is called.");
-        stopTimer("updateText");
-        delay = DEFAULT_DELAY;
-        period = DEFAULT_PERIOD;
-        startTimer("updateText");
+        if (restart) {
+            stopTimer("updateText");
+            delay = DEFAULT_DELAY;
+            period = DEFAULT_PERIOD;
+            startTimer("updateText");
+        } else {
+            setUpdatedText();
+        }
     }
 
-    private void startTimer(final String caller) {
+    private synchronized void startTimer(final String caller) {
         if (DEBUG) CKLog.d(TAG, "startTimer() is called from " + caller);
         if (timer != null) {
             return;
@@ -74,15 +78,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
                 if (timeProvider != null) {
                     time = timeProvider.getLastUpdated();
                 }
-                final String str = getRelativeTimeSpanString(time, System.currentTimeMillis());
-
-                if (DEBUG) CKLog.d(TAG, "time=" + time + " text=" + str);
-                post(new Runnable() {
-                    @Override
-                    public void run() {
-                        setText(str);
-                    }
-                });
+                setUpdatedText();
 
                 long newPeriod = getPeriod(time);
                 if (period != newPeriod) {
@@ -95,12 +91,23 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
         }, delay, period);
     }
 
-    private void stopTimer(String caller) {
+    private synchronized void stopTimer(String caller) {
         if (DEBUG) CKLog.d(TAG, "stopTimer() is called from " + caller);
         if (timer != null) {
             timer.cancel();
             timer = null;
         }
+    }
+
+    private void setUpdatedText() {
+        final String str = getRelativeTimeSpanString(time, System.currentTimeMillis());
+        post(new Runnable() {
+            @Override
+            public void run() {
+                setText(str);
+            }
+        });
+        if (DEBUG) CKLog.d(TAG, "time=" + time + " text=" + str);
     }
 
     private long getPeriod(long time) {

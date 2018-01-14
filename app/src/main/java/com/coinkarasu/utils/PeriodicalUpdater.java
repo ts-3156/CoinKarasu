@@ -28,7 +28,7 @@ public class PeriodicalUpdater {
         start(caller);
     }
 
-    public void start(String caller) {
+    public synchronized void start(String caller) {
         if (DEBUG) CKLog.d(TAG, "start() is called from " + caller);
         if (timer != null) {
             return;
@@ -51,7 +51,7 @@ public class PeriodicalUpdater {
         }, delay, interval);
     }
 
-    public void forceStart(String caller) {
+    public synchronized void forceStart(String caller) {
         long now = System.currentTimeMillis();
         if (!isBeingUpdated && forceUpdated <= now - FORCE_UPDATE_INTERVAL) {
             forceUpdated = now;
@@ -60,7 +60,7 @@ public class PeriodicalUpdater {
         }
     }
 
-    public void stop(String caller) {
+    public synchronized void stop(String caller) {
         if (DEBUG) CKLog.d(TAG, "stop() is called from " + caller);
         if (timer != null) {
             timer.cancel();
@@ -68,7 +68,7 @@ public class PeriodicalUpdater {
         }
     }
 
-    private void setBeingUpdatedTimer() {
+    private synchronized void setBeingUpdatedTimer() {
         if (isBeingUpdated) {
             return;
         }

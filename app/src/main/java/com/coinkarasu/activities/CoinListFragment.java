@@ -322,6 +322,7 @@ public class CoinListFragment extends Fragment implements
     @Override
     public void started(Exchange exchange, CoinKind coinKind) {
         showProgressbar(exchange, coinKind);
+        refreshRelativeTime(exchange, coinKind, false);
     }
 
     @Override
@@ -335,7 +336,7 @@ public class CoinListFragment extends Fragment implements
 
         if (prices == null || prices.isEmpty()) {
             if (DEBUG) CKLog.w(TAG, "finished() prices is null " + exchange + " " + coinKind);
-            refreshRelativeTime(exchange, coinKind);
+            refreshRelativeTime(exchange, coinKind, true);
             hideProgressbarWithError(exchange, coinKind);
             return;
         }
@@ -367,7 +368,7 @@ public class CoinListFragment extends Fragment implements
                 updater.setLastUpdated(System.currentTimeMillis());
                 adapter.resumeAnimation();
                 adapter.notifyCoinsChanged(exchange, coinKind);
-                refreshRelativeTime(exchange, coinKind);
+                refreshRelativeTime(exchange, coinKind, true);
                 hideProgressbarDelayed(exchange, coinKind, withWarning);
 
                 if (DEBUG) CKLog.d(TAG, "finished() " + kind + " " + exchange + " " + coinKind);
@@ -414,7 +415,7 @@ public class CoinListFragment extends Fragment implements
         progressbar.startAnimation();
     }
 
-    private void refreshRelativeTime(Exchange exchange, CoinKind coinKind) {
+    private void refreshRelativeTime(Exchange exchange, CoinKind coinKind, boolean restart) {
         if (getView() == null) {
             return;
         }
@@ -423,7 +424,7 @@ public class CoinListFragment extends Fragment implements
             if (DEBUG) CKLog.w(TAG, "refreshRelativeTime() Being recycled");
             return;
         }
-        timeSpan.updateText();
+        timeSpan.updateText(restart);
     }
 
     private String makeProgressbarTag(Exchange exchange, CoinKind coinKind) {

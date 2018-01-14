@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GetCoincheckSalesRatesTask extends GetPricesByExchangeTaskBase {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final String TAG = "GetCoincheckSalesRatesTask";
 
     private List<GetCoincheckSalesRateThread> threads;

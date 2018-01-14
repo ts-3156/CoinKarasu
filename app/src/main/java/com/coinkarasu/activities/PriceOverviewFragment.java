@@ -118,7 +118,7 @@ public class PriceOverviewFragment extends Fragment implements
 
         updater.setLastUpdated(System.currentTimeMillis());
         ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).stopAnimationDelayed(ValueAnimatorBase.DURATION, withWarning);
-        ((RelativeTimeSpanTextView) getView().findViewById(R.id.relative_time_span)).updateText();
+        ((RelativeTimeSpanTextView) getView().findViewById(R.id.relative_time_span)).updateText(true);
 
         Price price = prices.get(0);
         coin.setPrice(price.price);
