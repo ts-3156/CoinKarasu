@@ -138,11 +138,14 @@ public class CKLog {
     }
 
     private static String makeText(LogItem item) {
-        createNotification(item);
+        if (item == null) {
+            return "";
+        }
+        sendNotification(item);
         return getTime(item.time) + " " + item.tag + "\n" + item.message.substring(0, Math.min(item.message.length(), 100));
     }
 
-    private static void createNotification(LogItem item) {
+    private static void sendNotification(LogItem item) {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, "debug")
                         .setSmallIcon(R.mipmap.ic_launcher)

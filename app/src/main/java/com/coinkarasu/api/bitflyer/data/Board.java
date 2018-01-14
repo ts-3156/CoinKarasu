@@ -1,6 +1,6 @@
 package com.coinkarasu.api.bitflyer.data;
 
-import android.util.Log;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -12,11 +12,18 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Board {
-    private ArrayList<Data> asks;
+    private static final boolean DEBUG = true;
+    private static final String TAG = "Board";
+
+    private List<Data> asks;
     private double midPrice;
-    private ArrayList<Data> bids;
+    private List<Data> bids;
 
     public Board(JSONObject response) {
+        if (response == null) {
+            return;
+        }
+
         asks = new ArrayList<>();
         bids = new ArrayList<>();
 
@@ -47,7 +54,7 @@ public class Board {
             Collections.sort(asks, comparator);
 
         } catch (JSONException e) {
-            Log.d("Board", e.getMessage());
+            CKLog.e(TAG, response.toString(), e);
         }
 
     }

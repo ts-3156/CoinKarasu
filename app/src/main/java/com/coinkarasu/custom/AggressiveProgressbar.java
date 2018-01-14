@@ -16,7 +16,8 @@ public class AggressiveProgressbar extends AppCompatImageView {
     private enum Status {
         normal(R.drawable.ic_refresh_rotate, R.drawable.ic_refresh_stop),
         warning(R.drawable.ic_refresh_rotate_warning, R.drawable.ic_refresh_stop_warning),
-        error(R.drawable.ic_refresh_rotate_error, R.drawable.ic_refresh_stop_error);
+        error(R.drawable.ic_refresh_rotate_error, R.drawable.ic_refresh_stop_error),
+        airplane(R.drawable.ic_refresh_rotate, R.drawable.ic_airplanemode_active);
 
         public int rotate;
         public int stop;
@@ -52,6 +53,11 @@ public class AggressiveProgressbar extends AppCompatImageView {
     public void stopAnimation() {
         clearAnimation();
         setImageResource(status.stop);
+    }
+
+    public void stopAnimationWithAirplaneMode() {
+        status = Status.airplane;
+        stopAnimation();
     }
 
     public void stopAnimationWithError() {

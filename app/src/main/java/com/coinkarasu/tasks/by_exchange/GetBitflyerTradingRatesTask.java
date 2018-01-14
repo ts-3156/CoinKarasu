@@ -39,7 +39,7 @@ public class GetBitflyerTradingRatesTask extends GetPricesByExchangeTaskBase {
         CountDownLatch latch = new CountDownLatch(2);
 
         threads.add(new GetBitflyerBoardThread(context).setLatch(latch));
-        threads.add(new GetCccaggPricesThread(context, new String[]{"BTC"}, "JPY", Exchange.bitflyer.name()).setLatch(latch));
+        threads.add(new GetCccaggPricesThread(context, new String[]{"BTC"}, "JPY", exchange.name()).setLatch(latch));
 
         for (Thread thread : threads) {
             executor.submit(thread);

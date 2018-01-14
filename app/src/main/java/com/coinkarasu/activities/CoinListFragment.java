@@ -280,9 +280,24 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
-        CoinListAdapter adapter = (CoinListAdapter) recyclerView.getAdapter();
+        final CoinListAdapter adapter = (CoinListAdapter) recyclerView.getAdapter();
         if (adapter == null) {
             isStartTaskRequested = true;
+            return;
+        }
+
+        if (PrefHelper.isAirplaneModeOn(getActivity())) {
+            updater.setLastUpdated(System.currentTimeMillis());
+            for (final Section section : kind.sections) {
+                new Handler(getActivity().getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        adapter.notifyDataSetChanged();
+                        refreshRelativeTime(section.getExchange(), section.getCoinKind(), true);
+                        hideProgressbarWithAirplaneMode(section.getExchange(), section.getCoinKind());
+                    }
+                }, 1000);
+            }
             return;
         }
 
@@ -336,6 +351,7 @@ public class CoinListFragment extends Fragment implements
 
         if (prices == null || prices.isEmpty()) {
             if (DEBUG) CKLog.w(TAG, "finished() prices is null " + exchange + " " + coinKind);
+            updater.setLastUpdated(System.currentTimeMillis());
             refreshRelativeTime(exchange, coinKind, true);
             hideProgressbarWithError(exchange, coinKind);
             return;
@@ -389,6 +405,18 @@ public class CoinListFragment extends Fragment implements
             return;
         }
         progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION, withWarning);
+    }
+
+    private void hideProgressbarWithAirplaneMode(Exchange exchange, CoinKind coinKind) {
+        if (getView() == null) {
+            return;
+        }
+        AggressiveProgressbar progressbar = getView().findViewWithTag(makeProgressbarTag(exchange, coinKind));
+        if (progressbar == null) {
+            if (DEBUG) CKLog.w(TAG, "hideProgressbarWithAirplaneMode() Being recycled");
+            return;
+        }
+        progressbar.stopAnimationWithAirplaneMode();
     }
 
     private void hideProgressbarWithError(Exchange exchange, CoinKind coinKind) {
