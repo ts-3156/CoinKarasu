@@ -50,6 +50,14 @@ public class PriceOverviewFragment extends Fragment implements
 
     private Coin coin;
     private PeriodicalUpdater updater;
+    private AggressiveProgressbar progressbar;
+    private RelativeTimeSpanTextView timeSpan;
+    private boolean isAnimStarted;
+
+    private TextView priceView;
+    private TextView priceDiffView;
+    private TextView trendView;
+    private ImageView trendIconView;
 
     public PriceOverviewFragment() {
     }
@@ -81,10 +89,19 @@ public class PriceOverviewFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_price_overview, container, false);
 
-        ((RelativeTimeSpanTextView) view.findViewById(R.id.relative_time_span)).setTimeProvider(this);
-        updateCard(view, coin, true);
+        progressbar = view.findViewById(R.id.progressbar);
+
+        timeSpan = view.findViewById(R.id.relative_time_span);
+        timeSpan.setTimeProvider(this);
+
+        priceView = view.findViewById(R.id.price);
+        priceDiffView = view.findViewById(R.id.price_diff);
+        trendView = view.findViewById(R.id.trend);
+        trendIconView = view.findViewById(R.id.trend_icon);
+
+        isAnimStarted = false;
+        updateCard(coin);
         updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
-        updater.start("onCreateView");
 
         return view;
     }
@@ -103,9 +120,7 @@ public class PriceOverviewFragment extends Fragment implements
     }
 
     public void started(Exchange exchange, CoinKind coinKind) {
-        if (getView() != null) {
-            ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).startAnimation();
-        }
+        progressbar.startAnimation();
     }
 
     @Override
@@ -117,41 +132,42 @@ public class PriceOverviewFragment extends Fragment implements
             return;
         }
 
+        if (prices == null || prices.isEmpty()) {
+            if (DEBUG) CKLog.w(TAG, "finished() prices is null " + exchange + " " + coinKind);
+            updater.setLastUpdated(System.currentTimeMillis(), true);
+            timeSpan.updateText(true);
+            progressbar.stopAnimationWithError();
+            return;
+        }
+
         updater.setLastUpdated(System.currentTimeMillis(), true);
-        ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).stopAnimationDelayed(ValueAnimatorBase.DURATION, withWarning);
-        ((RelativeTimeSpanTextView) getView().findViewById(R.id.relative_time_span)).updateText(true);
+        progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION, withWarning);
+        timeSpan.updateText(true);
 
         Price price = prices.get(0);
         coin.setPrice(price.price);
         coin.setPriceDiff(price.priceDiff);
         coin.setTrend(price.trend);
-        updateCard(getView(), coin, false);
+
+        isAnimStarted = true;
+        updateCard(coin);
 
         if (DEBUG) CKLog.d(TAG, "finished()");
     }
 
-    private void updateCard(View view, Coin coin, boolean isFirstUpdate) {
-        if (view == null) {
-            return;
-        }
-
-        TextView priceView = view.findViewById(R.id.price);
-        TextView priceDiffView = view.findViewById(R.id.price_diff);
-        TextView trendView = view.findViewById(R.id.trend);
-
+    private void updateCard(Coin coin) {
         priceDiffView.setTextColor(getResources().getColor(new PriceColorFormat().format(coin.getPriceDiff())));
         trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(coin.getTrend())));
+        trendIconView.setImageResource(new TrendIconFormat().format(coin.getTrend()));
 
-        ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(new TrendIconFormat().format(coin.getTrend()));
-
-        if (isFirstUpdate || !PrefHelper.isAnimEnabled(getActivity())) {
-            priceView.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
-            priceDiffView.setText(new SignedPriceFormat(coin.getToSymbol()).format(coin.getPriceDiff()));
-            trendView.setText(new SurroundedTrendValueFormat().format(coin.getTrend()));
-        } else {
+        if (isAnimStarted && PrefHelper.isAnimEnabled(getActivity())) {
             new PriceAnimator(coin, priceView).start();
             new PriceDiffAnimator(coin, priceDiffView).start();
             new TrendAnimator(coin, trendView).start();
+        } else {
+            priceView.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+            priceDiffView.setText(new SignedPriceFormat(coin.getToSymbol()).format(coin.getPriceDiff()));
+            trendView.setText(new SurroundedTrendValueFormat().format(coin.getTrend()));
         }
     }
 

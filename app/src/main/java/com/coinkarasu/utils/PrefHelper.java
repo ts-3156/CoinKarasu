@@ -4,6 +4,8 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -11,6 +13,8 @@ import android.provider.Settings;
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
+
+import java.lang.reflect.Method;
 
 public class PrefHelper {
     private static final boolean DEBUG = true;
@@ -187,6 +191,32 @@ public class PrefHelper {
             return Settings.Global.getInt(context.getContentResolver(),
                     Settings.Global.AIRPLANE_MODE_ON, 0) != 0;
         }
+    }
+
+    public static boolean isMobileDataOn(Context context) {
+        boolean isEnabled = false;
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        try {
+            Class clazz = Class.forName(manager.getClass().getName());
+            Method method = clazz.getDeclaredMethod("getMobileDataEnabled");
+            method.setAccessible(true);
+            isEnabled = (Boolean) method.invoke(manager);
+        } catch (Exception e) {
+            CKLog.e(TAG, e);
+        }
+
+        return isEnabled;
+    }
+
+    public static boolean isWifiOn(Context context) {
+        WifiManager manager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        return manager != null && manager.isWifiEnabled();
+    }
+
+    public static boolean isWifiConnected(Context context) {
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        return manager != null && manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
     }
 
     public static SharedPreferences getPref(Context context) {

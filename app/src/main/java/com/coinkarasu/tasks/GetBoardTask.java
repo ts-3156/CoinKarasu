@@ -3,28 +3,25 @@ package com.coinkarasu.tasks;
 import android.app.Activity;
 import android.os.AsyncTask;
 
-import com.coinkarasu.api.bitflyer.data.Board;
 import com.coinkarasu.api.bitflyer.Client;
+import com.coinkarasu.api.bitflyer.data.Board;
 
-public class GetBoardTask extends AsyncTask<Integer, Integer, Integer> {
+public class GetBoardTask extends AsyncTask<Integer, Integer, Board> {
     Client client;
     Listener listener;
-    Board board;
 
     public GetBoardTask(Activity activity) {
         client = new Client(activity);
         this.listener = null;
-        this.board = null;
     }
 
     @Override
-    protected Integer doInBackground(Integer... params) {
-        board = client.getBoard();
-        return 200;
+    protected Board doInBackground(Integer... params) {
+        return client.getBoard();
     }
 
     @Override
-    protected void onPostExecute(Integer integer) {
+    protected void onPostExecute(Board board) {
         if (listener != null) {
             listener.finished(board);
         }

@@ -379,6 +379,7 @@ public class CoinListSectionFragment extends Fragment implements
         parent = null;
     }
 
+    // viewにアタッチしていないため、CoinListFragmentから直接呼んでいる
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);

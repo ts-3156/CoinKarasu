@@ -123,10 +123,10 @@
 
     <string name="line_chart_info">このチャートに使われている <![CDATA[<b>%1$s - %2$s</b>]]> 価格は、主な取引所の価格に対してVWAPを適用したものです。</string>
     <string name="exchange_info">直前の24時間に、少なくとも1回の <![CDATA[<b>%1$s - %2$s</b>]]> 取引があった取引所のみを表示しています。</string>
-    <string name="exchange_warn">直前の24時間に、 <![CDATA[<b>%1$s - %2$s</b>]]> 取引を行った取引所はないようです。</string>
-    <string name="exchange_warn_each_exchange">直前の24時間に、%3$s で <![CDATA[<b>%1$s - %2$s</b>]]> の取引は行われていないようです。</string>
+    <string name="exchange_warn">直前の24時間に、 <![CDATA[<b>%1$s - %2$s</b>]]> 取引を行った取引所は見つかりませんでした。</string>
+    <string name="exchange_warn_each_exchange">直前の24時間に、%3$s での <![CDATA[<b>%1$s - %2$s</b>]]> の取引は見つかりませんでした。</string>
     <string name="pie_chart_info">Money Flow は、<![CDATA[<b>%1$s</b>]]> と主な法定通貨の取引量、Trading Volume は、個別の取引所における <![CDATA[<b>%1$s</b>]]> と法定通貨との取引量を表しています。</string>
-    <string name="pie_chart_exchange_warn">直前の24時間に、<![CDATA[<b>%1$s - %2$s</b>]]> の取引を行った取引所はないようです。</string>
+    <string name="pie_chart_exchange_warn">直前の24時間に、<![CDATA[<b>%1$s - %2$s</b>]]> の取引を行った取引所は見つかりませんでした。</string>
 
     <string name="home_tab_trending">価格上昇中</string>
     <string name="home_tab_filter">フィルター</string>

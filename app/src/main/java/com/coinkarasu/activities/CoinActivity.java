@@ -229,6 +229,11 @@ public class CoinActivity extends AppCompatActivity implements
         new GetBoardTask(this).setListener(new GetBoardTask.Listener() {
             @Override
             public void finished(Board board) {
+                if (board.getAsks() == null || board.getBids() == null) {
+                    if (DEBUG) CKLog.w(TAG, "finished() board is invalid ");
+                    return;
+                }
+
                 Fragment fragment = getSupportFragmentManager().findFragmentByTag(Tag.board.name());
                 if (fragment != null) {
                     ((CoinBoardFragment) fragment).updateView(board);

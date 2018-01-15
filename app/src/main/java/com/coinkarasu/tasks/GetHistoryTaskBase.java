@@ -8,10 +8,9 @@ import com.coinkarasu.api.cryptocompare.data.History;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GetHistoryTaskBase extends AsyncTask<Integer, Integer, Integer> {
+public class GetHistoryTaskBase extends AsyncTask<Integer, Integer, List<History>> {
     Listener listener;
     Client client;
-    List<History> histories;
     String fromSymbol;
     String toSymbol;
     String exchange;
@@ -19,19 +18,18 @@ public class GetHistoryTaskBase extends AsyncTask<Integer, Integer, Integer> {
     public GetHistoryTaskBase(Client client) {
         this.listener = null;
         this.client = client;
-        this.histories = null;
         this.fromSymbol = null;
         this.toSymbol = null;
         this.exchange = "cccagg";
     }
 
     @Override
-    protected Integer doInBackground(Integer... params) {
+    protected List<History> doInBackground(Integer... params) {
         throw new RuntimeException("Stub");
     }
 
     @Override
-    protected void onPostExecute(Integer integer) {
+    protected void onPostExecute(List<History> histories) {
         if (listener != null) {
             listener.finished(histories);
         }

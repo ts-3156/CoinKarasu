@@ -1,6 +1,9 @@
 package com.coinkarasu.tasks;
 
 import com.coinkarasu.api.cryptocompare.Client;
+import com.coinkarasu.api.cryptocompare.data.History;
+
+import java.util.List;
 
 public class GetHistoryWeekTask extends GetHistoryTaskBase {
 
@@ -9,8 +12,7 @@ public class GetHistoryWeekTask extends GetHistoryTaskBase {
     }
 
     @Override
-    protected Integer doInBackground(Integer... params) {
-        histories = client.getHistoryHour(fromSymbol, toSymbol, 168, 2); // 24 * 7
-        return 200;
+    protected List<History> doInBackground(Integer... params) {
+        return client.getHistoryHour(fromSymbol, toSymbol, 168, 2); // 24 * 7
     }
 }

@@ -89,17 +89,17 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
 
     @Override
     public void finished(List<History> records) {
-        if (records.isEmpty()) {
+        if (isDetached() || getActivity() == null || getActivity().isFinishing()) {
+            taskStarted = false;
+            errorCount++;
+            return;
+        }
+
+        if (records == null || records.isEmpty()) {
             if (DEBUG) CKLog.w(TAG, "finished() empty " + kind + " " + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
-            return;
-        }
-
-        if (isDetached() || getView() == null) {
-            taskStarted = false;
-            errorCount++;
             return;
         }
 

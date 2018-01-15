@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -80,12 +81,12 @@ public class CKLog {
         if (DEBUG) Log.e(tag, message, ex);
     }
 
-    private synchronized static void makeToast(String tag, String message, final Level level) {
+    private synchronized static void makeToast(String tag, String message, Level level) {
         if (context == null || !BuildConfig.DEBUG || !PrefHelper.isDebugToastEnabled(context)) {
             return;
         }
 
-        queue.offer(new LogItem(System.currentTimeMillis(), tag, message));
+        queue.offer(new LogItem(System.currentTimeMillis(), tag, message, level));
 
         if (isRunning) {
             return;
@@ -102,27 +103,38 @@ public class CKLog {
                         isRunning = false;
                         break;
                     }
-                    if (level.ordinal() < Level.valueOf(PrefHelper.getDebugToastLevel(CKLog.context)).ordinal()) {
-                        queue.poll();
-                        continue;
+
+                    String levelString = PrefHelper.getDebugToastLevel(context);
+                    if (TextUtils.isEmpty(levelString)) {
+                        isRunning = false;
+                        break;
+                    }
+                    Level confLevel = Level.valueOf(levelString);
+
+                    StringBuilder builder = new StringBuilder();
+                    int pollCount = 0;
+
+                    while (!queue.isEmpty() && pollCount <= 5) {
+                        LogItem item = queue.poll();
+                        if (item.level.ordinal() < confLevel.ordinal()) {
+                            continue;
+                        }
+
+                        if (pollCount != 0) {
+                            builder.append("\n\n");
+                        }
+                        builder.append(makeText(item));
+                        pollCount++;
                     }
 
-                    handler.post(new Runnable() {
-                        public void run() {
-                            if (context != null) {
-                                StringBuilder builder = new StringBuilder();
-                                int pollCount = 0;
-                                while (!queue.isEmpty() && pollCount <= 5) {
-                                    if (pollCount != 0) {
-                                        builder.append("\n\n");
-                                    }
-                                    builder.append(makeText(queue.poll()));
-                                    pollCount++;
-                                }
-                                Toast.makeText(context, builder.toString(), Toast.LENGTH_SHORT).show();
+                    final String str = builder.toString();
+                    if (!TextUtils.isEmpty(str)) {
+                        handler.post(new Runnable() {
+                            public void run() {
+                                Toast.makeText(context, str, Toast.LENGTH_SHORT).show();
                             }
-                        }
-                    });
+                        });
+                    }
 
                     try {
                         Thread.sleep(2000); // LENGTH_SHORT
@@ -181,11 +193,13 @@ public class CKLog {
         long time;
         String tag;
         String message;
+        Level level;
 
-        public LogItem(long time, String tag, String message) {
+        public LogItem(long time, String tag, String message, Level level) {
             this.time = time;
             this.tag = tag;
             this.message = message;
+            this.level = level;
         }
     }
 }

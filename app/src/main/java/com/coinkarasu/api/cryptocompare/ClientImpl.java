@@ -2,7 +2,6 @@ package com.coinkarasu.api.cryptocompare;
 
 import android.content.Context;
 
-import com.android.volley.RequestQueue;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshotImpl;
 import com.coinkarasu.api.cryptocompare.data.History;
@@ -164,7 +163,11 @@ class ClientImpl implements Client {
         return new TopPairsImpl(topPairsResponse).getTopPairs();
     }
 
-    private ArrayList<History> sampling(List<History> records, int aggregate) {
+    private List<History> sampling(List<History> records, int aggregate) {
+        if (records == null || records.isEmpty()) {
+            return records;
+        }
+
         ArrayList<History> samples = new ArrayList<>();
         int size = records.size();
 

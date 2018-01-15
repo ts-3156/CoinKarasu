@@ -161,6 +161,14 @@ public class Board {
         return midPrice;
     }
 
+    public List<Data> getAsks() {
+        return asks;
+    }
+
+    public List<Data> getBids() {
+        return bids;
+    }
+
     private static class Data {
         double price;
         double size;

@@ -202,19 +202,6 @@ public class CoinListFragment extends Fragment implements
         if (isVisibleToUser && kind != null && kind.isToplist() && getActivity() != null) {
             UpdateToplistIntentService.start(getActivity(), kind);
         }
-
-        for (Fragment fragment : sectionFragments) {
-            fragment.onResume();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        for (Fragment fragment : sectionFragments) {
-            fragment.onPause();
-        }
     }
 
     @Override

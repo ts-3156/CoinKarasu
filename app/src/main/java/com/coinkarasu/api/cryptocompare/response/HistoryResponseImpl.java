@@ -58,7 +58,7 @@ public class HistoryResponseImpl implements HistoryResponse {
     @Override
     public JSONArray getData() {
         if (response == null) {
-            if (DEBUG) CKLog.e(TAG, "getData() Response is null.");
+            if (DEBUG) CKLog.w(TAG, "getData() response is null.");
             return null;
         }
 
@@ -77,7 +77,7 @@ public class HistoryResponseImpl implements HistoryResponse {
     public List<History> getHistories() {
         JSONArray data = getData();
         if (data == null) {
-            if (DEBUG) CKLog.d(TAG, "getHistories() null");
+            if (DEBUG) CKLog.w(TAG, "getHistories() data is null");
             return null;
         }
 
