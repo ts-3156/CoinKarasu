@@ -3,7 +3,9 @@ package com.coinkarasu.adapters.row;
 import android.view.View;
 
 import com.coinkarasu.activities.CoinActivity;
+import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.adapters.ConfigUtils;
 import com.coinkarasu.adapters.ResourceUtils;
@@ -14,6 +16,8 @@ import com.coinkarasu.animator.TrendAnimator;
 import com.coinkarasu.coins.Coin;
 
 public class ItemDelegate extends UiManagingDelegate {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "ItemDelegate";
     public static final int TYPE = CoinListAdapter.TYPE_ITEM;
 
     private ResourceUtils resources;
@@ -41,7 +45,9 @@ public class ItemDelegate extends UiManagingDelegate {
         holder.trend.setTextColor(resources.getTrendColor(coin.getTrend()));
         holder.trendIcon.setImageResource(resources.trendIconFormat.format(coin.getTrend()));
 
-        if (!configs.isAnimPaused && configs.isAnimEnabled && !configs.isScrolled) {
+        Section section = new Section(Exchange.valueOf(coin.getExchange()), coin.getCoinKind());
+
+        if (configs.isAnimStarted(section) && configs.isAnimEnabled && !configs.isScrolled) {
             holder.priceAnimator = new PriceAnimator(coin, holder.price);
             holder.priceAnimator.start();
 

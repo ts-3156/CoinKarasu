@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.coinkarasu.activities.TimeProvider;
+import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.utils.CKLog;
 
 import java.util.Timer;
@@ -24,6 +25,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
     private long time;
     private long delay;
     private long period;
+    private Section section;
     private TimeProvider timeProvider;
 
     public RelativeTimeSpanTextView(Context context) {
@@ -40,7 +42,12 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
         time = -1;
         delay = DEFAULT_DELAY;
         period = DEFAULT_PERIOD;
+        section = null;
         timeProvider = null;
+    }
+
+    public void setSection(Section section) {
+        this.section = section;
     }
 
     public void setTimeProvider(TimeProvider timeProvider) {
@@ -76,7 +83,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
             @Override
             public void run() {
                 if (timeProvider != null) {
-                    time = timeProvider.getLastUpdated();
+                    time = timeProvider.getLastUpdated(section);
                 }
                 setUpdatedText();
 

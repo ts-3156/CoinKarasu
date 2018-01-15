@@ -29,8 +29,12 @@ public class PeriodicalUpdater {
     }
 
     public synchronized void start(String caller) {
-        if (DEBUG) CKLog.d(TAG, "start() is called from " + caller);
+        long delay = Math.max(interval - (System.currentTimeMillis() - lastUpdated), 0);
+        if (DEBUG) CKLog.d(TAG, "start() is called from " + caller
+                + " interval=" + interval + " delay=" + delay);
+
         if (timer != null) {
+            if (DEBUG) CKLog.w(TAG, "start() timer is already started");
             return;
         }
 
@@ -38,7 +42,6 @@ public class PeriodicalUpdater {
             return;
         }
 
-        long delay = Math.max(interval - (System.currentTimeMillis() - lastUpdated), 0);
         timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -96,15 +99,17 @@ public class PeriodicalUpdater {
         return lastUpdated;
     }
 
-    // startTaskが1回だったとしても、タブによっては複数回コールバックされる
-    public synchronized void setLastUpdated(long lastUpdated) {
+    public synchronized void setLastUpdated(long lastUpdated, boolean restart) {
         this.lastUpdated = lastUpdated;
         isBeingUpdated = false;
         if (beingUpdatedTimer != null) {
             beingUpdatedTimer.cancel();
             beingUpdatedTimer = null;
         }
-        restart("setLastUpdated");
+
+        if (restart) {
+            restart("setLastUpdated");
+        }
     }
 
     public interface PeriodicallyRunnable {

@@ -2,7 +2,11 @@ package com.coinkarasu.activities.etc;
 
 import com.coinkarasu.coins.Coin;
 
-public class Section {
+import java.io.Serializable;
+
+public class Section implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final Exchange exchange;
     private final CoinKind coinKind;
 
@@ -41,6 +45,29 @@ public class Section {
 
     public CoinKind getCoinKind() {
         return coinKind;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        if (obj instanceof Section) {
+            Section other = (Section) obj;
+            return exchange == other.getExchange() && coinKind == other.getCoinKind();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return toString().hashCode();
     }
 
     public String toString() {

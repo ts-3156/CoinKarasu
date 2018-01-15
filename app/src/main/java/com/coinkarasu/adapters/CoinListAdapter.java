@@ -8,6 +8,7 @@ import com.coinkarasu.activities.TimeProvider;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.adapters.row.CoinListViewHolder;
 import com.coinkarasu.adapters.row.RowDataProvider;
 import com.coinkarasu.adapters.row.UiManager;
@@ -60,16 +61,8 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
         configs.isDownloadIconEnabled = flag;
     }
 
-    public void pauseAnimation() {
-        configs.isAnimPaused = true;
-    }
-
-    public boolean isAnimPaused() {
-        return configs.isAnimPaused;
-    }
-
-    public void resumeAnimation() {
-        configs.isAnimPaused = false;
+    public void startAnimation(Section section) {
+        configs.startAnimation(section);
     }
 
     public void addItem(Coin coin) {

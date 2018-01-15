@@ -3,7 +3,9 @@ package com.coinkarasu.adapters.row;
 import android.view.View;
 
 import com.coinkarasu.activities.TimeProvider;
+import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.adapters.ResourceUtils;
 import com.coinkarasu.coins.Coin;
@@ -28,6 +30,7 @@ public class HeaderDelegate extends UiManagingDelegate {
         holder.header.setText(resources.headerNameResIdStringMap.get(coin.getHeaderNameResId()));
         holder.progressbar.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-progressbar");
         holder.timeSpan.setTag(coin.getExchange() + "-" + coin.getCoinKind().name() + "-time_span");
+        holder.timeSpan.setSection(new Section(Exchange.valueOf(coin.getExchange()), coin.getCoinKind()));
         holder.timeSpan.setTimeProvider(timeProvider);
 
         if (holder.getAdapterPosition() == 0) {

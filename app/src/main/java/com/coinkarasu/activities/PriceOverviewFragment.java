@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
+import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.animator.PriceAnimator;
 import com.coinkarasu.animator.PriceDiffAnimator;
 import com.coinkarasu.animator.TrendAnimator;
@@ -116,7 +117,7 @@ public class PriceOverviewFragment extends Fragment implements
             return;
         }
 
-        updater.setLastUpdated(System.currentTimeMillis());
+        updater.setLastUpdated(System.currentTimeMillis(), true);
         ((AggressiveProgressbar) getView().findViewById(R.id.progressbar)).stopAnimationDelayed(ValueAnimatorBase.DURATION, withWarning);
         ((RelativeTimeSpanTextView) getView().findViewById(R.id.relative_time_span)).updateText(true);
 
@@ -178,7 +179,7 @@ public class PriceOverviewFragment extends Fragment implements
     }
 
     @Override
-    public long getLastUpdated() {
+    public long getLastUpdated(Section section) {
         if (updater != null) {
             return updater.getLastUpdated();
         } else {
