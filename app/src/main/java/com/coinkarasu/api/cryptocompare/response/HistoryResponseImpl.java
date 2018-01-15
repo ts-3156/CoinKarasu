@@ -1,12 +1,8 @@
 package com.coinkarasu.api.cryptocompare.response;
 
-import android.content.Context;
-import android.text.TextUtils;
-
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.api.cryptocompare.data.HistoryImpl;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.io.CacheFileHelper;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,45 +10,34 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class HistoryResponseImpl implements HistoryResponse {
     private static final boolean DEBUG = true;
     private static final String TAG = "HistoryResponseImpl";
 
-    public enum Kind {
-        minute(60 * 1000),
-        hour(60 * 60 * 1000),
-        day(24 * 60 * 60 * 1000);
+    public enum HistoryKind {
+        minute(TimeUnit.MINUTES.toMillis(1)),
+        hour(TimeUnit.HOURS.toMillis(1)),
+        day(TimeUnit.DAYS.toMillis(1));
 
-        long expires;
+        public long expires;
 
-        Kind(long expires) {
+        HistoryKind(long expires) {
             this.expires = expires;
         }
     }
 
     private JSONObject response;
 
-    private boolean isCache;
     private String fromSymbol;
     private String toSymbol;
-    private Kind kind;
-    private int limit;
-    private String exchange;
 
-    public HistoryResponseImpl(JSONObject response, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
-        this(response, fromSymbol, toSymbol, kind, limit, exchange, false);
-    }
-
-    private HistoryResponseImpl(JSONObject response, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange, boolean isCache) {
+    public HistoryResponseImpl(JSONObject response, String fromSymbol, String toSymbol) {
         this.response = response;
 
-        this.isCache = isCache;
         this.fromSymbol = fromSymbol;
         this.toSymbol = toSymbol;
-        this.kind = kind;
-        this.limit = limit;
-        this.exchange = exchange;
     }
 
     @Override
@@ -81,7 +66,7 @@ public class HistoryResponseImpl implements HistoryResponse {
             return null;
         }
 
-        ArrayList<History> histories = new ArrayList<>();
+        List<History> histories = new ArrayList<>();
 
         try {
             for (int i = 0; i < data.length(); i++) {
@@ -93,59 +78,5 @@ public class HistoryResponseImpl implements HistoryResponse {
         }
 
         return histories;
-    }
-
-    private static String getCacheName(String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
-        return "history_response_" + fromSymbol + "_" + toSymbol + "_" + kind + "_" + limit + "_" + exchange + ".json";
-    }
-
-    @Override
-    public boolean saveToCache(Context context) {
-        if (response == null) {
-            return false;
-        }
-
-        CacheFileHelper.write(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange), response.toString());
-        return true;
-    }
-
-    @Override
-    public boolean saveToCache(Context context, String tag) {
-        return saveToCache(context);
-    }
-
-    public static HistoryResponse restoreFromCache(Context context, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
-        String text = CacheFileHelper.read(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
-        if (TextUtils.isEmpty(text)) {
-            if (DEBUG) CKLog.e(TAG, "text is null.");
-            return null;
-        }
-        JSONObject response = null;
-
-        try {
-            response = new JSONObject(text);
-        } catch (JSONException e) {
-            CKLog.e(TAG, text, e);
-        }
-
-        if (response == null) {
-            return null;
-        }
-
-        return new HistoryResponseImpl(response, fromSymbol, toSymbol, kind, limit, exchange, true);
-    }
-
-    public static boolean isCacheExist(Context context, String fromSymbol, String toSymbol, Kind kind, int limit, String exchange) {
-        boolean exists = CacheFileHelper.exists(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange));
-        if (!exists) {
-            return false;
-        }
-
-        return !CacheFileHelper.isExpired(context, getCacheName(fromSymbol, toSymbol, kind, limit, exchange), kind.expires);
-    }
-
-    @Override
-    public boolean isCache() {
-        return isCache;
     }
 }

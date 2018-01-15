@@ -6,7 +6,7 @@ import org.json.JSONArray;
 
 import java.util.List;
 
-public interface HistoryResponse extends Cacheable {
+public interface HistoryResponse {
     JSONArray getData();
 
     List<History> getHistories();

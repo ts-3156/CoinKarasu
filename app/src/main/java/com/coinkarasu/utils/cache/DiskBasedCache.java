@@ -44,14 +44,14 @@ public class DiskBasedCache implements Cache {
     @Override
     public void remove(String key) {
         if (!remove(getFileFor(key))) {
-            if (DEBUG) CKLog.d(TAG, "remove() Could not delete cache file for " + key);
+            if (DEBUG) CKLog.w(TAG, "remove() Could not delete cache file for " + key);
         }
     }
 
     @Override
     public void clear() {
         if (!remove(rootDir)) {
-            if (DEBUG) CKLog.d(TAG, "clear() Could not clear cache dir " + rootDir.getPath());
+            if (DEBUG) CKLog.w(TAG, "clear() Could not clear cache dir " + rootDir.getPath());
         }
     }
 
@@ -62,6 +62,18 @@ public class DiskBasedCache implements Cache {
             }
         }
         return file.delete();
+    }
+
+    public boolean exists(String key) {
+        return getFileFor(key).exists();
+    }
+
+    public long lastModified(String key) {
+        return getFileFor(key).lastModified();
+    }
+
+    public boolean isExpired(String key, long expiration) {
+        return lastModified(key) < expiration;
     }
 
     private static void write(File file, String data) {

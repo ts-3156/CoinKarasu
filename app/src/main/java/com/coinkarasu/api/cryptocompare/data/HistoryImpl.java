@@ -1,11 +1,14 @@
 package com.coinkarasu.api.cryptocompare.data;
 
-import android.util.Log;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class HistoryImpl implements History {
+    private static final String TAG = "HistoryImpl";
+    private static final boolean DEBUG = true;
+
     private long time;
     private double close;
     private double high;
@@ -18,6 +21,11 @@ public class HistoryImpl implements History {
     private String toSymbol;
 
     public HistoryImpl(JSONObject row, String fromSymbol, String toSymbol) {
+        if (row == null) {
+            if (DEBUG) CKLog.w(TAG, "HistoryImpl() row is null.");
+            return;
+        }
+
         this.fromSymbol = fromSymbol;
         this.toSymbol = toSymbol;
 
@@ -30,9 +38,57 @@ public class HistoryImpl implements History {
             volumeFrom = row.getDouble("volumefrom");
             volumeTo = row.getDouble("volumeto");
         } catch (JSONException e) {
-            Log.d("HistoryImpl", e.getMessage());
-            Log.d("HistoryImpl", row.toString());
+            CKLog.e(TAG, row.toString(), e);
         }
+    }
+
+    public static History buildByJson(JSONObject data) {
+        History history = null;
+
+        try {
+            String fromSymbol = data.getString("fromSymbol");
+            String toSymbol = data.getString("toSymbol");
+
+            history = new HistoryImpl(data, fromSymbol, toSymbol);
+        } catch (JSONException e) {
+            CKLog.e(TAG, data.toString(), e);
+        }
+
+        return history;
+    }
+
+    public static History buildByString(String data) {
+        History history;
+
+        try {
+            history = buildByJson(new JSONObject(data));
+        } catch (JSONException e) {
+            CKLog.e(TAG, data, e);
+            history = null;
+        }
+
+        return history;
+    }
+
+    public JSONObject toJson() {
+        JSONObject data = new JSONObject();
+
+        try {
+            data.put("time", time);
+            data.put("close", close);
+            data.put("high", high);
+            data.put("low", low);
+            data.put("open", open);
+            data.put("volumefrom", volumeFrom);
+            data.put("volumeto", volumeTo);
+
+            data.put("fromSymbol", fromSymbol);
+            data.put("toSymbol", toSymbol);
+        } catch (JSONException e) {
+            CKLog.e(TAG, e);
+        }
+
+        return data;
     }
 
     @Override
@@ -80,8 +136,7 @@ public class HistoryImpl implements History {
         return toSymbol;
     }
 
-    @Override
     public String toString() {
-        return "" + time + ", " + close;
+        return toJson().toString();
     }
 }

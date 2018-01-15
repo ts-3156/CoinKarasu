@@ -2,8 +2,7 @@ package com.coinkarasu.utils.cache;
 
 import android.text.TextUtils;
 import android.util.Log;
-import com.coinkarasu.utils.cache.Cache;
-import com.coinkarasu.utils.cache.DiskBasedCache;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -38,6 +37,14 @@ public class StringArrayListCache {
         }
 
         cache.put(key, new Cache.Entry(json.toString()));
+    }
+
+    public List<String> get(String key, long expiration) {
+        if (cache.exists(key) && !cache.isExpired(key, expiration)) {
+            return get(key);
+        } else {
+            return null;
+        }
     }
 
     public List<String> get(String key) {

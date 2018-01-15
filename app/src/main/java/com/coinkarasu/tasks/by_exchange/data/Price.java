@@ -1,8 +1,9 @@
 package com.coinkarasu.tasks.by_exchange.data;
 
-import android.util.Log;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
+import com.coinkarasu.utils.CKLog;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,7 +48,7 @@ public class Price {
             price.priceDiff = priceDiff;
             price.trend = trend;
         } catch (JSONException e) {
-            if (DEBUG) Log.e(TAG, e.getMessage());
+            CKLog.e(TAG, data.toString(), e);
         }
 
         return price;
@@ -59,7 +60,7 @@ public class Price {
         try {
             price = buildByJson(new JSONObject(data));
         } catch (JSONException e) {
-            if (DEBUG) Log.e(TAG, e.getMessage());
+            CKLog.e(TAG, data, e);
             price = null;
         }
 
@@ -78,7 +79,7 @@ public class Price {
             data.put("priceDiff", priceDiff);
             data.put("trend", trend);
         } catch (JSONException e) {
-            if (DEBUG) Log.e(TAG, e.getMessage());
+            CKLog.e(TAG, e);
         }
 
         return data;

@@ -2,16 +2,22 @@ package com.coinkarasu.tasks.by_exchange.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
+import android.os.Looper;
+
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.cache.StringArrayListCache;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * CoinListSectionFragmentで、最後のデータを表示するために利用している。
+ * 有効期限はなく、常に上書きする。
+ */
 public class PricesCache {
 
     private static final boolean DEBUG = true;
@@ -24,6 +30,10 @@ public class PricesCache {
     }
 
     public synchronized void put(NavigationKind kind, Exchange exchange, CoinKind coinKind, List<Price> prices) {
+        if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
+            throw new RuntimeException("Should call put() from the main thread");
+        }
+
         if (prices == null || prices.isEmpty()) {
             return;
         }
@@ -48,7 +58,7 @@ public class PricesCache {
         for (String str : list) {
             Price price = Price.buildByString(str);
             if (price == null) {
-                if (DEBUG) Log.w(TAG, "get() Price is null " + str);
+                if (DEBUG) CKLog.w(TAG, "get() Price is null " + str);
                 continue;
             }
 

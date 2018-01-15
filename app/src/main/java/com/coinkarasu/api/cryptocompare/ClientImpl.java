@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshotImpl;
+import com.coinkarasu.api.cryptocompare.data.HistoriesCache;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.api.cryptocompare.data.Price;
 import com.coinkarasu.api.cryptocompare.data.PriceImpl;
@@ -14,8 +15,8 @@ import com.coinkarasu.api.cryptocompare.data.TopPairsImpl;
 import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.coinkarasu.api.cryptocompare.response.CoinSnapshotResponse;
 import com.coinkarasu.api.cryptocompare.response.CoinSnapshotResponseImpl;
-import com.coinkarasu.api.cryptocompare.response.HistoryResponse;
 import com.coinkarasu.api.cryptocompare.response.HistoryResponseImpl;
+import com.coinkarasu.api.cryptocompare.response.HistoryResponseImpl.HistoryKind;
 import com.coinkarasu.api.cryptocompare.response.PricesResponseImpl;
 import com.coinkarasu.api.cryptocompare.response.TopPairsResponse;
 import com.coinkarasu.api.cryptocompare.response.TopPairsResponseImpl;
@@ -64,27 +65,29 @@ class ClientImpl implements Client {
         return new PricesImpl(new PricesResponseImpl(response, fromSymbols, toSymbol, exchange));
     }
 
-    private List<History> getHistoryXxx(HistoryResponseImpl.Kind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+    private List<History> getHistoryXxx(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+        List<History> histories = new HistoriesCache(context).get(kind, fromSymbol, toSymbol, limit, aggregate, exchange);
+        if (histories != null && !histories.isEmpty()) {
+            return histories;
+        }
+
         String url = "https://min-api.cryptocompare.com/data/histo" + kind +
                 "?fsym=" + fromSymbol + "&tsym=" + toSymbol + "&e=" + exchange +
                 "&limit=" + limit + "&aggregate=" + aggregate;
 
-        HistoryResponse historyResponse;
+        JSONObject response = performGet(url);
+        histories = new HistoryResponseImpl(response, fromSymbol, toSymbol).getHistories();
 
-        if (HistoryResponseImpl.isCacheExist(context, fromSymbol, toSymbol, kind, limit, exchange)) {
-            historyResponse = HistoryResponseImpl.restoreFromCache(context, fromSymbol, toSymbol, kind, limit, exchange);
-        } else {
-            JSONObject response = performGet(url);
-            historyResponse = new HistoryResponseImpl(response, fromSymbol, toSymbol, kind, limit, exchange);
-            historyResponse.saveToCache(context);
+        if (histories != null && !histories.isEmpty()) {
+            new HistoriesCache(context).put(kind, fromSymbol, toSymbol, limit, aggregate, exchange, histories);
         }
 
-        return historyResponse.getHistories();
+        return histories;
     }
 
     @Override
     public List<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        List<History> records = getHistoryXxx(HistoryResponseImpl.Kind.minute, fromSymbol, toSymbol, limit, 1, exchange);
+        List<History> records = getHistoryXxx(HistoryKind.minute, fromSymbol, toSymbol, limit, 1, exchange);
         if (aggregate == 1) {
             return records;
         } else {
@@ -109,7 +112,7 @@ class ClientImpl implements Client {
 
     @Override
     public List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        List<History> records = getHistoryXxx(HistoryResponseImpl.Kind.hour, fromSymbol, toSymbol, limit, 1, exchange);
+        List<History> records = getHistoryXxx(HistoryKind.hour, fromSymbol, toSymbol, limit, 1, exchange);
         if (aggregate == 1) {
             return records;
         } else {
@@ -129,7 +132,7 @@ class ClientImpl implements Client {
 
     @Override
     public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        List<History> records = getHistoryXxx(HistoryResponseImpl.Kind.day, fromSymbol, toSymbol, limit, 1, exchange);
+        List<History> records = getHistoryXxx(HistoryKind.day, fromSymbol, toSymbol, limit, 1, exchange);
         if (aggregate == 1) {
             return records;
         } else {
