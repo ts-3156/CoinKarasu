@@ -289,11 +289,11 @@ public class CoinListSectionFragment extends Fragment implements
     }
 
     private void findProgressbar() {
-        if (progressbar != null) {
-            return;
-        }
         if (parent != null && parent.getView() != null) {
             progressbar = parent.getView().findViewWithTag(makeProgressbarTag(section.getExchange(), section.getCoinKind()));
+        }
+        if (progressbar == null) {
+            if (DEBUG) CKLog.w(TAG, "findProgressbar() Not initialized or being recycled");
         }
     }
 
@@ -303,29 +303,23 @@ public class CoinListSectionFragment extends Fragment implements
 
     private void hideProgressbarDelayed(Exchange exchange, CoinKind coinKind, boolean withWarning) {
         findProgressbar();
-        if (progressbar == null) {
-            if (DEBUG) CKLog.w(TAG, "hideProgressbarDelayed() Not initialized or being recycled");
-            return;
+        if (progressbar != null) {
+            progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION, withWarning);
         }
-        progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION, withWarning);
     }
 
     private void hideProgressbarWithAirplaneMode(Exchange exchange, CoinKind coinKind) {
         findProgressbar();
-        if (progressbar == null) {
-            if (DEBUG) CKLog.w(TAG, "hideProgressbarWithAirplaneMode() Not initialized or being recycled");
-            return;
+        if (progressbar != null) {
+            progressbar.stopAnimationWithAirplaneMode();
         }
-        progressbar.stopAnimationWithAirplaneMode();
     }
 
     private void hideProgressbarWithError(Exchange exchange, CoinKind coinKind) {
         findProgressbar();
-        if (progressbar == null) {
-            if (DEBUG) CKLog.w(TAG, "hideProgressbarWithError() Not initialized or being recycled");
-            return;
+        if (progressbar != null) {
+            progressbar.stopAnimationWithError();
         }
-        progressbar.stopAnimationWithError();
     }
 
     private void showProgressbar(Exchange exchange, CoinKind coinKind) {
@@ -334,7 +328,7 @@ public class CoinListSectionFragment extends Fragment implements
         }
         AggressiveProgressbar progressbar = parent.getView().findViewWithTag(makeProgressbarTag(exchange, coinKind));
         if (progressbar == null) {
-            if (DEBUG) CKLog.w(TAG, "showProgressbar() Being recycled");
+            if (DEBUG) CKLog.w(TAG, "showProgressbar() Not initialized or being recycled");
             return;
         }
         progressbar.startAnimation();
@@ -346,7 +340,7 @@ public class CoinListSectionFragment extends Fragment implements
         }
         RelativeTimeSpanTextView timeSpan = parent.getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-time_span");
         if (timeSpan == null) {
-            if (DEBUG) CKLog.w(TAG, "refreshRelativeTime() Being recycled");
+            if (DEBUG) CKLog.w(TAG, "refreshRelativeTime() Not initialized or being recycled");
             return;
         }
         timeSpan.updateText(restart);

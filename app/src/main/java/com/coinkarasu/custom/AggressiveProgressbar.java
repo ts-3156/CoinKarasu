@@ -8,12 +8,13 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.Section;
 
 public class AggressiveProgressbar extends AppCompatImageView {
     private static final boolean DEBUG = true;
     private static final String TAG = "AggressiveProgressbar";
 
-    private enum Status {
+    public enum Status {
         normal(R.drawable.ic_refresh_rotate, R.drawable.ic_refresh_stop),
         warning(R.drawable.ic_refresh_rotate_warning, R.drawable.ic_refresh_stop_warning),
         error(R.drawable.ic_refresh_rotate_error, R.drawable.ic_refresh_stop_error),
@@ -30,6 +31,7 @@ public class AggressiveProgressbar extends AppCompatImageView {
 
     private Animation anim;
     private Status status;
+    private Section section;
 
     public AggressiveProgressbar(Context context) {
         this(context, null);
@@ -73,6 +75,23 @@ public class AggressiveProgressbar extends AppCompatImageView {
                 stopAnimation();
             }
         }, delay);
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+        setImageResource(status.stop);
+    }
+
+    public Section getSection() {
+        return section;
+    }
+
+    public void setSection(Section section) {
+        this.section = section;
     }
 
     @Override
