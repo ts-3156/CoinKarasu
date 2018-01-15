@@ -116,7 +116,7 @@ public class CKLog {
 
                     while (!queue.isEmpty() && pollCount <= 5) {
                         LogItem item = queue.poll();
-                        if (item.level.ordinal() < confLevel.ordinal()) {
+                        if (item == null || item.level.ordinal() < confLevel.ordinal()) {
                             continue;
                         }
 

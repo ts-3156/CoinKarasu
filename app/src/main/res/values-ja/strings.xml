@@ -143,13 +143,16 @@
     <string name="billing_dialog_remove_ads">広告の非表示はプレミアムユーザー向けの機能です。</string>
 
     <string name="pref_header_general">全般</string>
-    <string name="pref_header_premium">プレミアム</string>
+    <string name="pref_header_account">アカウント</string>
     <string name="pref_header_speeding_up">高速化</string>
     <string name="pref_header_about">概要</string>
     <string name="pref_header_cache">キャッシュ</string>
     <string name="pref_header_data_sync">データの同期</string>
     <string name="pref_header_debug">デバッグ</string>
 
+    <string name="pref_account_grade_title">グレード</string>
+    <string name="pref_account_grade_summary">無料会員</string>
+    <string name="pref_account_grade_summary_premium">プレミアム会員</string>
     <string name="pref_open_source_licenses_title">オープンソースライセンス</string>
     <string name="pref_open_source_licenses_summary">オープンソースソフトウェアに関するライセンスの詳細</string>
     <string name="pref_app_version_title">バージョン</string>
@@ -168,12 +171,7 @@
     <string name="pref_title">設定</string>
     <string name="pref_title_currency">表示する通貨</string>
     <string-array name="pref_currency_titles">
-        <item>日本円</item>
-        <item>米ドル</item>
-    </string-array>
-    <string-array name="pref_currency_values">
-        <item>JPY</item>
-        <item>USD</item>
+        <item>自動</item>
     </string-array>
     <string name="pref_title_auto_refresh">自動更新</string>
     <string name="pref_description_auto_refresh"></string>

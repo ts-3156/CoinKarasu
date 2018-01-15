@@ -86,6 +86,10 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
         setDefaultSyncFrequencyIfNeeded();
         ((SwitchPreference) findPreference("pref_remove_ads")).setChecked(PrefHelper.isPremium(getActivity()));
 
+        if (PrefHelper.isPremium(getActivity())) {
+            findPreference("pref_account_grade").setSummary(R.string.pref_account_grade_summary_premium);
+        }
+
         bindPreferenceSummaryToValue(prefs, "pref_sync_frequency");
         bindPreferenceSummaryToValue(prefs, "pref_currency");
     }
