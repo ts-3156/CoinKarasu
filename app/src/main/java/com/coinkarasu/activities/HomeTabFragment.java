@@ -20,6 +20,7 @@ import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.services.UpdateTrendingIntentService;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.Tutorial;
 
 
 public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
@@ -33,6 +34,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private boolean isVisibleToUser;
     private BroadcastReceiver receiver;
     SwipeRefreshLayout refresh;
+    ProgressBar progressbar;
 
     public HomeTabFragment() {
     }
@@ -57,8 +59,8 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_tab, container, false);
 
-        ((ProgressBar) view.findViewById(R.id.screen_wait))
-                .setIndeterminateDrawable(getResources().getDrawable(NavigationKind.home.progressDrawableResId));
+        progressbar = view.findViewById(R.id.screen_wait);
+        progressbar.setIndeterminateDrawable(getResources().getDrawable(NavigationKind.home.progressDrawableResId));
 
         refresh = view.findViewById(R.id.refresh_layout);
         refresh.setOnRefreshListener(this);
@@ -71,7 +73,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
         }
 
         if (isVisibleToUser) {
-            initializeCards(view);
+            initializeCards();
         }
 
         receiver = new BroadcastReceiver() {
@@ -91,12 +93,14 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
         return view;
     }
 
-    private void initializeCards(View view) {
-        if (view == null || !isAdded() || isDetached()) {
+    private void initializeCards() {
+        if (!isAdded() || isDetached()) {
             return;
         }
 
-        view.findViewById(R.id.screen_wait).setVisibility(View.GONE);
+        if (progressbar != null) {
+            progressbar.setVisibility(View.GONE);
+        }
 
         Fragment fragment = getChildFragmentManager().findFragmentByTag(TrendingKind.values()[0].tag);
         if (fragment != null) {
@@ -110,6 +114,8 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
             transaction.replace(kind.containerId, HomeTabCardFragment.newInstance(kind), kind.tag);
         }
         transaction.commit();
+
+        Tutorial.showTabLayoutTutorial(getActivity());
     }
 
     private void refreshCard(TrendingKind kind) {
@@ -141,7 +147,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
         if (isVisibleToUser) {
             // フラグメントのライフサイクルと結びつかないイベントで初期化する。
             // 例) タブの初期化後に、タブのコンテンツを表示
-            initializeCards(getView());
+            initializeCards();
         }
     }
 

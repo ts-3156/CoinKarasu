@@ -33,6 +33,7 @@ import com.coinkarasu.tasks.by_exchange.data.Price;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PeriodicalUpdater;
 import com.coinkarasu.utils.PrefHelper;
+import com.coinkarasu.utils.Tutorial;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,7 +54,6 @@ public class PriceOverviewFragment extends Fragment implements
     private AggressiveProgressbar progressbar;
     private RelativeTimeSpanTextView timeSpan;
     private boolean isAnimStarted;
-
     private TextView priceView;
     private TextView priceDiffView;
     private TextView trendView;
@@ -177,6 +177,8 @@ public class PriceOverviewFragment extends Fragment implements
         if (updater != null) {
             updater.start("onResume");
         }
+
+        Tutorial.showPriceOverviewTutorial(getActivity(), getView());
     }
 
     @Override

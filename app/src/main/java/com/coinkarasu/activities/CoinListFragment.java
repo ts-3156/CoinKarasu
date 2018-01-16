@@ -28,6 +28,7 @@ import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.tasks.CollectCoinsTask;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
+import com.coinkarasu.utils.Tutorial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -230,6 +231,10 @@ public class CoinListFragment extends Fragment implements
             for (Fragment fragment : sectionFragments) {
                 fragment.setUserVisibleHint(isVisibleToUser);
             }
+        }
+
+        if (isVisibleToUser) {
+            Tutorial.showTabTutorial(getActivity(), recyclerView);
         }
     }
 

@@ -109,6 +109,7 @@ dependencies {
     }
     compile 'com.android.billingclient:billing:1.0'
     compile 'com.google.android.gms:play-services-ads:11.8.0'
+    compile 'com.github.deano2390:MaterialShowcaseView:1.2.0'
 }
 
 configurations {

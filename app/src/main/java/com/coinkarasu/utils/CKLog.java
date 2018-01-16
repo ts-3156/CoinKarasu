@@ -73,7 +73,7 @@ public class CKLog {
 
     public static void e(String tag, Exception ex) {
         Crashlytics.logException(ex);
-        if (DEBUG) Log.e(tag, ex.getMessage());
+        if (DEBUG) Log.e(tag, ex.getMessage(), ex);
     }
 
     public static void e(String tag, String message, Exception ex) {

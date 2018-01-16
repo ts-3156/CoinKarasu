@@ -266,6 +266,10 @@ public class CoinActivity extends AppCompatActivity implements
     }
 
     public static void start(Context context, Coin coin, NavigationKind kind) {
+        start(context, coin, kind, false);
+    }
+
+    public static void start(Context context, Coin coin, NavigationKind kind, boolean startAnim) {
         Intent intent = new Intent(context, CoinActivity.class);
         intent.putExtra(CoinActivity.KEY_COIN_JSON, coin.toJson().toString());
         intent.putExtra(CoinActivity.KEY_KIND, kind.name());
@@ -281,7 +285,7 @@ public class CoinActivity extends AppCompatActivity implements
             }
         }
 
-        if (activity != null) {
+        if (activity != null && startAnim) {
             activity.overridePendingTransition(R.anim.activity_enter_from_right, R.anim.activity_exit_to_left);
         }
     }
