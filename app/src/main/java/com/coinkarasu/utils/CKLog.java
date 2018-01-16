@@ -160,7 +160,7 @@ public class CKLog {
     private static void sendNotification(LogItem item) {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, "debug")
-                        .setSmallIcon(R.mipmap.ic_launcher)
+                        .setSmallIcon(R.mipmap.ic_launcher_karasu)
                         .setContentTitle(item.tag)
                         .setContentText(item.message)
                         .setTicker(item.message);
