@@ -71,7 +71,10 @@
             android:title="@string/pref_app_version_title" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_header_cache">
+    <PreferenceCategory
+        android:key="pref_category_debug"
+        android:title="@string/pref_header_debug">
+
         <Preference
             android:key="pref_clear_cache"
             android:summary="@string/pref_clear_cache_summary"
@@ -81,11 +84,6 @@
             android:key="pref_clear_config"
             android:summary="@string/pref_clear_config_summary"
             android:title="@string/pref_clear_config_title" />
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:key="pref_category_debug"
-        android:title="@string/pref_header_debug">
 
         <SwitchPreference
             android:defaultValue="@bool/keep_screen_on"
