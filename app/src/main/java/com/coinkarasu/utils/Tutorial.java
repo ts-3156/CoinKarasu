@@ -1,18 +1,21 @@
 package com.coinkarasu.utils;
 
 import android.app.Activity;
-import android.support.v4.app.AppLaunchChecker;
+import android.os.Handler;
+import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ScrollView;
 
+import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
-import com.coinkarasu.activities.CoinActivity;
 import com.coinkarasu.activities.MainActivity;
 import com.coinkarasu.activities.MainFragment;
 import com.coinkarasu.activities.etc.NavigationKind;
-import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.adapters.row.CoinListViewHolder;
+
+import java.util.List;
 
 import uk.co.deanwild.materialshowcaseview.IShowcaseListener;
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
@@ -24,91 +27,136 @@ public class Tutorial {
     private static final String TAG = "Tutorial";
 
     private static final int PADDING_RECT = 48;
-    private static final String ID_TAB_LAYOUT = "tab_layout_007";
-    private static final String ID_TAB = "tab_007";
-    private static final String ID_COIN = "coin_007";
-    private static final String ID_PRICE_OVERVIEW = "historical_price_card_007";
+    private static final int DELAY = 1000;
+    private static final String VERSION = BuildConfig.DEBUG ? "debug022" : BuildConfig.VERSION_NAME;
+    private static final String ID_TAB_LAYOUT = "tab_layout_" + VERSION;
+    private static final String ID_TAB = "tab_" + VERSION;
+    private static final String ID_COIN = "coin_" + VERSION;
+    private static final String ID_PRICE_OVERVIEW = "price_overview_" + VERSION;
 
     // MainActivityのTabLayoutのチュートリアル
-    public static void showTabLayoutTutorial(final Activity activity) {
-        if (activity == null || activity.isFinishing()) {
-            return;
-        }
-
-        if (AppLaunchChecker.hasStartedFromLauncher(activity)) {
+    public static void showTabLayoutTutorial(final Activity activity, final TabLayout targetView) {
+        if (activity == null || activity.isFinishing() || AppTutorialChecker.hasStarted(activity, ID_TAB_LAYOUT)) {
             return;
         }
 
         try {
-            build(ID_TAB_LAYOUT, activity, activity.findViewById(R.id.tab_layout),
-                    R.string.tutorial_dismiss, R.string.tutorial_content_tablayout, true, new Runnable() {
-                        @Override
-                        public void run() {
-                            if (!activity.isFinishing()) {
-                                MainFragment fragment = ((MainActivity) activity).getFragment();
-                                fragment.setCurrentKind(NavigationKind.coincheck, true);
-                            }
-                        }
-                    }).start();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    List<NavigationKind> visibleKinds = ((MainActivity) activity).getVisibleKinds();
+                    int index = visibleKinds.indexOf(NavigationKind.coincheck);
+                    if (index < 0) {
+                        if (DEBUG) CKLog.w(TAG, "showTabLayoutTutorial() Cancel since specified tab is not visible");
+                        return;
+                    }
 
-            AppLaunchChecker.onActivityCreate(activity);
+                    ShowcaseConfig config = new ShowcaseConfig();
+                    config.setDelay(DELAY);
+
+                    MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
+                    sequence.setConfig(config);
+
+                    sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
+                            .setTarget(targetView)
+                            .setDismissText(R.string.tutorial_dismiss)
+                            .setContentText(R.string.tutorial_content_tablayout)
+                            .withRectangleShape()
+                            .setShapePadding(PADDING_RECT)
+                            .build());
+
+                    View tabView = ((ViewGroup) targetView.getChildAt(0)).getChildAt(index);
+
+                    sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
+                            .setTarget(tabView)
+                            .setDismissText(R.string.tutorial_dismiss)
+                            .setContentText(R.string.tutorial_content_tablayout_tap_tab)
+                            .setTargetTouchable(true)
+                            .setListener(new IShowcaseListener() {
+                                @Override
+                                public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {
+                                }
+
+                                @Override
+                                public void onShowcaseDismissed(MaterialShowcaseView materialShowcaseView) {
+                                    if (!activity.isFinishing()) {
+                                        MainFragment fragment = ((MainActivity) activity).getFragment();
+                                        fragment.setCurrentKind(NavigationKind.coincheck, true);
+                                    }
+                                }
+                            })
+                            .build());
+
+                    sequence.start();
+                }
+            }, DELAY);
         } catch (Exception e) {
             CKLog.e(TAG, e);
+        } finally {
+            AppTutorialChecker.onTutorialFinished(activity, ID_TAB_LAYOUT);
         }
     }
 
     // MainActivityのタブのチュートリアル。今はCoincheckタブを使っている
-    public static void showTabTutorial(final Activity activity, final RecyclerView view) {
-        if (activity == null || activity.isFinishing()) {
+    public static void showTabTutorial(final Activity activity, final RecyclerView recyclerView) {
+        if (activity == null || activity.isFinishing() || AppTutorialChecker.hasStarted(activity, ID_TAB)) {
             return;
         }
 
         try {
-            build(ID_TAB, activity, activity.findViewById(R.id.tab_layout),
-                    R.string.tutorial_dismiss, R.string.tutorial_content_tab, false, new Runnable() {
-                        @Override
-                        public void run() {
-                            showCoinTutorial(activity, view);
-                        }
-                    }).start();
-        } catch (Exception e) {
-            CKLog.e(TAG, e);
-        }
-    }
-
-    // MainActivityのコインのチュートリアル
-    public static void showCoinTutorial(final Activity activity, final RecyclerView view) {
-        if (activity == null || activity.isFinishing()) {
-            return;
-        }
-
-        CoinListViewHolder holder = (CoinListViewHolder) view.findViewHolderForAdapterPosition(1);
-
-        try {
-            build(ID_COIN, activity, holder.container, R.string.tutorial_dismiss, R.string.tutorial_content_coin, true, new Runnable() {
+            new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (!activity.isFinishing()) {
-                        CoinListAdapter adapter = (CoinListAdapter) view.getAdapter();
-                        if (adapter != null) {
-                            CoinActivity.start(activity, adapter.getItem(1), NavigationKind.coincheck, false);
-                        }
-                    }
+                    ShowcaseConfig config = new ShowcaseConfig();
+                    config.setDelay(DELAY);
+
+                    MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
+                    sequence.setConfig(config);
+
+                    final View rowView = ((CoinListViewHolder) recyclerView.findViewHolderForAdapterPosition(1)).container;
+
+                    sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
+                            .setTarget(recyclerView)
+                            .setDismissText(R.string.tutorial_dismiss)
+                            .setContentText(R.string.tutorial_content_tab)
+                            .withoutShape()
+                            .build());
+
+                    sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
+                            .setTarget(rowView)
+                            .setDismissText(R.string.tutorial_dismiss)
+                            .setContentText(R.string.tutorial_content_coin)
+                            .withRectangleShape()
+                            .setShapePadding(PADDING_RECT)
+                            .build());
+
+                    sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
+                            .setTarget(rowView)
+                            .setDismissText(R.string.tutorial_dismiss)
+                            .setContentText(R.string.tutorial_content_coin_tap_coin)
+                            .setTargetTouchable(true)
+                            .withRectangleShape()
+                            .setShapePadding(PADDING_RECT)
+                            .build());
+
+                    sequence.start();
                 }
-            }).start();
+            }, DELAY);
         } catch (Exception e) {
             CKLog.e(TAG, e);
+        } finally {
+            AppTutorialChecker.onTutorialFinished(activity, ID_TAB);
         }
     }
 
     // CoinActivityのPriceOverviewチュートリアル
-    public static void showPriceOverviewTutorial(final Activity activity, View view) {
-        if (activity == null || activity.isFinishing()) {
+    public static void showPriceOverviewTutorial(final Activity activity, View targetView) {
+        if (activity == null || activity.isFinishing() || AppTutorialChecker.hasStarted(activity, ID_PRICE_OVERVIEW)) {
             return;
         }
 
         try {
-            build(ID_PRICE_OVERVIEW, activity, view.findViewById(R.id.container), R.string.tutorial_dismiss, R.string.tutorial_content_price_overview, true, new Runnable() {
+            build(activity, targetView, R.string.tutorial_dismiss, R.string.tutorial_content_price_overview, true, new Runnable() {
                 @Override
                 public void run() {
                     if (!activity.isFinishing()) {
@@ -120,21 +168,24 @@ public class Tutorial {
             }).start();
         } catch (Exception e) {
             CKLog.e(TAG, e);
+        } finally {
+            AppTutorialChecker.onTutorialFinished(activity, ID_PRICE_OVERVIEW);
         }
     }
 
-    private static MaterialShowcaseSequence build(String id, final Activity activity, View target,
+    private static MaterialShowcaseSequence build(final Activity activity, View target,
                                                   int dismissTextResId, int contentTextResId, boolean isRect, final Runnable executeOnDismiss) {
         ShowcaseConfig config = new ShowcaseConfig();
-        config.setDelay(1000);
+        config.setDelay(DELAY);
 
-        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, id);
+        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
         sequence.setConfig(config);
 
         MaterialShowcaseView.Builder builder = new MaterialShowcaseView.Builder(activity)
                 .setTarget(target)
                 .setDismissText(dismissTextResId)
                 .setContentText(contentTextResId)
+                .setTargetTouchable(true)
                 .setListener(new IShowcaseListener() {
                     @Override
                     public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {

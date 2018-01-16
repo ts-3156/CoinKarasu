@@ -178,7 +178,9 @@ public class PriceOverviewFragment extends Fragment implements
             updater.start("onResume");
         }
 
-        Tutorial.showPriceOverviewTutorial(getActivity(), getView());
+        if (getView() != null) {
+            Tutorial.showPriceOverviewTutorial(getActivity(), getView().findViewById(R.id.container));
+        }
     }
 
     @Override

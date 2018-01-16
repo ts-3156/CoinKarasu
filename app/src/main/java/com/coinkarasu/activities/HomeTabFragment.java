@@ -94,7 +94,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     private void initializeCards() {
-        if (!isAdded() || isDetached()) {
+        if (getActivity() == null || getActivity().isFinishing() || !isAdded() || isDetached()) {
             return;
         }
 
@@ -115,7 +115,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
         }
         transaction.commit();
 
-        Tutorial.showTabLayoutTutorial(getActivity());
+        Tutorial.showTabLayoutTutorial(getActivity(), ((MainActivity) getActivity()).getTabLayout());
     }
 
     private void refreshCard(TrendingKind kind) {

@@ -194,6 +194,10 @@ public class CoinListFragment extends Fragment implements
         for (CoinListSectionFragment fragment : sectionFragments) {
             fragment.onAdapterSetupFinished();
         }
+
+        if (isVisibleToUser && kind == NavigationKind.coincheck) {
+            Tutorial.showTabTutorial(getActivity(), recyclerView);
+        }
     }
 
     @Override
@@ -231,10 +235,6 @@ public class CoinListFragment extends Fragment implements
             for (Fragment fragment : sectionFragments) {
                 fragment.setUserVisibleHint(isVisibleToUser);
             }
-        }
-
-        if (isVisibleToUser) {
-            Tutorial.showTabTutorial(getActivity(), recyclerView);
         }
     }
 
