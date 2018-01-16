@@ -165,7 +165,7 @@ public class PrefHelper {
         if (pref == null) {
             return null;
         }
-        return pref.getString("pref_toast_level", "debug");
+        return pref.getString("pref_toast_level", "warn");
     }
 
     public static boolean isKeepScreenOnEnabled(Context context) {

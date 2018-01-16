@@ -98,7 +98,7 @@
             android:title="@string/pref_title_make_toast" />
 
         <ListPreference
-            android:defaultValue="debug"
+            android:defaultValue="warn"
             android:dependency="pref_make_toast"
             android:entries="@array/pref_toast_level_titles"
             android:entryValues="@array/pref_toast_level_values"
