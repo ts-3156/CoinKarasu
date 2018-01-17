@@ -29,8 +29,8 @@ public class ItemDelegate extends UiManagingDelegate {
     }
 
     @Override
-    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder, OnCoinClickListener listener) {
-        super.onBindViewHolder(coin, _holder, listener);
+    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder, OnCoinClickListener listener, boolean isVisible) {
+        super.onBindViewHolder(coin, _holder, listener, isVisible);
 
         ItemViewHolder holder = (ItemViewHolder) _holder;
 
@@ -47,7 +47,7 @@ public class ItemDelegate extends UiManagingDelegate {
 
         Section section = new Section(Exchange.valueOf(coin.getExchange()), coin.getCoinKind());
 
-        if (configs.isAnimStarted(section) && configs.isAnimEnabled && !configs.isScrolled) {
+        if (isVisible && configs.isAnimStarted(section) && configs.isAnimEnabled && !configs.isScrolled) {
             holder.priceAnimator = new PriceAnimator(coin, holder.price);
             holder.priceAnimator.start();
 

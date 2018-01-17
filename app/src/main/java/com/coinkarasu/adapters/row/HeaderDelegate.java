@@ -28,8 +28,8 @@ public class HeaderDelegate extends UiManagingDelegate {
     }
 
     @Override
-    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder, OnCoinClickListener listener) {
-        super.onBindViewHolder(coin, _holder, listener);
+    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder, OnCoinClickListener listener, boolean isVisible) {
+        super.onBindViewHolder(coin, _holder, listener, isVisible);
 
         HeaderViewHolder holder = (HeaderViewHolder) _holder;
         Section section = new Section(Exchange.valueOf(coin.getExchange()), coin.getCoinKind());

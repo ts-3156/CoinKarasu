@@ -6,7 +6,7 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.coins.Coin;
 
 public abstract class UiManagingDelegate {
-    void onBindViewHolder(Coin coin, final CoinListViewHolder holder, final OnCoinClickListener listener) {
+    void onBindViewHolder(Coin coin, final CoinListViewHolder holder, final OnCoinClickListener listener, boolean isVisible) {
         if (holder.container != null) {
             holder.container.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -20,8 +20,8 @@ public class UiDelegatesFactory {
         uiDelegates.put(ItemDelegate.TYPE, new ItemDelegate(resources, configs));
     }
 
-    public void onBindViewHolder(Coin coin, CoinListViewHolder holder, OnCoinClickListener listener) {
-        uiDelegates.get(holder.getItemViewType()).onBindViewHolder(coin, holder, listener);
+    public void onBindViewHolder(Coin coin, CoinListViewHolder holder, OnCoinClickListener listener, boolean isVisible) {
+        uiDelegates.get(holder.getItemViewType()).onBindViewHolder(coin, holder, listener, isVisible);
     }
 
     public void onViewRecycled(CoinListViewHolder holder) {

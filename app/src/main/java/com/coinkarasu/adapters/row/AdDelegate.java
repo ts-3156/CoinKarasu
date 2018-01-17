@@ -23,8 +23,8 @@ public class AdDelegate extends UiManagingDelegate {
     }
 
     @Override
-    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder, OnCoinClickListener listener) {
-        super.onBindViewHolder(coin, _holder, listener);
+    public void onBindViewHolder(Coin coin, CoinListViewHolder _holder, OnCoinClickListener listener, boolean isVisible) {
+        super.onBindViewHolder(coin, _holder, listener, isVisible);
 
         final AdViewHolder holder = (AdViewHolder) _holder;
 

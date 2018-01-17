@@ -38,8 +38,8 @@ public class UiManager implements OnCoinClickListener {
         }
     }
 
-    public void onBindViewHolder(Coin coin, CoinListViewHolder holder) {
-        delegatesFactory.onBindViewHolder(coin, holder, this);
+    public void onBindViewHolder(Coin coin, CoinListViewHolder holder, boolean isVisible) {
+        delegatesFactory.onBindViewHolder(coin, holder, this, isVisible);
     }
 
     public void onViewRecycled(CoinListViewHolder holder) {

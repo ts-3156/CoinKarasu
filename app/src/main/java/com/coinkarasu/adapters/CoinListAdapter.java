@@ -1,6 +1,7 @@
 package com.coinkarasu.adapters;
 
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
@@ -28,6 +29,7 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
     private UiManager uiManager;
     private ResourceUtils resources;
     private ConfigUtils configs;
+    private LinearLayoutManager layoutManager;
 
     public CoinListAdapter(Context context, TimeProvider timeProvider, NavigationKind kind, List<Coin> coins) {
         resources = new ResourceUtils(context, coins);
@@ -135,11 +137,17 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
 
     @Override
     public void onBindViewHolder(CoinListViewHolder holder, int position) {
-        uiManager.onBindViewHolder(getItem(position), holder);
+        int last = layoutManager.findLastVisibleItemPosition();
+        boolean isVisible = last == -1 || position <= last + 1; // できるだけ、見えているアイテムのみアニメーションさせるフラグ
+        uiManager.onBindViewHolder(getItem(position), holder, isVisible);
     }
 
     @Override
     public void onViewRecycled(CoinListViewHolder holder) {
         uiManager.onViewRecycled(holder);
+    }
+
+    public void setLayoutManager(LinearLayoutManager layoutManager) {
+        this.layoutManager = layoutManager;
     }
 }
