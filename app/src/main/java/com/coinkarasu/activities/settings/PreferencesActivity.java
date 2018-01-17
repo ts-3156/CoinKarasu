@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -45,6 +46,8 @@ public class PreferencesActivity extends AppCompatActivity implements
         if (bar != null) {
             bar.setTitle(getString(R.string.pref_title));
         }
+
+        PreferenceManager.setDefaultValues(this, R.xml.fragment_preferences, false);
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.content, new PreferencesFragment())
