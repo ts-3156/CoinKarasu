@@ -48,6 +48,10 @@ public class StringArrayListCache {
     }
 
     public List<String> get(String key) {
+        if (!cache.exists(key)) {
+            return null;
+        }
+
         Cache.Entry entry = cache.get(key);
         if (entry == null || TextUtils.isEmpty(entry.data)) {
             cache.remove(key);

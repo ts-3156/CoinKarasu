@@ -143,6 +143,7 @@
 
     <string name="tutorial_dismiss">GOT IT</string>
     <string name="tutorial_content_tablayout">Select a tab which you want to see</string>
+    <string name="tutorial_content_tablayout_tap_tab">Select a tab which you want to see</string>
     <string name="tutorial_content_tab">Select a tab which you want to see</string>
     <string name="tutorial_content_coin">Select a tab which you want to see</string>
     <string name="tutorial_content_coin_tap_coin">Select a tab which you want to see</string>

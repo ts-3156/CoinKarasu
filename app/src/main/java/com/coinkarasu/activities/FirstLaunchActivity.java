@@ -16,6 +16,9 @@ import android.view.WindowManager;
 
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.services.UpdateCoinListIntentService;
+import com.coinkarasu.services.UpdateToplistIntentService;
+import com.coinkarasu.services.UpdateTrendingIntentService;
 import com.coinkarasu.utils.CKLog;
 
 public class FirstLaunchActivity extends AppCompatActivity {
@@ -36,6 +39,16 @@ public class FirstLaunchActivity extends AppCompatActivity {
         }
 
         goToNext(null);
+
+        if (savedInstanceState == null) {
+            UpdateCoinListIntentService.start(this);
+            UpdateTrendingIntentService.start(this, true);
+            for (NavigationKind kind : NavigationKind.values()) {
+                if (kind.isToplist() && kind.isVisible(this)) {
+                    UpdateToplistIntentService.start(this, kind);
+                }
+            }
+        }
     }
 
     public void goToNext(Fragment currentFragment) {
@@ -45,10 +58,13 @@ public class FirstLaunchActivity extends AppCompatActivity {
         if (currentFragment == null) {
             nextFragment = FirstLaunchSplashFragment.newInstance();
         } else if (currentFragment instanceof FirstLaunchSplashFragment) {
-            nextFragment = FirstLaunchSplashFragment.newInstance();
+            // nextFragment = FirstLaunchSplashFragment.newInstance();
         }
 
-        if (nextFragment != null) {
+        if (nextFragment == null) {
+            MainActivity.start(this);
+            finish();
+        } else {
             setEnterTransition(nextFragment);
             setExitTransition(nextFragment);
 

@@ -43,7 +43,12 @@ public class DiskBasedCache implements Cache {
 
     @Override
     public void remove(String key) {
-        if (!remove(getFileFor(key))) {
+        File file = getFileFor(key);
+        if (!file.exists()) {
+            return;
+        }
+
+        if (!remove(file)) {
             if (DEBUG) CKLog.w(TAG, "remove() Could not delete cache file for " + key);
         }
     }
