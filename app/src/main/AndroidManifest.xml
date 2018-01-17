@@ -4,7 +4,7 @@
 
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.coinkarasu.activities.MainActivity"
+            android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -24,37 +24,33 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.coinkarasu.activities.CoinActivity"
-            android:parentActivityName="com.coinkarasu.activities.MainActivity">
+            android:name=".activities.CoinActivity"
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.coinkarasu.activities.MainActivity" />
         </activity>
-
         <activity
-            android:name="com.coinkarasu.billingmodule.BillingActivity"
-            android:parentActivityName="com.coinkarasu.activities.MainActivity">
+            android:name=".billingmodule.BillingActivity"
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.coinkarasu.activities.MainActivity" />
         </activity>
-
         <activity
-            android:name="com.coinkarasu.activities.settings.SettingsActivity"
-            android:parentActivityName="com.coinkarasu.activities.MainActivity">
+            android:name=".activities.settings.SettingsActivity"
+            android:parentActivityName=".activities.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.coinkarasu.activities.MainActivity" />
         </activity>
-
         <activity
-            android:name="com.coinkarasu.activities.settings.PreferencesActivity"
-            android:parentActivityName="com.coinkarasu.activities.MainActivity">
-
+            android:name=".activities.settings.PreferencesActivity"
+            android:parentActivityName=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MANAGE_NETWORK_USAGE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
@@ -62,31 +58,33 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.coinkarasu.activities.MainActivity" />
         </activity>
+        <activity
+            android:name=".activities.FirstLaunchActivity"
+            android:noHistory="true"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
-            android:name="com.coinkarasu.services.UpdateCoinListGcmService"
+            android:name=".services.UpdateCoinListGcmService"
             android:exported="true"
             android:permission="com.google.android.gms.permission.BIND_NETWORK_TASK_SERVICE">
             <intent-filter>
                 <action android:name="com.google.android.gms.gcm.ACTION_TASK_READY" />
             </intent-filter>
         </service>
-
         <service
-            android:name="com.coinkarasu.services.UpdateCoinListIntentService"
+            android:name=".services.UpdateCoinListIntentService"
             android:exported="false" />
-
         <service
-            android:name="com.coinkarasu.services.UpdateTrendingIntentService"
+            android:name=".services.UpdateTrendingIntentService"
             android:exported="false" />
-
         <service
-            android:name="com.coinkarasu.services.UpdateToplistIntentService"
+            android:name=".services.UpdateToplistIntentService"
             android:exported="false" />
 
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="${fabricApiKey}" />
+
     </application>
 
 </manifest>

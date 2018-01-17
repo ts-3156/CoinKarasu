@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.AppLaunchChecker;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -56,6 +57,14 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (PrefHelper.isDebugFirstLaunchScreen(this) || !AppLaunchChecker.hasStartedFromLauncher(this)) {
+            FirstLaunchActivity.start(this);
+            AppLaunchChecker.onActivityCreate(this);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_main); // ここで 180ms, onCreate全体で 230ms
         CKLog.setContext(this);
 
@@ -256,12 +265,19 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        viewController.onDestroy();
+        if (viewController != null) {
+            viewController.onDestroy();
+        }
         CKLog.releaseContext();
     }
 
     public void setFirebaseAnalytics(FirebaseAnalytics firebaseAnalytics) {
         this.firebaseAnalytics = firebaseAnalytics;
+    }
+
+    public static void start(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        context.startActivity(intent);
     }
 
     private static class InitializeActivityTask extends InitializeThirdPartyAppsTask {

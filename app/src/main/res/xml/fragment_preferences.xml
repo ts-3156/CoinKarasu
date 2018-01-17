@@ -113,6 +113,12 @@
             android:summary="@string/pref_description_become_premium"
             android:title="@string/pref_title_become_premium" />
 
+        <SwitchPreference
+            android:defaultValue="@bool/show_first_launch_screen"
+            android:key="pref_show_first_launch_screen"
+            android:summary="@string/pref_description_show_first_launch_screen"
+            android:title="@string/pref_title_show_first_launch_screen" />
+
         <ListPreference
             android:defaultValue="default"
             android:entries="@array/pref_change_ck_host_titles"
