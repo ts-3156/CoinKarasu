@@ -20,7 +20,7 @@ public class PrefHelper {
     private static final boolean DEBUG = true;
     private static final String TAG = "PrefHelper";
 
-    public static final int DEFAULT_SYNC_INTERVAL = 60000;
+    public static final int DEFAULT_SYNC_INTERVAL = 30000;
     public static final int MIN_SYNC_INTERVAL = 30000;
     private static final int PREMIUM_MIN_SYNC_INTERVAL = 10000;
 

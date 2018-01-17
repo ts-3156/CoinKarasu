@@ -19,7 +19,9 @@ import com.coinkarasu.R;
 import com.coinkarasu.activities.MainActivity;
 import com.crashlytics.android.Crashlytics;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.Random;
 
@@ -111,23 +113,26 @@ public class CKLog {
                     }
                     Level confLevel = Level.valueOf(levelString);
 
-                    StringBuilder builder = new StringBuilder();
-                    int pollCount = 0;
-
-                    while (!queue.isEmpty() && pollCount <= 5) {
+                    List<LogItem> items = new ArrayList<>();
+                    while (!queue.isEmpty() && items.size() <= 5) {
                         LogItem item = queue.poll();
                         if (item == null || item.level.ordinal() < confLevel.ordinal()) {
                             continue;
                         }
-
-                        if (pollCount != 0) {
-                            builder.append("\n\n");
-                        }
-                        builder.append(makeText(item));
-                        pollCount++;
+                        items.add(item);
                     }
 
+                    StringBuilder builder = new StringBuilder();
+                    for (int i = 0; i < items.size(); i++) {
+                        if (i != 0) {
+                            builder.append("\n\n");
+                        }
+                        LogItem item = items.get(i);
+                        builder.append(makeText(item));
+                        sendNotification(item);
+                    }
                     final String str = builder.toString();
+
                     if (!TextUtils.isEmpty(str)) {
                         handler.post(new Runnable() {
                             public void run() {
@@ -153,14 +158,13 @@ public class CKLog {
         if (item == null) {
             return "";
         }
-        sendNotification(item);
         return getTime(item.time) + " " + item.tag + "\n" + item.message.substring(0, Math.min(item.message.length(), 100));
     }
 
     private static void sendNotification(LogItem item) {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, "debug")
-                        .setSmallIcon(R.mipmap.ic_launcher_karasu)
+                        .setSmallIcon(R.drawable.ic_notif)
                         .setContentTitle(item.tag)
                         .setContentText(item.message)
                         .setTicker(item.message);
