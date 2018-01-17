@@ -28,11 +28,10 @@ public class Tutorial {
 
     private static final int PADDING_RECT = 48;
     private static final int DELAY = 1000;
-    private static final String VERSION = BuildConfig.DEBUG ? "debug022" : BuildConfig.VERSION_NAME;
-    private static final String ID_TAB_LAYOUT = "tab_layout_" + VERSION;
-    private static final String ID_TAB = "tab_" + VERSION;
-    private static final String ID_COIN = "coin_" + VERSION;
-    private static final String ID_PRICE_OVERVIEW = "price_overview_" + VERSION;
+    private static final String ID_SUFFIX = BuildConfig.DEBUG ? "_debug041" : "";
+    private static final String ID_TAB_LAYOUT = "tutorial_tab_layout" + ID_SUFFIX;
+    private static final String ID_TAB = "tutorial_tab" + ID_SUFFIX;
+    private static final String ID_PRICE_OVERVIEW = "tutorial_price_overview" + ID_SUFFIX;
 
     // MainActivityのTabLayoutのチュートリアル
     public static void showTabLayoutTutorial(final Activity activity, final TabLayout targetView) {
@@ -69,7 +68,7 @@ public class Tutorial {
 
                     sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
                             .setTarget(tabView)
-                            .setDismissText(R.string.tutorial_dismiss)
+                            .setDismissText("")
                             .setContentText(R.string.tutorial_content_tablayout_tap_tab)
                             .setTargetTouchable(true)
                             .setListener(new IShowcaseListener() {
@@ -132,7 +131,7 @@ public class Tutorial {
 
                     sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
                             .setTarget(rowView)
-                            .setDismissText(R.string.tutorial_dismiss)
+                            .setDismissText("")
                             .setContentText(R.string.tutorial_content_coin_tap_coin)
                             .setTargetTouchable(true)
                             .withRectangleShape()

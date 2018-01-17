@@ -152,6 +152,10 @@ public class PriceOverviewFragment extends Fragment implements
         isAnimStarted = true;
         updateCard(coin);
 
+        if (getView() != null) {
+            Tutorial.showPriceOverviewTutorial(getActivity(), getView().findViewById(R.id.container));
+        }
+
         if (DEBUG) CKLog.d(TAG, "finished()");
     }
 
@@ -176,10 +180,6 @@ public class PriceOverviewFragment extends Fragment implements
         super.onResume();
         if (updater != null) {
             updater.start("onResume");
-        }
-
-        if (getView() != null) {
-            Tutorial.showPriceOverviewTutorial(getActivity(), getView().findViewById(R.id.container));
         }
     }
 
