@@ -17,6 +17,8 @@
     <dimen name="coin_list_header_horizontal_offset">72dp</dimen><!-- spacing(16*2) + image(48) -->
     <dimen name="coin_list_header_time_span_horizontal_offset">24dp</dimen><!-- image(16) + offset(8) -->
     <dimen name="coin_list_icon_size">40dp</dimen>
+    <dimen name="coin_list_spark_line_width">60dp</dimen>
+    <dimen name="coin_list_spark_line_height">30dp</dimen>
 
     <dimen name="home_tab_icon_size">40dp</dimen>
     <dimen name="home_tab_horizontal_gap">16dp</dimen>

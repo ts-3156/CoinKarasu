@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.HistoricalPriceKind;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.format.PriceColorFormat;
 import com.coinkarasu.format.SignedPriceFormat;
@@ -31,20 +32,6 @@ public class HistoricalPriceFragment extends Fragment implements
     private static final boolean DEBUG = true;
     private static final String TAG = "HistoricalPriceFragment";
     private static final HistoricalPriceKind DEFAULT_KIND = HistoricalPriceKind.hour;
-
-    public enum HistoricalPriceKind {
-        hour(R.string.line_chart_label_1_hour),
-        day(R.string.line_chart_label_1_day),
-        week(R.string.line_chart_label_1_week),
-        month(R.string.line_chart_label_1_month),
-        year(R.string.line_chart_label_1_year);
-
-        int labelResId;
-
-        HistoricalPriceKind(int labelResId) {
-            this.labelResId = labelResId;
-        }
-    }
 
     private String fromSymbol;
     private String toSymbol;

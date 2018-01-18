@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
@@ -33,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/icon"
+            android:layout_toRightOf="@id/icon"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             tools:text="Bitcoin" />
 
@@ -41,8 +42,8 @@
             android:id="@+id/symbol"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/name"
-            android:layout_toRightOf="@+id/icon"
+            android:layout_below="@id/name"
+            android:layout_toRightOf="@id/icon"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             tools:text="BTC" />
 
@@ -51,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/name"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@id/spark_line"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             tools:text="¥ 1,000,000" />
 
@@ -79,9 +80,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/symbol"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@id/spark_line"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             tools:text="10.0%" />
+
+        <com.coinkarasu.custom.NetworkSparkView
+            android:id="@+id/spark_line"
+            android:layout_width="@dimen/coin_list_spark_line_width"
+            android:layout_height="@dimen/coin_list_spark_line_height"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/coin_list_horizontal_spacing"
+            app:spark_animateChanges="false"
+            app:spark_cornerRadius="1dp"
+            app:spark_lineColor="#80000000"
+            app:spark_lineWidth="1dp" />
 
     </RelativeLayout>
 

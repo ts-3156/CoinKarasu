@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.coinkarasu.activities.HistoricalPriceFragment.HistoricalPriceKind;
+import com.coinkarasu.activities.etc.HistoricalPriceKind;
 import com.coinkarasu.activities.CoinLineChartTabContentFragment;
 
 public class HistoricalPricePagerAdapter extends FragmentPagerAdapter {

@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.coinkarasu.R;
-import com.coinkarasu.activities.HistoricalPriceFragment.HistoricalPriceKind;
+import com.coinkarasu.activities.etc.HistoricalPriceKind;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.chart.CoinLineChart;
@@ -68,7 +68,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
         taskStarted = true;
 
-        GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getActivity()), kind.name())
+        GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getActivity()), kind)
                 .setFromSymbol(fromSymbol)
                 .setToSymbol(toSymbol)
                 .setListener(this)

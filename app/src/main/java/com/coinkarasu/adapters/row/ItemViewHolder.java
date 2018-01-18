@@ -10,6 +10,7 @@ import com.coinkarasu.animator.PriceAnimator;
 import com.coinkarasu.animator.PriceBgColorAnimator;
 import com.coinkarasu.animator.PriceDiffAnimator;
 import com.coinkarasu.animator.TrendAnimator;
+import com.coinkarasu.custom.NetworkSparkView;
 
 public final class ItemViewHolder extends CoinListViewHolder {
     public View innerContainer;
@@ -20,6 +21,7 @@ public final class ItemViewHolder extends CoinListViewHolder {
     public TextView price_diff;
     public TextView trend;
     public ImageView trendIcon;
+    public NetworkSparkView sparkLine;
 
     public PriceAnimator priceAnimator = null;
     public PriceDiffAnimator priceDiffAnimator = null;
@@ -36,5 +38,6 @@ public final class ItemViewHolder extends CoinListViewHolder {
         price_diff = itemView.findViewById(R.id.price_diff);
         trend = itemView.findViewById(R.id.trend);
         trendIcon = itemView.findViewById(R.id.trend_icon);
+        sparkLine = itemView.findViewById(R.id.spark_line);
     }
 }
