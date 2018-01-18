@@ -139,7 +139,7 @@
     <string name="edit_tabs_is_always_be_displayed">%1$s is always be displayed.</string>
 
     <string name="first_launch_description">The fast and easy price checker</string>
-    <string name="first_launch_next">Next</string>
+    <string name="first_launch_start">Start</string>
 
     <string name="tutorial_dismiss">GOT IT</string>
     <string name="tutorial_content_tablayout">Coins are grouped by tabs. You can change the tab by tapping each tab or by swiping the screen.</string>

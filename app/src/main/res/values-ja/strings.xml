@@ -139,7 +139,7 @@
     <string name="edit_tabs_is_always_be_displayed">%1$s は必ず表示されます</string>
 
     <string name="first_launch_description">話題のコインをサクッとチェック</string>
-    <string name="first_launch_next">次に進む</string>
+    <string name="first_launch_start">はじめる</string>
 
     <string name="tutorial_dismiss">次に進む</string>
     <string name="tutorial_content_tablayout">コインはタブごとにグループ分けして表示されます。各タブをタップするか、画面をスワイプすることでタブを変更することができます。</string>
