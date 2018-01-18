@@ -1,5 +1,6 @@
 package com.coinkarasu.activities.settings;
 
+import android.app.Fragment;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -14,9 +15,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.billingmodule.BillingActivity;
@@ -27,7 +30,8 @@ import com.coinkarasu.utils.PrefHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class PreferencesActivity extends AppCompatActivity implements
-        Preference.OnPreferenceChangeListener, InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
+        PreferencesFragment.OnFragmentInteractionListener,
+        InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "PreferencesActivity";
@@ -43,18 +47,54 @@ public class PreferencesActivity extends AppCompatActivity implements
         new InsertLaunchEventTask().execute(this);
         new InitializeThirdPartyAppsTask().execute(this);
 
-        ActionBar bar = getSupportActionBar();
-        if (bar != null) {
-            bar.setTitle(getString(R.string.pref_title));
-        }
+        updateToolbarTitle(R.string.pref_title);
+        updateToolbarColor();
 
         PreferenceManager.setDefaultValues(this, R.xml.fragment_preferences, false);
 
-        getFragmentManager().beginTransaction()
-                .replace(R.id.content, new PreferencesFragment())
-                .commit();
+        if (savedInstanceState == null) {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.content, new PreferencesFragment())
+                    .commit();
+        }
+    }
 
-        updateToolbarColor();
+    @Override
+    public void onNestedPreferenceSelected(String key) {
+        Fragment fragment = null;
+
+        if (BuildConfig.DEBUG && key.equals("pref_debug")) {
+            fragment = new DebugPreferencesFragment();
+        }
+
+        if (fragment != null) {
+            updateToolbarTitle(R.string.pref_header_debug);
+
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.content, fragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            super.onBackPressed();
+        } else {
+            updateToolbarTitle(R.string.pref_title);
+            getFragmentManager().popBackStack();
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -100,6 +140,13 @@ public class PreferencesActivity extends AppCompatActivity implements
         return true;
     }
 
+    private void updateToolbarTitle(int resId) {
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setTitle(getString(resId));
+        }
+    }
+
     private void updateToolbarColor() {
         NavigationKind kind = NavigationKind.edit_tabs;
         ActionBar bar = getSupportActionBar();
@@ -116,6 +163,12 @@ public class PreferencesActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        CKLog.setContext(this);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         CKLog.releaseContext();
@@ -124,5 +177,4 @@ public class PreferencesActivity extends AppCompatActivity implements
     public void setFirebaseAnalytics(FirebaseAnalytics firebaseAnalytics) {
         this.firebaseAnalytics = firebaseAnalytics;
     }
-
 }

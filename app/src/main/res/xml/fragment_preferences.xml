@@ -76,68 +76,9 @@
         android:title="@string/pref_header_debug">
 
         <Preference
-            android:key="pref_clear_cache"
-            android:summary="@string/pref_clear_cache_summary"
-            android:title="@string/pref_clear_cache_title" />
-
-        <Preference
-            android:key="pref_clear_config"
-            android:summary="@string/pref_clear_config_summary"
-            android:title="@string/pref_clear_config_title" />
-
-        <SwitchPreference
-            android:defaultValue="@bool/keep_screen_on"
-            android:key="pref_keep_screen_on"
-            android:summary="@string/pref_description_keep_screen_on"
-            android:title="@string/pref_title_keep_screen_on" />
-
-        <SwitchPreference
-            android:defaultValue="@bool/make_toast"
-            android:key="pref_make_toast"
-            android:summary="@string/pref_description_make_toast"
-            android:title="@string/pref_title_make_toast" />
-
-        <ListPreference
-            android:defaultValue="warn"
-            android:dependency="pref_make_toast"
-            android:entries="@array/pref_toast_level_titles"
-            android:entryValues="@array/pref_toast_level_values"
-            android:key="pref_toast_level"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="@string/pref_title_toast_level" />
-
-        <SwitchPreference
-            android:defaultValue="@bool/become_premium"
-            android:key="pref_become_premium"
-            android:summary="@string/pref_description_become_premium"
-            android:title="@string/pref_title_become_premium" />
-
-        <SwitchPreference
-            android:defaultValue="@bool/show_first_launch_screen"
-            android:key="pref_show_first_launch_screen"
-            android:summary="@string/pref_description_show_first_launch_screen"
-            android:title="@string/pref_title_show_first_launch_screen" />
-
-        <ListPreference
-            android:defaultValue="default"
-            android:entries="@array/pref_change_ck_host_titles"
-            android:entryValues="@array/pref_change_ck_host_values"
-            android:key="pref_change_ck_host"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="@string/pref_title_change_ck_host" />
-
-        <Preference
-            android:key="pref_uuid_file_exists"
-            android:summary=""
-            android:title="@string/pref_uuid_file_exists_title" />
-
-        <Preference
-            android:key="pref_token_file_exists"
-            android:summary=""
-            android:title="@string/pref_token_file_exists_title" />
-
+            android:key="pref_debug"
+            android:persistent="false"
+            android:title="@string/pref_header_debug" />
     </PreferenceCategory>
 
 </PreferenceScreen>

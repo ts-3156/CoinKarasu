@@ -26,25 +26,24 @@ import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
 import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.coinkarasu.billingmodule.BillingActivity;
-import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
-import com.coinkarasu.utils.UuidUtils;
-import com.coinkarasu.utils.cache.DiskBasedCache;
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.util.Arrays;
 import java.util.List;
 
-public class PreferencesFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+public class PreferencesFragment extends PreferenceFragment implements
+        Preference.OnPreferenceClickListener {
     private static final boolean DEBUG = true;
     private static final String TAG = "PreferencesFragment";
 
-    private Preference.OnPreferenceChangeListener listener;
+    private OnFragmentInteractionListener listener;
+
+    public PreferencesFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,43 +51,23 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
         addPreferencesFromResource(R.xml.fragment_preferences);
 
         findPreference("pref_app_version").setOnPreferenceClickListener(this);
-        findPreference("pref_clear_cache").setOnPreferenceClickListener(this);
-        findPreference("pref_clear_config").setOnPreferenceClickListener(this);
         findPreference("pref_open_source_licenses").setOnPreferenceClickListener(this);
         findPreference("pref_remove_ads").setOnPreferenceClickListener(this);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
         if (BuildConfig.DEBUG) {
-            ListPreference ckHost = (ListPreference) findPreference("pref_change_ck_host");
-            CharSequence[] entries = ckHost.getEntries();
-            entries[0] = BuildConfig.CK_HOST.substring(7) + " (default)";
-            CharSequence[] entryValues = ckHost.getEntryValues();
-            entryValues[0] = BuildConfig.CK_HOST;
-            ckHost.setEntries(entries);
-            ckHost.setEntryValues(entryValues);
-            ckHost.setDefaultValue(entryValues[0]);
-            int index = Arrays.asList(entryValues).indexOf(PrefHelper.getCkHost(getActivity(), BuildConfig.CK_HOST));
-            ckHost.setValueIndex(index < 0 ? 0 : index);
-            bindPreferenceSummaryToValue(prefs, "pref_change_ck_host");
-
-            bindPreferenceSummaryToValue(prefs, "pref_toast_level");
-
-            Preference uuidFile = findPreference("pref_uuid_file_exists");
-            uuidFile.setSummary(UuidUtils.exists(getActivity()) ? UuidUtils.get(getActivity()) : "No");
-
-            Preference tokenFile = findPreference("pref_token_file_exists");
-            tokenFile.setSummary(ApiKeyUtils.exists(getActivity()) ? ApiKeyUtils.get(getActivity()).toString() : ApiKeyUtils.dummy().toString());
+            findPreference("pref_debug").setOnPreferenceClickListener(this);
         } else {
             getPreferenceScreen().removePreference(findPreference("pref_category_debug"));
         }
 
-        setDefaultSyncFrequencyIfNeeded();
+        setDefaultSyncFrequencyIfNeeded(); // bindPreferenceSummaryToValue()の前に一度呼ぶ必要がある
         ((SwitchPreference) findPreference("pref_remove_ads")).setChecked(PrefHelper.isPremium(getActivity()));
 
         if (PrefHelper.isPremium(getActivity())) {
             findPreference("pref_account_grade").setSummary(R.string.pref_account_grade_summary_premium);
         }
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
         bindPreferenceSummaryToValue(prefs, "pref_sync_frequency");
         bindPreferenceSummaryToValue(prefs, "pref_currency");
@@ -98,30 +77,56 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
     public boolean onPreferenceClick(Preference preference) {
         String key = preference.getKey();
 
-        if (key.equals("pref_app_version")) {
-            new GetLatestVersionTask().execute();
-        } else if (key.equals("pref_clear_cache")) {
-            showDialog(R.string.pref_clear_cache_dialog, "OK", true, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    new ClearCacheTask(getActivity().getCacheDir()).execute();
+        switch (key) {
+            case "pref_app_version":
+                new GetLatestVersionTask(getActivity()).setListener(new GetLatestVersionTask.Listener() {
+                    @Override
+                    public void finished(String version) {
+                        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
+                            return;
+                        }
+
+                        if (TextUtils.isEmpty(version)) {
+                            showDialog(R.string.pref_app_version_up_to_date, "OK", false, null);
+                            return;
+                        }
+
+                        PackageInfo pInfo = null;
+                        try {
+                            pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
+                        } catch (PackageManager.NameNotFoundException e) {
+                            CKLog.e(TAG, e);
+                        }
+
+                        if (pInfo != null && version.equals(pInfo.versionName)) {
+                            showDialog(R.string.pref_app_version_up_to_date, "OK", false, null);
+                            return;
+                        }
+
+                        showDialog(R.string.pref_app_version_please_update, "Update", true, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                openPlayStore(getActivity());
+                            }
+                        });
+                    }
+                }).execute();
+                break;
+            case "pref_open_source_licenses":
+                startActivity(new Intent(getActivity(), OssLicensesMenuActivity.class));
+                break;
+            case "pref_remove_ads":
+                if (PrefHelper.isPremium(getActivity())) {
+                    ((SwitchPreference) preference).setChecked(true);
+                    showDialog(R.string.pref_remove_ads_already_available, "OK", false, null);
+                } else {
+                    BillingActivity.start(getActivity(), R.string.billing_dialog_remove_ads);
                 }
-            });
-        } else if (key.equals("pref_clear_config")) {
-            showDialog(R.string.pref_clear_config_dialog, "OK", true, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    PrefHelper.clear(getActivity());
-                    getActivity().recreate();
+                break;
+            case "pref_debug":
+                if (BuildConfig.DEBUG) {
+                    listener.onNestedPreferenceSelected(key);
                 }
-            });
-        } else if (key.equals("pref_open_source_licenses")) {
-            startActivity(new Intent(getActivity(), OssLicensesMenuActivity.class));
-        } else if (key.equals("pref_remove_ads")) {
-            if (PrefHelper.isPremium(getActivity())) {
-                ((SwitchPreference) preference).setChecked(true);
-                showDialog(R.string.pref_remove_ads_already_available, "OK", false, null);
-            } else {
-                BillingActivity.start(getActivity(), R.string.billing_dialog_remove_ads);
-            }
+                break;
         }
 
         return true;
@@ -170,7 +175,7 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        listener = (Preference.OnPreferenceChangeListener) context;
+        listener = (OnFragmentInteractionListener) context;
     }
 
     @Override
@@ -179,7 +184,7 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1) {
             return;
         }
-        listener = (Preference.OnPreferenceChangeListener) activity;
+        listener = (OnFragmentInteractionListener) activity;
     }
 
     @Override
@@ -188,30 +193,22 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
         listener = null;
     }
 
-    private static class ClearCacheTask extends AsyncTask<Void, Void, Void> {
-        private File file;
-
-        ClearCacheTask(File file) {
-            this.file = file;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            long start = System.currentTimeMillis();
-            new DiskBasedCache(file).clear();
-            if (DEBUG) CKLog.d(TAG, "Clear cache elapsed time: "
-                    + (System.currentTimeMillis() - start) + "ms");
-            return null;
-        }
-    }
-
-    private class GetLatestVersionTask extends AsyncTask<Void, Void, Void> {
+    private static class GetLatestVersionTask extends AsyncTask<Void, Void, String> {
+        private static final String TAG = "GetLatestVersionTask";
         private static final String URL = "https://coinkarasu.firebaseapp.com/version.json";
-        private String version;
+
+        private Context context;
+        private Listener listener;
+
+        public GetLatestVersionTask(Context context) {
+            this.context = context;
+        }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            JSONObject response = new BlockingRequest(getActivity(), URL).perform();
+        protected String doInBackground(Void... params) {
+            String version = null;
+            JSONObject response = new BlockingRequest(context, URL).perform();
+
             if (response != null && response.has("version")) {
                 try {
                     version = response.getString("version");
@@ -219,33 +216,26 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
                     CKLog.e(TAG, e);
                 }
             }
-            return null;
+
+            return version;
         }
 
         @Override
-        protected void onPostExecute(Void v) {
-            if (TextUtils.isEmpty(version) || getActivity() == null || getActivity().isFinishing()) {
-                showDialog(R.string.pref_app_version_up_to_date, "OK", false, null);
-                return;
+        protected void onPostExecute(String version) {
+            if (listener != null) {
+                listener.finished(version);
             }
+            context = null;
+            listener = null;
+        }
 
-            PackageInfo pInfo = null;
-            try {
-                pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0);
-            } catch (PackageManager.NameNotFoundException e) {
-                CKLog.e(TAG, e);
-            }
+        public GetLatestVersionTask setListener(Listener listener) {
+            this.listener = listener;
+            return this;
+        }
 
-            if (pInfo != null && version.equals(pInfo.versionName)) {
-                showDialog(R.string.pref_app_version_up_to_date, "OK", false, null);
-                return;
-            }
-
-            showDialog(R.string.pref_app_version_please_update, "Update", true, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    openPlayStore(getActivity());
-                }
-            });
+        interface Listener {
+            void finished(String version);
         }
     }
 
@@ -273,9 +263,12 @@ public class PreferencesFragment extends PreferenceFragment implements Preferenc
         }
 
         if (!found) {
-            Intent webIntent =
-                    new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appId));
+            Intent webIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appId));
             context.startActivity(webIntent);
         }
+    }
+
+    public interface OnFragmentInteractionListener extends Preference.OnPreferenceChangeListener {
+        void onNestedPreferenceSelected(String key);
     }
 }
