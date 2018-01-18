@@ -1,7 +1,9 @@
 package com.coinkarasu.utils.cache;
 
+import android.os.AsyncTask;
 import android.text.TextUtils;
-import android.util.Log;
+
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,8 +12,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringArrayListCache {
-
+public class StringArrayListCache<T> {
     private static final boolean DEBUG = true;
     private static final String TAG = "ArrayListCache";
 
@@ -21,15 +22,16 @@ public class StringArrayListCache {
         cache = new DiskBasedCache(rootDir);
     }
 
-    public void put(String key, List<String> list) {
+    public void put(String key, List<T> list) {
         if (list == null || list.isEmpty()) {
             return;
         }
 
         JSONArray json = new JSONArray();
-        for (String str : list) {
+        for (T t : list) {
+            String str = t.toString();
             if (TextUtils.isEmpty(str)) {
-                if (DEBUG) Log.e(TAG, "put() str is empty key=" + key);
+                if (DEBUG) CKLog.w(TAG, "put() str is empty key=" + key);
                 continue;
             }
 
@@ -65,14 +67,14 @@ public class StringArrayListCache {
             for (int i = 0; i < json.length(); i++) {
                 String str = json.getString(i);
                 if (TextUtils.isEmpty(str)) {
-                    if (DEBUG) Log.e(TAG, "get() str is empty index=" + i + " key=" + key);
+                    if (DEBUG) CKLog.w(TAG, "get() str is empty index=" + i + " key=" + key);
                     continue;
                 }
 
                 list.add(str);
             }
         } catch (JSONException e) {
-            if (DEBUG) Log.e(TAG, e.getMessage());
+            CKLog.e(TAG, e);
             list = null;
         }
 
@@ -84,7 +86,43 @@ public class StringArrayListCache {
         return list;
     }
 
+    public boolean exists(String key) {
+        return cache.exists(key);
+    }
+
     public void remove(String key) {
         cache.remove(key);
+    }
+
+    public static String makeCacheName(String prefix, Object... params) {
+        StringBuilder builder = new StringBuilder();
+        String delim = "_";
+        for (Object param : params) {
+            builder.append(delim);
+            builder.append(param.toString());
+        }
+
+        return prefix + builder.toString() + ".json";
+    }
+
+    public static class WriteCacheToDiskTask<T> extends AsyncTask<Void, Void, Void> {
+        private StringArrayListCache<T> cache;
+        private String key;
+        private List<T> list;
+
+        public WriteCacheToDiskTask(StringArrayListCache<T> cache, String key, List<T> list) {
+            this.cache = cache;
+            this.key = key;
+            this.list = list;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            cache.put(key, list);
+            cache = null;
+            key = null;
+            list = null;
+            return null;
+        }
     }
 }

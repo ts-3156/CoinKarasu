@@ -1,7 +1,6 @@
 package com.coinkarasu.tasks.by_exchange.data;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Looper;
 
 import com.coinkarasu.activities.etc.CoinKind;
@@ -9,47 +8,42 @@ import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.cache.StringArrayListCache;
+import com.coinkarasu.utils.cache.StringArrayListCache.WriteCacheToDiskTask;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import static com.coinkarasu.utils.cache.StringArrayListCache.makeCacheName;
 
 /**
  * CoinListSectionFragmentで、最後のデータを表示するために利用している。
  * 有効期限はなく、常に上書きする。
  */
-public class PricesCache {
-
+public final class PricesCache {
     private static final boolean DEBUG = true;
     private static final String TAG = "PricesCache";
 
-    private StringArrayListCache cache;
+    private StringArrayListCache<Price> cache;
 
     public PricesCache(Context context) {
-        cache = new StringArrayListCache(context.getCacheDir());
+        cache = new StringArrayListCache<>(context.getCacheDir());
     }
 
     public synchronized void put(NavigationKind kind, Exchange exchange, CoinKind coinKind, List<Price> prices) {
-        if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
-            throw new RuntimeException("Should call put() from the main thread");
-        }
+        String key = makeCacheName(TAG, kind, exchange, coinKind);
 
-        if (prices == null || prices.isEmpty()) {
-            return;
+        if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+            new WriteCacheToDiskTask<>(cache, key, prices).execute();
+        } else {
+            cache.put(key, prices);
         }
-
-        String[] list = new String[prices.size()];
-        for (int i = 0; i < prices.size(); i++) {
-            list[i] = prices.get(i).toString();
-        }
-
-        new WriteCacheToDiskTask(cache, makeCacheName(kind, exchange, coinKind)).execute(list);
     }
 
     public synchronized List<Price> get(NavigationKind kind, Exchange exchange, CoinKind coinKind) {
-        List<String> list = cache.get(makeCacheName(kind, exchange, coinKind));
+        String key = makeCacheName(TAG, kind, exchange, coinKind);
+        List<String> list = cache.get(key);
+
         if (list == null || list.isEmpty()) {
-            remove(kind, exchange, coinKind);
             return null;
         }
 
@@ -66,34 +60,10 @@ public class PricesCache {
         }
 
         if (prices.isEmpty()) {
-            remove(kind, exchange, coinKind);
+            cache.remove(key);
             return null;
         }
 
         return prices;
-    }
-
-    private synchronized void remove(NavigationKind kind, Exchange exchange, CoinKind coinKind) {
-        cache.remove(makeCacheName(kind, exchange, coinKind));
-    }
-
-    private static String makeCacheName(NavigationKind kind, Exchange exchange, CoinKind coinKind) {
-        return "cached_prices_" + kind.name() + "_" + exchange.name() + "_" + coinKind.name() + ".json";
-    }
-
-    private static class WriteCacheToDiskTask extends AsyncTask<String, Void, Void> {
-        private StringArrayListCache cache;
-        private String key;
-
-        WriteCacheToDiskTask(StringArrayListCache cache, String key) {
-            this.cache = cache;
-            this.key = key;
-        }
-
-        @Override
-        protected Void doInBackground(String... params) {
-            cache.put(key, Arrays.asList(params));
-            return null;
-        }
     }
 }

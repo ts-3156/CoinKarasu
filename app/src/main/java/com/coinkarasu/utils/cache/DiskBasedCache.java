@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class DiskBasedCache implements Cache {
-
     private static final boolean DEBUG = true;
     private static final String TAG = "DiskBasedCache";
 
