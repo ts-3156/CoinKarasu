@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.pagers.MainPagerAdapter;
+import com.coinkarasu.tasks.LogTabChangedEventTask;
 import com.coinkarasu.utils.CKLog;
 
 import java.util.List;
@@ -97,7 +98,7 @@ public class MainFragment extends Fragment implements
         return kind;
     }
 
-    // バックボタンが押された時、NavigationDrawerがクリックされた時
+    // バックボタンが押された時、NavigationDrawerがクリックされた時にMainViewControllerから呼ばれる
     public void setCurrentKind(NavigationKind kind, boolean smoothScroll) {
         this.kind = kind;
         int position = listener.getVisibleKinds().indexOf(kind);
@@ -151,6 +152,8 @@ public class MainFragment extends Fragment implements
         pager.setCurrentItem(position, false);
         kind = listener.getVisibleKinds().get(position);
         listener.requestRefreshUi(kind);
+
+        new LogTabChangedEventTask().execute(getActivity(), kind);
     }
 
     @Override

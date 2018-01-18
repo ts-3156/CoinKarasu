@@ -1,6 +1,5 @@
 package com.coinkarasu.activities.settings;
 
-import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -22,12 +21,10 @@ import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
+import com.coinkarasu.tasks.InsertLaunchEventTask;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
-
-import io.fabric.sdk.android.Fabric;
 
 public class PreferencesActivity extends AppCompatActivity implements
         Preference.OnPreferenceChangeListener, InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
@@ -42,6 +39,10 @@ public class PreferencesActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_preferences);
 
+        CKLog.setContext(this);
+        new InsertLaunchEventTask().execute(this);
+        new InitializeThirdPartyAppsTask().execute(this);
+
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setTitle(getString(R.string.pref_title));
@@ -54,8 +55,6 @@ public class PreferencesActivity extends AppCompatActivity implements
                 .commit();
 
         updateToolbarColor();
-
-        new InitializeActivityTask(this, this, null).execute();
     }
 
     @Override
@@ -116,23 +115,14 @@ public class PreferencesActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        CKLog.releaseContext();
+    }
+
     public void setFirebaseAnalytics(FirebaseAnalytics firebaseAnalytics) {
         this.firebaseAnalytics = firebaseAnalytics;
     }
 
-    private static class InitializeActivityTask extends InitializeThirdPartyAppsTask {
-        InitializeActivityTask(Context context, FirebaseAnalyticsReceiver receiver, Runnable runnable) {
-            super(context, receiver, runnable);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            long start = System.currentTimeMillis();
-            Fabric.with(context, new Crashlytics());
-            receiver.setFirebaseAnalytics(FirebaseAnalytics.getInstance(context));
-            if (DEBUG) CKLog.d(TAG, "InitializeThirdPartyAppsTask() " + (System.currentTimeMillis() - start));
-
-            return null;
-        }
-    }
 }

@@ -34,14 +34,12 @@ import com.coinkarasu.billingmodule.skulist.SkusAdapter;
 import com.coinkarasu.billingmodule.skulist.row.SkuRowData;
 import com.coinkarasu.billingmodule.skulist.row.UiManager;
 import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
+import com.coinkarasu.tasks.InsertLaunchEventTask;
 import com.coinkarasu.utils.CKLog;
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import io.fabric.sdk.android.Fabric;
 
 import static com.android.billingclient.api.BillingClient.BillingResponse;
 import static com.coinkarasu.billingmodule.billing.BillingManager.BILLING_MANAGER_NOT_INITIALIZED;
@@ -65,9 +63,11 @@ public class BillingActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         setContentView(R.layout.activity_billing);
+
+        CKLog.setContext(this);
+        new InsertLaunchEventTask().execute(this);
+        new InitializeThirdPartyAppsTask().execute(this);
 
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
@@ -77,7 +77,6 @@ public class BillingActivity extends AppCompatActivity implements
         showDialog();
         updateToolbarColor();
 
-        CKLog.setContext(this);
         mViewController = new BillingViewController(this);
         mBillingManager = new BillingManager(this, mViewController.getUpdateListener());
 
@@ -86,8 +85,6 @@ public class BillingActivity extends AppCompatActivity implements
         mScreenWait = findViewById(R.id.billing_screen_wait);
 
         onPurchaseButtonClicked(null);
-
-        new InitializeActivityTask(this, this, null).execute();
     }
 
     @Override
@@ -148,13 +145,18 @@ public class BillingActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        CKLog.releaseContext();
+    }
+
+    @Override
     public void onDestroy() {
         if (DEBUG) CKLog.d(TAG, "Destroying helper.");
         if (mBillingManager != null) {
             mBillingManager.destroy();
         }
         super.onDestroy();
-        CKLog.releaseContext();
     }
 
     private void showDialog() {
@@ -369,19 +371,4 @@ public class BillingActivity extends AppCompatActivity implements
         this.firebaseAnalytics = firebaseAnalytics;
     }
 
-    private static class InitializeActivityTask extends InitializeThirdPartyAppsTask {
-        InitializeActivityTask(Context context, FirebaseAnalyticsReceiver receiver, Runnable runnable) {
-            super(context, receiver, runnable);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            long start = System.currentTimeMillis();
-            Fabric.with(context, new Crashlytics());
-            receiver.setFirebaseAnalytics(FirebaseAnalytics.getInstance(context));
-            if (DEBUG) CKLog.d(TAG, "InitializeThirdPartyAppsTask() " + (System.currentTimeMillis() - start));
-
-            return null;
-        }
-    }
 }

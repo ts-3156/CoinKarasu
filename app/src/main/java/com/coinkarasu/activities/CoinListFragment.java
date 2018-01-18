@@ -27,7 +27,6 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.tasks.CollectCoinsTask;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.Tutorial;
 
 import java.util.ArrayList;
@@ -109,8 +108,6 @@ public class CoinListFragment extends Fragment implements
         refresh = view.findViewById(R.id.refresh_layout);
         refresh.setOnRefreshListener(this);
         refresh.setColorSchemeColors(getResources().getColor(R.color.colorRotate));
-
-        PrefHelper.getPref(getActivity()).registerOnSharedPreferenceChangeListener(this);
 
         return view;
     }
@@ -214,8 +211,6 @@ public class CoinListFragment extends Fragment implements
     @Override
     public void onDetach() {
         super.onDetach();
-        PrefHelper.getPref(getActivity()).unregisterOnSharedPreferenceChangeListener(this);
-
         for (Fragment fragment : sectionFragments) {
             fragment.onDetach();
         }

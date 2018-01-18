@@ -1,6 +1,7 @@
 package com.coinkarasu.utils;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
@@ -10,10 +11,12 @@ import android.widget.ScrollView;
 
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
+import com.coinkarasu.activities.CoinActivity;
 import com.coinkarasu.activities.MainActivity;
 import com.coinkarasu.activities.MainFragment;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.adapters.row.CoinListViewHolder;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
 
@@ -81,6 +84,7 @@ public class Tutorial {
                                     if (!activity.isFinishing()) {
                                         MainFragment fragment = ((MainActivity) activity).getFragment();
                                         fragment.setCurrentKind(NavigationKind.coincheck, true);
+                                        logTutorialProgress(((MainActivity) activity).getFirebaseAnalytics(), ID_TAB_LAYOUT);
                                     }
                                 }
                             })
@@ -134,6 +138,16 @@ public class Tutorial {
                             .setDismissText("")
                             .setContentText(R.string.tutorial_content_coin_tap_coin)
                             .setTargetTouchable(true)
+                            .setListener(new IShowcaseListener() {
+                                @Override
+                                public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {
+                                }
+
+                                @Override
+                                public void onShowcaseDismissed(MaterialShowcaseView materialShowcaseView) {
+                                    logTutorialProgress(((MainActivity) activity).getFirebaseAnalytics(), ID_TAB);
+                                }
+                            })
                             .withRectangleShape()
                             .setShapePadding(PADDING_RECT)
                             .build());
@@ -162,6 +176,9 @@ public class Tutorial {
                         ScrollView scroll = activity.findViewById(R.id.scroll_view);
                         View card = activity.findViewById(R.id.card_line_chart);
                         scroll.scrollTo(0, card.getBottom());
+
+                        logTutorialProgress(((CoinActivity) activity).getFirebaseAnalytics(), ID_PRICE_OVERVIEW);
+                        logTutorialComplete(((CoinActivity) activity).getFirebaseAnalytics());
                     }
                 }
             }).start();
@@ -208,5 +225,27 @@ public class Tutorial {
         }
 
         return sequence;
+    }
+
+    public static void logTutorialBegin(FirebaseAnalytics analytics) {
+        if (analytics != null) {
+            Bundle bundle = new Bundle();
+            analytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_BEGIN, bundle);
+        }
+    }
+
+    private static void logTutorialProgress(FirebaseAnalytics analytics, String id) {
+        if (analytics != null) {
+            Bundle bundle = new Bundle();
+            bundle.putString("tutorial_id", id);
+            analytics.logEvent("tutorial_progress", bundle);
+        }
+    }
+
+    private static void logTutorialComplete(FirebaseAnalytics analytics) {
+        if (analytics != null) {
+            Bundle bundle = new Bundle();
+            analytics.logEvent(FirebaseAnalytics.Event.TUTORIAL_COMPLETE, bundle);
+        }
     }
 }

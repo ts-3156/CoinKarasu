@@ -30,15 +30,14 @@ import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.custom.SwipeDetector;
 import com.coinkarasu.tasks.GetBoardTask;
 import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
+import com.coinkarasu.tasks.InsertLaunchEventTask;
+import com.coinkarasu.tasks.LogCoinSelectedEventTask;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
-import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import io.fabric.sdk.android.Fabric;
 
 public class CoinActivity extends AppCompatActivity implements
         InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
@@ -58,7 +57,6 @@ public class CoinActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_coin);
-        CKLog.setContext(this);
 
         Intent intent = getIntent();
         try {
@@ -66,8 +64,17 @@ public class CoinActivity extends AppCompatActivity implements
         } catch (JSONException e) {
             CKLog.e(TAG, e);
         }
+        final NavigationKind kind = NavigationKind.valueOf(intent.getStringExtra(KEY_KIND));
 
-        NavigationKind kind = NavigationKind.valueOf(intent.getStringExtra(KEY_KIND));
+        CKLog.setContext(this);
+        new InsertLaunchEventTask().execute(this);
+        new InitializeThirdPartyAppsTask(new Runnable() {
+            @Override
+            public void run() {
+                new LogCoinSelectedEventTask().execute(CoinActivity.this, kind, coin);
+            }
+        }).execute(this);
+
         updateToolbarTitle(kind);
         updateToolbarColor(kind);
 
@@ -75,13 +82,6 @@ public class CoinActivity extends AppCompatActivity implements
             setupFragment();
             drawBoardChart();
         }
-
-        new InitializeActivityTask(this, this, new Runnable() {
-            @Override
-            public void run() {
-                logEvent(coin);
-            }
-        }).execute();
     }
 
     private void setupFragment() {
@@ -243,16 +243,6 @@ public class CoinActivity extends AppCompatActivity implements
         }).execute();
     }
 
-    private void logEvent(Coin coin) {
-        if (firebaseAnalytics != null) {
-            Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, coin.getSymbol());
-            bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, coin.getSymbol());
-            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "coin");
-            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
-        }
-    }
-
     @Override
     public void finish() {
         super.finish();
@@ -260,8 +250,8 @@ public class CoinActivity extends AppCompatActivity implements
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void onPause() {
+        super.onPause();
         CKLog.releaseContext();
     }
 
@@ -291,19 +281,8 @@ public class CoinActivity extends AppCompatActivity implements
         this.firebaseAnalytics = firebaseAnalytics;
     }
 
-    private static class InitializeActivityTask extends InitializeThirdPartyAppsTask {
-        InitializeActivityTask(Context context, FirebaseAnalyticsReceiver receiver, Runnable runnable) {
-            super(context, receiver, runnable);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            long start = System.currentTimeMillis();
-            Fabric.with(context, new Crashlytics());
-            receiver.setFirebaseAnalytics(FirebaseAnalytics.getInstance(context));
-            if (DEBUG) CKLog.d(TAG, "InitializeThirdPartyAppsTask() " + (System.currentTimeMillis() - start));
-
-            return null;
-        }
+    public FirebaseAnalytics getFirebaseAnalytics() {
+        return firebaseAnalytics;
     }
+
 }

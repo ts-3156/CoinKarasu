@@ -1,33 +1,48 @@
 package com.coinkarasu.tasks;
 
-import android.content.Context;
+import android.app.Activity;
 import android.os.AsyncTask;
 
+import com.coinkarasu.BuildConfig;
+import com.coinkarasu.activities.MainActivity;
+import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
-public abstract class InitializeThirdPartyAppsTask extends AsyncTask<Void, Void, Void> {
+import io.fabric.sdk.android.Fabric;
+
+public class InitializeThirdPartyAppsTask extends AsyncTask<Activity, Void, Void> {
     private static final boolean DEBUG = true;
     private static final String TAG = "InitializeThirdPartyAppsTask";
 
-    protected Context context;
-    protected FirebaseAnalyticsReceiver receiver;
     protected Runnable runnable;
 
-    protected InitializeThirdPartyAppsTask(Context context, FirebaseAnalyticsReceiver receiver, Runnable runnable) {
-        this.context = context;
-        this.receiver = receiver;
+    public InitializeThirdPartyAppsTask() {
+        this(null);
+    }
+
+    public InitializeThirdPartyAppsTask(Runnable runnable) {
         this.runnable = runnable;
     }
 
     @Override
-    protected abstract Void doInBackground(Void... params);
+    protected Void doInBackground(Activity... params) {
+        Activity activity = params[0];
+        Fabric.with(activity, new Crashlytics());
+        ((FirebaseAnalyticsReceiver) activity).setFirebaseAnalytics(FirebaseAnalytics.getInstance(activity));
+
+        if (activity instanceof MainActivity) {
+            MobileAds.initialize(activity, BuildConfig.ADMOB_APP_ID);
+        }
+
+        return null;
+    }
 
     @Override
     protected void onPostExecute(Void v) {
         if (runnable != null) {
             runnable.run();
         }
-        context = null;
         runnable = null;
     }
 

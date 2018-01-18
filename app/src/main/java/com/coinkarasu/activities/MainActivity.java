@@ -26,20 +26,17 @@ import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.billingmodule.billing.BillingManager;
 import com.coinkarasu.tasks.GetApiKeyTask;
 import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
+import com.coinkarasu.tasks.InsertLaunchEventTask;
 import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
-import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
-
-import io.fabric.sdk.android.Fabric;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -58,6 +55,15 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        CKLog.setContext(this);
+        new InsertLaunchEventTask().execute(this);
+        new InitializeThirdPartyAppsTask(new Runnable() {
+            @Override
+            public void run() {
+                setupAdView();
+            }
+        }).execute(this);
+
         if (PrefHelper.isDebugFirstLaunchScreen(this) || !AppLaunchChecker.hasStartedFromLauncher(this)) {
             FirstLaunchActivity.start(this);
             AppLaunchChecker.onActivityCreate(this);
@@ -66,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         setContentView(R.layout.activity_main); // ここで 180ms, onCreate全体で 230ms
-        CKLog.setContext(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -102,12 +107,6 @@ public class MainActivity extends AppCompatActivity implements
         viewController = new MainViewController(this);
         new BillingManager(this, viewController.getUpdateListener());
 
-        new InitializeActivityTask(this, this, new Runnable() {
-            @Override
-            public void run() {
-                setupAdView();
-            }
-        }).execute();
         if (!ApiKeyUtils.exists(this)) {
             new GetApiKeyTask(this).execute();
         }
@@ -263,37 +262,29 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        CKLog.releaseContext();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (viewController != null) {
             viewController.onDestroy();
         }
-        CKLog.releaseContext();
     }
 
     public void setFirebaseAnalytics(FirebaseAnalytics firebaseAnalytics) {
         this.firebaseAnalytics = firebaseAnalytics;
     }
 
+    public FirebaseAnalytics getFirebaseAnalytics() {
+        return firebaseAnalytics;
+    }
+
     public static void start(Context context) {
         Intent intent = new Intent(context, MainActivity.class);
         context.startActivity(intent);
-    }
-
-    private static class InitializeActivityTask extends InitializeThirdPartyAppsTask {
-        InitializeActivityTask(Context context, FirebaseAnalyticsReceiver receiver, Runnable runnable) {
-            super(context, receiver, runnable);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            long start = System.currentTimeMillis();
-            Fabric.with(context, new Crashlytics());
-            receiver.setFirebaseAnalytics(FirebaseAnalytics.getInstance(context));
-            MobileAds.initialize(context, BuildConfig.ADMOB_APP_ID);
-            if (DEBUG) CKLog.d(TAG, "InitializeThirdPartyAppsTask() " + (System.currentTimeMillis() - start));
-
-            return null;
-        }
     }
 }

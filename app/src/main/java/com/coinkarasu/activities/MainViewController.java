@@ -175,7 +175,7 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
     }
 
     private void loadData() {
-        isPremium = (BuildConfig.DEBUG && PrefHelper.isDebugPremium(activity)) || PrefHelper.isPremium(activity);
+        isPremium = PrefHelper.isDebugPremium(activity) || PrefHelper.isPremium(activity);
     }
 
     private class UpdateListener implements BillingManager.BillingUpdatesListener {

@@ -19,17 +19,33 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.services.UpdateCoinListIntentService;
 import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.services.UpdateTrendingIntentService;
+import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
+import com.coinkarasu.tasks.InsertLaunchEventTask;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.Tutorial;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
-public class FirstLaunchActivity extends AppCompatActivity {
+public class FirstLaunchActivity extends AppCompatActivity implements
+        InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
     private static final boolean DEBUG = true;
     private static final String TAG = "FirstLaunchActivity";
+
+    private FirebaseAnalytics firebaseAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentTransitionsFlag();
         setContentView(R.layout.activity_first_launch);
+
+        CKLog.setContext(this);
+        new InsertLaunchEventTask().execute(this);
+        new InitializeThirdPartyAppsTask(new Runnable() {
+            @Override
+            public void run() {
+                Tutorial.logTutorialBegin(firebaseAnalytics);
+            }
+        }).execute(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -110,8 +126,20 @@ public class FirstLaunchActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        CKLog.releaseContext();
+    }
+
     public static void start(Context context) {
         Intent intent = new Intent(context, FirstLaunchActivity.class);
         context.startActivity(intent);
     }
+
+    @Override
+    public void setFirebaseAnalytics(FirebaseAnalytics firebaseAnalytics) {
+        this.firebaseAnalytics = firebaseAnalytics;
+    }
+
 }
