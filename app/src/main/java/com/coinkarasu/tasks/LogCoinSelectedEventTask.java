@@ -43,6 +43,8 @@ public class LogCoinSelectedEventTask extends AsyncTask<Object, Void, Void> {
                 bundle.putString("sync_interval", String.valueOf(PrefHelper.getSyncInterval(activity)));
                 bundle.putString("is_premium", String.valueOf(PrefHelper.isPremium(activity)));
                 analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+                if (DEBUG) CKLog.d(TAG, bundle.toString());
             }
         } catch (Exception e) {
             CKLog.e(TAG, e);

@@ -155,8 +155,6 @@ public class PriceOverviewFragment extends Fragment implements
         if (getView() != null) {
             Tutorial.showPriceOverviewTutorial(getActivity(), getView().findViewById(R.id.container));
         }
-
-        if (DEBUG) CKLog.d(TAG, "finished()");
     }
 
     private void updateCard(Coin coin) {

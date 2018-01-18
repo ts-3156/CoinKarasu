@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,8 +19,8 @@ import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.TopPair;
 import com.coinkarasu.pagers.CoinPieChartPagerAdapter;
 import com.coinkarasu.tasks.GetTopPairsTask;
+import com.coinkarasu.utils.CKLog;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -31,6 +30,8 @@ import java.util.List;
 public class CoinPieChartFragment extends Fragment implements
         ViewPager.OnPageChangeListener, GetTopPairsTask.Listener {
 
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinPieChartFragment";
     private static final Kind DEFAULT_KIND = Kind.currency;
 
     public enum Kind {
@@ -163,7 +164,7 @@ public class CoinPieChartFragment extends Fragment implements
         }
 
         if (pairs == null) {
-            Log.e("finished", "null(retry), " + errorCount);
+            if (DEBUG) CKLog.w(TAG, "finished() pairs is null " + "retry=true err=" + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();

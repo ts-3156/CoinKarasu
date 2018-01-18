@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.Spanned;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -235,7 +234,7 @@ public class CoinExchangeFragment extends Fragment implements
 
         List<SnapshotCoin> coins = snapshot.getSnapshotCoins();
         if (coins == null) {
-            Log.e("finished", "null(retry), " + kind + ", " + errorCount);
+            if (DEBUG) CKLog.w(TAG, "finished() snapshot is null " + kind + " retry=true err=" + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
@@ -251,7 +250,7 @@ public class CoinExchangeFragment extends Fragment implements
         }
 
         if (coins.isEmpty()) {
-            Log.e("finished", "empty, " + kind + ", " + errorCount);
+            if (DEBUG) CKLog.w(TAG, "finished() coins is empty " + kind + " err=" + errorCount);
             View view = getView();
             view.findViewById(R.id.pager_container).setVisibility(View.GONE);
             view.findViewById(R.id.info_container).setVisibility(View.GONE);
