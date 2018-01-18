@@ -34,6 +34,7 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
@@ -50,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements
     private FirebaseAnalytics firebaseAnalytics;
     private MainViewController viewController;
     private MainFragment fragment;
+    private DrawerLayout drawer;
+    private AdView ad;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,14 +60,9 @@ public class MainActivity extends AppCompatActivity implements
 
         CKLog.setContext(this);
         new InsertLaunchEventTask().execute(this);
-        new InitializeThirdPartyAppsTask(new Runnable() {
-            @Override
-            public void run() {
-                setupAdView();
-            }
-        }).execute(this);
+        new InitializeThirdPartyAppsTask().execute(this);
 
-        if (PrefHelper.isDebugFirstLaunchScreen(this) || !AppLaunchChecker.hasStartedFromLauncher(this)) {
+        if (PrefHelper.shouldShowFirstLaunchScreen(this) || !AppLaunchChecker.hasStartedFromLauncher(this)) {
             FirstLaunchActivity.start(this);
             AppLaunchChecker.onActivityCreate(this);
             finish();
@@ -86,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         });
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -112,45 +110,22 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    private void switchCurrencyMenuTitle(Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_currency);
-        if (item == null) {
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
             return;
         }
 
-        NavigationKind kind = viewController.getCurrentKind();
-        if (kind != null && kind == NavigationKind.japan) {
-            item.setEnabled(false);
-            item.setTitle(Currency.JPY.disabledTitleStrResId);
-        } else {
-            item.setEnabled(true);
-            String symbol = PrefHelper.getToSymbol(this);
-
-            if (symbol != null && symbol.equals(Currency.JPY.name())) {
-                item.setTitle(Currency.JPY.titleStrResId);
-            } else {
-                item.setTitle(Currency.USD.titleStrResId);
-            }
-        }
-    }
-
-    public MainFragment getFragment() {
-        return fragment;
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
+        if (viewController != null) {
             NavigationKind kind = viewController.getCurrentKind();
             if (kind != null && kind != NavigationKind.getDefault()) {
                 viewController.setCurrentKind(NavigationKind.getDefault(), true);
-            } else {
-                super.onBackPressed();
+                return;
             }
         }
+
+        super.onBackPressed();
     }
 
     @Override
@@ -161,7 +136,6 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        switchCurrencyMenuTitle(menu);
         return true;
     }
 
@@ -206,28 +180,39 @@ public class MainActivity extends AppCompatActivity implements
             startActivity(new Intent(this, PreferencesActivity.class));
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    /**
+     * バックボタンが押された時、タブを編集した時などにMainFragmentからコールバックされる。
+     */
     @Override
     public void requestRefreshUi(NavigationKind kind) {
         viewController.requestRefreshUi(kind);
     }
 
+    void onBillingManagerSetupFinished() {
+        setupAdView();
+    }
+
     private void setupAdView() {
-        if (isPremiumPurchased()) {
+        if (isFinishing() || viewController == null || isPremiumPurchased() || ad != null) {
             return;
         }
 
-        final AdView ad = new AdView(this);
+        MobileAds.initialize(this, BuildConfig.ADMOB_APP_ID);
+        ad = new AdView(this);
         ad.setAdSize(AdSize.SMART_BANNER);
         ad.setAdUnitId(BuildConfig.ADMOB_UNIT_ID);
 
         ad.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
+                if (isFinishing()) {
+                    return;
+                }
+
                 if (ad.getParent() == null) {
                     ViewGroup parent = findViewById(R.id.main_ad_container);
                     parent.addView(ad);
@@ -235,13 +220,13 @@ public class MainActivity extends AppCompatActivity implements
                     int adHeight = AdSize.SMART_BANNER.getHeightInPixels(MainActivity.this);
                     findViewById(R.id.fragment_container).setPadding(0, 0, 0, adHeight);
 
-                    if (DEBUG) CKLog.d("onAdLoaded", "loaded");
+                    if (DEBUG) CKLog.d(TAG, "onAdLoaded()");
                 }
             }
 
             @Override
             public void onAdFailedToLoad(int errorCode) {
-                if (DEBUG) CKLog.e(TAG, "onAdFailedToLoad() " + errorCode);
+                if (DEBUG) CKLog.w(TAG, "onAdFailedToLoad() " + errorCode);
             }
         });
         ad.loadAd(new AdRequest.Builder().build());
@@ -249,6 +234,10 @@ public class MainActivity extends AppCompatActivity implements
 
     public boolean isPremiumPurchased() {
         return viewController.isPremiumPurchased();
+    }
+
+    public MainFragment getFragment() {
+        return fragment;
     }
 
     @Override
@@ -259,6 +248,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public TabLayout getTabLayout() {
         return findViewById(R.id.tab_layout);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        CKLog.setContext(this);
     }
 
     @Override

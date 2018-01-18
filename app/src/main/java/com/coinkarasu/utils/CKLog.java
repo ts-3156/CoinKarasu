@@ -36,8 +36,8 @@ public class CKLog {
     private static boolean isRunning;
 
     public static synchronized void setContext(Context context) {
-        Log.d(TAG, "setContext()");
-        if (CKLog.context == null) {
+        if (DEBUG) Log.d(TAG, "setContext()");
+        if (BuildConfig.DEBUG && CKLog.context == null) {
             CKLog.context = context.getApplicationContext();
             queue = new LinkedList<>();
             isRunning = false;
@@ -45,7 +45,7 @@ public class CKLog {
     }
 
     public static void releaseContext() {
-        Log.d(TAG, "releaseContext()");
+        if (DEBUG) Log.d(TAG, "releaseContext()");
         context = null;
     }
 

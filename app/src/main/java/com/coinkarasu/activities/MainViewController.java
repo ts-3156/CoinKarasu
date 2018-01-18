@@ -15,7 +15,6 @@ import android.view.WindowManager;
 
 import com.android.billingclient.api.BillingClient.BillingResponse;
 import com.android.billingclient.api.Purchase;
-import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.billingmodule.billing.BillingManager;
@@ -181,6 +180,7 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
     private class UpdateListener implements BillingManager.BillingUpdatesListener {
         @Override
         public void onBillingClientSetupFinished() {
+            activity.onBillingManagerSetupFinished();
         }
 
         @Override

@@ -14,12 +14,16 @@ public class AppTutorialChecker {
     }
 
     public static void onTutorialFinished(@NonNull Activity activity, String id) {
-        final SharedPreferences sp = PrefHelper.getPref(activity);
+        SharedPreferences sp = PrefHelper.getPref(activity);
         if (sp.getBoolean(makeKey(id), false)) {
             return;
         }
 
         sp.edit().putBoolean(makeKey(id), true).apply();
+    }
+
+    public static void reset(Context context, String id) {
+        PrefHelper.getPref(context).edit().putBoolean(makeKey(id), false).apply();
     }
 
     private static String makeKey(String id) {

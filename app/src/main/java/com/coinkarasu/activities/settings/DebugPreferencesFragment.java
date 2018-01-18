@@ -18,13 +18,15 @@ import com.coinkarasu.R;
 import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
+import com.coinkarasu.utils.Tutorial;
 import com.coinkarasu.utils.UuidUtils;
 import com.coinkarasu.utils.cache.DiskBasedCache;
 
 import java.io.File;
 import java.util.Arrays;
 
-public class DebugPreferencesFragment extends PreferenceFragment implements Preference.OnPreferenceClickListener {
+public class DebugPreferencesFragment extends PreferenceFragment implements
+        Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
     private static final boolean DEBUG = true;
     private static final String TAG = "DebugPreferencesFragment";
 
@@ -40,6 +42,7 @@ public class DebugPreferencesFragment extends PreferenceFragment implements Pref
 
         findPreference("pref_clear_cache").setOnPreferenceClickListener(this);
         findPreference("pref_clear_config").setOnPreferenceClickListener(this);
+        findPreference("pref_show_first_launch_screen").setOnPreferenceChangeListener(this);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
@@ -122,6 +125,16 @@ public class DebugPreferencesFragment extends PreferenceFragment implements Pref
     public void onDetach() {
         super.onDetach();
         listener = null;
+    }
+
+    @Override
+    public boolean onPreferenceChange(Preference preference, Object value) {
+        if (preference.getKey().equals("pref_show_first_launch_screen")) {
+            if ((Boolean) value) {
+                Tutorial.reset(getActivity());
+            }
+        }
+        return true;
     }
 
     private static class ClearCacheTask extends AsyncTask<File, Void, Void> {

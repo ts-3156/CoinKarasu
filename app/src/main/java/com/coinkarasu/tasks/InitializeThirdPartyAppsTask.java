@@ -3,10 +3,7 @@ package com.coinkarasu.tasks;
 import android.app.Activity;
 import android.os.AsyncTask;
 
-import com.coinkarasu.BuildConfig;
-import com.coinkarasu.activities.MainActivity;
 import com.crashlytics.android.Crashlytics;
-import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import io.fabric.sdk.android.Fabric;
@@ -30,10 +27,6 @@ public class InitializeThirdPartyAppsTask extends AsyncTask<Activity, Void, Void
         Activity activity = params[0];
         Fabric.with(activity, new Crashlytics());
         ((FirebaseAnalyticsReceiver) activity).setFirebaseAnalytics(FirebaseAnalytics.getInstance(activity));
-
-        if (activity instanceof MainActivity) {
-            MobileAds.initialize(activity, BuildConfig.ADMOB_APP_ID);
-        }
 
         return null;
     }

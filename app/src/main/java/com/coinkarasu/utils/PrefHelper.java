@@ -176,8 +176,16 @@ public class PrefHelper {
         return BuildConfig.DEBUG && isEnabled(context, "pref_become_premium", R.bool.become_premium);
     }
 
-    public static boolean isDebugFirstLaunchScreen(Context context) {
+    public static boolean shouldShowFirstLaunchScreen(Context context) {
         return BuildConfig.DEBUG && isEnabled(context, "pref_show_first_launch_screen", R.bool.show_first_launch_screen);
+    }
+
+    public static void setShouldShowFirstLaunchScreen(Context context, boolean flag) {
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return;
+        }
+        pref.edit().putBoolean("pref_show_first_launch_screen", flag).apply();
     }
 
     private static boolean isEnabled(Context context, String key, int defResId) {

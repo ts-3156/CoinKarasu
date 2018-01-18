@@ -1,6 +1,7 @@
 package com.coinkarasu.utils;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.TabLayout;
@@ -225,6 +226,12 @@ public class Tutorial {
         }
 
         return sequence;
+    }
+
+    public static void reset(Context context) {
+        AppTutorialChecker.reset(context, ID_TAB_LAYOUT);
+        AppTutorialChecker.reset(context, ID_TAB);
+        AppTutorialChecker.reset(context, ID_PRICE_OVERVIEW);
     }
 
     public static void logTutorialBegin(FirebaseAnalytics analytics) {

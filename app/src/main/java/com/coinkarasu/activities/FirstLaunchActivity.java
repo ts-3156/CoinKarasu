@@ -9,8 +9,8 @@ import android.support.transition.Slide;
 import android.support.transition.TransitionSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Gravity;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -22,6 +22,7 @@ import com.coinkarasu.services.UpdateTrendingIntentService;
 import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
 import com.coinkarasu.tasks.InsertLaunchEventTask;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.Tutorial;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -58,13 +59,15 @@ public class FirstLaunchActivity extends AppCompatActivity implements
 
         if (savedInstanceState == null) {
             UpdateCoinListIntentService.start(this);
-            UpdateTrendingIntentService.start(this, true);
+            UpdateTrendingIntentService.start(this, false);
             for (NavigationKind kind : NavigationKind.values()) {
                 if (kind.isToplist() && kind.isVisible(this)) {
                     UpdateToplistIntentService.start(this, kind);
                 }
             }
         }
+
+        PrefHelper.setShouldShowFirstLaunchScreen(this, false);
     }
 
     public void goToNext(Fragment currentFragment) {
@@ -102,7 +105,7 @@ public class FirstLaunchActivity extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TransitionSet set = new TransitionSet()
                     .addTransition(new Fade(Fade.IN))
-                    .addTransition(new Slide(Gravity.END))
+                    .addTransition(new Slide(GravityCompat.END))
                     .setDuration(DURATION)
                     .setOrdering(TransitionSet.ORDERING_TOGETHER);
 
@@ -113,7 +116,7 @@ public class FirstLaunchActivity extends AppCompatActivity implements
     private void setExitTransition(Fragment fragment) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             TransitionSet set = new TransitionSet()
-                    .addTransition(new Slide(Gravity.START))
+                    .addTransition(new Slide(GravityCompat.START))
                     .setDuration(DURATION)
                     .setOrdering(TransitionSet.ORDERING_TOGETHER);
 
