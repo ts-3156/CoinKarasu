@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.CKStringUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -98,15 +99,8 @@ public class StringArrayListCache<T> {
         cache.remove(key);
     }
 
-    public static String makeCacheName(String prefix, Object... params) {
-        StringBuilder builder = new StringBuilder();
-        String delim = "_";
-        for (Object param : params) {
-            builder.append(delim);
-            builder.append(param.toString());
-        }
-
-        return prefix + builder.toString() + ".json";
+    public static String makeCacheName(Object... params) {
+        return CKStringUtils.join("_", params);
     }
 
     public static class WriteCacheToDiskTask<T> extends AsyncTask<Void, Void, Void> {

@@ -12,10 +12,6 @@ import java.util.List;
 
 import static com.coinkarasu.utils.cache.StringArrayListCache.makeCacheName;
 
-/**
- * ClientImpl内から直接利用している。
- * HistoryKindに応じた有効期限がある。
- */
 public final class HistoriesCache {
     private static final boolean DEBUG = true;
     private static final String TAG = "HistoriesCache";
@@ -26,8 +22,18 @@ public final class HistoriesCache {
         cache = new StringArrayListCache<>(context.getCacheDir());
     }
 
+    /**
+     * Clientの中からキャッシュを保存する時に使っている。細かい粒度でキャッシュを分けるために引数が多い
+     */
     public synchronized void put(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange, List<History> histories) {
-        String key = makeCacheName(TAG, kind, fromSymbol, toSymbol, limit, aggregate, exchange);
+        put(makeCacheName(kind, fromSymbol, toSymbol, limit, aggregate, exchange), histories);
+    }
+
+    /**
+     * Fragmentから利用している。大きな粒度でキャッシュを分けるためにtagだけしかキーの引数がない
+     */
+    public synchronized void put(String tag, List<History> histories) {
+        String key = TAG + tag;
 
         if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
             new StringArrayListCache.WriteCacheToDiskTask<>(cache, key, histories).execute();
@@ -36,18 +42,35 @@ public final class HistoriesCache {
         }
     }
 
+    /**
+     * 有効期限と関係なく、ファイルが存在すればそのキャッシュを返す
+     */
     public synchronized List<History> get(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
         return get(kind, fromSymbol, toSymbol, limit, aggregate, exchange, false);
     }
 
+    /**
+     * 有効期限を使うかどうか指定するフラグがある
+     */
     public synchronized List<History> get(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange, boolean ignoreExpires) {
-        String key = makeCacheName(TAG, kind, fromSymbol, toSymbol, limit, aggregate, exchange);
+        return get(makeCacheName(kind, fromSymbol, toSymbol, limit, aggregate, exchange), ignoreExpires, kind.expires);
+    }
+
+    /**
+     * Fragmentから利用している。大きな粒度でキャッシュを分けるためにtagだけしかキーの引数がない
+     */
+    public synchronized List<History> get(String tag) {
+        return get(tag, true, -1);
+    }
+
+    private List<History> get(String tag, boolean ignoreExpires, long expires) {
+        String key = TAG + tag;
         List<String> list;
 
         if (ignoreExpires) {
             list = cache.get(key);
         } else {
-            list = cache.get(key, System.currentTimeMillis() - kind.expires);
+            list = cache.get(key, System.currentTimeMillis() - expires);
         }
 
         if (list == null || list.isEmpty()) {

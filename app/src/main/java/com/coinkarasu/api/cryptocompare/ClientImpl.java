@@ -21,7 +21,7 @@ import com.coinkarasu.api.cryptocompare.response.PricesResponseImpl;
 import com.coinkarasu.api.cryptocompare.response.TopPairsResponse;
 import com.coinkarasu.api.cryptocompare.response.TopPairsResponseImpl;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.StringHelper;
+import com.coinkarasu.utils.CKStringUtils;
 import com.coinkarasu.utils.volley.RequestQueueWrapper;
 import com.coinkarasu.utils.volley.VolleyHelper;
 
@@ -58,7 +58,7 @@ class ClientImpl implements Client {
     @Override
     public Prices getPrices(String[] fromSymbols, String toSymbol, String exchange) {
         String url = "https://min-api.cryptocompare.com/data/pricemultifull?"
-                + "&fsyms=" + StringHelper.join(",", fromSymbols)
+                + "&fsyms=" + CKStringUtils.join(fromSymbols, ",")
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
         JSONObject response = performGet(url);

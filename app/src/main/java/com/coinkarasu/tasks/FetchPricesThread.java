@@ -4,7 +4,7 @@ import android.app.Activity;
 
 import com.coinkarasu.api.cryptocompare.request.NonBlockingRequest;
 import com.coinkarasu.api.cryptocompare.request.Request;
-import com.coinkarasu.utils.StringHelper;
+import com.coinkarasu.utils.CKStringUtils;
 
 import org.json.JSONObject;
 
@@ -27,7 +27,7 @@ public class FetchPricesThread extends Thread {
 
     @Override
     public void run() {
-        String url = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + StringHelper.join(",", fromSymbols) + "&tsyms=" + toSymbol;
+        String url = "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=" + CKStringUtils.join(fromSymbols, ",") + "&tsyms=" + toSymbol;
         new NonBlockingRequest(activity, url).perform(new Request.Listener() {
             @Override
             public void finished(JSONObject response) {

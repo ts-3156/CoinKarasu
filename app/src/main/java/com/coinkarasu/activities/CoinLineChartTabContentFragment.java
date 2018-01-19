@@ -10,10 +10,12 @@ import android.view.ViewGroup;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.HistoricalPriceKind;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
+import com.coinkarasu.api.cryptocompare.data.HistoriesCache;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.chart.CoinLineChart;
 import com.coinkarasu.tasks.GetHistoryTaskBase;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.CKStringUtils;
 import com.coinkarasu.utils.PrefHelper;
 import com.github.mikephil.charting.charts.LineChart;
 
@@ -75,6 +77,11 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
         taskStarted = true;
 
+        List<History> histories = new HistoriesCache(getActivity()).get(CKStringUtils.join("_", TAG, kind, fromSymbol, toSymbol));
+        if (histories != null && !histories.isEmpty()) {
+            finished(histories);
+        }
+
         GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getActivity()), kind)
                 .setFromSymbol(fromSymbol)
                 .setToSymbol(toSymbol)
@@ -102,6 +109,8 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         if (parent != null) {
             parent.updateTab(kind.ordinal(), records);
         }
+
+        new HistoriesCache(getActivity()).put(CKStringUtils.join("_", TAG, kind, fromSymbol, toSymbol), records);
 
         if (DEBUG) CKLog.d(TAG, "finished() " + kind + " " + records.size());
     }
