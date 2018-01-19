@@ -395,7 +395,9 @@ public class CoinListSectionFragment extends Fragment implements
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putBoolean(STATE_IS_VISIBLE_TO_USER_KEY, isVisibleToUser);
-        savedInstanceState.putLong(STATE_LAST_UPDATED_KEY, updater.getLastUpdated());
+        if (updater != null) {
+            savedInstanceState.putLong(STATE_LAST_UPDATED_KEY, updater.getLastUpdated());
+        }
         super.onSaveInstanceState(savedInstanceState);
     }
 
