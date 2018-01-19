@@ -122,12 +122,9 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             return;
         }
 
-        List<Double> values = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
-
         if (pairs.isEmpty()) {
             if (DEBUG) CKLog.w(TAG, "finished() empty " + kind + " " + errorCount);
-            drawChart(values, labels);
+            displayWarning();
             return;
         }
 
@@ -136,6 +133,9 @@ public class CoinPieChartTabContentFragment extends Fragment implements
                 return tp1.getVolume24h() > tp2.getVolume24h() ? -1 : 1;
             }
         });
+
+        List<Double> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
 
         for (int i = 0; i < pairs.size(); i++) {
             TopPair pair = pairs.get(i);

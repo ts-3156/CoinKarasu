@@ -290,7 +290,7 @@ public class CoinExchangeFragment extends Fragment implements
         ImageView trendIcon;
         double priceDiff;
 
-        public TabViewHolder(View itemView, SnapshotCoin coin) {
+        TabViewHolder(View itemView, SnapshotCoin coin) {
             this.itemView = itemView;
             container = itemView.findViewById(R.id.tab_container);
             label = itemView.findViewById(R.id.label);

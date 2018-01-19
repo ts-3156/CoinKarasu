@@ -184,7 +184,7 @@ public class HistoricalPriceFragment extends Fragment implements
         ImageView trendIcon;
         double priceDiff;
 
-        public TabViewHolder(View itemView, String labelString) {
+        TabViewHolder(View itemView, String labelString) {
             this.itemView = itemView;
             container = itemView.findViewById(R.id.tab_container);
             label = itemView.findViewById(R.id.label);

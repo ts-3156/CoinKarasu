@@ -51,6 +51,8 @@ public class CoinPieChartFragment extends Fragment implements
     private TabLayout.Tab tab;
     private String fromSymbol;
     private String toSymbol;
+    private ViewPager pager;
+    private TabLayout tabs;
 
     public CoinPieChartFragment() {
     }
@@ -82,6 +84,9 @@ public class CoinPieChartFragment extends Fragment implements
         Spanned text = Html.fromHtml(getString(R.string.pie_chart_info, fromSymbol));
         ((TextView) view.findViewById(R.id.info_text)).setText(text);
 
+        pager = view.findViewById(R.id.view_pager);
+        tabs = view.findViewById(R.id.tab_layout);
+
         startTask();
 
         return view;
@@ -93,58 +98,61 @@ public class CoinPieChartFragment extends Fragment implements
         }
         tabsCreated = true;
 
-        View view = getView();
-        ViewPager pager = view.findViewById(R.id.view_pager);
         pager.setAdapter(new CoinPieChartPagerAdapter(getChildFragmentManager(), fromSymbol, toSymbol, pairs));
         pager.setCurrentItem(DEFAULT_KIND.ordinal());
         pager.addOnPageChangeListener(this);
         pager.setOffscreenPageLimit(Math.min(pairs.size() + 1, 5));
 
-        TabLayout tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        tabs.getTabAt(Kind.currency.ordinal()).setCustomView(createTab(inflater, null, Kind.currency.label, fromSymbol));
+        TabViewHolder firstHolder = new TabViewHolder(inflater.inflate(R.layout.tab_pie_chart, null, false), Kind.currency.label, fromSymbol);
+        TabLayout.Tab firstTab = tabs.getTabAt(Kind.currency.ordinal());
+        firstTab.setCustomView(firstHolder.itemView);
+        firstTab.setTag(firstHolder);
+
         for (int i = 0; i < pairs.size(); i++) {
-            tabs.getTabAt(i + 1).setCustomView(createTab(inflater, null, Kind.exchange.label, pairs.get(i).getToSymbol()));
+            TabViewHolder holder = new TabViewHolder(inflater.inflate(R.layout.tab_pie_chart, null, false), Kind.exchange.label, pairs.get(i).getToSymbol());
+            TabLayout.Tab tab = tabs.getTabAt(i + 1);
+            tab.setCustomView(holder.itemView);
+            tab.setTag(holder);
         }
 
         tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
-        setSelected(DEFAULT_KIND.ordinal(), view);
+        setTabSelected(tab);
     }
 
-    private View createTab(LayoutInflater inflater, ViewGroup container, String label, String symbol) {
-        View view = inflater.inflate(R.layout.tab_pie_chart, container, false);
-
-        ((TextView) view.findViewById(R.id.label)).setText(label);
-        ((TextView) view.findViewById(R.id.symbol)).setText(symbol);
-
-        return view;
-    }
-
-    private void setSelected(int position, View container) {
-        if (container == null) {
+    private void setTabSelected(TabLayout.Tab tab) {
+        if (tab == null || tab.getTag() == null) {
+            if (DEBUG) CKLog.w(TAG, "setTabSelected() Cannot update a tab since it is null");
             return;
         }
 
-        int inactiveColor = getResources().getColor(R.color.colorTabInactiveText);
-        View view = tab.getCustomView();
-        view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
-        ((TextView) view.findViewById(R.id.label)).setTextColor(inactiveColor);
-        ((TextView) view.findViewById(R.id.symbol)).setTextColor(inactiveColor);
-
-        tab = ((TabLayout) container.findViewById(R.id.tab_layout)).getTabAt(position);
-
+        TabViewHolder holder = (TabViewHolder) tab.getTag();
         int activeColor = getResources().getColor(R.color.colorTabActiveText);
-        view = tab.getCustomView();
-        view.findViewById(R.id.tab_container).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        ((TextView) view.findViewById(R.id.label)).setTextColor(activeColor);
-        ((TextView) view.findViewById(R.id.symbol)).setTextColor(activeColor);
+
+        holder.container.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        holder.label.setTextColor(activeColor);
+        holder.symbol.setTextColor(activeColor);
+    }
+
+    private void setTabUnselected(TabLayout.Tab tab) {
+        if (tab == null || tab.getTag() == null) {
+            if (DEBUG) CKLog.w(TAG, "setTabUnselected() Cannot update a tab since it is null");
+            return;
+        }
+
+        TabViewHolder holder = (TabViewHolder) tab.getTag();
+        int inactiveColor = getResources().getColor(R.color.colorTabInactiveText);
+
+        holder.container.setBackgroundColor(Color.WHITE);
+        holder.label.setTextColor(inactiveColor);
+        holder.symbol.setTextColor(inactiveColor);
     }
 
     private void startTask() {
-        if (taskStarted || errorCount >= 3 || getActivity() == null) {
+        if (taskStarted || errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
             return;
         }
         taskStarted = true;
@@ -157,7 +165,7 @@ public class CoinPieChartFragment extends Fragment implements
 
     @Override
     public void finished(List<TopPair> pairs) {
-        if (isDetached() || getView() == null) {
+        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
             taskStarted = false;
             errorCount++;
             return;
@@ -213,15 +221,30 @@ public class CoinPieChartFragment extends Fragment implements
     @Override
     public void onPageScrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_SETTLING) {
-            if (getView() == null) {
-                return;
-            }
-
-            int position = ((ViewPager) getView().findViewById(R.id.view_pager)).getCurrentItem();
+            int position = pager.getCurrentItem();
 
             if (position != tab.getPosition()) {
-                setSelected(position, getView());
+                setTabUnselected(tab);
+                tab = tabs.getTabAt(position);
+                setTabSelected(tab);
             }
+        }
+    }
+
+    private static final class TabViewHolder {
+        View itemView;
+        View container;
+        TextView label;
+        TextView symbol;
+
+        TabViewHolder(View itemView, String labelString, String symbolString) {
+            this.itemView = itemView;
+            container = itemView.findViewById(R.id.tab_container);
+            label = itemView.findViewById(R.id.label);
+            symbol = itemView.findViewById(R.id.symbol);
+
+            label.setText(labelString);
+            symbol.setText(symbolString);
         }
     }
 }
