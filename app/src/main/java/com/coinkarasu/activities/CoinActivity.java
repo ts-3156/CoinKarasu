@@ -11,10 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.transition.Fade;
-import android.transition.Slide;
-import android.transition.TransitionSet;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -93,12 +89,6 @@ public class CoinActivity extends AppCompatActivity implements
         Fragment pieChart = CoinPieChartFragment.newInstance(coin.getSymbol(), toSymbol);
         Fragment board = CoinBoardFragment.newInstance("order_book");
 
-        setEnterTransition(card);
-        setEnterTransition(lineChart);
-        setEnterTransition(exchange);
-        setEnterTransition(pieChart);
-        setEnterTransition(board);
-
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.card_overview, card, Tag.card.name())
                 .replace(R.id.card_line_chart, lineChart, Tag.line.name())
@@ -123,34 +113,6 @@ public class CoinActivity extends AppCompatActivity implements
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.activity_enter_from_left, R.anim.activity_exit_to_right);
-    }
-
-    private void setEnterTransition(Fragment fragment) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Slide slideToRight = new Slide();
-            slideToRight.setSlideEdge(Gravity.RIGHT);
-
-            TransitionSet transition = new TransitionSet();
-            transition.addTransition(new Fade());
-            transition.addTransition(slideToRight);
-            transition.setDuration(700);
-
-            fragment.setEnterTransition(transition);
-        }
-    }
-
-    private void setExitTransition(Fragment fragment) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Slide slideToLeft = new Slide();
-            slideToLeft.setSlideEdge(Gravity.LEFT);
-
-            TransitionSet transition = new TransitionSet();
-            transition.addTransition(new Fade());
-            transition.addTransition(slideToLeft);
-            transition.setDuration(700);
-
-            fragment.setExitTransition(transition);
-        }
     }
 
     @Override

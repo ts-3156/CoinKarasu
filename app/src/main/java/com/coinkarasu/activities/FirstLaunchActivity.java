@@ -4,12 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.transition.Fade;
-import android.support.transition.Slide;
-import android.support.transition.TransitionSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 import android.view.WindowManager;
@@ -23,6 +19,7 @@ import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
 import com.coinkarasu.tasks.InsertLaunchEventTask;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
+import com.coinkarasu.utils.TransitionUtils;
 import com.coinkarasu.utils.Tutorial;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -36,7 +33,7 @@ public class FirstLaunchActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentTransitionsFlag();
+        TransitionUtils.setContentTransitionsFlag(this);
         setContentView(R.layout.activity_first_launch);
 
         CKLog.setContext(this);
@@ -84,43 +81,12 @@ public class FirstLaunchActivity extends AppCompatActivity implements
             MainActivity.start(this);
             finish();
         } else {
-            setEnterTransition(nextFragment);
-            setExitTransition(nextFragment);
+            TransitionUtils.setEnterTransition(nextFragment);
+            TransitionUtils.setExitTransition(nextFragment);
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, nextFragment)
                     .commit();
-        }
-    }
-
-    private void setContentTransitionsFlag() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
-        }
-    }
-
-    private static final int DURATION = 300;
-
-    private void setEnterTransition(Fragment fragment) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            TransitionSet set = new TransitionSet()
-                    .addTransition(new Fade(Fade.IN))
-                    .addTransition(new Slide(GravityCompat.END))
-                    .setDuration(DURATION)
-                    .setOrdering(TransitionSet.ORDERING_TOGETHER);
-
-            fragment.setEnterTransition(set);
-        }
-    }
-
-    private void setExitTransition(Fragment fragment) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            TransitionSet set = new TransitionSet()
-                    .addTransition(new Slide(GravityCompat.START))
-                    .setDuration(DURATION)
-                    .setOrdering(TransitionSet.ORDERING_TOGETHER);
-
-            fragment.setExitTransition(set);
         }
     }
 
