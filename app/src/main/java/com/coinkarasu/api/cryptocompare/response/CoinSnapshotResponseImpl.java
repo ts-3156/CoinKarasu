@@ -1,11 +1,13 @@
 package com.coinkarasu.api.cryptocompare.response;
 
-import android.util.Log;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CoinSnapshotResponseImpl implements CoinSnapshotResponse {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinSnapshotResponseImpl";
 
     private JSONObject response;
     private String fromSymbol;
@@ -28,8 +30,7 @@ public class CoinSnapshotResponseImpl implements CoinSnapshotResponse {
         try {
             data = response.getJSONObject("Data");
         } catch (JSONException e) {
-            Log.d("getData", e.getMessage());
-            Log.d("getData", response.toString());
+            CKLog.e(TAG, response.toString(), e);
         }
 
         return data;

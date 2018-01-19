@@ -77,7 +77,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
         taskStarted = true;
 
-        List<History> histories = new HistoriesCache(getActivity()).get(CKStringUtils.join("_", TAG, kind, fromSymbol, toSymbol));
+        List<History> histories = new HistoriesCache(getActivity()).get(makeCacheKey());
         if (histories != null && !histories.isEmpty()) {
             finished(histories);
         }
@@ -107,12 +107,16 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
 
         drawChart(records);
         if (parent != null) {
-            parent.updateTab(kind.ordinal(), records);
+            parent.refreshTabText(kind.ordinal(), records);
         }
 
-        new HistoriesCache(getActivity()).put(CKStringUtils.join("_", TAG, kind, fromSymbol, toSymbol), records);
+        new HistoriesCache(getActivity()).put(makeCacheKey(), records);
 
         if (DEBUG) CKLog.d(TAG, "finished() " + kind + " " + records.size());
+    }
+
+    private String makeCacheKey() {
+        return CKStringUtils.join("_", TAG, kind, fromSymbol, toSymbol);
     }
 
     private void drawChart(List<History> records) {

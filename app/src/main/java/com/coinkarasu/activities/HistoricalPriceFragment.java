@@ -22,6 +22,7 @@ import com.coinkarasu.format.TrendColorFormat;
 import com.coinkarasu.format.TrendIconFormat;
 import com.coinkarasu.format.TrendValueFormat;
 import com.coinkarasu.pagers.HistoricalPricePagerAdapter;
+import com.coinkarasu.utils.CKLog;
 
 import java.util.List;
 
@@ -36,6 +37,8 @@ public class HistoricalPriceFragment extends Fragment implements
     private String fromSymbol;
     private String toSymbol;
     private TabLayout.Tab tab;
+    private ViewPager pager;
+    private TabLayout tabs;
 
     public HistoricalPriceFragment() {
     }
@@ -64,17 +67,20 @@ public class HistoricalPriceFragment extends Fragment implements
 
         ((TextView) view.findViewById(R.id.caption_left)).setText(getString(R.string.caption_left, fromSymbol, toSymbol));
 
-        ViewPager pager = view.findViewById(R.id.view_pager);
+        pager = view.findViewById(R.id.view_pager);
         pager.setAdapter(new HistoricalPricePagerAdapter(getChildFragmentManager(), fromSymbol, toSymbol));
         pager.setCurrentItem(DEFAULT_KIND.ordinal());
         pager.addOnPageChangeListener(this);
         pager.setOffscreenPageLimit(HistoricalPriceKind.values().length);
 
-        TabLayout tabs = view.findViewById(R.id.tab_layout);
+        tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
         for (HistoricalPriceKind kind : HistoricalPriceKind.values()) {
-            tabs.getTabAt(kind.ordinal()).setCustomView(createTab(inflater, container, getString(kind.labelResId)));
+            TabViewHolder holder = new TabViewHolder(inflater.inflate(R.layout.tab_historical_price, null, false), getString(kind.labelResId));
+            TabLayout.Tab tab = tabs.getTabAt(kind.ordinal());
+            tab.setCustomView(holder.itemView);
+            tab.setTag(holder);
         }
 
         tab = tabs.getTabAt(DEFAULT_KIND.ordinal());
@@ -86,90 +92,58 @@ public class HistoricalPriceFragment extends Fragment implements
         return view;
     }
 
-    private View createTab(LayoutInflater inflater, ViewGroup container, String label) {
-        View view = inflater.inflate(R.layout.tab_historical_price, container, false);
-
-        ((TextView) view.findViewById(R.id.label)).setText(label);
-        ((TextView) view.findViewById(R.id.price)).setText("0.00");
-        ((TextView) view.findViewById(R.id.trend)).setText("0.00%");
-        ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(R.drawable.ic_trending_flat);
-
-        return view;
-    }
-
-    public void updateTab(int position, List<History> records) {
-        if (getView() == null) {
-            return;
-        }
-
-        TabLayout tabs = getView().findViewById(R.id.tab_layout);
-        if (tabs == null) {
-            return;
-        }
-
+    public void refreshTabText(int position, List<History> records) {
         TabLayout.Tab tab = tabs.getTabAt(position);
-        View view = tab.getCustomView();
+        if (tab == null || tab.getTag() == null) {
+            if (DEBUG) CKLog.w(TAG, "refreshTabText() Cannot initialize a tab at " + position + " since it is null");
+            return;
+        }
+
+        TabViewHolder holder = (TabViewHolder) tab.getTag();
 
         double curPrice = records.get(records.size() - 1).getClose();
         double prevPrice = records.get(0).getClose();
-        double priceDiff = curPrice - prevPrice;
+        holder.priceDiff = curPrice - prevPrice;
+        double trend = holder.priceDiff / prevPrice;
         boolean isSelected = this.tab != null && this.tab.getPosition() == position;
 
-        TextView priceView = view.findViewById(R.id.price);
-        priceView.setText(new SignedPriceFormat(records.get(0).getToSymbol()).format(priceDiff));
-        priceView.setTextColor(getResources().getColor(new PriceColorFormat().format(priceDiff, isSelected)));
-
-        double trend = priceDiff / prevPrice;
-        TextView trendView = view.findViewById(R.id.trend);
-        trendView.setText(new TrendValueFormat().format(trend));
-        trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(trend, isSelected)));
-
-        ImageView icon = view.findViewById(R.id.trend_icon);
-        icon.setImageResource(new TrendIconFormat().format(trend, isSelected));
-
-        tab.setTag(priceDiff);
+        holder.price.setText(new SignedPriceFormat(records.get(0).getToSymbol()).format(holder.priceDiff));
+        holder.price.setTextColor(getResources().getColor(new PriceColorFormat().format(holder.priceDiff, isSelected)));
+        holder.trend.setText(new TrendValueFormat().format(trend));
+        holder.trend.setTextColor(getResources().getColor(new TrendColorFormat().format(trend, isSelected)));
+        holder.trendIcon.setImageResource(new TrendIconFormat().format(trend, isSelected));
     }
 
     private void setTabSelected(TabLayout.Tab tab) {
-        if (tab == null || tab.getCustomView() == null) {
+        if (tab == null || tab.getTag() == null) {
+            if (DEBUG) CKLog.w(TAG, "setTabSelected() Cannot update a tab since it is null");
             return;
         }
 
-        View view = tab.getCustomView();
+        TabViewHolder holder = (TabViewHolder) tab.getTag();
         int activeTextColor = getResources().getColor(R.color.colorTabActiveText);
 
-        view.findViewById(R.id.tab_container).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        ((TextView) view.findViewById(R.id.label)).setTextColor(activeTextColor);
-        ((TextView) view.findViewById(R.id.price)).setTextColor(activeTextColor);
-        ((TextView) view.findViewById(R.id.trend)).setTextColor(activeTextColor);
-
-        Object tag = tab.getTag();
-        double priceDiff = tag == null ? 0 : (double) tag;
-
-        ((ImageView) view.findViewById(R.id.trend_icon))
-                .setImageResource(new TrendIconFormat().format(priceDiff, true));
+        holder.container.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        holder.label.setTextColor(activeTextColor);
+        holder.price.setTextColor(activeTextColor);
+        holder.trend.setTextColor(activeTextColor);
+        holder.trendIcon.setImageResource(new TrendIconFormat().format(holder.priceDiff, true));
     }
 
     private void setTabUnselected(TabLayout.Tab tab) {
-        if (tab == null || tab.getCustomView() == null) {
+        if (tab == null || tab.getTag() == null) {
+            if (DEBUG) CKLog.w(TAG, "setTabUnselected() Cannot update a tab since it is null");
             return;
         }
 
-        View view = tab.getCustomView();
+        TabViewHolder holder = (TabViewHolder) tab.getTag();
         int inactiveTextColor = getResources().getColor(R.color.colorTabInactiveText);
 
-        view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
-        ((TextView) view.findViewById(R.id.label)).setTextColor(inactiveTextColor);
-
-        Object tag = tab.getTag();
-        double priceDiff = tag == null ? 0 : (double) tag;
-
-        ((TextView) view.findViewById(R.id.price))
-                .setTextColor(getResources().getColor(new PriceColorFormat().format(priceDiff)));
-        ((TextView) view.findViewById(R.id.trend))
-                .setTextColor(getResources().getColor(new TrendColorFormat().format(priceDiff)));
-        ((ImageView) view.findViewById(R.id.trend_icon))
-                .setImageResource(new TrendIconFormat().format(priceDiff));
+        holder.container.setBackgroundColor(Color.WHITE);
+        holder.label.setTextColor(inactiveTextColor);
+        holder.price.setTextColor(getResources().getColor(new PriceColorFormat().format(holder.priceDiff)));
+        holder.trend.setTextColor(getResources().getColor(new TrendColorFormat().format(holder.priceDiff)));
+        holder.trendIcon.setImageResource(new TrendIconFormat().format(holder.priceDiff));
     }
 
     @Override
@@ -191,17 +165,35 @@ public class HistoricalPriceFragment extends Fragment implements
     @Override
     public void onPageScrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_SETTLING) {
-            if (getView() == null) {
-                return;
-            }
-
-            int position = ((ViewPager) getView().findViewById(R.id.view_pager)).getCurrentItem();
+            int position = pager.getCurrentItem();
 
             if (position != tab.getPosition()) {
                 setTabUnselected(tab);
-                tab = ((TabLayout) getView().findViewById(R.id.tab_layout)).getTabAt(position);
+                tab = tabs.getTabAt(position);
                 setTabSelected(tab);
             }
+        }
+    }
+
+    private static final class TabViewHolder {
+        View itemView;
+        View container;
+        TextView label;
+        TextView price;
+        TextView trend;
+        ImageView trendIcon;
+        double priceDiff;
+
+        public TabViewHolder(View itemView, String labelString) {
+            this.itemView = itemView;
+            container = itemView.findViewById(R.id.tab_container);
+            label = itemView.findViewById(R.id.label);
+            price = itemView.findViewById(R.id.price);
+            trend = itemView.findViewById(R.id.trend);
+            trendIcon = itemView.findViewById(R.id.trend_icon);
+            priceDiff = 0.0;
+
+            label.setText(labelString);
         }
     }
 }

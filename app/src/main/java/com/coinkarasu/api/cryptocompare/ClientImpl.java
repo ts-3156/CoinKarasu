@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 class ClientImpl implements Client {
-
     private static final boolean DEBUG = true;
     private static final String TAG = "ClientImpl";
     private static final String DEFAULT_EXCHANGE = "cccagg";

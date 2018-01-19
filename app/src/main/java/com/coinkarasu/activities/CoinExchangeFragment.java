@@ -52,6 +52,12 @@ public class CoinExchangeFragment extends Fragment implements
 
     private boolean tabsCreated = false;
     private TabLayout.Tab tab;
+    private ViewPager pager;
+    private TabLayout tabs;
+    private View pagerContainer;
+    private View infoContainer;
+    private TextView warning;
+    private View warningContainer;
 
     public CoinExchangeFragment() {
     }
@@ -89,130 +95,104 @@ public class CoinExchangeFragment extends Fragment implements
         Spanned text = Html.fromHtml(getString(R.string.exchange_info, coin.getSymbol(), coin.getToSymbol()));
         ((TextView) view.findViewById(R.id.info_text)).setText(text);
 
+        pager = view.findViewById(R.id.view_pager);
+        tabs = view.findViewById(R.id.tab_layout);
+        pagerContainer = view.findViewById(R.id.pager_container);
+        infoContainer = view.findViewById(R.id.info_container);
+        warning = view.findViewById(R.id.warn_text);
+        warningContainer = view.findViewById(R.id.warn_container);
+
         startTask();
 
         return view;
     }
 
     private void createTabs(List<SnapshotCoin> coins) {
-        if (tabsCreated || getView() == null || getActivity() == null) {
+        if (tabsCreated || getActivity() == null) {
             return;
         }
         tabsCreated = true;
 
-        View view = getView();
-        ViewPager pager = view.findViewById(R.id.view_pager);
-        pager.setAdapter(new CoinExchangePagerAdapter(getChildFragmentManager(), coins));
+        CoinExchangePagerAdapter adapter = new CoinExchangePagerAdapter(getChildFragmentManager(), coins);
+        pager.setAdapter(adapter);
 
-        int offset = pager.getAdapter().getCount() - coins.size();
-        pager.setCurrentItem(offset);
         pager.addOnPageChangeListener(this);
-        pager.setOffscreenPageLimit(Math.min(coins.size() + offset, 5));
+        pager.setOffscreenPageLimit(Math.min(coins.size(), 5));
 
-        TabLayout tabs = view.findViewById(R.id.tab_layout);
         tabs.setupWithViewPager(pager);
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        for (int i = 0; i < offset; i++) {
-            tabs.getTabAt(i).setCustomView(createTab(inflater, null, "All"));
-        }
         for (int i = 0; i < coins.size(); i++) {
-            SnapshotCoin coin = coins.get(i);
-            tabs.getTabAt(i + offset).setCustomView(createTab(inflater, null, coin));
+            TabViewHolder holder = new TabViewHolder(inflater.inflate(R.layout.tab_exchange, null, false), coins.get(i));
+            TabLayout.Tab tab = tabs.getTabAt(i);
+            tab.setCustomView(holder.itemView);
+            tab.setTag(holder);
         }
 
-        tab = tabs.getTabAt(offset);
-        setSelected(offset, view);
+        pager.setCurrentItem(0);
+        tab = tabs.getTabAt(0);
+        setTabSelected(tab);
+
+        // タブでキャッシュを利用する場合、タブのsetCustomViewよりもFragmentのonCreateViewと
+        // updateTabへのコールバックが先に呼ばれてしまう。その際の不整合を防ぐために初期化完了を通知している。
+        adapter.onTabsSetupFinished();
     }
 
-    private View createTab(LayoutInflater inflater, ViewGroup container, String label) {
-        View view = inflater.inflate(R.layout.tab_exchanges, container, false);
-        ((TextView) view.findViewById(R.id.label)).setText(label);
-        return view;
-    }
-
-    private View createTab(LayoutInflater inflater, ViewGroup container, SnapshotCoin coin) {
-        View view = inflater.inflate(R.layout.tab_exchange, container, false);
-
-        ((TextView) view.findViewById(R.id.label)).setText(coin.getMarket());
-
-        String priceString = new PriceFormat(coin.getToSymbol()).format(coin.getPrice());
-        ((TextView) view.findViewById(R.id.price)).setText(priceString);
-
-        ((TextView) view.findViewById(R.id.trend)).setText("0.00%");
-        ((ImageView) view.findViewById(R.id.trend_icon)).setImageResource(R.drawable.ic_trending_flat);
-
-        return view;
-    }
-
-    public void updateTab(int position, List<History> records) {
-        View container = getView();
-        if (container == null) {
-            return;
-        }
-
-        TabLayout tabs = container.findViewById(R.id.tab_layout);
-        if (tabs == null) {
-            return;
-        }
-
+    public void refreshTabText(int position, List<History> records) {
         TabLayout.Tab tab = tabs.getTabAt(position);
-        View view = tab.getCustomView();
+        if (tab == null || tab.getTag() == null) {
+            if (DEBUG) CKLog.w(TAG, "refreshTabText() Cannot initialize a tab at " + position + " since it is null");
+            return;
+        }
+
+        TabViewHolder holder = (TabViewHolder) tab.getTag();
 
         double curPrice = records.get(records.size() - 1).getClose();
         double prevPrice = records.get(0).getClose();
-        double priceDiff = curPrice - prevPrice;
-
+        holder.priceDiff = curPrice - prevPrice;
+        double trend = holder.priceDiff / prevPrice;
         boolean isSelected = this.tab != null && this.tab.getPosition() == position;
 
-        double trend = priceDiff / prevPrice;
-        TextView trendView = view.findViewById(R.id.trend);
-        trendView.setText(new TrendValueFormat().format(trend));
-        trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(trend, isSelected)));
-
-        ImageView icon = view.findViewById(R.id.trend_icon);
-        icon.setImageResource(new TrendIconFormat().format(trend, isSelected));
-
-        tab.setTag(priceDiff);
+        holder.trend.setText(new TrendValueFormat().format(trend));
+        holder.trend.setTextColor(getResources().getColor(new TrendColorFormat().format(trend, isSelected)));
+        holder.trendIcon.setImageResource(new TrendIconFormat().format(trend, isSelected));
     }
 
-    private void setSelected(int position, View container) {
-        if (tab == null || container == null) {
+    private void setTabSelected(TabLayout.Tab tab) {
+        if (tab == null || tab.getTag() == null) {
+            if (DEBUG) CKLog.w(TAG, "setTabSelected() Cannot update a tab since it is null");
             return;
         }
 
-        int inactiveTextColor = getResources().getColor(R.color.colorTabInactiveText);
-        View view = tab.getCustomView();
-        view.findViewById(R.id.tab_container).setBackgroundColor(Color.WHITE);
-        ((TextView) view.findViewById(R.id.label)).setTextColor(inactiveTextColor);
-        ((TextView) view.findViewById(R.id.price)).setTextColor(inactiveTextColor);
-
-        ((TextView) view.findViewById(R.id.trend)).setTextColor(inactiveTextColor);
-        Object tag = tab.getTag();
-        double priceDiff = tag == null ? 0 : (double) tag;
-        ((TextView) view.findViewById(R.id.trend))
-                .setTextColor(getResources().getColor(new TrendColorFormat().format(priceDiff)));
-        ((ImageView) view.findViewById(R.id.trend_icon))
-                .setImageResource(new TrendIconFormat().format(priceDiff));
-
-        tab = ((TabLayout) container.findViewById(R.id.tab_layout)).getTabAt(position);
-
+        TabViewHolder holder = (TabViewHolder) tab.getTag();
         int activeTextColor = getResources().getColor(R.color.colorTabActiveText);
-        view = tab.getCustomView();
-        view.findViewById(R.id.tab_container).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        ((TextView) view.findViewById(R.id.label)).setTextColor(activeTextColor);
-        ((TextView) view.findViewById(R.id.price)).setTextColor(activeTextColor);
 
-        tag = tab.getTag();
-        priceDiff = tag == null ? 0 : (double) tag;
-        ((TextView) view.findViewById(R.id.trend)).setTextColor(activeTextColor);
-        ((ImageView) view.findViewById(R.id.trend_icon))
-                .setImageResource(new TrendIconFormat().format(priceDiff, true));
+        holder.container.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        holder.label.setTextColor(activeTextColor);
+        holder.price.setTextColor(activeTextColor);
+        holder.trend.setTextColor(activeTextColor);
+        holder.trendIcon.setImageResource(new TrendIconFormat().format(holder.priceDiff, true));
+    }
+
+    private void setTabUnselected(TabLayout.Tab tab) {
+        if (tab == null || tab.getTag() == null) {
+            if (DEBUG) CKLog.w(TAG, "setTabUnselected() Cannot update a tab since it is null");
+            return;
+        }
+
+        TabViewHolder holder = (TabViewHolder) tab.getTag();
+        int inactiveTextColor = getResources().getColor(R.color.colorTabInactiveText);
+
+        holder.container.setBackgroundColor(Color.WHITE);
+        holder.label.setTextColor(inactiveTextColor);
+        holder.price.setTextColor(inactiveTextColor);
+        holder.trend.setTextColor(getResources().getColor(new TrendColorFormat().format(holder.priceDiff)));
+        holder.trendIcon.setImageResource(new TrendIconFormat().format(holder.priceDiff));
     }
 
     private void startTask() {
-        if (taskStarted || errorCount >= 3 || getActivity() == null) {
+        if (taskStarted || errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
             return;
         }
         taskStarted = true;
@@ -226,7 +206,7 @@ public class CoinExchangeFragment extends Fragment implements
 
     @Override
     public void finished(CoinSnapshot snapshot) {
-        if (isDetached() || getView() == null) {
+        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
             taskStarted = false;
             errorCount++;
             return;
@@ -251,12 +231,11 @@ public class CoinExchangeFragment extends Fragment implements
 
         if (coins.isEmpty()) {
             if (DEBUG) CKLog.w(TAG, "finished() coins is empty " + kind + " err=" + errorCount);
-            View view = getView();
-            view.findViewById(R.id.pager_container).setVisibility(View.GONE);
-            view.findViewById(R.id.info_container).setVisibility(View.GONE);
+            pagerContainer.setVisibility(View.GONE);
+            infoContainer.setVisibility(View.GONE);
             Spanned text = Html.fromHtml(getString(R.string.exchange_warn, coin.getSymbol(), coin.getToSymbol()));
-            ((TextView) view.findViewById(R.id.warn_text)).setText(text);
-            view.findViewById(R.id.warn_container).setVisibility(View.VISIBLE);
+            warning.setText(text);
+            warningContainer.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -288,15 +267,40 @@ public class CoinExchangeFragment extends Fragment implements
     @Override
     public void onPageScrollStateChanged(int state) {
         if (state == ViewPager.SCROLL_STATE_SETTLING) {
-            if (getView() == null) {
-                return;
-            }
-
-            int position = ((ViewPager) getView().findViewById(R.id.view_pager)).getCurrentItem();
+            int position = pager.getCurrentItem();
 
             if (position != tab.getPosition()) {
-                setSelected(position, getView());
+                setTabUnselected(tab);
+                tab = tabs.getTabAt(position);
+                setTabSelected(tab);
             }
+        }
+    }
+
+    public boolean tabsSetupFinished() {
+        return tab != null;
+    }
+
+    private static final class TabViewHolder {
+        View itemView;
+        View container;
+        TextView label;
+        TextView price;
+        TextView trend;
+        ImageView trendIcon;
+        double priceDiff;
+
+        public TabViewHolder(View itemView, SnapshotCoin coin) {
+            this.itemView = itemView;
+            container = itemView.findViewById(R.id.tab_container);
+            label = itemView.findViewById(R.id.label);
+            price = itemView.findViewById(R.id.price);
+            trend = itemView.findViewById(R.id.trend);
+            trendIcon = itemView.findViewById(R.id.trend_icon);
+            priceDiff = 0.0;
+
+            label.setText(coin.getMarket());
+            price.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
         }
     }
 }

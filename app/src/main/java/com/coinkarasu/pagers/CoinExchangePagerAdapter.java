@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoinExchangePagerAdapter extends FragmentPagerAdapter {
-    List<Fragment> fragments;
+    private List<CoinExchangeTabContentFragment> fragments;
 
     public CoinExchangePagerAdapter(FragmentManager manager) {
         super(manager);
@@ -24,6 +24,12 @@ public class CoinExchangePagerAdapter extends FragmentPagerAdapter {
         for (int i = 0; i < coins.size(); i++) {
             SnapshotCoin coin = coins.get(i);
             fragments.add(CoinExchangeTabContentFragment.newInstance(coin, i, coin.getMarket().toLowerCase()));
+        }
+    }
+
+    public void onTabsSetupFinished() {
+        for (CoinExchangeTabContentFragment fragment : fragments) {
+            fragment.onTabsSetupFinished();
         }
     }
 

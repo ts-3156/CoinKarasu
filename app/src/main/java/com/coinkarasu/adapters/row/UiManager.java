@@ -46,6 +46,9 @@ public class UiManager implements OnCoinClickListener {
         delegatesFactory.onViewRecycled(holder);
     }
 
+    /**
+     * リスナーの登録はonBindViewHolderの際に行っており、実装はUiManagingDelegateの中にある。
+     */
     public void onCoinClicked(View view, CoinListViewHolder holder) {
         Coin coin = rowDataProvider.getItem(holder.getAdapterPosition());
         if (coin != null) {

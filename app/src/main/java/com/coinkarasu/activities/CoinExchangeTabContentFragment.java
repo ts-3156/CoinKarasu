@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.HistoricalPriceKind;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
+import com.coinkarasu.api.cryptocompare.data.HistoriesCache;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.chart.CoinLineChart;
 import com.coinkarasu.coins.SnapshotCoin;
@@ -20,6 +21,7 @@ import com.coinkarasu.coins.SnapshotCoinImpl;
 import com.coinkarasu.tasks.GetHistoryHourTask;
 import com.coinkarasu.tasks.GetHistoryTaskBase;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.CKStringUtils;
 import com.coinkarasu.utils.PrefHelper;
 import com.github.mikephil.charting.charts.LineChart;
 
@@ -84,8 +86,11 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         chartView = view.findViewById(R.id.line_chart);
         warning = view.findViewById(R.id.warn_text);
         warningContainer = view.findViewById(R.id.warn_container);
+
         parent = ((CoinExchangeFragment) getParentFragment());
-        startTask();
+        if (parent != null && parent.tabsSetupFinished()) {
+            startTask();
+        }
         return view;
     }
 
@@ -95,6 +100,11 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
             return;
         }
         taskStarted = true;
+
+        List<History> histories = new HistoriesCache(getActivity()).get(makeCacheKey());
+        if (histories != null && !histories.isEmpty()) {
+            finished(histories);
+        }
 
         GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getActivity()), kind, exchange)
                 .setFromSymbol(coin.getFromSymbol())
@@ -126,11 +136,17 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         }
 
         drawChart(records);
-        if (parent != null) {
-            parent.updateTab(position, records);
+        if (parent != null && parent.tabsSetupFinished()) {
+            parent.refreshTabText(position, records);
         }
 
+        new HistoriesCache(getActivity()).put(makeCacheKey(), records);
+
         if (DEBUG) CKLog.d(TAG, "finished() " + exchange + " " + records.size());
+    }
+
+    private String makeCacheKey() {
+        return CKStringUtils.join("_", TAG, kind, exchange, coin.getFromSymbol(), coin.getToSymbol());
     }
 
     private void drawChart(List<History> records) {
@@ -164,5 +180,9 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         if (isVisibleToUser) {
             startTask();
         }
+    }
+
+    public void onTabsSetupFinished() {
+        startTask();
     }
 }

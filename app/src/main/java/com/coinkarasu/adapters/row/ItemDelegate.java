@@ -74,7 +74,6 @@ public class ItemDelegate extends UiManagingDelegate {
             holder.price_diff.setText(resources.signedPriceFormatter.format(coin.getPriceDiff()));
             holder.trend.setText(resources.surroundedTrendFormatter.format(coin.getTrend()));
             holder.innerContainer.setBackgroundColor(resources.priceToColor);
-
         }
     }
 
