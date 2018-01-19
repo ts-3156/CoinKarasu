@@ -13,21 +13,19 @@ public interface Client {
 
     Prices getPrices(String[] fromSymbols, String toSymbol, String exchange);
 
-    List<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit);
+    List<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int sampling, String exchange, int mode);
 
-    List<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange);
+    List<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int mode);
 
-    List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit);
+    List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int sampling, int mode);
 
-    List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate);
+    List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int mode);
 
-    List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange);
+    List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int sampling, String exchange, int mode);
 
-    List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit);
+    List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int sampling, int mode);
 
-    List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate);
-
-    List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange);
+    List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int sampling, String exchange, int mode);
 
     CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol);
 

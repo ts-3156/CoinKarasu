@@ -65,10 +65,37 @@ class ClientImpl implements Client {
         return new PricesImpl(new PricesResponseImpl(response, fromSymbols, toSymbol, exchange));
     }
 
-    private List<History> getHistoryXxx(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        List<History> histories = new HistoriesCache(context).get(kind, fromSymbol, toSymbol, limit, aggregate, exchange);
-        if (histories != null && !histories.isEmpty()) {
-            return histories;
+    /**
+     * HistoryKindに応じて、このメソッドの内部でもキャッシュしている。キャッシュのキーに使うパラメーターを
+     * HTTPアクセスのパラメーターと極力揃えて、粒度の小さいキャッシングを行うためにそうしている。
+     */
+    private List<History> getHistoryXxx(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange, int mode) {
+        if (mode == CacheMode.NONE) {
+            throw new UnsupportedOperationException();
+        }
+
+        List<History> histories;
+        HistoriesCache cache = new HistoriesCache(context);
+
+        if ((mode & CacheMode.FORCE_IF_EXPIRED) == 0 && (mode & (CacheMode.NORMAL | CacheMode.READ_ONLY)) != 0) {
+            histories = cache.get(kind, fromSymbol, toSymbol, limit, aggregate, exchange, (mode & CacheMode.IGNORE_EXPIRES) != 0);
+
+            if (histories != null && !histories.isEmpty()) {
+                if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Return cache");
+                return histories;
+            }
+        }
+
+        if ((mode & CacheMode.FORCE_IF_EXPIRED) == 0 && (mode & CacheMode.READ_ONLY) != 0) {
+            if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Flag is READ_ONLY and return null");
+            return null;
+        }
+
+        if ((mode & CacheMode.FORCE_IF_EXPIRED) != 0
+                && cache.exists(kind, fromSymbol, toSymbol, limit, aggregate, exchange)
+                && !cache.isExpired(kind, fromSymbol, toSymbol, limit, aggregate, exchange)) {
+            if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Flag is FORCE_IF_EXPIRED and return null");
+            return null;
         }
 
         String url = "https://min-api.cryptocompare.com/data/histo" + kind +
@@ -82,61 +109,63 @@ class ClientImpl implements Client {
             new HistoriesCache(context).put(kind, fromSymbol, toSymbol, limit, aggregate, exchange, histories);
         }
 
+        if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Return histories");
+
         return histories;
     }
 
     @Override
-    public List<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        List<History> records = getHistoryXxx(HistoryKind.minute, fromSymbol, toSymbol, limit, 1, exchange);
-        if (aggregate == 1) {
+    public List<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int sampling, String exchange, int mode) {
+        List<History> records = getHistoryXxx(HistoryKind.minute, fromSymbol, toSymbol, limit, 1, exchange, mode);
+        if (sampling == 1) {
             return records;
         } else {
-            return sampling(records, aggregate);
+            return sampling(records, sampling);
         }
     }
 
     @Override
-    public List<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit) {
-        return getHistoryMinute(fromSymbol, toSymbol, limit, 1, DEFAULT_EXCHANGE);
+    public List<History> getHistoryMinute(String fromSymbol, String toSymbol, int limit, int mode) {
+        return getHistoryMinute(fromSymbol, toSymbol, limit, 1, DEFAULT_EXCHANGE, mode);
     }
 
     @Override
-    public List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate) {
-        return getHistoryHour(fromSymbol, toSymbol, limit, aggregate, DEFAULT_EXCHANGE);
+    public List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate, int mode) {
+        return getHistoryHour(fromSymbol, toSymbol, limit, aggregate, DEFAULT_EXCHANGE, mode);
     }
 
     @Override
-    public List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit) {
-        return getHistoryHour(fromSymbol, toSymbol, limit, 1);
+    public List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int mode) {
+        return getHistoryHour(fromSymbol, toSymbol, limit, 1, mode);
     }
 
     @Override
-    public List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        List<History> records = getHistoryXxx(HistoryKind.hour, fromSymbol, toSymbol, limit, 1, exchange);
-        if (aggregate == 1) {
+    public List<History> getHistoryHour(String fromSymbol, String toSymbol, int limit, int sampling, String exchange, int mode) {
+        List<History> records = getHistoryXxx(HistoryKind.hour, fromSymbol, toSymbol, limit, 1, exchange, mode);
+        if (sampling == 1) {
             return records;
         } else {
-            return sampling(records, aggregate);
+            return sampling(records, sampling);
         }
     }
 
     @Override
-    public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit) {
-        return getHistoryDay(fromSymbol, toSymbol, limit, 1);
+    public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int mode) {
+        return getHistoryDay(fromSymbol, toSymbol, limit, 1, mode);
     }
 
     @Override
-    public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate) {
-        return getHistoryDay(fromSymbol, toSymbol, limit, aggregate, DEFAULT_EXCHANGE);
+    public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int sampling, int mode) {
+        return getHistoryDay(fromSymbol, toSymbol, limit, sampling, DEFAULT_EXCHANGE, mode);
     }
 
     @Override
-    public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        List<History> records = getHistoryXxx(HistoryKind.day, fromSymbol, toSymbol, limit, 1, exchange);
-        if (aggregate == 1) {
+    public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int sampling, String exchange, int mode) {
+        List<History> records = getHistoryXxx(HistoryKind.day, fromSymbol, toSymbol, limit, 1, exchange, mode);
+        if (sampling == 1) {
             return records;
         } else {
-            return sampling(records, aggregate);
+            return sampling(records, sampling);
         }
     }
 

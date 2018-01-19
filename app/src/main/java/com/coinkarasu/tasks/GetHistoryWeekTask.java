@@ -4,6 +4,7 @@ import com.coinkarasu.api.cryptocompare.Client;
 import com.coinkarasu.api.cryptocompare.data.History;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class GetHistoryWeekTask extends GetHistoryTaskBase {
 
@@ -13,6 +14,6 @@ public class GetHistoryWeekTask extends GetHistoryTaskBase {
 
     @Override
     protected List<History> doInBackground(Integer... params) {
-        return client.getHistoryHour(fromSymbol, toSymbol, 168, 2); // 24 * 7
+        return client.getHistoryHour(fromSymbol, toSymbol, (int) TimeUnit.DAYS.toHours(7), 2, cacheMode);
     }
 }

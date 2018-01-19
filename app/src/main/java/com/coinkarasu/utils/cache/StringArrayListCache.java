@@ -90,6 +90,10 @@ public class StringArrayListCache<T> {
         return cache.exists(key);
     }
 
+    public boolean isExpired(String key, long expiration) {
+        return cache.isExpired(key, expiration);
+    }
+
     public void remove(String key) {
         cache.remove(key);
     }

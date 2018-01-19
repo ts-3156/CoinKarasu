@@ -83,6 +83,8 @@ public class ItemDelegate extends UiManagingDelegate {
         ItemViewHolder holder = (ItemViewHolder) _holder;
 
         holder.sparkLine.setAdapter(new CoinListSparkAdapter(EMPTY_ARRAY));
+        holder.sparkLine.setAdapter(null);
+
         holder.icon.setImageUrl(null, resources.imageLoader);
 
         if (holder.priceAnimator != null) {

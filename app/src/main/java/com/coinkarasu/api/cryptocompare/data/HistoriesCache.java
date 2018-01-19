@@ -37,8 +37,18 @@ public final class HistoriesCache {
     }
 
     public synchronized List<History> get(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+        return get(kind, fromSymbol, toSymbol, limit, aggregate, exchange, false);
+    }
+
+    public synchronized List<History> get(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange, boolean ignoreExpires) {
         String key = makeCacheName(TAG, kind, fromSymbol, toSymbol, limit, aggregate, exchange);
-        List<String> list = cache.get(key, System.currentTimeMillis() - kind.expires);
+        List<String> list;
+
+        if (ignoreExpires) {
+            list = cache.get(key);
+        } else {
+            list = cache.get(key, System.currentTimeMillis() - kind.expires);
+        }
 
         if (list == null || list.isEmpty()) {
             return null;
@@ -62,5 +72,13 @@ public final class HistoriesCache {
         }
 
         return histories;
+    }
+
+    public boolean exists(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+        return cache.exists(makeCacheName(TAG, kind, fromSymbol, toSymbol, limit, aggregate, exchange));
+    }
+
+    public boolean isExpired(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
+        return cache.isExpired(makeCacheName(TAG, kind, fromSymbol, toSymbol, limit, aggregate, exchange), System.currentTimeMillis() - kind.expires);
     }
 }

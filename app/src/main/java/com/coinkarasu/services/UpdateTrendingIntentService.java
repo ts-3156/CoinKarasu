@@ -9,6 +9,7 @@ import com.coinkarasu.activities.HomeTabFragment;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.TrendingKind;
+import com.coinkarasu.api.cryptocompare.CacheMode;
 import com.coinkarasu.api.cryptocompare.Client;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.CoinList;
@@ -118,19 +119,19 @@ public class UpdateTrendingIntentService extends IntentService {
 
         switch (kind) {
             case one_hour:
-                records = client.getHistoryMinute(fromSymbol, toSymbol, 60, 1, exchange);
+                records = client.getHistoryMinute(fromSymbol, toSymbol, 60, 1, exchange, CacheMode.NORMAL);
                 break;
             case six_hours:
-                records = client.getHistoryMinute(fromSymbol, toSymbol, 60 * 6, 1, exchange);
+                records = client.getHistoryMinute(fromSymbol, toSymbol, 60 * 6, 1, exchange, CacheMode.NORMAL);
                 break;
             case twelve_hours:
-                records = client.getHistoryHour(fromSymbol, toSymbol, 12, 1, exchange);
+                records = client.getHistoryHour(fromSymbol, toSymbol, 12, 1, exchange, CacheMode.NORMAL);
                 break;
             case twenty_four_hours:
-                records = client.getHistoryHour(fromSymbol, toSymbol, 24, 1, exchange);
+                records = client.getHistoryHour(fromSymbol, toSymbol, 24, 1, exchange, CacheMode.NORMAL);
                 break;
             case three_days:
-                records = client.getHistoryDay(fromSymbol, toSymbol, 3, 1, exchange);
+                records = client.getHistoryDay(fromSymbol, toSymbol, 3, 1, exchange, CacheMode.NORMAL);
                 break;
         }
 
