@@ -14,6 +14,7 @@ import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.chart.CoinLineChart;
 import com.coinkarasu.tasks.GetHistoryTaskBase;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.PrefHelper;
 import com.github.mikephil.charting.charts.LineChart;
 
 import java.util.List;
@@ -28,6 +29,9 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     private boolean taskStarted;
     private CoinLineChart chart;
     private int errorCount = 0;
+    private LineChart chartView;
+    private HistoricalPriceFragment parent;
+
     private boolean isVisibleToUser = false;
 
     public CoinLineChartTabContentFragment() {
@@ -58,12 +62,15 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         View view = inflater.inflate(R.layout.fragment_coin_line_chart_tab_content, container, false);
         taskStarted = false;
         chart = null;
+        chartView = view.findViewById(R.id.line_chart);
+        parent = ((HistoricalPriceFragment) getParentFragment());
         startTask();
         return view;
     }
 
     private void startTask() {
-        if (taskStarted || errorCount >= 3 || getActivity() == null) {
+        if (taskStarted || errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
+            if (DEBUG) CKLog.w(TAG, "startTask() Return started=" + taskStarted + " error=" + errorCount);
             return;
         }
         taskStarted = true;
@@ -75,28 +82,16 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void updateView() {
-        if (isDetached() || getView() == null) {
-            return;
-        }
-
-        if (taskStarted) {
-            return;
-        }
-
-        startTask();
-    }
-
     @Override
     public void finished(List<History> records) {
-        if (isDetached() || getActivity() == null || getActivity().isFinishing()) {
+        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
+            if (DEBUG) CKLog.w(TAG, "finished() Too early");
             taskStarted = false;
-            errorCount++;
             return;
         }
 
         if (records == null || records.isEmpty()) {
-            if (DEBUG) CKLog.w(TAG, "finished() empty " + kind + " " + errorCount);
+            if (DEBUG) CKLog.w(TAG, "finished() records is empty kind=" + kind + " error=" + errorCount);
             taskStarted = false;
             errorCount++;
             startTask();
@@ -104,14 +99,16 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         }
 
         drawChart(records);
-        ((HistoricalPriceFragment) getParentFragment()).updateTab(kind.ordinal(), records);
+        if (parent != null) {
+            parent.updateTab(kind.ordinal(), records);
+        }
 
         if (DEBUG) CKLog.d(TAG, "finished() " + kind + " " + records.size());
     }
 
     private void drawChart(List<History> records) {
-        chart = new CoinLineChart((LineChart) getView().findViewById(R.id.line_chart));
-        chart.initialize(kind.name());
+        chart = new CoinLineChart(chartView);
+        chart.initialize(kind.name(), PrefHelper.shouldAnimateCharts(getActivity()));
         chart.setData(records);
         chart.invalidate();
     }
@@ -131,7 +128,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         this.isVisibleToUser = isVisibleToUser;
 
         if (isVisibleToUser) {
-            updateView();
+            startTask();
         }
     }
 }

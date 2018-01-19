@@ -92,7 +92,7 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/coin_list_horizontal_spacing"
             app:spark_animateChanges="false"
-            app:spark_cornerRadius="1dp"
+            app:spark_cornerRadius="0.5dp"
             app:spark_lineColor="#80000000"
             app:spark_lineWidth="1dp" />
 

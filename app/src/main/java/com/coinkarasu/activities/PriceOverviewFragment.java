@@ -162,7 +162,7 @@ public class PriceOverviewFragment extends Fragment implements
         trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(coin.getTrend())));
         trendIconView.setImageResource(new TrendIconFormat().format(coin.getTrend()));
 
-        if (isAnimStarted && PrefHelper.isAnimEnabled(getActivity())) {
+        if (isAnimStarted && PrefHelper.shouldAnimatePrices(getActivity())) {
             new PriceAnimator(coin, priceView).start();
             new PriceDiffAnimator(coin, priceDiffView).start();
             new TrendAnimator(coin, trendView).start();

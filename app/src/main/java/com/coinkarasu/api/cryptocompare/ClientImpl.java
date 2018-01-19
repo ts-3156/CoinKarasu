@@ -150,11 +150,6 @@ class ClientImpl implements Client {
     }
 
     @Override
-    public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int mode) {
-        return getHistoryDay(fromSymbol, toSymbol, limit, 1, mode);
-    }
-
-    @Override
     public List<History> getHistoryDay(String fromSymbol, String toSymbol, int limit, int sampling, int mode) {
         return getHistoryDay(fromSymbol, toSymbol, limit, sampling, DEFAULT_EXCHANGE, mode);
     }

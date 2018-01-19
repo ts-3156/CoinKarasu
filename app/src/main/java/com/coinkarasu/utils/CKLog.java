@@ -28,6 +28,7 @@ import java.util.Random;
 public class CKLog {
     private static final boolean DEBUG = BuildConfig.DEBUG;
     private static final String TAG = "CKLog";
+    private static final String TAG_PREFIX = "CK.";
 
     private enum Level {debug, info, warn, error}
 
@@ -36,7 +37,7 @@ public class CKLog {
     private static boolean isRunning;
 
     public static synchronized void setContext(Context context) {
-        if (DEBUG) Log.d(TAG, "setContext()");
+        if (DEBUG) Log.d(TAG_PREFIX + TAG, "setContext()");
         if (BuildConfig.DEBUG && CKLog.context == null) {
             CKLog.context = context.getApplicationContext();
             queue = new LinkedList<>();
@@ -45,42 +46,42 @@ public class CKLog {
     }
 
     public static void releaseContext() {
-        if (DEBUG) Log.d(TAG, "releaseContext()");
+        if (DEBUG) Log.d(TAG_PREFIX + TAG, "releaseContext()");
         context = null;
     }
 
     public static void d(String tag, String message) {
         if (!DEBUG) return;
-        Log.d(tag, message);
-        makeToast(tag, message, Level.debug);
+        Log.d(TAG_PREFIX + tag, message);
+        makeToast(TAG_PREFIX + tag, message, Level.debug);
     }
 
     public static void i(String tag, String message) {
         if (!DEBUG) return;
-        Log.i(tag, message);
-        makeToast(tag, message, Level.info);
+        Log.i(TAG_PREFIX + tag, message);
+        makeToast(TAG_PREFIX + tag, message, Level.info);
     }
 
     public static void w(String tag, String message) {
         if (!DEBUG) return;
-        Log.w(tag, message);
-        makeToast(tag, message, Level.warn);
+        Log.w(TAG_PREFIX + tag, message);
+        makeToast(TAG_PREFIX + tag, message, Level.warn);
     }
 
     public static void e(String tag, String message) {
         if (!DEBUG) return;
-        Log.e(tag, message);
-        makeToast(tag, message, Level.error);
+        Log.e(TAG_PREFIX + tag, message);
+        makeToast(TAG_PREFIX + tag, message, Level.error);
     }
 
     public static void e(String tag, Exception ex) {
         Crashlytics.logException(ex);
-        if (DEBUG) Log.e(tag, ex.getMessage(), ex);
+        if (DEBUG) Log.e(TAG_PREFIX + tag, ex.getMessage(), ex);
     }
 
     public static void e(String tag, String message, Exception ex) {
         Crashlytics.logException(ex);
-        if (DEBUG) Log.e(tag, message, ex);
+        if (DEBUG) Log.e(TAG_PREFIX + tag, message, ex);
     }
 
     private synchronized static void makeToast(String tag, String message, Level level) {

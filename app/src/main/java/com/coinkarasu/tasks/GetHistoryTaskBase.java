@@ -62,11 +62,11 @@ public abstract class GetHistoryTaskBase extends AsyncTask<Integer, Integer, Lis
         return instance;
     }
 
-    public static GetHistoryTaskBase newInstance(Client client, String kind, String exchange) {
+    public static GetHistoryTaskBase newInstance(Client client, HistoricalPriceKind kind, String exchange) {
         GetHistoryTaskBase instance;
 
         switch (kind) {
-            case "day":
+            case day:
                 instance = new GetHistoryDayTask(client, exchange);
                 break;
             default:

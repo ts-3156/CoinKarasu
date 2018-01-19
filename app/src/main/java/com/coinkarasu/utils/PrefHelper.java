@@ -65,11 +65,15 @@ public class PrefHelper {
         return DEFAULT_SYNC_INTERVAL;
     }
 
-    public static boolean isAnimEnabled(Context context) {
+    public static boolean shouldAnimatePrices(Context context) {
         return isEnabled(context, "pref_enable_price_anim", R.bool.enable_price_anim);
     }
 
-    public static boolean isDownloadIconEnabled(Context context) {
+    public static boolean shouldAnimateCharts(Context context) {
+        return isEnabled(context, "pref_enable_chart_anim", R.bool.enable_chart_anim);
+    }
+
+    public static boolean shouldDownloadIcon(Context context) {
         return isEnabled(context, "pref_enable_download_icon", R.bool.enable_download_icon);
     }
 

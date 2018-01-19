@@ -20,6 +20,7 @@ import com.coinkarasu.coins.SnapshotCoin;
 import com.coinkarasu.tasks.GetCoinSnapshotTask;
 import com.coinkarasu.tasks.GetTopPairsTask;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.PrefHelper;
 import com.github.mikephil.charting.charts.PieChart;
 
 import java.util.ArrayList;
@@ -40,7 +41,11 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     private String toSymbol;
     private boolean taskStarted;
     private CoinPieChart chart;
+    private PieChart chartView;
     private int errorCount = 0;
+    private TextView warning;
+    private View warningContainer;
+
     private boolean isVisibleToUser = false;
 
     public CoinPieChartTabContentFragment() {
@@ -71,15 +76,20 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_coin_pie_chart_tab_content, container, false);
         taskStarted = false;
         chart = null;
+        chartView = view.findViewById(R.id.pie_chart);
+        warning = view.findViewById(R.id.warn_text);
+        warningContainer = view.findViewById(R.id.warn_container);
         startTask();
         return view;
     }
 
     private void startTask() {
-        if (taskStarted || errorCount >= 3 || getActivity() == null) {
+        if (taskStarted || errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
+            if (DEBUG) CKLog.w(TAG, "startTask() Return started=" + taskStarted + " error=" + errorCount);
             return;
         }
         taskStarted = true;
+
         Client client = ClientFactory.getInstance(getActivity());
 
         if (kind == CoinPieChartFragment.Kind.currency) {
@@ -96,26 +106,11 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         }
     }
 
-    private void updateView() {
-        if (isDetached() || getView() == null) {
-            return;
-        }
-
-        if (taskStarted) {
-            if (chart != null) {
-//                chart.animateY();
-            }
-            return;
-        }
-
-        startTask();
-    }
-
     @Override
     public void finished(List<TopPair> pairs) {
-        if (isDetached() || getView() == null) {
+        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
+            if (DEBUG) CKLog.w(TAG, "finished() Too early");
             taskStarted = false;
-            errorCount++;
             return;
         }
 
@@ -156,9 +151,9 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
     @Override
     public void finished(CoinSnapshot snapshot) {
-        if (isDetached() || getView() == null) {
+        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
+            if (DEBUG) CKLog.w(TAG, "finished() Too early");
             taskStarted = false;
-            errorCount++;
             return;
         }
 
@@ -179,12 +174,9 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             }
         }
 
-        ArrayList<Double> values = new ArrayList<>();
-        ArrayList<String> labels = new ArrayList<>();
-
         if (coins.isEmpty()) {
             if (DEBUG) CKLog.w(TAG, "finished() empty " + kind + " " + errorCount);
-            drawChart(values, labels);
+            displayWarning();
             return;
         }
 
@@ -193,6 +185,9 @@ public class CoinPieChartTabContentFragment extends Fragment implements
                 return c1.getVolume24Hour() > c2.getVolume24Hour() ? -1 : 1;
             }
         });
+
+        List<Double> values = new ArrayList<>();
+        List<String> labels = new ArrayList<>();
 
         for (int i = 0; i < coins.size(); i++) {
             SnapshotCoin coin = coins.get(i);
@@ -207,16 +202,8 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     }
 
     private void drawChart(List<Double> values, List<String> labels) {
-        if (values.isEmpty()) {
-            getView().findViewById(R.id.pie_chart).setVisibility(View.GONE);
-            Spanned text = Html.fromHtml(getString(R.string.pie_chart_exchange_warn, fromSymbol, toSymbol));
-            ((TextView) getView().findViewById(R.id.warn_text)).setText(text);
-            getView().findViewById(R.id.warn_container).setVisibility(View.VISIBLE);
-            return;
-        }
-
-        chart = new CoinPieChart((PieChart) getView().findViewById(R.id.pie_chart));
-        chart.initialize();
+        chart = new CoinPieChart(chartView);
+        chart.initialize(PrefHelper.shouldAnimateCharts(getActivity()));
 
         if (kind == CoinPieChartFragment.Kind.currency) {
             chart.setCurrencyCenterText(getActivity(), fromSymbol);
@@ -225,6 +212,13 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         }
         chart.setData(values, labels);
         chart.invalidate();
+    }
+
+    private void displayWarning() {
+        chartView.setVisibility(View.GONE);
+        Spanned text = Html.fromHtml(getString(R.string.pie_chart_exchange_warn, fromSymbol, toSymbol));
+        warning.setText(text);
+        warningContainer.setVisibility(View.VISIBLE);
     }
 
     private void groupSmallSlices(List<Double> values, List<String> labels) {
@@ -275,7 +269,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         this.isVisibleToUser = isVisibleToUser;
 
         if (isVisibleToUser) {
-            updateView();
+            startTask();
         }
     }
 }

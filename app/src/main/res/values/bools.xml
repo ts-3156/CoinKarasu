@@ -5,6 +5,7 @@
     <bool name="keep_screen_on">false</bool>
     <bool name="remove_ads">false</bool>
     <bool name="enable_price_anim">false</bool>
+    <bool name="enable_chart_anim">false</bool>
     <bool name="enable_download_icon">true</bool>
     <bool name="make_toast">true</bool>
     <bool name="become_premium">false</bool>

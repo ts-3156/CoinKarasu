@@ -199,6 +199,8 @@
     <string name="pref_remove_ads_already_available">あなたは既にプレミアムユーザーです。広告は表示されません！</string>
     <string name="pref_title_enable_price_anim">価格のアニメーションを有効化する</string>
     <string name="pref_description_enable_price_anim">この設定をオフにすると表示が高速化されます</string>
+    <string name="pref_title_enable_chart_anim">チャートのアニメーションを有効化する</string>
+    <string name="pref_description_enable_chart_anim">この設定をオフにすると表示が高速化されます</string>
     <string name="pref_title_enable_download_icon">高解像度のアイコンをダウンロードする</string>
     <string name="pref_description_enable_download_icon">この設定をオフにすると表示が高速化されます</string>
     <string name="pref_title_make_toast">トーストを表示する</string>

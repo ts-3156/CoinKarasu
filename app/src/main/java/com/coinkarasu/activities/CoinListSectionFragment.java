@@ -193,8 +193,8 @@ public class CoinListSectionFragment extends Fragment implements
         CoinListAdapter adapter = parent.getAdapter();
         String toSymbol = kind.getToSymbol();
 
-        adapter.setAnimEnabled(PrefHelper.isAnimEnabled(getActivity()));
-        adapter.setDownloadIconEnabled(PrefHelper.isDownloadIconEnabled(getActivity()));
+        adapter.setAnimEnabled(PrefHelper.shouldAnimatePrices(getActivity()));
+        adapter.setDownloadIconEnabled(PrefHelper.shouldDownloadIcon(getActivity()));
         adapter.setToSymbol(toSymbol);
 
         if (PrefHelper.isAirplaneModeOn(getActivity())) {

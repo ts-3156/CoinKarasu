@@ -29,7 +29,7 @@ public class CoinLineChart {
         this.offsetSeconds = 0;
     }
 
-    public void initialize(String kind) {
+    public void initialize(String kind, boolean shouldAnimate) {
         replaceValueFormatter(kind);
 
         chart.getDescription().setEnabled(false);
@@ -38,7 +38,9 @@ public class CoinLineChart {
         chart.invalidate();
 
         chart.getLegend().setEnabled(false);
-        chart.animateX(1000);
+        if (shouldAnimate) {
+            chart.animateX(1000);
+        }
         // enable touch gestures
         chart.setTouchEnabled(false);
         chart.setDoubleTapToZoomEnabled(false);

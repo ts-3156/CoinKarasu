@@ -33,7 +33,7 @@ public class CoinPieChart {
         chart.invalidate();
     }
 
-    public void initialize() {
+    public void initialize(boolean shouldAnimate) {
         chart.setUsePercentValues(true);
 
         chart.getDescription().setEnabled(false);
@@ -59,7 +59,9 @@ public class CoinPieChart {
 
 //        setData(4, 100);
 
-        chart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
+        if (shouldAnimate) {
+            chart.animateY(1400, Easing.EasingOption.EaseInOutQuad);
+        }
         // mChart.spin(2000, 0, 360);
 
         chart.getLegend().setEnabled(false);
