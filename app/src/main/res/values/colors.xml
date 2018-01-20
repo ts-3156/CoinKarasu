@@ -6,6 +6,10 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="colorCoinListSymbol">#80000000</color>
+    <color name="colorCoinListName">#40000000</color>
+    <color name="colorCoinListPrice">#80000000</color>
+
     <color name="colorInfoText">#0D47A1</color>
     <color name="colorInfoBackground">#E1F5FE</color>
     <color name="colorWarnText">#E65100</color>
@@ -14,9 +18,9 @@
     <color name="colorTabActiveText">#ffffff</color>
     <color name="colorTabInactiveText">#80000000</color>
 
-    <color name="colorTrendUp">#008000</color>
-    <color name="colorTrendFlat">#8a000000</color>
-    <color name="colorTrendDown">#ff0000</color>
+    <color name="colorTrendUp">#90008000</color>
+    <color name="colorTrendFlat">#80000000</color>
+    <color name="colorTrendDown">#80ff0000</color>
 
     <color name="colorPriceBgUp">#E8F5E9</color>
     <color name="colorPriceBgDown">#FFEBEE</color>
