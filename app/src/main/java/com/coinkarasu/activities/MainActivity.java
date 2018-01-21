@@ -1,5 +1,6 @@
 package com.coinkarasu.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.settings.PreferencesActivity;
 import com.coinkarasu.billingmodule.billing.BillingManager;
 import com.coinkarasu.tasks.GetApiKeyTask;
+import com.coinkarasu.tasks.GetFirstLaunchDateTask;
 import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
 import com.coinkarasu.tasks.InsertLaunchEventTask;
 import com.coinkarasu.utils.ApiKeyUtils;
@@ -34,7 +36,9 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -71,15 +75,15 @@ public class MainActivity extends AppCompatActivity implements
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                BillingActivity.start(view.getContext(), -1);
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        // FloatingActionButton fab = findViewById(R.id.fab);
+        // fab.setOnClickListener(new View.OnClickListener() {
+        //     @Override
+        //     public void onClick(View view) {
+        //         BillingActivity.start(view.getContext(), -1);
+        //         Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+        //                 .setAction("Action", null).show();
+        //     }
+        // });
 
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
@@ -198,35 +202,46 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
 
-        MobileAds.initialize(this, BuildConfig.ADMOB_APP_ID);
-        ad = new AdView(this);
-        ad.setAdSize(AdSize.SMART_BANNER);
-        ad.setAdUnitId(BuildConfig.ADMOB_UNIT_ID);
-
-        ad.setAdListener(new AdListener() {
+        new GetFirstLaunchDateTask(new GetFirstLaunchDateTask.Callback() {
             @Override
-            public void onAdLoaded() {
-                if (isFinishing()) {
+            public void run(Date date) {
+                if (isFinishing() || ad != null || date == null
+                        || System.currentTimeMillis() - date.getTime() < TimeUnit.DAYS.toMillis(3)) {
                     return;
                 }
 
-                if (ad.getParent() == null) {
-                    ViewGroup parent = findViewById(R.id.main_ad_container);
-                    parent.addView(ad);
+                final Activity activity = MainActivity.this;
+                MobileAds.initialize(activity, BuildConfig.ADMOB_APP_ID);
+                ad = new AdView(activity);
+                ad.setAdSize(AdSize.SMART_BANNER);
+                ad.setAdUnitId(BuildConfig.ADMOB_UNIT_ID);
 
-                    int adHeight = AdSize.SMART_BANNER.getHeightInPixels(MainActivity.this);
-                    findViewById(R.id.fragment_container).setPadding(0, 0, 0, adHeight);
+                ad.setAdListener(new AdListener() {
+                    @Override
+                    public void onAdLoaded() {
+                        if (isFinishing()) {
+                            return;
+                        }
 
-                    if (DEBUG) CKLog.d(TAG, "onAdLoaded()");
-                }
+                        if (ad.getParent() == null) {
+                            ViewGroup parent = findViewById(R.id.main_ad_container);
+                            parent.addView(ad);
+
+                            int adHeight = AdSize.SMART_BANNER.getHeightInPixels(activity);
+                            findViewById(R.id.fragment_container).setPadding(0, 0, 0, adHeight);
+
+                            if (DEBUG) CKLog.d(TAG, "onAdLoaded()");
+                        }
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(int errorCode) {
+                        if (DEBUG) CKLog.w(TAG, "onAdFailedToLoad() " + errorCode);
+                    }
+                });
+                ad.loadAd(new AdRequest.Builder().build());
             }
-
-            @Override
-            public void onAdFailedToLoad(int errorCode) {
-                if (DEBUG) CKLog.w(TAG, "onAdFailedToLoad() " + errorCode);
-            }
-        });
-        ad.loadAd(new AdRequest.Builder().build());
+        }).execute(this);
     }
 
     public boolean isPremiumPurchased() {

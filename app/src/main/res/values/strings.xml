@@ -249,6 +249,10 @@
     <string name="pref_title_show_first_launch_screen">Show first launch screen</string>
     <string name="pref_description_show_first_launch_screen"></string>
 
+    <string name="pref_title_first_launch_date">First launch date</string>
+    <string name="pref_description_first_launch_date"></string>
+    <string name="pref_first_launch_date_dialog">Insert dummy first launch date?</string>
+
     <string name="pref_title_change_ck_host">Change ck host</string>
     <string-array name="pref_change_ck_host_titles">
         <item>default</item>

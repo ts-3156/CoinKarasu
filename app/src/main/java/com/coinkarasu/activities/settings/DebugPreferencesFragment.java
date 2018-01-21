@@ -15,6 +15,8 @@ import android.support.v7.app.AlertDialog;
 
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
+import com.coinkarasu.tasks.GetFirstLaunchDateTask;
+import com.coinkarasu.tasks.InsertDummyFirstLaunchDateTask;
 import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
@@ -24,6 +26,7 @@ import com.coinkarasu.utils.cache.DiskBasedCache;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Date;
 
 public class DebugPreferencesFragment extends PreferenceFragment implements
         Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
@@ -42,6 +45,7 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
 
         findPreference("pref_clear_cache").setOnPreferenceClickListener(this);
         findPreference("pref_clear_config").setOnPreferenceClickListener(this);
+        findPreference("pref_first_launch_date").setOnPreferenceClickListener(this);
         findPreference("pref_show_first_launch_screen").setOnPreferenceChangeListener(this);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -57,6 +61,14 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
         int index = Arrays.asList(entryValues).indexOf(PrefHelper.getCkHost(getActivity(), BuildConfig.CK_HOST));
         ckHost.setValueIndex(index < 0 ? 0 : index);
         bindPreferenceSummaryToValue(prefs, "pref_change_ck_host");
+
+        new GetFirstLaunchDateTask(new GetFirstLaunchDateTask.Callback() {
+            @Override
+            public void run(Date date) {
+                Preference firstLaunchDate = findPreference("pref_first_launch_date");
+                firstLaunchDate.setSummary(date == null ? "null" : date.toString());
+            }
+        }).execute(getActivity());
 
         bindPreferenceSummaryToValue(prefs, "pref_toast_level");
 
@@ -82,6 +94,18 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
                 public void onClick(DialogInterface dialog, int id) {
                     PrefHelper.clear(getActivity());
                     getActivity().recreate();
+                }
+            });
+        } else if (key.equals("pref_first_launch_date")) {
+            showDialog(R.string.pref_first_launch_date_dialog, "OK", true, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    new InsertDummyFirstLaunchDateTask(new InsertDummyFirstLaunchDateTask.Callback() {
+                        @Override
+                        public void run(Date date) {
+                            Preference firstLaunchDate = findPreference("pref_first_launch_date");
+                            firstLaunchDate.setSummary(date == null ? "null" : date.toString());
+                        }
+                    }).execute(getActivity());
                 }
             });
         }

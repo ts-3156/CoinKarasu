@@ -148,10 +148,10 @@ public class CoinListFragment extends Fragment implements
                 if (indexOfSection < kind.sections.size() - 1) {
                     collectCoins(inCoins, kind.sections.get(indexOfSection + 1));
                 } else {
-                    if (!((MainActivity) getActivity()).isPremiumPurchased() && kind.isToplist()
-                            && section.getExchange() == Exchange.cccagg && inCoins.size() >= 3) {
-                        inCoins.add(2, new AdCoinImpl());
-                    }
+                    // if (!((MainActivity) getActivity()).isPremiumPurchased() && kind.isToplist()
+                    //         && section.getExchange() == Exchange.cccagg && inCoins.size() >= 3) {
+                    //     inCoins.add(2, new AdCoinImpl());
+                    // }
 
                     if (adapter == null) {
                         adapter = new CoinListAdapter(getActivity(), CoinListFragment.this, kind, inCoins);

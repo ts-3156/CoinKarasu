@@ -49,6 +49,11 @@
             android:summary="@string/pref_description_show_first_launch_screen"
             android:title="@string/pref_title_show_first_launch_screen" />
 
+        <Preference
+            android:key="pref_first_launch_date"
+            android:summary="@string/pref_description_first_launch_date"
+            android:title="@string/pref_title_first_launch_date" />
+
         <ListPreference
             android:defaultValue="default"
             android:entries="@array/pref_change_ck_host_titles"
