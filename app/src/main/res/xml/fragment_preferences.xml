@@ -28,19 +28,16 @@
             android:positiveButtonText="@null"
             android:title="@string/pref_title_currency" />
 
+        <Preference
+            android:key="pref_account_grade"
+            android:summary="@string/pref_account_grade_summary"
+            android:title="@string/pref_account_grade_title" />
+
         <SwitchPreference
             android:defaultValue="@bool/remove_ads"
             android:key="pref_remove_ads"
             android:summary="@string/pref_description_remove_ads"
             android:title="@string/pref_title_remove_ads" />
-
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="@string/pref_header_account">
-        <Preference
-            android:key="pref_account_grade"
-            android:summary="@string/pref_account_grade_summary"
-            android:title="@string/pref_account_grade_title" />
 
     </PreferenceCategory>
 

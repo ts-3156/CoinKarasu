@@ -161,7 +161,7 @@
     <string name="pref_header_data_sync">データの同期</string>
     <string name="pref_header_debug">デバッグ</string>
 
-    <string name="pref_account_grade_title">グレード</string>
+    <string name="pref_account_grade_title">アカウント</string>
     <string name="pref_account_grade_summary">無料会員</string>
     <string name="pref_account_grade_summary_premium">プレミアム会員</string>
     <string name="pref_open_source_licenses_title">オープンソースライセンス</string>
