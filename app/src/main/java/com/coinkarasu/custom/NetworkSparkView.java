@@ -12,6 +12,7 @@ import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.tasks.GetHistoryTaskBase;
 import com.coinkarasu.tasks.GetHistoryWeekTask;
 import com.coinkarasu.utils.CKLog;
+import com.robinhood.spark.SparkAdapter;
 import com.robinhood.spark.SparkView;
 
 import java.util.List;
@@ -20,10 +21,26 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
     private static final boolean DEBUG = true;
     private static final String TAG = "NetworkSparkView";
 
+    private static final SparkAdapter emptyAdapter = new SparkAdapter() {
+        @Override
+        public int getCount() {
+            return 0;
+        }
+
+        @Override
+        public Object getItem(int index) {
+            return null;
+        }
+
+        @Override
+        public float getY(int index) {
+            return 0;
+        }
+    };
+
     private GetHistoryTaskBase task;
     private String fromSymbol;
     private String toSymbol;
-    private boolean isDetached;
 
     public NetworkSparkView(Context context) {
         this(context, null);
@@ -40,16 +57,27 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
     public void setSymbols(String fromSymbol, String toSymbol) {
         this.fromSymbol = fromSymbol;
         this.toSymbol = toSymbol;
-        this.isDetached = false;
-        load();
+        loadDataIfNecessary();
     }
 
-    void load() {
+    private void cancelTask() {
+        if (task != null) {
+            task.cancel(false);
+            task = null;
+        }
+    }
+
+    public void clearData() {
+        cancelTask();
+        if (getAdapter() != null) {
+            setAdapter(emptyAdapter);
+            setAdapter(null);
+        }
+    }
+
+    private void loadDataIfNecessary() {
         if (TextUtils.isEmpty(fromSymbol) || TextUtils.isEmpty(toSymbol)) {
-            if (task != null) {
-                task.cancel(false);
-                task = null;
-            }
+            cancelTask();
             return;
         }
 
@@ -57,7 +85,7 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
             if (task.getFromSymbol().equals(fromSymbol) && task.getToSymbol().equals(toSymbol)) {
                 return;
             } else {
-                task.cancel(false);
+                cancelTask();
             }
         }
 
@@ -71,7 +99,7 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
 
     @Override
     public void finished(List<History> histories) {
-        if (isDetached || task == null) {
+        if (task == null) {
             return;
         }
 
@@ -104,12 +132,14 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        loadDataIfNecessary();
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
-        isDetached = true;
-        if (task != null) {
-            task.cancel(false);
-            task = null;
-        }
         super.onDetachedFromWindow();
+        cancelTask();
     }
 }

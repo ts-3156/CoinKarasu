@@ -7,7 +7,6 @@ import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.adapters.CoinListAdapter;
-import com.coinkarasu.adapters.CoinListSparkAdapter;
 import com.coinkarasu.adapters.ConfigUtils;
 import com.coinkarasu.adapters.ResourceUtils;
 import com.coinkarasu.animator.PriceAnimator;
@@ -20,7 +19,6 @@ public class ItemDelegate extends UiManagingDelegate {
     private static final boolean DEBUG = true;
     private static final String TAG = "ItemDelegate";
     public static final int TYPE = CoinListAdapter.TYPE_ITEM;
-    private static final double[] EMPTY_ARRAY = new double[0];
 
     private ResourceUtils resources;
     private ConfigUtils configs;
@@ -81,10 +79,8 @@ public class ItemDelegate extends UiManagingDelegate {
     public void onViewRecycled(CoinListViewHolder _holder) {
         ItemViewHolder holder = (ItemViewHolder) _holder;
 
-        holder.sparkLine.setAdapter(new CoinListSparkAdapter(EMPTY_ARRAY));
-        holder.sparkLine.setAdapter(null);
-
-        holder.icon.setImageUrl(null, resources.imageLoader);
+        holder.sparkLine.clearData();
+        holder.icon.setImageUrl(null, null);
 
         if (holder.priceAnimator != null) {
             holder.priceAnimator.cancel();

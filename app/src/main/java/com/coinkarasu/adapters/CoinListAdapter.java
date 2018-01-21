@@ -135,6 +135,13 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
         return uiManager.onCreateViewHolder(parent, viewType);
     }
 
+    /**
+     * スクロールにより画面から消えるとonDetachedFromWindow
+     * スクロールにより画面に表示されるとonAttachedToWindow、onVisibilityChanged(true)
+     * 画面に表示されていない時に定期的(？)にonAttachedToWindow、onVisibilityChanged(true)、onDetachedFromWindow
+     * 画面に表示されていない時にデータが更新されると、onViewRecycled、onBindViewHolder、onAttachedToWindow、onVisibilityChanged(true)、onDetachedFromWindow
+     * 画面に表示されている時にデータが更新されると、onBindViewHolder
+     */
     @Override
     public void onBindViewHolder(CoinListViewHolder holder, int position) {
         int last = layoutManager.findLastVisibleItemPosition();
