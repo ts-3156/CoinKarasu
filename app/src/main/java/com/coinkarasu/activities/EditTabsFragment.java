@@ -1,13 +1,13 @@
 package com.coinkarasu.activities;
 
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
@@ -47,11 +47,11 @@ public class EditTabsFragment extends Fragment implements
             return;
         }
         if (item.kind == NavigationKind.bitflyer || item.kind == NavigationKind.zaif) {
-            Snackbar.make(view, getString(R.string.edit_tabs_is_not_available, getString(item.kind.tabStrResId)), Snackbar.LENGTH_SHORT).show();
+            Toast.makeText(view.getContext(), getString(R.string.edit_tabs_is_not_available, getString(item.kind.tabStrResId)), Toast.LENGTH_SHORT).show();
             return;
         }
         if (item.kind == NavigationKind.home) {
-            Snackbar.make(view, getString(R.string.edit_tabs_is_always_be_displayed, getString(item.kind.tabStrResId)), Snackbar.LENGTH_SHORT).show();
+            Toast.makeText(view.getContext(), getString(R.string.edit_tabs_is_always_be_displayed, getString(item.kind.tabStrResId)), Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -65,7 +65,7 @@ public class EditTabsFragment extends Fragment implements
         RecyclerView.Adapter adapter = recyclerView.getAdapter();
         adapter.notifyItemChanged(position);
 
-        Snackbar.make(view, isAddedOrRemoved(item.kind, isAdded), Snackbar.LENGTH_SHORT).show();
+        Toast.makeText(view.getContext(), isAddedOrRemoved(item.kind, isAdded), Toast.LENGTH_SHORT).show();
 
         if (getParentFragment() != null) {
             ((MainFragment) getParentFragment()).refreshTabVisibility(isAdded);
