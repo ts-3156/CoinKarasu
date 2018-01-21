@@ -211,8 +211,10 @@ public class CoinListFragment extends Fragment implements
     @Override
     public void onDetach() {
         super.onDetach();
-        for (Fragment fragment : sectionFragments) {
-            fragment.onDetach();
+        if (sectionFragments != null) {
+            for (Fragment fragment : sectionFragments) {
+                fragment.onDetach();
+            }
         }
     }
 
