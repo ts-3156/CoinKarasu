@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         viewController = new MainViewController(this);
-        billingDelegate = new BillingViewController(this, this);
+        billingDelegate = new BillingViewController(this, null, this);
         billingManager = new BillingManager(this, billingDelegate.getUpdatesListener());
 
         if (!ApiKeyUtils.exists(this)) {
@@ -206,6 +206,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onPurchasesUpdated() {
         setupAdView();
+    }
+
+    @Override
+    public void onConsumeFinished() {
     }
 
     private void setupAdView() {

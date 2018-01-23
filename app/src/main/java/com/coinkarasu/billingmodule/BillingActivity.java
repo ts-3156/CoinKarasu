@@ -45,7 +45,7 @@ public class BillingActivity extends AppCompatActivity implements
         BillingCallback,
         InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
 
-    private static final String TAG = "BaseGamePlayActivity";
+    private static final String TAG = "BillingActivity";
     private static final boolean DEBUG = true;
 
     private BillingManager mBillingManager;
@@ -75,7 +75,7 @@ public class BillingActivity extends AppCompatActivity implements
         showPrePurchaseDialog();
         updateToolbarColor();
 
-        mViewController = new BillingViewController(this, this);
+        mViewController = new BillingViewController(this, this, this);
         mBillingManager = new BillingManager(this, mViewController.getUpdatesListener());
 
         mErrorTextView = findViewById(R.id.error_textview);
@@ -159,6 +159,7 @@ public class BillingActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
     public void onBillingManagerSetupFinished() {
         if (mRecyclerView != null) {
             setWaitScreen(true);
@@ -166,11 +167,17 @@ public class BillingActivity extends AppCompatActivity implements
         }
     }
 
+    @Override
     public void onPurchasesUpdated() {
         setWaitScreen(false);
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onConsumeFinished() {
+        onPurchasesUpdated();
     }
 
     private void setWaitScreen(boolean set) {

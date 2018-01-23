@@ -28,8 +28,7 @@ public class PremiumMonthlyDelegate extends UiManagingDelegate {
         if (mBillingProvider.isPremiumMonthly()) {
             holder.button.setText(R.string.billing_button_own);
         } else {
-            int textId = mBillingProvider.isPremiumPurchased() ? R.string.billing_button_change : R.string.billing_button_buy;
-            holder.button.setText(textId);
+            holder.button.setText(R.string.billing_button_buy);
         }
     }
 
@@ -38,11 +37,7 @@ public class PremiumMonthlyDelegate extends UiManagingDelegate {
         if (mBillingProvider.isPremiumMonthly()) {
             showAlreadyPurchasedToast();
         } else if (mBillingProvider.isPremiumPurchased()) {
-            ArrayList<String> currentSubscriptionSku = new ArrayList<>();
-            currentSubscriptionSku.add(PremiumDelegate.SKU_ID);
-
-            mBillingProvider.getBillingManager().initiatePurchaseFlow(data.getSku(),
-                    currentSubscriptionSku, data.getSkuType());
+            showAlreadyPurchasedToast();
         } else {
             super.onButtonClicked(data);
         }

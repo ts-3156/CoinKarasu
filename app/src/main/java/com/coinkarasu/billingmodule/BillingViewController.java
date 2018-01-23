@@ -4,25 +4,32 @@ import android.content.Context;
 
 import com.android.billingclient.api.BillingClient.BillingResponse;
 import com.android.billingclient.api.Purchase;
+import com.coinkarasu.R;
 import com.coinkarasu.billingmodule.billing.BillingCallback;
 import com.coinkarasu.billingmodule.billing.BillingManager;
+import com.coinkarasu.billingmodule.billing.BillingProvider;
 import com.coinkarasu.billingmodule.skulist.row.PremiumDelegate;
 import com.coinkarasu.billingmodule.skulist.row.PremiumMonthlyDelegate;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class BillingViewController {
     private static final boolean DEBUG = true;
     private static final String TAG = "BillingViewController";
 
     private Context context;
+    private BillingProvider billingProvider;
     private BillingCallback billingCallback;
     private UpdatesListener updatesListener;
+    private Set<String> tokensToBeConsumed;
 
-    public BillingViewController(Context context, BillingCallback billingCallback) {
+    public BillingViewController(Context context, BillingProvider billingProvider, BillingCallback billingCallback) {
         this.context = context;
+        this.billingProvider = billingProvider;
         this.billingCallback = billingCallback;
         updatesListener = new UpdatesListener();
     }
@@ -51,13 +58,25 @@ public class BillingViewController {
 
         @Override
         public void onConsumeFinished(String token, @BillingResponse int result) {
-            throw new UnsupportedOperationException();
+            if (tokensToBeConsumed == null || !tokensToBeConsumed.contains(token)) {
+                return;
+            }
+
+            if (result == BillingResponse.OK) {
+                if (DEBUG) CKLog.d(TAG, "Consumption successful. Provisioning. " + token);
+                PrefHelper.setPremiumPurchased(context, false);
+            } else {
+                if (DEBUG) CKLog.w(TAG, context.getString(R.string.billing_alert_error_consuming, result));
+            }
+
+            billingCallback.onConsumeFinished();
         }
 
         @Override
         public void onPurchasesUpdated(List<Purchase> purchaseList) {
             boolean isPremiumPurchased = false;
             boolean premiumMonthly = false;
+            boolean isForceConsumeItems = PrefHelper.isForceConsumeItems(context);
 
             for (Purchase purchase : purchaseList) {
                 switch (purchase.getSku()) {
@@ -71,6 +90,17 @@ public class BillingViewController {
                         break;
                     default:
                         if (DEBUG) CKLog.w(TAG, "Not registered item " + purchase.getSku());
+                }
+
+                if (isForceConsumeItems && purchase.getSku().equals(PremiumDelegate.SKU_ID) && billingProvider != null) {
+                    String token = purchase.getPurchaseToken();
+                    if (tokensToBeConsumed == null) {
+                        tokensToBeConsumed = new HashSet<>();
+                    }
+                    if (!tokensToBeConsumed.contains(token)) {
+                        tokensToBeConsumed.add(token);
+                        billingProvider.getBillingManager().consumeAsync(token);
+                    }
                 }
             }
 

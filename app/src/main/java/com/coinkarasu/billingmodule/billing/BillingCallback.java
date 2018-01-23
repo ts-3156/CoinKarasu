@@ -5,5 +5,7 @@ public interface BillingCallback {
     void onBillingManagerSetupFinished();
 
     void onPurchasesUpdated();
+
+    void onConsumeFinished();
 }
 

@@ -1,10 +1,10 @@
 package com.coinkarasu.billingmodule.skulist.row;
 
+import android.widget.Toast;
+
 import com.android.billingclient.api.BillingClient.SkuType;
 import com.coinkarasu.R;
 import com.coinkarasu.billingmodule.billing.BillingProvider;
-
-import java.util.ArrayList;
 
 /**
  * Handles Ui specific to "premium" - non-consumable in-app item row
@@ -28,8 +28,7 @@ public class PremiumDelegate extends UiManagingDelegate {
         if (mBillingProvider.isPremiumPurchased()) {
             holder.button.setText(R.string.billing_button_own);
         } else {
-            int textId = mBillingProvider.isPremiumMonthly() ? R.string.billing_button_change : R.string.billing_button_buy;
-            holder.button.setText(textId);
+            holder.button.setText(R.string.billing_button_buy);
         }
     }
 
@@ -38,11 +37,8 @@ public class PremiumDelegate extends UiManagingDelegate {
         if (mBillingProvider.isPremiumPurchased()) {
             showAlreadyPurchasedToast();
         } else if (mBillingProvider.isPremiumMonthly()) {
-            ArrayList<String> currentSubscriptionSku = new ArrayList<>();
-            currentSubscriptionSku.add(PremiumMonthlyDelegate.SKU_ID);
-
-            mBillingProvider.getBillingManager().initiatePurchaseFlow(data.getSku(),
-                    currentSubscriptionSku, data.getSkuType());
+            Toast.makeText(mBillingProvider.getBillingManager().getContext(),
+                    R.string.billing_alert_already_purchased, Toast.LENGTH_SHORT).show();
         } else {
             super.onButtonClicked(data);
         }

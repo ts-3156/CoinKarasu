@@ -154,8 +154,9 @@
     <string name="billing_alert_no_gas">Oh, no! You are out of gas! Try buying some!</string>
     <string name="billing_alert_drove">Vroooom, you drove a few miles.</string>
     <string name="billing_alert_fill_gas">You filled &#188; tank. Your tank is now %1$d/4 full!</string>
-    <string name="billing_alert_error_consuming">Error while consuming: %1$s</string>
-    <string name="billing_alert_already_purchased">Item is already purchased</string>
+    <string name="billing_alert_error_consuming">Error while consuming: %1$d</string>
+    <string name="billing_alert_already_purchased">You\'ve already been a premium.</string>
+    <string name="billing_alert_cancel_subscription">Please cancel your subscription contract in first.</string>
     <string name="billing_error_no_skus">We didn\'t find any SKUs to display&#8230; Check your internetconnection and make sure your Google Developer Console was setup correctly.</string>
     <string name="billing_error_billing_unavailable">Billing unavailable. Make sure your Google Play appis setup correctly</string>
     <string name="billing_error_billing_default">Billing unavailable. Please check your device.</string>
@@ -246,6 +247,9 @@
 
     <string name="pref_title_become_premium">Become premium</string>
     <string name="pref_description_become_premium"></string>
+
+    <string name="pref_title_force_consume_items">Force consume items</string>
+    <string name="pref_description_force_consume_items"></string>
 
     <string name="pref_title_show_first_launch_screen">Show first launch screen</string>
     <string name="pref_description_show_first_launch_screen"></string>

@@ -44,6 +44,12 @@
             android:title="@string/pref_title_become_premium" />
 
         <SwitchPreference
+            android:defaultValue="@bool/force_consume_items"
+            android:key="pref_force_consume_items"
+            android:summary="@string/pref_description_force_consume_items"
+            android:title="@string/pref_title_force_consume_items" />
+
+        <SwitchPreference
             android:defaultValue="@bool/show_first_launch_screen"
             android:key="pref_show_first_launch_screen"
             android:summary="@string/pref_description_show_first_launch_screen"

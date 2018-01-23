@@ -194,6 +194,10 @@ public class PrefHelper {
         return BuildConfig.DEBUG && isEnabled(context, "pref_become_premium", R.bool.become_premium);
     }
 
+    public static boolean isForceConsumeItems(Context context) {
+        return BuildConfig.DEBUG && isEnabled(context, "pref_force_consume_items", R.bool.force_consume_items);
+    }
+
     public static boolean shouldShowFirstLaunchScreen(Context context) {
         return BuildConfig.DEBUG && isEnabled(context, "pref_show_first_launch_screen", R.bool.show_first_launch_screen);
     }

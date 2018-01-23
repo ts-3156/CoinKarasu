@@ -10,5 +10,6 @@
     <bool name="enable_download_icon">true</bool>
     <bool name="make_toast">true</bool>
     <bool name="become_premium">false</bool>
+    <bool name="force_consume_items">false</bool>
     <bool name="show_first_launch_screen">false</bool>
 </resources>

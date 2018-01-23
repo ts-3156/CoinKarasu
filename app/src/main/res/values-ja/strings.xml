@@ -156,7 +156,8 @@
     <string name="billing_button_buy">購入する</string>
     <string name="billing_button_own">購入済み</string>
     <string name="billing_button_change">変更する</string>
-    <string name="billing_alert_already_purchased">その商品は既に購入済みです</string>
+    <string name="billing_alert_already_purchased">あなたは既にプレミアムユーザーです</string>
+    <string name="billing_alert_cancel_subscription">買い切りプランを購入する場合は、事前に、Play Storeアプリ内から毎月更新プランの解約を行ってください</string>
     <string name="billing_header_inapp">長期間利用でとってもお得</string>
     <string name="billing_header_subscriptions">短期間でも無駄なく活用</string>
     <string name="billing_benefits">- 最短で10秒おきの自動更新\n- いつでも引っ張って更新\n- 広告の非表示</string>
@@ -215,6 +216,8 @@
     <string name="pref_description_make_toast"></string>
     <string name="pref_title_become_premium">プレミアムになる</string>
     <string name="pref_description_become_premium"></string>
+    <string name="pref_title_force_consume_items">アイテムを強制的に消費する</string>
+    <string name="pref_description_force_consume_items"></string>
     <string name="pref_title_show_first_launch_screen">初回起動画面を表示する</string>
     <string name="pref_description_show_first_launch_screen"></string>
     <string name="pref_title_first_launch_date">初回起動日時</string>
