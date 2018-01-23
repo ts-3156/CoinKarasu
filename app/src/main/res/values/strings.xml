@@ -160,7 +160,7 @@
     <string name="billing_error_billing_unavailable">Billing unavailable. Make sure your Google Play appis setup correctly</string>
     <string name="billing_error_billing_default">Billing unavailable. Please check your device.</string>
     <string name="billing_button_drive">Drive</string>
-    <string name="billing_button_purchase">Purchase</string>
+    <string name="billing_button_purchase">Purchase premium plan</string>
     <string name="billing_button_buy">Buy</string>
     <string name="billing_button_own">Own</string>
     <string name="billing_button_update">Update</string>
@@ -176,6 +176,7 @@
     <string name="billing_dialog_pull_to_refresh">Pull-to-Refresh is available for Premium Users only</string>
     <string name="billing_dialog_sync_interval">`Every 10 seconds` is available for Premium Users only</string>
     <string name="billing_dialog_remove_ads">`Remove ads` is available for Premium Users only</string>
+    <string name="billing_benefits">- Update every 10 seconds\n- Pull-to-Refresh\n- Remove ads</string>
 
     <string name="pref_header_general">General</string>
     <string name="pref_header_account">Account</string>

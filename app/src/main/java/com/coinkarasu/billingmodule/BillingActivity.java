@@ -1,17 +1,12 @@
 package com.coinkarasu.billingmodule;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Looper;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.annotation.UiThread;
-import android.support.annotation.VisibleForTesting;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +22,7 @@ import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.billingmodule.billing.BillingCallback;
 import com.coinkarasu.billingmodule.billing.BillingManager;
 import com.coinkarasu.billingmodule.billing.BillingProvider;
 import com.coinkarasu.billingmodule.skulist.CardsWithHeadersDecoration;
@@ -45,7 +41,9 @@ import static com.android.billingclient.api.BillingClient.BillingResponse;
 import static com.coinkarasu.billingmodule.billing.BillingManager.BILLING_MANAGER_NOT_INITIALIZED;
 
 public class BillingActivity extends AppCompatActivity implements
-        BillingProvider, InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
+        BillingProvider,
+        BillingCallback,
+        InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
 
     private static final String TAG = "BaseGamePlayActivity";
     private static final boolean DEBUG = true;
@@ -74,11 +72,11 @@ public class BillingActivity extends AppCompatActivity implements
             bar.setTitle(R.string.billing_button_purchase);
         }
 
-        showDialog();
+        showPrePurchaseDialog();
         updateToolbarColor();
 
-        mViewController = new BillingViewController(this);
-        mBillingManager = new BillingManager(this, mViewController.getUpdateListener());
+        mViewController = new BillingViewController(this, this);
+        mBillingManager = new BillingManager(this, mViewController.getUpdatesListener());
 
         mErrorTextView = findViewById(R.id.error_textview);
         mRecyclerView = findViewById(R.id.list);
@@ -107,26 +105,17 @@ public class BillingActivity extends AppCompatActivity implements
 
     @Override
     public boolean isPremiumPurchased() {
-//        return mViewController.isPremiumPurchased();
-        return false;
+        return mViewController.isPremiumPurchased();
     }
 
     @Override
-    public boolean isGoldMonthlySubscribed() {
-//        return mViewController.isGoldMonthlySubscribed();
-        return false;
+    public boolean isPremiumMonthly() {
+        return mViewController.isPremiumMonthly();
     }
 
     @Override
-    public boolean isGoldYearlySubscribed() {
-//        return mViewController.isGoldYearlySubscribed();
-        return false;
-    }
-
-    @Override
-    public boolean isTankFull() {
-//        return mViewController.isTankFull();
-        return false;
+    public boolean isPremium() {
+        return mViewController.isPremium();
     }
 
     /**
@@ -152,14 +141,16 @@ public class BillingActivity extends AppCompatActivity implements
 
     @Override
     public void onDestroy() {
-        if (DEBUG) CKLog.d(TAG, "Destroying helper.");
         if (mBillingManager != null) {
             mBillingManager.destroy();
+        }
+        if (mViewController != null) {
+            mViewController.onDestroy();
         }
         super.onDestroy();
     }
 
-    private void showDialog() {
+    private void showPrePurchaseDialog() {
         Intent intent = getIntent();
         int resId = intent.getIntExtra("resId", -1);
         if (resId != -1) {
@@ -168,79 +159,23 @@ public class BillingActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * Remove loading spinner and refresh the UI
-     */
-    public void showRefreshedUi() {
+    public void onBillingManagerSetupFinished() {
+        if (mRecyclerView != null) {
+            setWaitScreen(true);
+            querySkuDetails();
+        }
+    }
+
+    public void onPurchasesUpdated() {
         setWaitScreen(false);
-        updateUi();
         if (mAdapter != null) {
             mAdapter.notifyDataSetChanged();
         }
     }
 
-    /**
-     * Show an alert dialog to the user
-     *
-     * @param messageId     String id to display inside the alert dialog
-     * @param optionalParam Optional attribute for the string
-     */
-    @UiThread
-    void alert(@StringRes int messageId, @Nullable Object optionalParam) {
-        if (Looper.getMainLooper().getThread() != Thread.currentThread()) {
-            throw new RuntimeException("Dialog could be shown only from the main thread");
-        }
-
-        AlertDialog.Builder bld = new AlertDialog.Builder(this);
-        bld.setNeutralButton("OK", null);
-
-        if (optionalParam == null) {
-            bld.setMessage(messageId);
-        } else {
-            bld.setMessage(getResources().getString(messageId, optionalParam));
-        }
-
-        bld.create().show();
-    }
-
-    void onBillingManagerSetupFinished() {
-        if (mRecyclerView != null) {
-            setWaitScreen(true);
-            querySkuDetails();
-
-        }
-    }
-
-    @VisibleForTesting
-    public BillingViewController getViewController() {
-        return mViewController;
-    }
-
-    /**
-     * Enables or disables the "please wait" screen.
-     */
     private void setWaitScreen(boolean set) {
         mRecyclerView.setVisibility(set ? View.GONE : View.VISIBLE);
         mScreenWait.setVisibility(set ? View.VISIBLE : View.GONE);
-    }
-
-    /**
-     * Update UI to reflect model
-     */
-    @UiThread
-    private void updateUi() {
-        if (DEBUG) CKLog.d(TAG, "Updating the UI. Thread: " + Thread.currentThread().getName());
-
-//        // Update car's color to reflect premium status or lack thereof
-//        setImageResourceWithTestTag(mCarImageView, isPremiumPurchased() ? R.drawable.billpremium
-//                : R.drawable.free);
-//
-//        // Update gas gauge to reflect tank status
-//        setImageResourceWithTestTag(mGasImageView, mViewController.getTankResId());
-
-        if (isGoldMonthlySubscribed() || isGoldYearlySubscribed()) {
-//            mCarImageView.setBackgroundColor(ContextCompat.getColor(this, R.color.billing_gold));
-        }
     }
 
     private void displayAnErrorIfNeeded() {
@@ -272,28 +207,23 @@ public class BillingActivity extends AppCompatActivity implements
      * Queries for in-app and subscriptions SKU details and updates an adapter with new data
      */
     private void querySkuDetails() {
-        long startTime = System.currentTimeMillis();
-
-        if (DEBUG)
-            CKLog.d(TAG, "querySkuDetails() got subscriptions and inApp SKU details lists for: "
-                    + (System.currentTimeMillis() - startTime) + "ms");
-
-        if (!isFinishing()) {
-            final List<SkuRowData> dataList = new ArrayList<>();
-            mAdapter = new SkusAdapter();
-            final UiManager uiManager = createUiManager(mAdapter, this);
-            mAdapter.setUiManager(uiManager);
-            // Filling the list with all the data to render subscription rows
-            List<String> subscriptionsSkus = uiManager.getDelegatesFactory().getSkuList(BillingClient.SkuType.SUBS);
-            addSkuRows(dataList, subscriptionsSkus, BillingClient.SkuType.SUBS, new Runnable() {
-                @Override
-                public void run() {
-                    // Once we added all the subscription items, fill the in-app items rows below
-                    List<String> inAppSkus = uiManager.getDelegatesFactory().getSkuList(BillingClient.SkuType.INAPP);
-                    addSkuRows(dataList, inAppSkus, BillingClient.SkuType.INAPP, null);
-                }
-            });
+        if (isFinishing()) {
+            return;
         }
+
+        final List<SkuRowData> dataList = new ArrayList<>();
+        mAdapter = new SkusAdapter();
+        final UiManager uiManager = createUiManager(mAdapter, this);
+        mAdapter.setUiManager(uiManager);
+
+        List<String> subscriptionsSkus = uiManager.getDelegatesFactory().getSkuList(BillingClient.SkuType.SUBS);
+        addSkuRows(dataList, subscriptionsSkus, BillingClient.SkuType.SUBS, new Runnable() {
+            @Override
+            public void run() {
+                List<String> inAppSkus = uiManager.getDelegatesFactory().getSkuList(BillingClient.SkuType.INAPP);
+                addSkuRows(dataList, inAppSkus, BillingClient.SkuType.INAPP, null);
+            }
+        });
     }
 
     private void addSkuRows(final List<SkuRowData> inList, List<String> skusList, final @BillingClient.SkuType String billingType, final Runnable executeWhenFinished) {
@@ -309,9 +239,8 @@ public class BillingActivity extends AppCompatActivity implements
                     // If we successfully got SKUs, add a header in front of the row
                     @StringRes int stringRes = (billingType.equals(BillingClient.SkuType.INAPP)) ? R.string.billing_header_inapp : R.string.billing_header_subscriptions;
                     inList.add(new SkuRowData(getString(stringRes)));
-                    // Then fill all the other rows
+
                     for (SkuDetails details : skuDetailsList) {
-                        if (DEBUG) CKLog.i(TAG, "Adding sku: " + details.getSku());
                         inList.add(new SkuRowData(details, SkusAdapter.TYPE_NORMAL, billingType));
                     }
 

@@ -17,12 +17,10 @@ import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 
 import com.coinkarasu.R;
-import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.billingmodule.BillingActivity;
-import com.coinkarasu.coins.AdCoinImpl;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.tasks.CollectCoinsTask;
@@ -148,7 +146,7 @@ public class CoinListFragment extends Fragment implements
                 if (indexOfSection < kind.sections.size() - 1) {
                     collectCoins(inCoins, kind.sections.get(indexOfSection + 1));
                 } else {
-                    // if (!((MainActivity) getActivity()).isPremiumPurchased() && kind.isToplist()
+                    // if (!((MainActivity) getActivity()).isPremium() && kind.isToplist()
                     //         && section.getExchange() == Exchange.cccagg && inCoins.size() >= 3) {
                     //     inCoins.add(2, new AdCoinImpl());
                     // }
@@ -261,9 +259,11 @@ public class CoinListFragment extends Fragment implements
             return;
         }
 
-        if (((MainActivity) getActivity()).isPremiumPurchased()) {
-            for (CoinListSectionFragment fragment : sectionFragments) {
-                fragment.forceRefresh();
+        if (((MainActivity) getActivity()).isPremium()) {
+            if (sectionFragments != null) {
+                for (CoinListSectionFragment fragment : sectionFragments) {
+                    fragment.forceRefresh();
+                }
             }
         } else {
             BillingActivity.start(getActivity(), R.string.billing_dialog_pull_to_refresh);

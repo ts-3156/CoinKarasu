@@ -167,7 +167,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
             return;
         }
 
-        if (((MainActivity) getActivity()).isPremiumPurchased()) {
+        if (((MainActivity) getActivity()).isPremium()) {
             UpdateTrendingIntentService.start(getActivity(), true);
         } else {
             BillingActivity.start(getActivity(), R.string.billing_dialog_pull_to_refresh);

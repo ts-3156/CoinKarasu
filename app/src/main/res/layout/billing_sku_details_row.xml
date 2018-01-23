@@ -66,7 +66,26 @@
 
         </LinearLayout>
 
-      <Button
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/billing_single_padding">
+
+            <TextView
+                android:id="@+id/benefits"
+                android:layout_marginStart="@dimen/billing_single_padding"
+                android:layout_marginLeft="@dimen/billing_single_padding"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/billing_benefits"
+                android:textSize="@dimen/billing_sku_details_row_description_text_size"
+                android:layout_weight="1"/>
+
+        </LinearLayout>
+
+        <Button
             android:id="@+id/state_button"
             style="@style/BillingButtonStyle"
             android:layout_marginTop="@dimen/billing_single_padding"

@@ -152,6 +152,14 @@
     <string name="billing_dialog_pull_to_refresh">リアルタイム更新(引っ張って更新)はプレミアムユーザー向けの機能です。</string>
     <string name="billing_dialog_sync_interval">10秒おきの更新はプレミアムユーザー向けの機能です。</string>
     <string name="billing_dialog_remove_ads">広告の非表示はプレミアムユーザー向けの機能です。</string>
+    <string name="billing_button_purchase">プレミアムプランの購入</string>
+    <string name="billing_button_buy">購入する</string>
+    <string name="billing_button_own">購入済み</string>
+    <string name="billing_button_change">変更する</string>
+    <string name="billing_alert_already_purchased">その商品は既に購入済みです</string>
+    <string name="billing_header_inapp">長期間利用でとってもお得</string>
+    <string name="billing_header_subscriptions">短期間でも無駄なく活用</string>
+    <string name="billing_benefits">- 最短で10秒おきの自動更新\n- いつでも引っ張って更新\n- 広告の非表示</string>
 
     <string name="pref_header_general">全般</string>
     <string name="pref_header_account">アカウント</string>

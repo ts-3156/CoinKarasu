@@ -38,7 +38,7 @@ public class LogTabChangedEventTask extends AsyncTask<Object, Void, Void> {
                     bundle.putString("uuid", UuidUtils.get(activity));
                 }
                 bundle.putString("sync_interval", String.valueOf(PrefHelper.getSyncInterval(activity)));
-                bundle.putString("is_premium", String.valueOf(activity.isPremiumPurchased()));
+                bundle.putString("is_premium", String.valueOf(PrefHelper.isPremium(activity)));
                 analytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
                 if (DEBUG) CKLog.d(TAG, bundle.toString());

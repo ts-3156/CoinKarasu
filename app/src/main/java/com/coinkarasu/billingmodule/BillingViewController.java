@@ -1,170 +1,88 @@
 package com.coinkarasu.billingmodule;
 
+import android.content.Context;
+
 import com.android.billingclient.api.BillingClient.BillingResponse;
 import com.android.billingclient.api.Purchase;
-import com.coinkarasu.R;
+import com.coinkarasu.billingmodule.billing.BillingCallback;
 import com.coinkarasu.billingmodule.billing.BillingManager;
 import com.coinkarasu.billingmodule.skulist.row.PremiumDelegate;
-import com.coinkarasu.billingmodule.skulist.row.TestItemDelegate;
-import com.coinkarasu.billingmodule.skulist.row.TestSubscriptionDelegate;
+import com.coinkarasu.billingmodule.skulist.row.PremiumMonthlyDelegate;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 
 import java.util.List;
 
-/**
- * Handles control logic of the BaseGamePlayActivity
- */
 public class BillingViewController {
     private static final boolean DEBUG = true;
     private static final String TAG = "BillingViewController";
 
-    // Graphics for the gas gauge
-//    private static int[] TANK_RES_IDS = {com.example.billingmodule.R.drawable.gas0, com.example.billingmodule.R.drawable.gas1, com.example.billingmodule.R.drawable.gas2,
-//            com.example.billingmodule.R.drawable.gas3, com.example.billingmodule.R.drawable.gas4};
+    private Context context;
+    private BillingCallback billingCallback;
+    private UpdatesListener updatesListener;
 
-    // How many units (1/4 tank is our unit) fill in the tank.
-    private static final int TANK_MAX = 4;
-
-    private final UpdateListener mUpdateListener;
-    private BillingActivity mActivity;
-
-    // Tracks if we currently own subscriptions SKUs
-//    private boolean mGoldMonthly;
-//    private boolean mGoldYearly;
-
-    // Tracks if we currently own a premium car
-    private boolean mIsPremium;
-
-    // Current amount of gas in tank, in units
-//    private int mTank;
-
-    public BillingViewController(BillingActivity activity) {
-        mUpdateListener = new UpdateListener();
-        mActivity = activity;
-        loadData();
+    public BillingViewController(Context context, BillingCallback billingCallback) {
+        this.context = context;
+        this.billingCallback = billingCallback;
+        updatesListener = new UpdatesListener();
     }
 
-    public void useGas() {
-//        mTank--;
-        saveData();
-//        if (DEBUG) CKLog.d(TAG, "Tank is now: " + mTank);
+    public UpdatesListener getUpdatesListener() {
+        return updatesListener;
     }
 
-    public UpdateListener getUpdateListener() {
-        return mUpdateListener;
+    public boolean isPremium() {
+        return PrefHelper.isDebugPremium(context) || PrefHelper.isPremium(context);
     }
 
-//    public boolean isTankEmpty() {
-//        return mTank <= 0;
-//    }
-//
-//    public boolean isTankFull() {
-//        return mTank >= TANK_MAX;
-//    }
-//
-//    public boolean isPremiumPurchased() {
-//        return mIsPremium;
-//    }
-//
-//    public boolean isGoldMonthlySubscribed() {
-//        return mGoldMonthly;
-//    }
-//
-//    public boolean isGoldYearlySubscribed() {
-//        return mGoldYearly;
-//    }
+    public boolean isPremiumMonthly() {
+        return PrefHelper.isPremiumMonthly(context);
+    }
 
-//    public @DrawableRes
-//    int getTankResId() {
-//        int index = (mTank >= TANK_RES_IDS.length) ? (TANK_RES_IDS.length - 1) : mTank;
-//        return TANK_RES_IDS[index];
-//    }
+    public boolean isPremiumPurchased() {
+        return PrefHelper.isPremiumPurchased(context);
+    }
 
-    /**
-     * Handler to billing updates
-     */
-    private class UpdateListener implements BillingManager.BillingUpdatesListener {
+    private class UpdatesListener implements BillingManager.BillingUpdatesListener {
         @Override
         public void onBillingClientSetupFinished() {
-            mActivity.onBillingManagerSetupFinished();
+            billingCallback.onBillingManagerSetupFinished();
         }
 
         @Override
         public void onConsumeFinished(String token, @BillingResponse int result) {
-            if (DEBUG) CKLog.d(TAG, "Consumption finished. Purchase token: "
-                    + token + ", result: " + result);
-
-            // Note: We know this is the SKU_GAS, because it's the only one we consume, so we don't
-            // check if token corresponding to the expected sku was consumed.
-            // If you have more than one sku, you probably need to validate that the token matches
-            // the SKU you expect.
-            // It could be done by maintaining a map (updating it every time you call consumeAsync)
-            // of all tokens into SKUs which were scheduled to be consumed and then looking through
-            // it here to check which SKU corresponds to a consumed token.
-            if (result == BillingResponse.OK) {
-                // Successfully consumed, so we apply the effects of the item in our
-                // game world's logic, which in our case means filling the gas tank a bit
-                if (DEBUG) CKLog.d(TAG, "Consumption successful. Provisioning.");
-//                mTank = mTank == TANK_MAX ? TANK_MAX : mTank + 1;
-                saveData();
-//                mActivity.alert(com.example.billingmodule.R.string.alert_fill_gas, mTank);
-            } else {
-                mActivity.alert(R.string.billing_alert_error_consuming, result);
-            }
-
-            mActivity.showRefreshedUi();
-            if (DEBUG) CKLog.d(TAG, "End consumption flow.");
+            throw new UnsupportedOperationException();
         }
 
         @Override
         public void onPurchasesUpdated(List<Purchase> purchaseList) {
-//            mGoldMonthly = false;
-//            mGoldYearly = false;
+            boolean isPremiumPurchased = false;
+            boolean premiumMonthly = false;
 
             for (Purchase purchase : purchaseList) {
                 switch (purchase.getSku()) {
                     case PremiumDelegate.SKU_ID:
-                        if (DEBUG) CKLog.d(TAG, "You are Premium! Congratulations!!!");
-                        mIsPremium = true;
+                        if (DEBUG) CKLog.d(TAG, "You have a premium item.");
+                        isPremiumPurchased = true;
                         break;
-                    case TestSubscriptionDelegate.SKU_ID:
-                        if (DEBUG) CKLog.d(TAG, "You have a TestSubscription! Congratulations!!!");
-                        mIsPremium = true;
+                    case PremiumMonthlyDelegate.SKU_ID:
+                        if (DEBUG) CKLog.d(TAG, "You have a premium subscription.");
+                        premiumMonthly = true;
                         break;
-                    case TestItemDelegate.SKU_ID:
-                        if (DEBUG) CKLog.d(TAG, "We have a TestItem. Consuming it.");
-                        // We should consume the purchase and fill up the tank once it was consumed
-                        mActivity.getBillingManager().consumeAsync(purchase.getPurchaseToken());
-                        break;
-//                    case GoldMonthlyDelegate.SKU_ID:
-//                        mGoldMonthly = true;
-//                        break;
-//                    case GoldYearlyDelegate.SKU_ID:
-//                        mGoldYearly = true;
-//                        break;
                     default:
-                        if (DEBUG) CKLog.e(TAG, "Not registered item " + purchase.getSku());
+                        if (DEBUG) CKLog.w(TAG, "Not registered item " + purchase.getSku());
                 }
             }
 
-            mActivity.showRefreshedUi();
+            PrefHelper.setPremiumPurchased(context, isPremiumPurchased);
+            PrefHelper.setPremiumMonthly(context, premiumMonthly);
+
+            billingCallback.onPurchasesUpdated();
         }
     }
 
-    /**
-     * Save current tank level to disc
-     * <p>
-     * Note: In a real application, we recommend you save data in a secure way to
-     * prevent tampering.
-     * For simplicity in this sample, we simply store the data using a
-     * SharedPreferences.
-     */
-    private void saveData() {
-        PrefHelper.setPremium(mActivity, mIsPremium);
-    }
-
-    private void loadData() {
-        mIsPremium = PrefHelper.isPremium(mActivity);
+    public void onDestroy() {
+        context = null;
+        billingCallback = null;
     }
 }

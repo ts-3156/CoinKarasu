@@ -76,7 +76,7 @@ public class UpdateTrendingIntentService extends IntentService {
 
         for (PriceMultiFullCoin coin : baseCoins) {
             List<History> records = getHistories(kind, coin.getFromSymbol(), coin.getToSymbol(), exchange.name());
-            if (records.isEmpty()) {
+            if (records == null || records.isEmpty()) {
                 continue;
             }
 

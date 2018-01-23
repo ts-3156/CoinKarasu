@@ -31,36 +31,19 @@ import java.util.Set;
  */
 public class BillingManager implements PurchasesUpdatedListener {
     private static final boolean DEBUG = true;
-
-    // Default value of mBillingClientResponseCode until BillingManager was not yeat initialized
-    public static final int BILLING_MANAGER_NOT_INITIALIZED = -1;
-
     private static final String TAG = "BillingManager";
 
-    /**
-     * A reference to BillingClient
-     **/
+    // Default value of mBillingClientResponseCode until BillingManager was not yet initialized
+    public static final int BILLING_MANAGER_NOT_INITIALIZED = -1;
+
     private BillingClient mBillingClient;
-
-    /**
-     * True if billing service is connected now.
-     */
     private boolean mIsServiceConnected;
-
     private final BillingUpdatesListener mBillingUpdatesListener;
-
     private final Activity mActivity;
-
     private final List<Purchase> mPurchases = new ArrayList<>();
-
     private Set<String> mTokensToBeConsumed;
-
     private int mBillingClientResponseCode = BILLING_MANAGER_NOT_INITIALIZED;
 
-    /**
-     * Listener to the updates that happen when purchases list was updated or consumption of the
-     * item was finished
-     */
     public interface BillingUpdatesListener {
         void onBillingClientSetupFinished();
 
@@ -69,31 +52,16 @@ public class BillingManager implements PurchasesUpdatedListener {
         void onPurchasesUpdated(List<Purchase> purchases);
     }
 
-    /**
-     * Listener for the Billing client state to become connected
-     */
-    public interface ServiceConnectedListener {
-        void onServiceConnected(@BillingResponse int resultCode);
-    }
-
     public BillingManager(Activity activity, final BillingUpdatesListener updatesListener) {
         if (DEBUG) CKLog.d(TAG, "Creating Billing client.");
         mActivity = activity;
         mBillingUpdatesListener = updatesListener;
         mBillingClient = BillingClient.newBuilder(mActivity).setListener(this).build();
 
-        if (DEBUG) CKLog.d(TAG, "Starting setup.");
-
-        // Start setup. This is asynchronous and the specified listener will be called
-        // once setup completes.
-        // It also starts to report all the new purchases through onPurchasesUpdated() callback.
         startServiceConnection(new Runnable() {
             @Override
             public void run() {
-                // Notifying the listener that billing client is ready
                 mBillingUpdatesListener.onBillingClientSetupFinished();
-                // IAB is fully set up. Now, let's get an inventory of stuff we own.
-                if (DEBUG) CKLog.d(TAG, "Setup successful. Querying inventory.");
                 queryPurchases();
             }
         });
@@ -127,8 +95,7 @@ public class BillingManager implements PurchasesUpdatedListener {
     /**
      * Start a purchase or subscription replace flow
      */
-    public void initiatePurchaseFlow(final String skuId, final ArrayList<String> oldSkus,
-                                     final @SkuType String billingType) {
+    public void initiatePurchaseFlow(final String skuId, final ArrayList<String> oldSkus, final @SkuType String billingType) {
         Runnable purchaseFlowRequest = new Runnable() {
             @Override
             public void run() {
@@ -286,18 +253,10 @@ public class BillingManager implements PurchasesUpdatedListener {
         Runnable queryToExecute = new Runnable() {
             @Override
             public void run() {
-                long time = System.currentTimeMillis();
                 PurchasesResult purchasesResult = mBillingClient.queryPurchases(SkuType.INAPP);
-                if (DEBUG) CKLog.i(TAG, "Querying purchases elapsed time: "
-                        + (System.currentTimeMillis() - time) + "ms");
 
-                // If there are subscriptions supported, we add subscription rows as well
                 if (areSubscriptionsSupported()) {
                     PurchasesResult subscriptionResult = mBillingClient.queryPurchases(SkuType.SUBS);
-                    if (DEBUG) CKLog.i(TAG, "Querying purchases and subscriptions elapsed time: "
-                            + (System.currentTimeMillis() - time) + "ms");
-                    if (DEBUG) CKLog.i(TAG, "Querying subscriptions result code: "
-                            + subscriptionResult.getResponseCode() + " res: " + subscriptionResult.getPurchasesList().size());
 
                     if (subscriptionResult.getResponseCode() == BillingResponse.OK) {
                         purchasesResult.getPurchasesList().addAll(subscriptionResult.getPurchasesList());

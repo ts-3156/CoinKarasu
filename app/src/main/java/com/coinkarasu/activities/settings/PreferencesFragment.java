@@ -50,6 +50,7 @@ public class PreferencesFragment extends PreferenceFragment implements
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.fragment_preferences);
 
+        findPreference("pref_account_grade").setOnPreferenceClickListener(this);
         findPreference("pref_app_version").setOnPreferenceClickListener(this);
         findPreference("pref_open_source_licenses").setOnPreferenceClickListener(this);
         findPreference("pref_remove_ads").setOnPreferenceClickListener(this);
@@ -78,6 +79,9 @@ public class PreferencesFragment extends PreferenceFragment implements
         String key = preference.getKey();
 
         switch (key) {
+            case "pref_account_grade":
+                BillingActivity.start(getActivity(), -1);
+                break;
             case "pref_app_version":
                 new GetLatestVersionTask(getActivity()).setListener(new GetLatestVersionTask.Listener() {
                     @Override

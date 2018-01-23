@@ -14,7 +14,7 @@ public class SkuRowData {
 
     public SkuRowData(SkuDetails details, int rowType, String billingType) {
         this.sku = details.getSku();
-        this.title = details.getTitle();
+        this.title = details.getTitle().split("\\(")[0];
         this.price = details.getPrice();
         this.description = details.getDescription();
         this.type = rowType;

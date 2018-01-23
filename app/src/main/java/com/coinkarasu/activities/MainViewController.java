@@ -13,12 +13,8 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.android.billingclient.api.BillingClient.BillingResponse;
-import com.android.billingclient.api.Purchase;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
-import com.coinkarasu.billingmodule.billing.BillingManager;
-import com.coinkarasu.billingmodule.skulist.row.TestItemDelegate;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 
@@ -29,16 +25,12 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
     private static final boolean DEBUG = true;
     private static final String TAG = "MainViewController";
 
-    private final UpdateListener updateListener;
     private MainActivity activity;
-    private boolean isPremium;
     private List<NavigationKind> visibleKinds;
 
     public MainViewController(MainActivity activity) {
-        updateListener = new UpdateListener();
         this.activity = activity;
         PrefHelper.getPref(activity).registerOnSharedPreferenceChangeListener(this);
-        loadData();
     }
 
     public void setCurrentKind(NavigationKind kind, boolean smoothScroll) {
@@ -50,11 +42,7 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
 
     public NavigationKind getCurrentKind() {
         MainFragment fragment = activity.getFragment();
-        if (fragment == null) {
-            return null;
-        } else {
-            return fragment.getCurrentKind();
-        }
+        return (fragment == null ? null : fragment.getCurrentKind());
     }
 
     public void requestRefreshUi(NavigationKind kind) {
@@ -98,7 +86,7 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
     }
 
     private void updateTabColor(NavigationKind kind) {
-        activity.findViewById(R.id.tab_layout).setBackgroundColor(activity.getResources().getColor(kind.colorResId));
+        activity.getTabLayout().setBackgroundColor(activity.getResources().getColor(kind.colorResId));
         activity.findViewById(R.id.toolbar).setBackgroundColor(activity.getResources().getColor(kind.colorResId));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -110,7 +98,7 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
     }
 
     private void updateTabIconAlpha(NavigationKind kind) {
-        TabLayout tabs = activity.findViewById(R.id.tab_layout);
+        TabLayout tabs = activity.getTabLayout();
         TabLayout.Tab tab = tabs.getTabAt(NavigationKind.edit_tabs.ordinal());
         if (tab == null) {
             return;
@@ -144,14 +132,6 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
         }
     }
 
-    public UpdateListener getUpdateListener() {
-        return updateListener;
-    }
-
-    public boolean isPremiumPurchased() {
-        return isPremium;
-    }
-
     public List<NavigationKind> getVisibleKinds() {
         if (visibleKinds == null || visibleKinds.isEmpty()) {
             visibleKinds = new ArrayList<>();
@@ -167,40 +147,5 @@ public class MainViewController implements SharedPreferences.OnSharedPreferenceC
     public void onDestroy() {
         PrefHelper.getPref(activity).unregisterOnSharedPreferenceChangeListener(this);
         activity = null;
-    }
-
-    private void saveData() {
-        PrefHelper.setPremium(activity, isPremium);
-    }
-
-    private void loadData() {
-        isPremium = PrefHelper.isDebugPremium(activity) || PrefHelper.isPremium(activity);
-    }
-
-    private class UpdateListener implements BillingManager.BillingUpdatesListener {
-        @Override
-        public void onBillingClientSetupFinished() {
-            activity.onBillingManagerSetupFinished();
-        }
-
-        @Override
-        public void onConsumeFinished(String token, @BillingResponse int result) {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public void onPurchasesUpdated(List<Purchase> purchaseList) {
-            for (Purchase purchase : purchaseList) {
-                switch (purchase.getSku()) {
-                    case TestItemDelegate.SKU_ID:
-                        if (DEBUG) CKLog.d(TAG, "You have a TestItem(Premium).");
-                        isPremium = true;
-                        saveData();
-                        break;
-                    default:
-                        if (DEBUG) CKLog.w(TAG, "Not registered item " + purchase.getSku());
-                }
-            }
-        }
     }
 }

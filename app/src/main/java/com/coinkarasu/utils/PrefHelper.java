@@ -144,17 +144,31 @@ public class PrefHelper {
     }
 
     public static boolean isPremium(Context context) {
-        return isEnabled(context, "pref_is_premium", R.bool.premium);
+        return isPremiumPurchased(context) || isPremiumMonthly(context);
     }
 
-    public static void setPremium(Context context, boolean flag) {
+    public static boolean isPremiumPurchased(Context context) {
+        return isEnabled(context, "pref_is_premium_purchased", R.bool.premium_purchased);
+    }
+
+    public static boolean isPremiumMonthly(Context context) {
+        return isEnabled(context, "pref_is_premium_monthly", R.bool.premium_monthly);
+    }
+
+    public static void setPremiumPurchased(Context context, boolean flag) {
         SharedPreferences pref = getPref(context);
         if (pref == null) {
             return;
         }
-        SharedPreferences.Editor edit = pref.edit();
-        edit.putBoolean("pref_is_premium", flag);
-        edit.apply();
+        pref.edit().putBoolean("pref_is_premium_purchased", flag).apply();
+    }
+
+    public static void setPremiumMonthly(Context context, boolean flag) {
+        SharedPreferences pref = getPref(context);
+        if (pref == null) {
+            return;
+        }
+        pref.edit().putBoolean("pref_is_premium_monthly", flag).apply();
     }
 
     public static boolean isDebugToastEnabled(Context context) {

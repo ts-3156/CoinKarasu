@@ -27,8 +27,7 @@ public abstract class UiManagingDelegate {
     }
 
     public void onButtonClicked(SkuRowData data) {
-        mBillingProvider.getBillingManager().initiatePurchaseFlow(data.getSku(),
-                data.getSkuType());
+        mBillingProvider.getBillingManager().initiatePurchaseFlow(data.getSku(), data.getSkuType());
     }
 
     protected void showAlreadyPurchasedToast() {

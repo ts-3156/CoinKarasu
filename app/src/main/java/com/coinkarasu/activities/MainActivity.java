@@ -21,6 +21,8 @@ import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.Currency;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.settings.PreferencesActivity;
+import com.coinkarasu.billingmodule.BillingViewController;
+import com.coinkarasu.billingmodule.billing.BillingCallback;
 import com.coinkarasu.billingmodule.billing.BillingManager;
 import com.coinkarasu.tasks.GetApiKeyTask;
 import com.coinkarasu.tasks.GetFirstLaunchDateTask;
@@ -43,7 +45,8 @@ import java.util.concurrent.TimeUnit;
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         MainFragment.OnFragmentInteractionListener,
-        InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
+        InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver,
+        BillingCallback {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "MainActivity";
@@ -51,6 +54,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private FirebaseAnalytics firebaseAnalytics;
     private MainViewController viewController;
+    private BillingViewController billingDelegate;
+    private BillingManager billingManager;
     private MainFragment fragment;
     private DrawerLayout drawer;
     private AdView ad;
@@ -104,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         viewController = new MainViewController(this);
-        new BillingManager(this, viewController.getUpdateListener());
+        billingDelegate = new BillingViewController(this, this);
+        billingManager = new BillingManager(this, billingDelegate.getUpdatesListener());
 
         if (!ApiKeyUtils.exists(this)) {
             new GetApiKeyTask(this).execute();
@@ -193,12 +199,17 @@ public class MainActivity extends AppCompatActivity implements
         viewController.requestRefreshUi(kind);
     }
 
-    void onBillingManagerSetupFinished() {
+    @Override
+    public void onBillingManagerSetupFinished() {
+    }
+
+    @Override
+    public void onPurchasesUpdated() {
         setupAdView();
     }
 
     private void setupAdView() {
-        if (isFinishing() || viewController == null || isPremiumPurchased() || ad != null) {
+        if (isFinishing() || billingDelegate == null || billingDelegate.isPremium() || ad != null) {
             return;
         }
 
@@ -244,8 +255,11 @@ public class MainActivity extends AppCompatActivity implements
         }).execute(this);
     }
 
-    public boolean isPremiumPurchased() {
-        return viewController.isPremiumPurchased();
+    /**
+     * Pull-to-Refreshの際にCoinListFragmentとHomeTabFragmentから利用している。
+     */
+    public boolean isPremium() {
+        return billingDelegate.isPremium();
     }
 
     public MainFragment getFragment() {
@@ -276,10 +290,16 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        if (billingManager != null) {
+            billingManager.destroy();
+        }
         if (viewController != null) {
             viewController.onDestroy();
         }
+        if (billingDelegate != null) {
+            billingDelegate.onDestroy();
+        }
+        super.onDestroy();
     }
 
     public void setFirebaseAnalytics(FirebaseAnalytics firebaseAnalytics) {
