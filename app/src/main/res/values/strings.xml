@@ -192,6 +192,8 @@
     <string name="pref_account_grade_summary_premium">Premium</string>
     <string name="pref_open_source_licenses_title">Open source licenses</string>
     <string name="pref_open_source_licenses_summary">License details for open source software</string>
+    <string name="pref_cryptocompare_license_title">CryptoCompare API license</string>
+    <string name="pref_cryptocompare_license_summary">License details for CryptoCompare API</string>
     <string name="pref_app_version_title">App version</string>
     <string name="pref_app_version_summary">Version 1.0.0</string>
     <string name="pref_app_version_up_to_date">This app is up to date.</string>

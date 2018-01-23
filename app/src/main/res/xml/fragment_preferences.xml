@@ -69,6 +69,17 @@
             android:title="@string/pref_open_source_licenses_title" />
 
         <Preference
+            android:key="pref_cryptocompare_license"
+            android:summary="@string/pref_cryptocompare_license_summary"
+            android:title="@string/pref_cryptocompare_license_title">
+
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://creativecommons.org/licenses/by-nc/3.0/" />
+
+        </Preference>
+
+        <Preference
             android:key="pref_app_version"
             android:summary="@string/pref_app_version_summary"
             android:title="@string/pref_app_version_title" />

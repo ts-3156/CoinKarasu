@@ -175,6 +175,8 @@
     <string name="pref_account_grade_summary_premium">プレミアム会員</string>
     <string name="pref_open_source_licenses_title">オープンソースライセンス</string>
     <string name="pref_open_source_licenses_summary">オープンソースソフトウェアに関するライセンスの詳細</string>
+    <string name="pref_cryptocompare_license_title">CryptoCompare APIライセンス</string>
+    <string name="pref_cryptocompare_license_summary">CryptoCompare APIに関するライセンスの詳細</string>
     <string name="pref_app_version_title">バージョン</string>
     <string name="pref_app_version_summary">バージョン 1.0.0</string>
     <string name="pref_app_version_up_to_date">このアプリは、最新バージョンです。</string>

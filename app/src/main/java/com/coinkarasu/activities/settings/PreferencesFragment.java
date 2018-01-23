@@ -116,6 +116,7 @@ public class PreferencesFragment extends PreferenceFragment implements
                 }).execute();
                 break;
             case "pref_open_source_licenses":
+                OssLicensesMenuActivity.setActivityTitle(getString(R.string.pref_open_source_licenses_title));
                 startActivity(new Intent(getActivity(), OssLicensesMenuActivity.class));
                 break;
             case "pref_remove_ads":
