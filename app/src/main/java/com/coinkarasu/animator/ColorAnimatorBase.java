@@ -45,21 +45,13 @@ public abstract class ColorAnimatorBase implements ValueAnimator.AnimatorUpdateL
         setValue(getValue());
     }
 
-    int getPrevValue() {
-        throw new RuntimeException("Stub");
-    }
+    abstract int getPrevValue();
 
-    int getValue() {
-        throw new RuntimeException("Stub");
-    }
+    abstract int getValue();
 
-    void setValue(int value) {
-        throw new RuntimeException("Stub");
-    }
+    abstract void setValue(int value);
 
-    void onAnimationEnd() {
-        throw new RuntimeException("Stub");
-    }
+    abstract void onAnimationEnd();
 
     @Override
     public void onAnimationUpdate(ValueAnimator animator) {

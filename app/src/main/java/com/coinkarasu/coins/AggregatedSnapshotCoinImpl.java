@@ -151,6 +151,6 @@ public class AggregatedSnapshotCoinImpl implements AggregatedSnapshotCoin {
 
     @Override
     public JSONObject toJson() {
-        throw new RuntimeException("Stub");
+        throw new UnsupportedOperationException();
     }
 }

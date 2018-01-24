@@ -21,9 +21,7 @@ public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Int
     }
 
     @Override
-    protected List<Price> doInBackground(Integer... params) {
-        throw new RuntimeException("Stub");
-    }
+    abstract protected List<Price> doInBackground(Integer... params);
 
     @Override
     protected void onProgressUpdate(Integer... progress) {
@@ -33,9 +31,7 @@ public abstract class GetPricesByExchangeTaskBase extends AsyncTask<Integer, Int
     }
 
     @Override
-    protected void onPostExecute(List<Price> prices) {
-        throw new RuntimeException("Stub");
-    }
+    abstract protected void onPostExecute(List<Price> prices);
 
     public GetPricesByExchangeTaskBase setListener(Listener listener) {
         this.listener = listener;
