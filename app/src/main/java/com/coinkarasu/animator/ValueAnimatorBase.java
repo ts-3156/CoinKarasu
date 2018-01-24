@@ -5,7 +5,7 @@ import android.animation.ValueAnimator;
 import com.coinkarasu.utils.CKLog;
 
 public abstract class ValueAnimatorBase implements ValueAnimator.AnimatorUpdateListener {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final String TAG = "ValueAnimatorBase";
     public static final long DURATION = 1000;
     private static final double THRESHOLD_PCT = 0.95;

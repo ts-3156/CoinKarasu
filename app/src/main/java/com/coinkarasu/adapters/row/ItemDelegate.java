@@ -43,7 +43,7 @@ public class ItemDelegate extends UiManagingDelegate {
 
         holder.name.setText(coin.getCoinName());
         holder.symbol.setText(coin.getSymbol());
-        holder.price_diff.setTextColor(resources.getPriceColor(coin.getPriceDiff()));
+        holder.priceDiff.setTextColor(resources.getPriceColor(coin.getPriceDiff()));
         holder.trend.setTextColor(resources.getTrendColor(coin.getTrend()));
         holder.trendIcon.setImageResource(resources.trendIconFormat.format(coin.getTrend()));
 
@@ -53,23 +53,18 @@ public class ItemDelegate extends UiManagingDelegate {
             holder.priceAnimator = new PriceAnimator(coin, holder.price);
             holder.priceAnimator.start();
 
-            if (coin.getPrice() > coin.getPrevPrice()) {
-                holder.priceBgColorAnimator = new PriceBgColorAnimator(resources.priceUpFromColor, resources.priceToColor, holder.innerContainer);
-            } else if (coin.getPrice() < coin.getPrevPrice()) {
-                holder.priceBgColorAnimator = new PriceBgColorAnimator(resources.priceDownFromColor, resources.priceToColor, holder.innerContainer);
-            }
-            if (holder.priceBgColorAnimator != null) {
-                holder.priceBgColorAnimator.start();
-            }
+            int fromColor = coin.getPrice() > coin.getPrevPrice() ? resources.priceUpFromColor : resources.priceDownFromColor;
+            holder.priceBgColorAnimator = new PriceBgColorAnimator(fromColor, resources.priceToColor, holder.innerContainer);
+            holder.priceBgColorAnimator.start();
 
-            holder.priceDiffAnimator = new PriceDiffAnimator(coin, holder.price_diff);
+            holder.priceDiffAnimator = new PriceDiffAnimator(coin, holder.priceDiff);
             holder.priceDiffAnimator.start();
 
             holder.trendAnimator = new TrendAnimator(coin, holder.trend);
             holder.trendAnimator.start();
         } else {
-            holder.price.setText(resources.priceFormatter.format(coin.getPrice()));
-            holder.price_diff.setText(resources.signedPriceFormatter.format(coin.getPriceDiff()));
+            holder.price.setText(resources.getPriceFormatter(coin.getToSymbol()).format(coin.getPrice()));
+            holder.priceDiff.setText(resources.signedPriceFormatter.format(coin.getPriceDiff()));
             holder.trend.setText(resources.surroundedTrendFormatter.format(coin.getTrend()));
             holder.innerContainer.setBackgroundColor(resources.priceToColor);
         }

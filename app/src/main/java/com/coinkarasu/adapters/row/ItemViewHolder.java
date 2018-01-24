@@ -18,7 +18,7 @@ public final class ItemViewHolder extends CoinListViewHolder {
     public TextView name;
     public TextView symbol;
     public TextView price;
-    public TextView price_diff;
+    public TextView priceDiff;
     public TextView trend;
     public ImageView trendIcon;
     public NetworkSparkView sparkLine;
@@ -35,7 +35,7 @@ public final class ItemViewHolder extends CoinListViewHolder {
         name = itemView.findViewById(R.id.name);
         symbol = itemView.findViewById(R.id.symbol);
         price = itemView.findViewById(R.id.price);
-        price_diff = itemView.findViewById(R.id.price_diff);
+        priceDiff = itemView.findViewById(R.id.price_diff);
         trend = itemView.findViewById(R.id.trend);
         trendIcon = itemView.findViewById(R.id.trend_icon);
         sparkLine = itemView.findViewById(R.id.spark_line);

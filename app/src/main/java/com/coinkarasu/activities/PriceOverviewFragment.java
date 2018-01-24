@@ -167,7 +167,7 @@ public class PriceOverviewFragment extends Fragment implements
             new PriceDiffAnimator(coin, priceDiffView).start();
             new TrendAnimator(coin, trendView).start();
         } else {
-            priceView.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
+            priceView.setText(PriceFormat.getInstance(coin.getToSymbol()).format(coin.getPrice()));
             priceDiffView.setText(new SignedPriceFormat(coin.getToSymbol()).format(coin.getPriceDiff()));
             trendView.setText(new SurroundedTrendValueFormat().format(coin.getTrend()));
         }

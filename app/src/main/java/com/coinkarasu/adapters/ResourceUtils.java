@@ -2,7 +2,6 @@ package com.coinkarasu.adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Color;
 import android.util.SparseArray;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -14,6 +13,7 @@ import com.coinkarasu.format.SurroundedTrendValueFormat;
 import com.coinkarasu.format.TrendColorFormat;
 import com.coinkarasu.format.TrendIconFormat;
 import com.coinkarasu.format.TrendValueFormat;
+import com.coinkarasu.format.WeightedPriceFormat;
 import com.coinkarasu.utils.volley.VolleyHelper;
 
 import java.util.HashMap;
@@ -31,7 +31,8 @@ public class ResourceUtils {
     public int priceDownFromColor;
     public int priceToColor;
 
-    public PriceFormat priceFormatter;
+    private PriceFormat priceFormatter;
+    private WeightedPriceFormat weightedPriceFormatter;
     public SignedPriceFormat signedPriceFormatter;
     TrendValueFormat trendFormatter;
     public SurroundedTrendValueFormat surroundedTrendFormatter;
@@ -46,6 +47,7 @@ public class ResourceUtils {
         for (Coin coin : coins) {
             if (!coin.isSectionHeader() && !coin.isAdCoin()) {
                 priceFormatter = new PriceFormat(coin.getToSymbol());
+                weightedPriceFormatter = new WeightedPriceFormat(coin.getToSymbol());
                 signedPriceFormatter = new SignedPriceFormat(coin.getToSymbol());
                 break;
             }
@@ -102,6 +104,7 @@ public class ResourceUtils {
 
     void toSymbolChanged(String symbol) {
         priceFormatter = new PriceFormat(symbol);
+        weightedPriceFormatter = new WeightedPriceFormat(symbol);
         signedPriceFormatter = new SignedPriceFormat(symbol);
     }
 
@@ -121,5 +124,13 @@ public class ResourceUtils {
 
     public int getPriceColor(double price) {
         return getTrendColor(price);
+    }
+
+    public PriceFormat getPriceFormatter(String toSymbol) {
+        if (toSymbol.equals("BTC")) {
+            return weightedPriceFormatter;
+        } else {
+            return priceFormatter;
+        }
     }
 }

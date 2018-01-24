@@ -4,6 +4,7 @@ import android.widget.TextView;
 
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.format.PriceFormat;
+import com.coinkarasu.format.WeightedPriceFormat;
 
 public class PriceAnimator extends ValueAnimatorBase {
     protected Coin coin;
@@ -14,7 +15,11 @@ public class PriceAnimator extends ValueAnimatorBase {
         super();
         this.coin = coin;
         this.view = view;
-        this.formatter = new PriceFormat(coin.getToSymbol());
+        if (coin.getToSymbol().equals("BTC")) {
+            this.formatter = new WeightedPriceFormat(coin.getToSymbol());
+        } else {
+            this.formatter = new PriceFormat(coin.getToSymbol());
+        }
     }
 
     @Override

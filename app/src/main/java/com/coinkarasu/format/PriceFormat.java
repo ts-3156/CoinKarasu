@@ -1,13 +1,12 @@
 package com.coinkarasu.format;
 
-import android.util.Log;
+import com.coinkarasu.utils.CKLog;
 
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.Locale;
 
 public class PriceFormat {
-
     private static final boolean DEBUG = true;
     private static final String TAG = "PriceFormat";
 
@@ -25,11 +24,7 @@ public class PriceFormat {
         this.formatter = NumberFormat.getCurrencyInstance(locale);
     }
 
-    public String format(String price) {
-        return format(Double.valueOf(price));
-    }
-
-    public String format(double price) {
+    public CharSequence format(double price) {
         if (toSymbol.equals("BTC")) {
             formatter.setMaximumFractionDigits(6);
             formatter.setMinimumFractionDigits(6);
@@ -46,7 +41,10 @@ public class PriceFormat {
             price /= Math.pow(10, currency.getDefaultFractionDigits());
         }
 
-        String str = formatter.format(price);
+        return changePrefixIfNecessary(formatter.format(price));
+    }
+
+    private String changePrefixIfNecessary(String str) {
         if (unknownSymbol) {
             if (toSymbol.equals("BTC")) {
                 str = str.replace("$", "Ƀ ");
@@ -97,9 +95,17 @@ public class PriceFormat {
         if (locale == null) {
             locale = Locale.US;
             unknownSymbol = true;
-            if (DEBUG) Log.e(TAG, "Invalid symbol " + symbol);
+            if (DEBUG) CKLog.w(TAG, "symbolToLocale() Unknown symbol " + symbol);
         }
 
         return locale;
+    }
+
+    public static PriceFormat getInstance(String toSymbol) {
+        if (toSymbol.equals("BTC")) {
+            return new WeightedPriceFormat(toSymbol);
+        } else {
+            return new PriceFormat(toSymbol);
+        }
     }
 }

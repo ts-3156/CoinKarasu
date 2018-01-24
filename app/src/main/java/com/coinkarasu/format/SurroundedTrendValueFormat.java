@@ -1,18 +1,16 @@
 package com.coinkarasu.format;
 
 public class SurroundedTrendValueFormat extends TrendValueFormat {
-    private String prefix;
-    private String suffix;
+    private static final String DEFAULT_PREFIX = "(";
+    private static final String DEFAULT_SUFFIX = ")";
 
     public SurroundedTrendValueFormat() {
         super();
-        prefix = "(";
-        suffix = ")";
     }
 
     @Override
     public String format(double trend) {
         String str = super.format(trend);
-        return prefix + str + suffix;
+        return DEFAULT_PREFIX + str + DEFAULT_SUFFIX;
     }
 }

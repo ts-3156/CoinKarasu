@@ -7,8 +7,9 @@ public class SignedPriceFormat extends PriceFormat {
     }
 
     @Override
-    public String format(double price) {
-        String str = super.format(price);
+    public CharSequence format(double price) {
+        CharSequence seq = super.format(price);
+        String str = seq.toString();
         if (price > 0.0) {
             str = "+" + str;
         }
