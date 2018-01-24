@@ -34,10 +34,7 @@ public class UuidUtils {
 
     public static boolean exists(Context context) {
         File file = new File(context.getFilesDir(), NAME);
-        if (!file.exists()) {
-            return false;
-        }
+        return file.exists() && !TextUtils.isEmpty(FileHelper.read(file));
 
-        return !TextUtils.isEmpty(FileHelper.read(file));
     }
 }

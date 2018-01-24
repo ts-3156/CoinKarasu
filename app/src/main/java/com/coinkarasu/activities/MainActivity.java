@@ -14,7 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
@@ -31,6 +33,7 @@ import com.coinkarasu.tasks.InsertLaunchEventTask;
 import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
+import com.coinkarasu.utils.UuidUtils;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
@@ -98,6 +101,12 @@ public class MainActivity extends AppCompatActivity implements
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        if (UuidUtils.exists(this)) {
+            View navHeader = navigationView.getHeaderView(0);
+            String id = UuidUtils.get(this).split("-")[0];
+            ((TextView) navHeader.findViewById(R.id.uuid)).setText(id);
+            ((TextView) navHeader.findViewById(R.id.email)).setText(id + "@coinkarasu.com");
+        }
 
         if (savedInstanceState != null) {
             fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag(FRAGMENT_TAG);
