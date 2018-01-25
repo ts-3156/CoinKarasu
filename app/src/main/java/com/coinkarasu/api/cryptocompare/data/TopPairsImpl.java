@@ -1,8 +1,8 @@
 package com.coinkarasu.api.cryptocompare.data;
 
-import android.util.Log;
-
 import com.coinkarasu.api.cryptocompare.response.TopPairsResponse;
+import com.coinkarasu.coins.TopPairCoin;
+import com.coinkarasu.coins.TopPairCoinImpl;
 import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONArray;
@@ -15,7 +15,7 @@ public class TopPairsImpl implements TopPairs {
     private static final boolean DEBUG = true;
     private static final String TAG = "TopPairsImpl";
 
-    private ArrayList<TopPair> topPairs;
+    private List<TopPairCoin> topPairCoins;
 
     public TopPairsImpl(TopPairsResponse response) {
         if (response == null || response.getData() == null) {
@@ -27,11 +27,11 @@ public class TopPairsImpl implements TopPairs {
             return;
         }
 
-        topPairs = new ArrayList<>(data.length());
+        topPairCoins = new ArrayList<>(data.length());
 
         try {
             for (int i = 0; i < data.length(); i++) {
-                topPairs.add(new TopPairImpl(data.getJSONObject(i)));
+                topPairCoins.add(new TopPairCoinImpl(data.getJSONObject(i)));
             }
         } catch (JSONException e) {
             CKLog.e(TAG, e);
@@ -39,7 +39,7 @@ public class TopPairsImpl implements TopPairs {
     }
 
     @Override
-    public List<TopPair> getTopPairs() {
-        return topPairs;
+    public List<TopPairCoin> getTopPairCoins() {
+        return topPairCoins;
     }
 }

@@ -4,7 +4,7 @@ import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.api.cryptocompare.data.Price;
 import com.coinkarasu.api.cryptocompare.data.Prices;
-import com.coinkarasu.api.cryptocompare.data.TopPair;
+import com.coinkarasu.api.cryptocompare.data.TopPairs;
 
 import java.util.List;
 
@@ -29,5 +29,5 @@ public interface Client {
 
     CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol);
 
-    List<TopPair> getTopPairs(String fromSymbol);
+    TopPairs getTopPairs(String fromSymbol);
 }

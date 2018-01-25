@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.coinkarasu.activities.CoinPieChartFragment;
 import com.coinkarasu.activities.CoinPieChartTabContentFragment;
-import com.coinkarasu.api.cryptocompare.data.TopPair;
+import com.coinkarasu.coins.TopPairCoin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,13 +18,13 @@ public class CoinPieChartPagerAdapter extends FragmentPagerAdapter {
         super(manager);
     }
 
-    public CoinPieChartPagerAdapter(FragmentManager manager, String fromSymbol, String toSymbol, List<TopPair> pairs) {
+    public CoinPieChartPagerAdapter(FragmentManager manager, String fromSymbol, String toSymbol, List<TopPairCoin> coins) {
         super(manager);
         fragments = new ArrayList<>();
 
         fragments.add(CoinPieChartTabContentFragment.newInstance(CoinPieChartFragment.Kind.currency, fromSymbol, toSymbol));
-        for (TopPair pair : pairs) {
-            fragments.add(CoinPieChartTabContentFragment.newInstance(CoinPieChartFragment.Kind.exchange, fromSymbol, pair.getToSymbol()));
+        for (TopPairCoin coin : coins) {
+            fragments.add(CoinPieChartTabContentFragment.newInstance(CoinPieChartFragment.Kind.exchange, fromSymbol, coin.getToSymbol()));
         }
     }
 

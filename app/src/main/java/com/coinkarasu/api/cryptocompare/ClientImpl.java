@@ -10,7 +10,7 @@ import com.coinkarasu.api.cryptocompare.data.Price;
 import com.coinkarasu.api.cryptocompare.data.PriceImpl;
 import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.api.cryptocompare.data.PricesImpl;
-import com.coinkarasu.api.cryptocompare.data.TopPair;
+import com.coinkarasu.api.cryptocompare.data.TopPairs;
 import com.coinkarasu.api.cryptocompare.data.TopPairsImpl;
 import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.coinkarasu.api.cryptocompare.response.CoinSnapshotResponse;
@@ -173,7 +173,7 @@ class ClientImpl implements Client {
     }
 
     @Override
-    public List<TopPair> getTopPairs(String fromSymbol) {
+    public TopPairs getTopPairs(String fromSymbol) {
         String url = "https://min-api.cryptocompare.com/data/top/pairs?fsym=" + fromSymbol + "&limit=100";
 
         TopPairsResponse topPairsResponse;
@@ -186,7 +186,7 @@ class ClientImpl implements Client {
             topPairsResponse.saveToCache(context);
         }
 
-        return new TopPairsImpl(topPairsResponse).getTopPairs();
+        return new TopPairsImpl(topPairsResponse);
     }
 
     private List<History> sampling(List<History> records, int aggregate) {
@@ -194,7 +194,7 @@ class ClientImpl implements Client {
             return records;
         }
 
-        ArrayList<History> samples = new ArrayList<>();
+        List<History> samples = new ArrayList<>();
         int size = records.size();
 
         for (int i = 0; i < size; i++) {

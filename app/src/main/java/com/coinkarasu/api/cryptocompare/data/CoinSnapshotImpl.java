@@ -1,12 +1,10 @@
 package com.coinkarasu.api.cryptocompare.data;
 
-import android.util.Log;
-
+import com.coinkarasu.api.cryptocompare.response.CoinSnapshotResponse;
 import com.coinkarasu.coins.AggregatedSnapshotCoin;
 import com.coinkarasu.coins.AggregatedSnapshotCoinImpl;
 import com.coinkarasu.coins.SnapshotCoin;
 import com.coinkarasu.coins.SnapshotCoinImpl;
-import com.coinkarasu.api.cryptocompare.response.CoinSnapshotResponse;
 import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONArray;
@@ -27,7 +25,7 @@ public class CoinSnapshotImpl implements CoinSnapshot {
     private double totalCoinsMined;
     private double blockReward;
     private AggregatedSnapshotCoin aggregatedSnapshotCoin;
-    private ArrayList<SnapshotCoin> snapshotCoins;
+    private List<SnapshotCoin> snapshotCoins;
 
     public CoinSnapshotImpl(CoinSnapshotResponse response) {
         if (response == null || response.getData() == null) {

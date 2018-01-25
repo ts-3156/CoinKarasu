@@ -1,6 +1,6 @@
-package com.coinkarasu.api.cryptocompare.data;
+package com.coinkarasu.coins;
 
-public interface TopPair {
+public interface TopPairCoin {
 
     String getExchange();
 

@@ -1,11 +1,13 @@
-package com.coinkarasu.api.cryptocompare.data;
+package com.coinkarasu.coins;
 
-import android.util.Log;
+import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class TopPairImpl implements TopPair {
+public class TopPairCoinImpl implements TopPairCoin {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "TopPairCoinImpl";
 
     private String exchange;
     private String fromSymbol;
@@ -13,7 +15,11 @@ public class TopPairImpl implements TopPair {
     private double volume24h;
     private double volume24hTo;
 
-    TopPairImpl(JSONObject response) {
+    public TopPairCoinImpl(JSONObject response) {
+        if (response == null) {
+            return;
+        }
+
         try {
             exchange = response.getString("exchange");
             fromSymbol = response.getString("fromSymbol");
@@ -21,7 +27,7 @@ public class TopPairImpl implements TopPair {
             volume24h = response.getDouble("volume24h");
             volume24hTo = response.getDouble("volume24hTo");
         } catch (JSONException e) {
-            Log.d("TopPairImpl", e.getMessage());
+            CKLog.e(TAG, response.toString(), e);
         }
     }
 

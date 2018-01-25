@@ -14,7 +14,8 @@ import com.coinkarasu.R;
 import com.coinkarasu.api.cryptocompare.Client;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
-import com.coinkarasu.api.cryptocompare.data.TopPair;
+import com.coinkarasu.coins.TopPairCoin;
+import com.coinkarasu.api.cryptocompare.data.TopPairs;
 import com.coinkarasu.chart.CoinPieChart;
 import com.coinkarasu.coins.SnapshotCoin;
 import com.coinkarasu.tasks.GetCoinSnapshotTask;
@@ -105,14 +106,15 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     }
 
     @Override
-    public void finished(List<TopPair> pairs) {
+    public void finished(TopPairs topPairs) {
         if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
             if (DEBUG) CKLog.w(TAG, "finished() Too early");
             taskStarted = false;
             return;
         }
 
-        if (pairs == null) {
+        List<TopPairCoin> coins = topPairs.getTopPairCoins();
+        if (coins == null) {
             if (DEBUG) CKLog.w(TAG, "finished() null(retry) " + kind + " " + errorCount);
             taskStarted = false;
             errorCount++;
@@ -120,25 +122,25 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             return;
         }
 
-        if (pairs.isEmpty()) {
+        if (coins.isEmpty()) {
             if (DEBUG) CKLog.w(TAG, "finished() empty " + kind + " " + errorCount);
             displayWarning();
             return;
         }
 
-        Collections.sort(pairs, new Comparator<TopPair>() {
-            public int compare(TopPair tp1, TopPair tp2) {
-                return tp1.getVolume24h() > tp2.getVolume24h() ? -1 : 1;
+        Collections.sort(coins, new Comparator<TopPairCoin>() {
+            public int compare(TopPairCoin c1, TopPairCoin c2) {
+                return c1.getVolume24h() > c2.getVolume24h() ? -1 : 1;
             }
         });
 
         List<Double> values = new ArrayList<>();
         List<String> labels = new ArrayList<>();
 
-        for (int i = 0; i < pairs.size(); i++) {
-            TopPair pair = pairs.get(i);
-            values.add(pair.getVolume24h());
-            labels.add(pair.getToSymbol());
+        for (int i = 0; i < coins.size(); i++) {
+            TopPairCoin coin = coins.get(i);
+            values.add(coin.getVolume24h());
+            labels.add(coin.getToSymbol());
         }
 
         groupSmallSlices(values, labels);

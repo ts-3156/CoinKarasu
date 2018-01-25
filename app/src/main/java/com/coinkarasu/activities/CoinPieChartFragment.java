@@ -16,7 +16,8 @@ import android.widget.TextView;
 
 import com.coinkarasu.R;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
-import com.coinkarasu.api.cryptocompare.data.TopPair;
+import com.coinkarasu.coins.TopPairCoin;
+import com.coinkarasu.api.cryptocompare.data.TopPairs;
 import com.coinkarasu.pagers.CoinPieChartPagerAdapter;
 import com.coinkarasu.tasks.GetTopPairsTask;
 import com.coinkarasu.utils.CKLog;
@@ -92,16 +93,16 @@ public class CoinPieChartFragment extends Fragment implements
         return view;
     }
 
-    private void createTabs(List<TopPair> pairs) {
+    private void createTabs(List<TopPairCoin> coins) {
         if (tabsCreated || getView() == null || getActivity() == null) {
             return;
         }
         tabsCreated = true;
 
-        pager.setAdapter(new CoinPieChartPagerAdapter(getChildFragmentManager(), fromSymbol, toSymbol, pairs));
+        pager.setAdapter(new CoinPieChartPagerAdapter(getChildFragmentManager(), fromSymbol, toSymbol, coins));
         pager.setCurrentItem(DEFAULT_KIND.ordinal());
         pager.addOnPageChangeListener(this);
-        pager.setOffscreenPageLimit(Math.min(pairs.size() + 1, 5));
+        pager.setOffscreenPageLimit(Math.min(coins.size() + 1, 5));
 
         tabs.setupWithViewPager(pager);
 
@@ -112,8 +113,8 @@ public class CoinPieChartFragment extends Fragment implements
         firstTab.setCustomView(firstHolder.itemView);
         firstTab.setTag(firstHolder);
 
-        for (int i = 0; i < pairs.size(); i++) {
-            TabViewHolder holder = new TabViewHolder(inflater.inflate(R.layout.tab_pie_chart, null, false), Kind.exchange.label, pairs.get(i).getToSymbol());
+        for (int i = 0; i < coins.size(); i++) {
+            TabViewHolder holder = new TabViewHolder(inflater.inflate(R.layout.tab_pie_chart, null, false), Kind.exchange.label, coins.get(i).getToSymbol());
             TabLayout.Tab tab = tabs.getTabAt(i + 1);
             tab.setCustomView(holder.itemView);
             tab.setTag(holder);
@@ -164,14 +165,15 @@ public class CoinPieChartFragment extends Fragment implements
     }
 
     @Override
-    public void finished(List<TopPair> pairs) {
+    public void finished(TopPairs topPairs) {
         if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
             taskStarted = false;
             errorCount++;
             return;
         }
 
-        if (pairs == null) {
+        List<TopPairCoin> coins = topPairs.getTopPairCoins();
+        if (coins == null) {
             if (DEBUG) CKLog.w(TAG, "finished() pairs is null " + "retry=true err=" + errorCount);
             taskStarted = false;
             errorCount++;
@@ -180,26 +182,26 @@ public class CoinPieChartFragment extends Fragment implements
         }
 
         double sum = 0.0;
-        for (TopPair pair : pairs) {
-            sum += pair.getVolume24h();
+        for (TopPairCoin coin : coins) {
+            sum += coin.getVolume24h();
         }
         double threshold = sum * CoinPieChartTabContentFragment.GROUP_SMALL_SLICES_PCT;
 
-        Iterator<TopPair> iterator = pairs.iterator();
+        Iterator<TopPairCoin> iterator = coins.iterator();
         while (iterator.hasNext()) {
-            TopPair pair = iterator.next();
-            if (pair.getVolume24h() < threshold) {
+            TopPairCoin coin = iterator.next();
+            if (coin.getVolume24h() < threshold) {
                 iterator.remove();
             }
         }
 
-        Collections.sort(pairs, new Comparator<TopPair>() {
-            public int compare(TopPair tp1, TopPair tp2) {
-                return tp1.getVolume24h() > tp2.getVolume24h() ? -1 : 1;
+        Collections.sort(coins, new Comparator<TopPairCoin>() {
+            public int compare(TopPairCoin c1, TopPairCoin c2) {
+                return c1.getVolume24h() > c2.getVolume24h() ? -1 : 1;
             }
         });
 
-        createTabs(pairs);
+        createTabs(coins);
     }
 
     @Override
