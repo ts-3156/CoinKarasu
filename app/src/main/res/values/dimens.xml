@@ -26,6 +26,8 @@
 
     <dimen name="edit_tabs_vertical_gap">16dp</dimen>
 
+    <dimen name="board_divider_vertical_spacing">4dp</dimen>
+
     <dimen name="billing_single_padding">8dp</dimen>
     <dimen name="billing_double_padding">16dp</dimen>
     <dimen name="billing_header_gap">8dp</dimen>

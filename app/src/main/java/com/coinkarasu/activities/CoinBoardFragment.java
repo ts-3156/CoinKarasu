@@ -3,7 +3,6 @@ package com.coinkarasu.activities;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 
 import com.coinkarasu.R;
 import com.coinkarasu.api.bitflyer.data.Board;
+import com.coinkarasu.tasks.GetBoardTask;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.DecimalFormat;
@@ -21,9 +21,14 @@ import java.util.List;
 
 
 public class CoinBoardFragment extends Fragment implements View.OnClickListener {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinBoardFragment";
 
-    Button btn;
-    String kind;
+    private Button btn;
+    private String kind;
+    private LinearLayout columnAsk;
+    private LinearLayout columnPrice;
+    private LinearLayout columnBid;
 
     public CoinBoardFragment() {
     }
@@ -48,21 +53,32 @@ public class CoinBoardFragment extends Fragment implements View.OnClickListener 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_board, container, false);
 
-        view.findViewById(R.id.board_order_book).setOnClickListener(this);
-        view.findViewById(R.id.board_time_and_sales).setOnClickListener(this);
+        columnAsk = view.findViewById(R.id.column_ask);
+        columnPrice = view.findViewById(R.id.column_price);
+        columnBid = view.findViewById(R.id.column_bid);
 
         btn = view.findViewById(R.id.board_order_book);
+        btn.setOnClickListener(this);
         btn.setBackgroundColor(Color.LTGRAY);
+
+        view.findViewById(R.id.board_time_and_sales).setOnClickListener(this);
+
+        new GetBoardTask(getActivity()).setListener(new GetBoardTask.Listener() {
+            @Override
+            public void finished(Board board) {
+                if (board != null && board.getAsks() != null && board.getBids() != null) {
+                    updateView(board);
+                }
+            }
+        }).execute();
 
         return view;
     }
 
     private View divider() {
         View divider = new View(getActivity());
-
+        int margin = getResources().getDimensionPixelSize(R.dimen.board_divider_vertical_spacing);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        int margin = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 4, getResources().getDisplayMetrics());
 
         params.setMargins(0, margin, 0, margin);
         divider.setLayoutParams(params);
@@ -125,15 +141,10 @@ public class CoinBoardFragment extends Fragment implements View.OnClickListener 
     }
 
     public void updateView(Board board) {
-        if (isDetached() || getView() == null) {
+        if (isDetached() || getActivity() == null || getActivity().isFinishing()) {
             return;
         }
 
-        View view = getView();
-
-        LinearLayout columnAsk = view.findViewById(R.id.column_ask);
-        LinearLayout columnPrice = view.findViewById(R.id.column_price);
-        LinearLayout columnBid = view.findViewById(R.id.column_bid);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 

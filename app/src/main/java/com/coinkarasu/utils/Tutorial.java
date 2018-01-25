@@ -175,7 +175,7 @@ public class Tutorial {
                 public void run() {
                     if (!activity.isFinishing()) {
                         ScrollView scroll = activity.findViewById(R.id.scroll_view);
-                        View card = activity.findViewById(R.id.card_line_chart);
+                        View card = activity.findViewById(R.id.historical_price);
                         scroll.scrollTo(0, card.getBottom());
 
                         logTutorialProgress(((CoinActivity) activity).getFirebaseAnalytics(), ID_PRICE_OVERVIEW);

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:background="#ffffff"
     android:padding="16dp"
-    tools:context="com.coinkarasu.activities.HistoricalPriceFragment">
+    tools:context="com.coinkarasu.activities.PriceOverviewFragment">
 
     <TextView
         android:id="@+id/caption_left"
