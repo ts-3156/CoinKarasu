@@ -98,7 +98,7 @@ public class CoinExchangeFragment extends Fragment implements
     }
 
     private void createTabs(List<SnapshotCoin> coins) {
-        if (tabsCreated || getActivity() == null) {
+        if (tabsCreated || getActivity() == null || getActivity().isFinishing()) {
             return;
         }
         tabsCreated = true;

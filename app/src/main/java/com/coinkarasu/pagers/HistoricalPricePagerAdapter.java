@@ -8,8 +8,8 @@ import com.coinkarasu.activities.etc.HistoricalPriceKind;
 import com.coinkarasu.activities.CoinLineChartTabContentFragment;
 
 public class HistoricalPricePagerAdapter extends FragmentPagerAdapter {
-    String fromSymbol;
-    String toSymbol;
+    private String fromSymbol;
+    private String toSymbol;
 
     public HistoricalPricePagerAdapter(FragmentManager manager) {
         super(manager);

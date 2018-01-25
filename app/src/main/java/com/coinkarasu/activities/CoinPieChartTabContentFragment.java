@@ -40,7 +40,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     private String fromSymbol;
     private String toSymbol;
     private boolean taskStarted;
-    private CoinPieChart chart;
     private PieChart chartView;
     private int errorCount = 0;
     private TextView warning;
@@ -75,7 +74,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_pie_chart_tab_content, container, false);
         taskStarted = false;
-        chart = null;
         chartView = view.findViewById(R.id.pie_chart);
         warning = view.findViewById(R.id.warn_text);
         warningContainer = view.findViewById(R.id.warn_container);
@@ -162,7 +160,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             if (DEBUG) CKLog.w(TAG, "finished() null(retry) " + kind + " " + errorCount);
             taskStarted = false;
             errorCount++;
-            startTask();
             return;
         }
 
@@ -202,7 +199,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     }
 
     private void drawChart(List<Double> values, List<String> labels) {
-        chart = new CoinPieChart(chartView);
+        CoinPieChart chart = new CoinPieChart(chartView);
         chart.initialize(PrefHelper.shouldAnimateCharts(getActivity()));
 
         if (kind == CoinPieChartFragment.Kind.currency) {
@@ -256,7 +253,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        // This method may be called outside of the fragment lifecycle.
+        super.setUserVisibleHint(isVisibleToUser);
         this.isVisibleToUser = isVisibleToUser;
 
         if (isVisibleToUser) {

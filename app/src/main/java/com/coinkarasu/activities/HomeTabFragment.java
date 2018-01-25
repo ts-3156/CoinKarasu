@@ -144,7 +144,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        // This method may be called outside of the fragment lifecycle.
+        super.setUserVisibleHint(isVisibleToUser);
         this.isVisibleToUser = isVisibleToUser;
 
         if (isVisibleToUser) {

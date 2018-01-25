@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoinPieChartPagerAdapter extends FragmentPagerAdapter {
-    ArrayList<Fragment> fragments;
+    private List<Fragment> fragments;
 
     public CoinPieChartPagerAdapter(FragmentManager manager) {
         super(manager);

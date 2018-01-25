@@ -39,7 +39,6 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     private int position;
     private String exchange;
     private boolean taskStarted;
-    private CoinLineChart chart;
     private LineChart chartView;
     private TextView warning;
     private View warningContainer;
@@ -82,7 +81,6 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_exchange_tab_content, container, false);
         taskStarted = false;
-        chart = null;
         chartView = view.findViewById(R.id.line_chart);
         warning = view.findViewById(R.id.warn_text);
         warningContainer = view.findViewById(R.id.warn_container);
@@ -103,7 +101,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
 
         List<History> histories = new HistoriesCache(getActivity()).get(makeCacheKey());
         if (histories != null && !histories.isEmpty()) {
-            finished(histories);
+            refreshUi(histories);
         }
 
         GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getActivity()), kind, exchange)
@@ -125,7 +123,6 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
             if (DEBUG) CKLog.w(TAG, "finished() records is null " + exchange + " error=" + errorCount);
             taskStarted = false;
             errorCount++;
-            startTask();
             return;
         }
 
@@ -135,14 +132,16 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
             return;
         }
 
+        new HistoriesCache(getActivity()).put(makeCacheKey(), records);
+
+        refreshUi(records);
+    }
+
+    private void refreshUi(List<History> records) {
         drawChart(records);
         if (parent != null && parent.tabsSetupFinished()) {
             parent.refreshTabText(position, records);
         }
-
-        new HistoriesCache(getActivity()).put(makeCacheKey(), records);
-
-        if (DEBUG) CKLog.d(TAG, "finished() " + exchange + " " + records.size());
     }
 
     private String makeCacheKey() {
@@ -150,7 +149,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     }
 
     private void drawChart(List<History> records) {
-        chart = new CoinLineChart(chartView);
+        CoinLineChart chart = new CoinLineChart(chartView);
         chart.initialize(kind.name(), PrefHelper.shouldAnimateCharts(getActivity()));
         chart.setData(records);
         chart.invalidate();
@@ -165,7 +164,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        // This method may be called outside of the fragment lifecycle.
+        super.setUserVisibleHint(isVisibleToUser);
         this.isVisibleToUser = isVisibleToUser;
 
         if (isVisibleToUser) {

@@ -220,7 +220,6 @@ public class CoinListFragment extends Fragment implements
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        // This method may be called outside of the fragment lifecycle.
         this.isVisibleToUser = isVisibleToUser;
 
         if (isVisibleToUser) {

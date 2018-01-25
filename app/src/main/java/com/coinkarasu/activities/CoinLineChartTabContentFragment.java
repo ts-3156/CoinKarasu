@@ -29,7 +29,6 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     private String fromSymbol;
     private String toSymbol;
     private boolean taskStarted;
-    private CoinLineChart chart;
     private int errorCount = 0;
     private LineChart chartView;
     private HistoricalPriceFragment parent;
@@ -63,7 +62,6 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_coin_line_chart_tab_content, container, false);
         taskStarted = false;
-        chart = null;
         chartView = view.findViewById(R.id.line_chart);
         parent = ((HistoricalPriceFragment) getParentFragment());
         startTask();
@@ -79,7 +77,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
 
         List<History> histories = new HistoriesCache(getActivity()).get(makeCacheKey());
         if (histories != null && !histories.isEmpty()) {
-            finished(histories);
+            refreshUi(histories);
         }
 
         GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getActivity()), kind)
@@ -101,18 +99,19 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
             if (DEBUG) CKLog.w(TAG, "finished() records is empty kind=" + kind + " error=" + errorCount);
             taskStarted = false;
             errorCount++;
-            startTask();
             return;
-        }
-
-        drawChart(records);
-        if (parent != null) {
-            parent.refreshTabText(kind.ordinal(), records);
         }
 
         new HistoriesCache(getActivity()).put(makeCacheKey(), records);
 
-        if (DEBUG) CKLog.d(TAG, "finished() " + kind + " " + records.size());
+        refreshUi(records);
+    }
+
+    private void refreshUi(List<History> records) {
+        drawChart(records);
+        if (parent != null) {
+            parent.refreshTabText(kind.ordinal(), records);
+        }
     }
 
     private String makeCacheKey() {
@@ -120,7 +119,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     }
 
     private void drawChart(List<History> records) {
-        chart = new CoinLineChart(chartView);
+        CoinLineChart chart = new CoinLineChart(chartView);
         chart.initialize(kind.name(), PrefHelper.shouldAnimateCharts(getActivity()));
         chart.setData(records);
         chart.invalidate();
@@ -128,7 +127,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        // This method may be called outside of the fragment lifecycle.
+        super.setUserVisibleHint(isVisibleToUser);
         this.isVisibleToUser = isVisibleToUser;
 
         if (isVisibleToUser) {
