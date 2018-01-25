@@ -33,7 +33,7 @@ import java.util.List;
 
 public class CoinListSectionFragment extends Fragment implements
         GetPricesByExchangeTaskBase.Listener,
-        PeriodicalUpdater.PeriodicallyRunnable {
+        PeriodicalUpdater.PeriodicalTask {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "CoinListSectionFragment";
@@ -178,15 +178,15 @@ public class CoinListSectionFragment extends Fragment implements
         if (DEBUG) CKLog.d(TAG, "updateCoinsIfCacheExists() " + section.toString());
     }
 
-    public void startTask() {
-        if (DEBUG) CKLog.d(TAG, "startTask() " + section.toString());
+    public void startUpdating() {
+        if (DEBUG) CKLog.d(TAG, "startUpdating() " + section.toString());
         if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
-            if (DEBUG) CKLog.w(TAG, "startTask() not initialized or be finishing");
+            if (DEBUG) CKLog.w(TAG, "startUpdating() not initialized or be finishing");
             return;
         }
 
         if (parent == null || parent.getAdapter() == null) {
-            if (DEBUG) CKLog.w(TAG, "startTask() parent or adapter is null");
+            if (DEBUG) CKLog.w(TAG, "startUpdating() parent or adapter is null");
             return;
         }
 

@@ -41,7 +41,7 @@ import java.util.List;
 
 
 public class PriceOverviewFragment extends Fragment implements
-        PeriodicalUpdater.PeriodicallyRunnable,
+        PeriodicalUpdater.PeriodicalTask,
         GetPricesByExchangeTaskBase.Listener,
         TimeProvider {
 
@@ -105,8 +105,8 @@ public class PriceOverviewFragment extends Fragment implements
         return view;
     }
 
-    public void startTask() {
-        if (getActivity() == null || getView() == null) {
+    public void startUpdating() {
+        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
             return;
         }
 
@@ -124,7 +124,7 @@ public class PriceOverviewFragment extends Fragment implements
 
     @Override
     public void finished(Exchange exchange, CoinKind coinKind, List<Price> prices, boolean withWarning) {
-        if (isDetached() || getActivity() == null || getView() == null) {
+        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
             if (updater != null) {
                 updater.stop("finished");
             }

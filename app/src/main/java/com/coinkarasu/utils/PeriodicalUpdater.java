@@ -9,15 +9,15 @@ public class PeriodicalUpdater {
     private static final long FORCE_UPDATE_INTERVAL = 3000;
 
     private Timer timer;
-    private PeriodicallyRunnable runnable;
+    private PeriodicalTask task;
     private int interval;
     private long lastUpdated;
     private long forceUpdated;
     private Timer beingUpdatedTimer;
     private boolean isBeingUpdated;
 
-    public PeriodicalUpdater(PeriodicallyRunnable runnable, int interval) {
-        this.runnable = runnable;
+    public PeriodicalUpdater(PeriodicalTask task, int interval) {
+        this.task = task;
         this.interval = interval;
         forceUpdated = -1;
         isBeingUpdated = false;
@@ -48,7 +48,7 @@ public class PeriodicalUpdater {
             public void run() {
                 if (!isBeingUpdated) {
                     setBeingUpdatedTimer();
-                    runnable.startTask();
+                    task.startUpdating();
                 }
             }
         }, delay, interval);
@@ -59,7 +59,7 @@ public class PeriodicalUpdater {
         if (!isBeingUpdated && forceUpdated <= now - FORCE_UPDATE_INTERVAL) {
             forceUpdated = now;
             setBeingUpdatedTimer();
-            runnable.startTask();
+            task.startUpdating();
         }
     }
 
@@ -112,7 +112,7 @@ public class PeriodicalUpdater {
         }
     }
 
-    public interface PeriodicallyRunnable {
-        void startTask();
+    public interface PeriodicalTask {
+        void startUpdating();
     }
 }
