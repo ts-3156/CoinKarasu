@@ -127,15 +127,6 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        kind = null;
-        fromSymbol = null;
-        toSymbol = null;
-        chart = null;
-    }
-
-    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         // This method may be called outside of the fragment lifecycle.
         this.isVisibleToUser = isVisibleToUser;

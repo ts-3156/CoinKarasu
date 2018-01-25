@@ -90,12 +90,6 @@ public class HomeTabCardFragment extends Fragment implements
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        kind = null;
-    }
-
-    @Override
     public void onItemClick(Coin coin, View view, int position) {
         CoinActivity.start(view.getContext(), coin, NavigationKind.home);
     }

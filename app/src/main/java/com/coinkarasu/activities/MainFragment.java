@@ -124,7 +124,6 @@ public class MainFragment extends Fragment implements
     public void onDetach() {
         super.onDetach();
         listener = null;
-        kind = null;
     }
 
     @Override

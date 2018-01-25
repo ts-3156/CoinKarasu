@@ -29,9 +29,6 @@ import com.coinkarasu.pagers.CoinExchangePagerAdapter;
 import com.coinkarasu.tasks.GetCoinSnapshotTask;
 import com.coinkarasu.utils.CKLog;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -239,14 +236,6 @@ public class CoinExchangeFragment extends Fragment implements
         });
 
         createTabs(coins);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        kind = null;
-        coin = null;
-        tab = null;
     }
 
     @Override

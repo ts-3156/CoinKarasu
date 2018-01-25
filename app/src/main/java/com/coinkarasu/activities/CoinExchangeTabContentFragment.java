@@ -164,15 +164,6 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        coin = null;
-        kind = null;
-        exchange = null;
-        chart = null;
-    }
-
-    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         // This method may be called outside of the fragment lifecycle.
         this.isVisibleToUser = isVisibleToUser;

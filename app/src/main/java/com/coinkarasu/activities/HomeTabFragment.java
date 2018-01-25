@@ -76,18 +76,6 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
             initializeCards();
         }
 
-        receiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                if (isVisibleToUser) {
-                    Bundle bundle = intent.getExtras();
-                    refreshCard(TrendingKind.valueOf(bundle.getString("kind")));
-                }
-            }
-        };
-        LocalBroadcastManager.getInstance(getActivity())
-                .registerReceiver(receiver, new IntentFilter(ACTION_UPDATE_TRENDING));
-
         UpdateTrendingIntentService.start(getActivity(), false);
 
         return view;
@@ -128,6 +116,21 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
         getChildFragmentManager().beginTransaction()
                 .replace(kind.containerId, HomeTabCardFragment.newInstance(kind), kind.tag)
                 .commitNowAllowingStateLoss();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (isVisibleToUser) {
+                    refreshCard(TrendingKind.valueOf(intent.getExtras().getString("kind")));
+                }
+            }
+        };
+        LocalBroadcastManager.getInstance(context)
+                .registerReceiver(receiver, new IntentFilter(ACTION_UPDATE_TRENDING));
     }
 
     @Override

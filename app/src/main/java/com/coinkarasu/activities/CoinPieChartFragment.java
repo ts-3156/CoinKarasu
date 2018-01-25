@@ -203,14 +203,6 @@ public class CoinPieChartFragment extends Fragment implements
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        tab = null;
-        fromSymbol = null;
-        toSymbol = null;
-    }
-
-    @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
     }
 

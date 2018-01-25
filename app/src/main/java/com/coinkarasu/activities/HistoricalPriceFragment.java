@@ -147,14 +147,6 @@ public class HistoricalPriceFragment extends Fragment implements
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        fromSymbol = null;
-        toSymbol = null;
-        tab = null;
-    }
-
-    @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
     }
 

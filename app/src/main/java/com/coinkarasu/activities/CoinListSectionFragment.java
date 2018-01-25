@@ -365,14 +365,6 @@ public class CoinListSectionFragment extends Fragment implements
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        updater = null;
-        kind = null;
-        parent = null;
-    }
-
     // viewにアタッチしていないため、CoinListFragmentから直接呼んでいる
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {

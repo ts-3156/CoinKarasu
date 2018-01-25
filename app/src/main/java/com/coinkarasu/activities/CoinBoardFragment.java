@@ -198,13 +198,6 @@ public class CoinBoardFragment extends Fragment implements View.OnClickListener 
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        btn = null;
-        kind = null;
-    }
-
-    @Override
     public void onClick(View view) {
         String next;
 
