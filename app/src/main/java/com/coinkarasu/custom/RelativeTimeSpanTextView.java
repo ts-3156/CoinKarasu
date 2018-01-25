@@ -8,7 +8,6 @@ import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.coinkarasu.activities.TimeProvider;
 import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.utils.CKLog;
 
@@ -193,5 +192,9 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
             state = bundle.getParcelable("state");
         }
         super.onRestoreInstanceState(state);
+    }
+
+    public interface TimeProvider {
+        long getLastUpdated(Section section);
     }
 }

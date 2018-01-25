@@ -2,7 +2,6 @@ package com.coinkarasu.adapters.row;
 
 import android.view.View;
 
-import com.coinkarasu.activities.TimeProvider;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.Section;
@@ -10,6 +9,7 @@ import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.adapters.ResourceUtils;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.AggressiveProgressbar;
+import com.coinkarasu.custom.RelativeTimeSpanTextView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,11 +17,11 @@ import java.util.Map;
 public class HeaderDelegate extends UiManagingDelegate {
     public static final int TYPE = CoinListAdapter.TYPE_HEADER;
 
-    private TimeProvider timeProvider;
+    private RelativeTimeSpanTextView.TimeProvider timeProvider;
     private ResourceUtils resources;
     private Map<Section, AggressiveProgressbar.Status> savedStatuses;
 
-    public HeaderDelegate(TimeProvider timeProvider, ResourceUtils resources) {
+    public HeaderDelegate(RelativeTimeSpanTextView.TimeProvider timeProvider, ResourceUtils resources) {
         this.timeProvider = timeProvider;
         this.resources = resources;
         this.savedStatuses = new HashMap<>();

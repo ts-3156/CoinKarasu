@@ -75,13 +75,7 @@ public class CoinExchangeFragment extends Fragment implements
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             kind = getArguments().getString("kind");
-            String coinJson = getArguments().getString("coinJson");
-
-            try {
-                coin = Coin.buildBy(new JSONObject(coinJson));
-            } catch (JSONException e) {
-                CKLog.e(TAG, e);
-            }
+            coin = Coin.buildBy(getArguments().getString("coinJson"));
         }
     }
 

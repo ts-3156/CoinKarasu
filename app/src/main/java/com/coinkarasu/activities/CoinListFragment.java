@@ -22,6 +22,7 @@ import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.coins.Coin;
+import com.coinkarasu.custom.RelativeTimeSpanTextView;
 import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.tasks.CollectCoinsTask;
 import com.coinkarasu.utils.CKLog;
@@ -34,7 +35,7 @@ import java.util.List;
 public class CoinListFragment extends Fragment implements
         SwipeRefreshLayout.OnRefreshListener,
         SharedPreferences.OnSharedPreferenceChangeListener,
-        TimeProvider {
+        RelativeTimeSpanTextView.TimeProvider {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "CoinListFragment";

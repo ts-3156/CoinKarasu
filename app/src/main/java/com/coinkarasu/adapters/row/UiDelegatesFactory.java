@@ -4,16 +4,16 @@ import android.content.Context;
 import android.util.SparseArray;
 import android.view.View;
 
-import com.coinkarasu.activities.TimeProvider;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.adapters.ConfigUtils;
 import com.coinkarasu.adapters.ResourceUtils;
 import com.coinkarasu.coins.Coin;
+import com.coinkarasu.custom.RelativeTimeSpanTextView;
 
 public class UiDelegatesFactory {
     private SparseArray<UiManagingDelegate> uiDelegates;
 
-    public UiDelegatesFactory(Context context, TimeProvider timeProvider, ResourceUtils resources, ConfigUtils configs) {
+    public UiDelegatesFactory(Context context, RelativeTimeSpanTextView.TimeProvider timeProvider, ResourceUtils resources, ConfigUtils configs) {
         uiDelegates = new SparseArray<>();
         uiDelegates.put(AdDelegate.TYPE, new AdDelegate(context));
         uiDelegates.put(HeaderDelegate.TYPE, new HeaderDelegate(timeProvider, resources));

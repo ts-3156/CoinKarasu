@@ -15,7 +15,7 @@ public class ConfigUtils {
     private Set<Section> isAnimStarted;
 
     public ConfigUtils(Context context) {
-        isAnimEnabled = PrefHelper.shouldAnimatePrices(context);
+        isAnimEnabled = PrefHelper.shouldAnimatePrice(context);
         isDownloadIconEnabled = PrefHelper.shouldDownloadIcon(context);
         isScrolled = false;
         isAnimStarted = new HashSet<>();

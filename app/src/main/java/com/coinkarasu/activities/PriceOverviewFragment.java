@@ -2,6 +2,7 @@ package com.coinkarasu.activities;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +17,6 @@ import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.animator.PriceAnimator;
 import com.coinkarasu.animator.PriceDiffAnimator;
 import com.coinkarasu.animator.TrendAnimator;
-import com.coinkarasu.animator.ValueAnimatorBase;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
@@ -34,19 +34,17 @@ import com.coinkarasu.utils.PeriodicalUpdater;
 import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.Tutorial;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.List;
 
 
 public class PriceOverviewFragment extends Fragment implements
         PeriodicalUpdater.PeriodicalTask,
         GetPricesByExchangeTaskBase.Listener,
-        TimeProvider {
+        RelativeTimeSpanTextView.TimeProvider {
 
     private static final boolean DEBUG = true;
     private static final String TAG = "PriceOverviewFragment";
+    private static final String STATE_LAST_UPDATED_KEY = "lastUpdated";
 
     private Coin coin;
     private PeriodicalUpdater updater;
@@ -74,19 +72,19 @@ public class PriceOverviewFragment extends Fragment implements
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            String coinJson = getArguments().getString("coinJson");
-
-            try {
-                coin = Coin.buildBy(new JSONObject(coinJson));
-            } catch (JSONException e) {
-                CKLog.e(TAG, e);
-            }
+            coin = Coin.buildBy(getArguments().getString("coinJson"));
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_price_overview, container, false);
+
+        updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
+
+        if (savedInstanceState != null) {
+            updater.setLastUpdated(savedInstanceState.getLong(STATE_LAST_UPDATED_KEY), false);
+        }
 
         progressbar = view.findViewById(R.id.progressbar);
 
@@ -100,7 +98,6 @@ public class PriceOverviewFragment extends Fragment implements
 
         isAnimStarted = false;
         updateCard(coin);
-        updater = new PeriodicalUpdater(this, PrefHelper.getSyncInterval(getActivity()));
 
         return view;
     }
@@ -131,17 +128,16 @@ public class PriceOverviewFragment extends Fragment implements
             return;
         }
 
+        updater.setLastUpdated(System.currentTimeMillis(), true);
+        timeSpan.updateText(true);
+
         if (prices == null || prices.isEmpty()) {
             if (DEBUG) CKLog.w(TAG, "finished() prices is null " + exchange + " " + coinKind);
-            updater.setLastUpdated(System.currentTimeMillis(), true);
-            timeSpan.updateText(true);
             progressbar.stopAnimationWithError();
             return;
         }
 
-        updater.setLastUpdated(System.currentTimeMillis(), true);
-        progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION, withWarning);
-        timeSpan.updateText(true);
+        progressbar.stopAnimationDelayed(withWarning);
 
         Price price = prices.get(0);
         coin.setPrice(price.price);
@@ -161,7 +157,7 @@ public class PriceOverviewFragment extends Fragment implements
         trendView.setTextColor(getResources().getColor(new TrendColorFormat().format(coin.getTrend())));
         trendIconView.setImageResource(new TrendIconFormat().format(coin.getTrend()));
 
-        if (isAnimStarted && PrefHelper.shouldAnimatePrices(getActivity())) {
+        if (isAnimStarted && PrefHelper.shouldAnimatePrice(getActivity())) {
             new PriceAnimator(coin, priceView).start();
             new PriceDiffAnimator(coin, priceDiffView).start();
             new TrendAnimator(coin, trendView).start();
@@ -189,10 +185,11 @@ public class PriceOverviewFragment extends Fragment implements
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        coin = null;
-        updater = null;
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        if (updater != null) {
+            savedInstanceState.putLong(STATE_LAST_UPDATED_KEY, updater.getLastUpdated());
+        }
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override

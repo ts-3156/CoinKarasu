@@ -5,7 +5,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.coinkarasu.activities.TimeProvider;
 import com.coinkarasu.activities.etc.CoinKind;
 import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
@@ -14,6 +13,7 @@ import com.coinkarasu.adapters.row.CoinListViewHolder;
 import com.coinkarasu.adapters.row.RowDataProvider;
 import com.coinkarasu.adapters.row.UiManager;
 import com.coinkarasu.coins.Coin;
+import com.coinkarasu.custom.RelativeTimeSpanTextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +31,7 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
     private ConfigUtils configs;
     private LinearLayoutManager layoutManager;
 
-    public CoinListAdapter(Context context, TimeProvider timeProvider, NavigationKind kind, List<Coin> coins) {
+    public CoinListAdapter(Context context, RelativeTimeSpanTextView.TimeProvider timeProvider, NavigationKind kind, List<Coin> coins) {
         resources = new ResourceUtils(context, coins);
         configs = new ConfigUtils(context);
         uiManager = new UiManager(context, this, timeProvider, resources, configs, kind);

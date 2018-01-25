@@ -3,6 +3,7 @@ package com.coinkarasu.activities;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,6 @@ import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.adapters.CoinListAdapter;
-import com.coinkarasu.animator.ValueAnimatorBase;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
@@ -193,7 +193,7 @@ public class CoinListSectionFragment extends Fragment implements
         CoinListAdapter adapter = parent.getAdapter();
         String toSymbol = kind.getToSymbol();
 
-        adapter.setAnimEnabled(PrefHelper.shouldAnimatePrices(getActivity()));
+        adapter.setAnimEnabled(PrefHelper.shouldAnimatePrice(getActivity()));
         adapter.setDownloadIconEnabled(PrefHelper.shouldDownloadIcon(getActivity()));
         adapter.setToSymbol(toSymbol);
 
@@ -304,7 +304,7 @@ public class CoinListSectionFragment extends Fragment implements
     private void hideProgressbarDelayed(Exchange exchange, CoinKind coinKind, boolean withWarning) {
         findProgressbar();
         if (progressbar != null) {
-            progressbar.stopAnimationDelayed(ValueAnimatorBase.DURATION, withWarning);
+            progressbar.stopAnimationDelayed(withWarning);
         }
     }
 
@@ -393,7 +393,7 @@ public class CoinListSectionFragment extends Fragment implements
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
+    public void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
         savedInstanceState.putBoolean(STATE_IS_VISIBLE_TO_USER_KEY, isVisibleToUser);
         if (updater != null) {
             savedInstanceState.putLong(STATE_LAST_UPDATED_KEY, updater.getLastUpdated());

@@ -9,10 +9,12 @@ import android.view.animation.AnimationUtils;
 
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.Section;
+import com.coinkarasu.animator.ValueAnimatorBase;
 
 public class AggressiveProgressbar extends AppCompatImageView {
     private static final boolean DEBUG = true;
     private static final String TAG = "AggressiveProgressbar";
+    private static final long DELAY = ValueAnimatorBase.DURATION;
 
     public enum Status {
         normal(R.drawable.ic_refresh_rotate, R.drawable.ic_refresh_stop),
@@ -67,14 +69,14 @@ public class AggressiveProgressbar extends AppCompatImageView {
         stopAnimation();
     }
 
-    public void stopAnimationDelayed(long delay, boolean withWarning) {
+    public void stopAnimationDelayed(boolean withWarning) {
         status = withWarning ? Status.warning : Status.normal;
         postDelayed(new Runnable() {
             @Override
             public void run() {
                 stopAnimation();
             }
-        }, delay);
+        }, DELAY);
     }
 
     public Status getStatus() {

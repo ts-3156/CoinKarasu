@@ -65,7 +65,7 @@ public class PrefHelper {
         return DEFAULT_SYNC_INTERVAL;
     }
 
-    public static boolean shouldAnimatePrices(Context context) {
+    public static boolean shouldAnimatePrice(Context context) {
         return isEnabled(context, "pref_enable_price_anim", R.bool.enable_price_anim);
     }
 
