@@ -2,7 +2,8 @@ package com.coinkarasu.tasks;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import com.coinkarasu.api.cryptocompare.data.CoinListImpl;
+
+import com.coinkarasu.api.cryptocompare.data.CoinList;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.services.UpdateCoinListIntentService;
 
@@ -23,12 +24,12 @@ public class CollectCoinsTask extends AsyncTask<Integer, Integer, Integer> {
     @Override
     protected Integer doInBackground(Integer... params) {
         if (fromSymbols.length > 300) {
-            coins = CoinListImpl.getInstance(context).collectCoins(fromSymbols); // File
+            coins = CoinList.getInstance(context).collectCoins(fromSymbols); // File
         } else {
-            coins = CoinListImpl.collectCoins(context, fromSymbols); // DB
+            coins = CoinList.collectCoins(context, fromSymbols); // DB
 
             if (coins == null || coins.size() != fromSymbols.length) {
-                coins = CoinListImpl.getInstance(context).collectCoins(fromSymbols); // File
+                coins = CoinList.getInstance(context).collectCoins(fromSymbols); // File
                 UpdateCoinListIntentService.start(context);
             }
         }

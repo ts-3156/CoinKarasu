@@ -16,12 +16,9 @@ public class PricesImpl implements Prices {
     private static final boolean DEBUG = true;
     private static final String TAG = "PricesImpl";
 
-    private String exchange;
-
     private List<PriceMultiFullCoin> coins;
 
     public PricesImpl(PricesResponse response) {
-        this.exchange = response.getExchange();
         this.coins = new ArrayList<>();
         extract(response);
     }
@@ -51,10 +48,5 @@ public class PricesImpl implements Prices {
     @Override
     public List<PriceMultiFullCoin> getCoins() {
         return coins;
-    }
-
-    @Override
-    public String getExchange() {
-        return exchange;
     }
 }

@@ -1,9 +1,24 @@
 package com.coinkarasu.api.cryptocompare.response;
 
+import com.coinkarasu.utils.CKLog;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
-public interface CoinListResponse extends Cacheable {
-    JSONObject getData();
+public abstract class CoinListResponse {
+    private static final boolean DEBUG = true;
+    private static final String TAG = "CoinListResponse";
 
-    boolean isSuccess();
+    public abstract JSONObject getData();
+
+    abstract boolean isSuccess();
+
+    public static CoinListResponse buildBy(String str) {
+        try {
+            return new CoinListResponseImpl(new JSONObject(str));
+        } catch (JSONException e) {
+            CKLog.e(TAG, str == null ? "null" : str, e);
+            return null;
+        }
+    }
 }

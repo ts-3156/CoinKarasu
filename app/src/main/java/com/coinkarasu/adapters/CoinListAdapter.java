@@ -25,7 +25,7 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
     public static final int TYPE_HEADER = 1;
     public static final int TYPE_AD = 2;
 
-    private ArrayList<Coin> coins = new ArrayList<>();
+    private List<Coin> coins;
     private UiManager uiManager;
     private ResourceUtils resources;
     private ConfigUtils configs;
@@ -38,6 +38,7 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
 
         setHasStableIds(true);
 
+        this.coins = new ArrayList<>();
         for (Coin coin : coins) {
             addItem(coin);
         }

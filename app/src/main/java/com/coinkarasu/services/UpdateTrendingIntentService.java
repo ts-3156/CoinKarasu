@@ -13,7 +13,6 @@ import com.coinkarasu.api.cryptocompare.CacheMode;
 import com.coinkarasu.api.cryptocompare.Client;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.CoinList;
-import com.coinkarasu.api.cryptocompare.data.CoinListImpl;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.coins.Coin;
@@ -71,7 +70,7 @@ public class UpdateTrendingIntentService extends IntentService {
                 .getPrices(uniqueSymbols.toArray(new String[uniqueSymbols.size()]), toSymbol, exchange.name());
         List<PriceMultiFullCoin> baseCoins = prices.getCoins();
         List<Coin> coins = new ArrayList<>();
-        CoinList coinList = CoinListImpl.getInstance(this);
+        CoinList coinList = CoinList.getInstance(this);
 
         for (PriceMultiFullCoin coin : baseCoins) {
             List<History> records = getHistories(kind, coin.getFromSymbol(), coin.getToSymbol(), exchange.name());

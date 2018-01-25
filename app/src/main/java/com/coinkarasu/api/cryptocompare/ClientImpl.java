@@ -6,8 +6,6 @@ import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshotImpl;
 import com.coinkarasu.api.cryptocompare.data.HistoriesCache;
 import com.coinkarasu.api.cryptocompare.data.History;
-import com.coinkarasu.api.cryptocompare.data.Price;
-import com.coinkarasu.api.cryptocompare.data.PriceImpl;
 import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.api.cryptocompare.data.PricesImpl;
 import com.coinkarasu.api.cryptocompare.data.TopPairs;
@@ -44,24 +42,13 @@ class ClientImpl implements Client {
     }
 
     @Override
-    public Price getPrice(String fromSymbol, String toSymbol, String exchange) {
-        String url = "https://min-api.cryptocompare.com/data/pricemultifull?"
-                + "&fsyms=" + fromSymbol
-                + "&tsyms=" + toSymbol
-                + "&e=" + exchange;
-
-        JSONObject response = performGet(url);
-        return new PriceImpl(new PricesResponseImpl(response, new String[]{fromSymbol}, toSymbol, exchange));
-    }
-
-    @Override
     public Prices getPrices(String[] fromSymbols, String toSymbol, String exchange) {
         String url = "https://min-api.cryptocompare.com/data/pricemultifull?"
                 + "&fsyms=" + CKStringUtils.join(fromSymbols, ",")
                 + "&tsyms=" + toSymbol
                 + "&e=" + exchange;
         JSONObject response = performGet(url);
-        return new PricesImpl(new PricesResponseImpl(response, fromSymbols, toSymbol, exchange));
+        return new PricesImpl(new PricesResponseImpl(response));
     }
 
     /**

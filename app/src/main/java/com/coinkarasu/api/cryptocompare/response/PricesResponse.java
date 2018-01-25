@@ -2,8 +2,6 @@ package com.coinkarasu.api.cryptocompare.response;
 
 import org.json.JSONObject;
 
-public interface PricesResponse extends Cacheable {
+public interface PricesResponse {
     JSONObject getRaw();
-
-    String getExchange();
 }

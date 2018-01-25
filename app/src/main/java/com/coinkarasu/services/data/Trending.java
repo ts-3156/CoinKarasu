@@ -48,7 +48,7 @@ public class Trending {
             return null;
         }
 
-        ArrayList<Coin> coins = new ArrayList<>();
+        List<Coin> coins = new ArrayList<>();
 
         try {
             JSONArray data = new JSONArray(text);

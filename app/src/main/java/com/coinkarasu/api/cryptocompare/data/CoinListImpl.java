@@ -1,14 +1,7 @@
 package com.coinkarasu.api.cryptocompare.data;
 
-import android.content.Context;
-
-import com.coinkarasu.api.cryptocompare.CoinListReader;
 import com.coinkarasu.api.cryptocompare.response.CoinListResponse;
-import com.coinkarasu.api.cryptocompare.response.CoinListResponseImpl;
 import com.coinkarasu.coins.Coin;
-import com.coinkarasu.database.AppDatabase;
-import com.coinkarasu.database.CoinListCoin;
-import com.coinkarasu.services.UpdateCoinListIntentService;
 import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
@@ -18,47 +11,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class CoinListImpl implements CoinList {
+public class CoinListImpl extends CoinList {
     private static final boolean DEBUG = true;
     private static final String TAG = "CoinListImpl";
 
-    private static CoinList instance;
     private CoinListResponse response;
-    private boolean isCache;
 
-    private CoinListImpl(CoinListResponse response) {
-        this(response, false);
-    }
-
-    private CoinListImpl(CoinListResponse response, boolean isCache) {
+    protected CoinListImpl(CoinListResponse response) {
         this.response = response;
-        this.isCache = isCache;
-    }
-
-    public static synchronized CoinList getInstance(Context context) {
-        if (instance == null) {
-            try {
-                instance = CoinListImpl.restoreFromCache(context);
-            } catch (Exception e) {
-                CKLog.e(TAG, "getInstance1", e);
-            }
-        }
-
-        if (instance == null) {
-            try {
-                instance = CoinListImpl.buildByResponse(new JSONObject(CoinListReader.read(context)));
-                UpdateCoinListIntentService.start(context);
-            } catch (JSONException e) {
-                CKLog.e(TAG, "getInstance2", e);
-            }
-        }
-
-        return instance;
-    }
-
-    // @Override
-    public static CoinList buildByResponse(JSONObject response) {
-        return new CoinListImpl(new CoinListResponseImpl(response));
     }
 
     @Override
@@ -131,32 +91,6 @@ public class CoinListImpl implements CoinList {
         return coins;
     }
 
-    public static List<Coin> collectCoins(Context context, String[] fromSymbols) {
-        long start = System.currentTimeMillis();
-        List<Coin> coins = new ArrayList<>(fromSymbols.length);
-        AppDatabase db = AppDatabase.getAppDatabase(context);
-
-        List<CoinListCoin> coinListCoins = db.coinListCoinDao().findBySymbols(fromSymbols);
-
-        for (String symbol : fromSymbols) {
-            for (CoinListCoin coinListCoin : coinListCoins) {
-                if (coinListCoin.getSymbol().equals(symbol)) {
-                    coins.add(Coin.buildBy(coinListCoin));
-                    break;
-                }
-            }
-        }
-
-        if (fromSymbols.length != coins.size()) {
-            if (DEBUG) CKLog.w(TAG, "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
-        }
-
-        if (DEBUG) CKLog.d(TAG, "collectCoins() from DB " + coins.size() + " coins "
-                + (System.currentTimeMillis() - start) + " ms");
-
-        return coins;
-    }
-
     @Override
     public List<String> getAllSymbols() {
         return getAllSymbols(0, 3000);
@@ -193,7 +127,7 @@ public class CoinListImpl implements CoinList {
     }
 
     @Override
-    public void removeBySymbols(ArrayList<String> symbols) {
+    public void removeBySymbols(List<String> symbols) {
         JSONObject data = response.getData();
         if (data == null) {
             return;
@@ -213,27 +147,7 @@ public class CoinListImpl implements CoinList {
     }
 
     @Override
-    public boolean saveToCache(Context context) {
-        return response != null && response.saveToCache(context);
-    }
-
-    @Override
-    public boolean saveToCache(Context context, String tag) {
-        return saveToCache(context);
-    }
-
-    @Override
-    public boolean isCache() {
-        return isCache;
-    }
-
-    // @Override
-    private static CoinList restoreFromCache(Context context) {
-        CoinListResponse coinListResponse = CoinListResponseImpl.restoreFromCache(context);
-        if (coinListResponse == null || !coinListResponse.isSuccess()) {
-            return null;
-        }
-
-        return new CoinListImpl(coinListResponse);
+    public String toString() {
+        return response.toString();
     }
 }

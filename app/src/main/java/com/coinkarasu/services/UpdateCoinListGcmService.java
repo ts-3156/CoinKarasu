@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.coinkarasu.api.cryptocompare.data.CoinList;
-import com.coinkarasu.api.cryptocompare.data.CoinListImpl;
 import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.google.android.gms.gcm.GcmNetworkManager;
 import com.google.android.gms.gcm.GcmTaskService;
@@ -38,7 +37,7 @@ public class UpdateCoinListGcmService extends GcmTaskService {
             public void run() {
                 String url = "https://www.cryptocompare.com/api/data/coinlist/";
                 JSONObject response = new BlockingRequest(UpdateCoinListGcmService.this, url).perform();
-                CoinList coinList = CoinListImpl.buildByResponse(response);
+                CoinList coinList = CoinList.buildBy(response);
 
             }
         });
