@@ -5,7 +5,7 @@ import com.coinkarasu.activities.etc.CoinKind;
 
 import org.json.JSONObject;
 
-public class SectionHeaderCoinImpl implements SectionHeaderCoin, Coin {
+public class SectionHeaderCoinImpl extends Coin implements SectionHeaderCoin {
     private Exchange exchange;
     private CoinKind coinKind;
 

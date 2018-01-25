@@ -6,7 +6,6 @@ import com.coinkarasu.api.cryptocompare.CoinListReader;
 import com.coinkarasu.api.cryptocompare.response.CoinListResponse;
 import com.coinkarasu.api.cryptocompare.response.CoinListResponseImpl;
 import com.coinkarasu.coins.Coin;
-import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.database.AppDatabase;
 import com.coinkarasu.database.CoinListCoin;
 import com.coinkarasu.services.UpdateCoinListIntentService;
@@ -72,7 +71,7 @@ public class CoinListImpl implements CoinList {
 
         try {
             JSONObject attrs = response.getData().getJSONObject(symbol);
-            coin = CoinImpl.buildByAttrs(attrs);
+            coin = Coin.buildBy(attrs);
         } catch (JSONException e) {
             CKLog.e(TAG, e);
         }
@@ -96,7 +95,7 @@ public class CoinListImpl implements CoinList {
                 String key = keys.next();
                 JSONObject attrs = data.getJSONObject(key);
                 if (attrs.getString("Id").equals(id)) {
-                    coin = CoinImpl.buildByAttrs(attrs);
+                    coin = Coin.buildBy(attrs);
                     break;
                 }
             }
@@ -142,7 +141,7 @@ public class CoinListImpl implements CoinList {
         for (String symbol : fromSymbols) {
             for (CoinListCoin coinListCoin : coinListCoins) {
                 if (coinListCoin.getSymbol().equals(symbol)) {
-                    coins.add(CoinImpl.buildByCoinListCoin(coinListCoin));
+                    coins.add(Coin.buildBy(coinListCoin));
                     break;
                 }
             }

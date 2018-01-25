@@ -20,7 +20,6 @@ import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.coins.Coin;
-import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.coins.SnapshotCoin;
 import com.coinkarasu.format.PriceFormat;
 import com.coinkarasu.format.TrendColorFormat;
@@ -79,7 +78,7 @@ public class CoinExchangeFragment extends Fragment implements
             String coinJson = getArguments().getString("coinJson");
 
             try {
-                coin = CoinImpl.buildByAttrs(new JSONObject(coinJson));
+                coin = Coin.buildBy(new JSONObject(coinJson));
             } catch (JSONException e) {
                 CKLog.e(TAG, e);
             }

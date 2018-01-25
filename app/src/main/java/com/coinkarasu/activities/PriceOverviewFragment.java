@@ -18,7 +18,6 @@ import com.coinkarasu.animator.PriceDiffAnimator;
 import com.coinkarasu.animator.TrendAnimator;
 import com.coinkarasu.animator.ValueAnimatorBase;
 import com.coinkarasu.coins.Coin;
-import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
 import com.coinkarasu.format.PriceColorFormat;
@@ -78,7 +77,7 @@ public class PriceOverviewFragment extends Fragment implements
             String coinJson = getArguments().getString("coinJson");
 
             try {
-                coin = CoinImpl.buildByAttrs(new JSONObject(coinJson));
+                coin = Coin.buildBy(new JSONObject(coinJson));
             } catch (JSONException e) {
                 CKLog.e(TAG, e);
             }

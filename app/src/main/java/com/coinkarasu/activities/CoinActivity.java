@@ -22,7 +22,6 @@ import com.coinkarasu.activities.etc.Currency;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.api.bitflyer.data.Board;
 import com.coinkarasu.coins.Coin;
-import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.custom.SwipeDetector;
 import com.coinkarasu.tasks.GetBoardTask;
 import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
@@ -31,9 +30,6 @@ import com.coinkarasu.tasks.LogCoinSelectedEventTask;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 import com.google.firebase.analytics.FirebaseAnalytics;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class CoinActivity extends AppCompatActivity implements
         InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
@@ -55,11 +51,7 @@ public class CoinActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_coin);
 
         Intent intent = getIntent();
-        try {
-            coin = CoinImpl.buildByAttrs(new JSONObject(intent.getStringExtra(KEY_COIN_JSON)));
-        } catch (JSONException e) {
-            CKLog.e(TAG, e);
-        }
+        coin = Coin.buildBy(intent.getStringExtra(KEY_COIN_JSON));
         final NavigationKind kind = NavigationKind.valueOf(intent.getStringExtra(KEY_KIND));
 
         CKLog.setContext(this);

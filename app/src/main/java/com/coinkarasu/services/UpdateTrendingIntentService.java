@@ -17,7 +17,6 @@ import com.coinkarasu.api.cryptocompare.data.CoinListImpl;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.coins.Coin;
-import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Trending;
 import com.coinkarasu.utils.CKLog;
@@ -87,7 +86,7 @@ public class UpdateTrendingIntentService extends IntentService {
             }
 
             Coin coinListCoin = coinList.getCoinBySymbol(coin.getFromSymbol());
-            Coin newCoin = CoinImpl.buildByPMFCoin(coin, coinListCoin.getFullName(), coinListCoin.getImageUrl());
+            Coin newCoin = Coin.buildBy(coin, coinListCoin.getFullName(), coinListCoin.getImageUrl());
             newCoin.setToSymbol(coin.getToSymbol());
             newCoin.setPrice(oldest.getClose());
             newCoin.setPrice(latest.getClose());

@@ -5,7 +5,6 @@ import android.text.TextUtils;
 
 import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.coins.Coin;
-import com.coinkarasu.coins.CoinImpl;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.io.CacheFileHelper;
 
@@ -55,7 +54,7 @@ public class Trending {
             JSONArray data = new JSONArray(text);
             for (int i = 0; i < data.length(); i++) {
                 JSONObject attrs = data.getJSONObject(i);
-                coins.add(CoinImpl.buildByAttrs(attrs));
+                coins.add(Coin.buildBy(attrs));
             }
         } catch (JSONException e) {
             CKLog.e(TAG, text, e);

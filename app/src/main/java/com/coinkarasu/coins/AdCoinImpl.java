@@ -1,11 +1,10 @@
 package com.coinkarasu.coins;
 
 import com.coinkarasu.activities.etc.CoinKind;
-import com.coinkarasu.activities.etc.Exchange;
 
 import org.json.JSONObject;
 
-public class AdCoinImpl implements AdCoin, Coin {
+public class AdCoinImpl extends Coin implements AdCoin {
 
     @Override
     public int getId() {

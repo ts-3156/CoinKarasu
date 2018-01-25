@@ -6,8 +6,7 @@ import com.coinkarasu.utils.CKLog;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CoinImpl implements Coin {
-
+public class CoinImpl extends Coin {
     private static final boolean DEBUG = true;
     private static final String TAG = "CoinImpl";
 
@@ -43,7 +42,7 @@ public class CoinImpl implements Coin {
 
     private CoinKind coinKind;
 
-    private CoinImpl(JSONObject attrs) {
+    protected CoinImpl(JSONObject attrs) {
         try {
             if (attrs.has("Id"))
                 id = attrs.getInt("Id");
@@ -103,29 +102,6 @@ public class CoinImpl implements Coin {
             CKLog.e(TAG, attrs.toString(), e);
         }
 
-    }
-
-    public static Coin buildByAttrs(JSONObject attrs) {
-        return new CoinImpl(attrs);
-    }
-
-    public static Coin buildByPMFCoin(PriceMultiFullCoin coin, String fullName, String imageUrl) {
-        JSONObject attrs = new JSONObject();
-
-        try {
-            attrs.put("Symbol", coin.getFromSymbol());
-            attrs.put("FullName", fullName);
-            attrs.put("ImageUrl", imageUrl);
-        } catch (JSONException e) {
-            CKLog.e(TAG, coin.toJson().toString(), e);
-            return null;
-        }
-
-        return new CoinImpl(attrs);
-    }
-
-    public static Coin buildByCoinListCoin(com.coinkarasu.database.CoinListCoin coin) {
-        return new CoinImpl(coin.toJson());
     }
 
     @Override
