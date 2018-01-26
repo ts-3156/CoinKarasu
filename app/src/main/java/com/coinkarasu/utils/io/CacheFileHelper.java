@@ -40,7 +40,7 @@ public class CacheFileHelper {
         try {
             file.createNewFile();
         } catch (IOException e) {
-            CKLog.e(TAG, "touch()", e);
+            CKLog.e(TAG, e);
         }
         return file.setLastModified(System.currentTimeMillis());
     }

@@ -30,8 +30,12 @@ public class CoinListImpl extends CoinList {
         Coin coin = null;
 
         try {
-            JSONObject attrs = response.getData().getJSONObject(symbol);
-            coin = Coin.buildBy(attrs);
+            if (response.getData().has(symbol)) {
+                JSONObject attrs = response.getData().getJSONObject(symbol);
+                coin = Coin.buildBy(attrs);
+            } else {
+                if (DEBUG) CKLog.w(TAG, "CoinList doesn't have " + symbol);
+            }
         } catch (JSONException e) {
             CKLog.e(TAG, e);
         }
@@ -82,7 +86,8 @@ public class CoinListImpl extends CoinList {
         }
 
         if (fromSymbols.length != coins.size()) {
-            if (DEBUG) CKLog.w(TAG, "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
+            if (DEBUG) CKLog.w(TAG, "collectCoins() Different size "
+                    + fromSymbols.length + " symbols " + coins.size() + " coins from FILE");
         }
 
         if (DEBUG) CKLog.d(TAG, "collectCoins() from FILE " + coins.size() + " coins "

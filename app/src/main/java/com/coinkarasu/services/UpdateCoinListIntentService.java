@@ -5,28 +5,27 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.CoinList;
-import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.database.AppDatabase;
 import com.coinkarasu.database.CoinListCoin;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.io.CacheFileHelper;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class UpdateCoinListIntentService extends IntentService {
 
     private static final boolean DEBUG = true;
+    private static final String TAG = "UpdateCoinListIntentService";
 
     private static final String LOG = UpdateCoinListIntentService.class.getSimpleName() + ".log";
-    private static final long THIRTY_MINUTES = 30 * 60 * 1000;
-    private static final String TAG = UpdateCoinListIntentService.class.getSimpleName();
+    private static final long THIRTY_MINUTES = TimeUnit.MINUTES.toMinutes(30);
 
     public UpdateCoinListIntentService() {
         super(TAG);
@@ -49,9 +48,7 @@ public class UpdateCoinListIntentService extends IntentService {
         CacheFileHelper.touch(this, LOG);
 
         long start = System.currentTimeMillis();
-        String url = "https://www.cryptocompare.com/api/data/coinlist/";
-        JSONObject response = new BlockingRequest(this, url).perform();
-        CoinList coinList = CoinList.buildBy(response);
+        CoinList coinList = ClientFactory.getInstance(this).getCoinList();
 
         AppDatabase db = AppDatabase.getAppDatabase(this);
         db.coinListCoinDao().deleteAll();
@@ -62,20 +59,22 @@ public class UpdateCoinListIntentService extends IntentService {
                 continue;
             }
 
-            String[] array = getResources().getStringArray(kind.symbolsResId);
-            Collections.addAll(uniqueSymbols, array);
+            Collections.addAll(uniqueSymbols, getResources().getStringArray(kind.symbolsResId));
         }
 
         List<Coin> coins = new ArrayList<>(uniqueSymbols.size());
         for (String symbol : uniqueSymbols) {
-            coins.add(coinList.getCoinBySymbol(symbol));
+            Coin c = coinList.getCoinBySymbol(symbol);
+            if (c != null) {
+                coins.add(coinList.getCoinBySymbol(symbol));
+            }
         }
 
-        List<CoinListCoin> coinListCoins = new ArrayList<>(coins.size());
+        List<CoinListCoin> insertCoins = new ArrayList<>(coins.size());
         for (Coin coin : coins) {
-            coinListCoins.add(new CoinListCoin(coin));
+            insertCoins.add(new CoinListCoin(coin));
         }
-        db.coinListCoinDao().insertCoins(coinListCoins);
+        db.coinListCoinDao().insertCoins(insertCoins);
 
         removeUnusedSymbolsFromCoinList(coinList, uniqueSymbols);
         coinList.saveToCache(this);
@@ -85,7 +84,7 @@ public class UpdateCoinListIntentService extends IntentService {
                 +coinList.getAllSymbols().size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 
-    private void removeUnusedSymbolsFromCoinList(CoinList coinList, LinkedHashSet<String> symbols) {
+    private static void removeUnusedSymbolsFromCoinList(CoinList coinList, LinkedHashSet<String> symbols) {
         List<String> unusedSymbols = new ArrayList<>();
 
         for (String symbol : coinList.getAllSymbols()) {

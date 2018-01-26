@@ -1,5 +1,6 @@
 package com.coinkarasu.api.cryptocompare;
 
+import com.coinkarasu.api.cryptocompare.data.CoinList;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.api.cryptocompare.data.Prices;
@@ -27,4 +28,6 @@ public interface Client {
     CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol);
 
     TopPairs getTopPairs(String fromSymbol);
+
+    CoinList getCoinList();
 }

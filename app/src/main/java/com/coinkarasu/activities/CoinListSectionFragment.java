@@ -113,6 +113,7 @@ public class CoinListSectionFragment extends Fragment implements
         } else {
             fromSymbols = getResources().getStringArray(section.getSymbolsResId());
         }
+        final int fromSymbolsLength = fromSymbols.length;
 
         new CollectCoinsTask(getActivity())
                 .setFromSymbols(fromSymbols)
@@ -121,6 +122,11 @@ public class CoinListSectionFragment extends Fragment implements
                     public void coinsCollected(List<Coin> inCoins) {
                         if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
                             return;
+                        }
+
+                        if (coins != null && fromSymbolsLength != coins.size()) {
+                            if (DEBUG) CKLog.w(TAG, "collectCoins() " + section.toString()
+                                    + " Different size " + fromSymbolsLength + " symbols " + coins.size() + " coins");
                         }
 
                         if (coins != null && !coins.isEmpty()) {

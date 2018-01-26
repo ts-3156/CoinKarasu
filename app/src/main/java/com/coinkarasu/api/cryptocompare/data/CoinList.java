@@ -52,7 +52,8 @@ public abstract class CoinList {
         }
 
         if (fromSymbols.length != coins.size()) {
-            if (DEBUG) CKLog.w(TAG, "Different size " + fromSymbols.length + " symbols " + coins.size() + " coins");
+            if (DEBUG) CKLog.w(TAG, "collectCoins() Different size "
+                    + fromSymbols.length + " symbols " + coins.size() + " coins from DB");
         }
 
         if (DEBUG) CKLog.d(TAG, "collectCoins() from DB " + coins.size() + " coins "
@@ -77,6 +78,7 @@ public abstract class CoinList {
         }
 
         if (instance == null) {
+            if (DEBUG) CKLog.w(TAG, "getInstance() Failed to restore from cache");
             try {
                 instance = buildBy(new JSONObject(readFromResource(context)));
                 UpdateCoinListIntentService.start(context);

@@ -2,6 +2,7 @@ package com.coinkarasu.api.cryptocompare;
 
 import android.content.Context;
 
+import com.coinkarasu.api.cryptocompare.data.CoinList;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshotImpl;
 import com.coinkarasu.api.cryptocompare.data.HistoriesCache;
@@ -176,6 +177,12 @@ class ClientImpl implements Client {
         }
 
         return new TopPairsImpl(response);
+    }
+
+    @Override
+    public CoinList getCoinList() {
+        String url = "https://www.cryptocompare.com/api/data/coinlist/";
+        return CoinList.buildBy(performGet(url));
     }
 
     private List<History> sampling(List<History> records, int aggregate) {
