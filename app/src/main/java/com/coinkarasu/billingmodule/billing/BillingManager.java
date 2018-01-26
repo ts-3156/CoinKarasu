@@ -30,7 +30,7 @@ import java.util.Set;
  * it through BillingClient and caches temporary states/data if needed
  */
 public class BillingManager implements PurchasesUpdatedListener {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "BillingManager";
 
     // Default value of mBillingClientResponseCode until BillingManager was not yet initialized

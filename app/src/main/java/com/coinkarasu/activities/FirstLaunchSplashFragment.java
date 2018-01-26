@@ -7,9 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.coinkarasu.R;
+import com.coinkarasu.utils.CKLog;
 
 public class FirstLaunchSplashFragment extends Fragment {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "FirstLaunchSplashFragment";
 
     public FirstLaunchSplashFragment() {

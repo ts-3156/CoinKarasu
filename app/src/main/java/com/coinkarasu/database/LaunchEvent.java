@@ -16,7 +16,7 @@ import java.util.Date;
 
 @Entity(tableName = "launch_events", indices = {@Index(value = {"created"})})
 public class LaunchEvent {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "LaunchEvent";
 
     public LaunchEvent() {

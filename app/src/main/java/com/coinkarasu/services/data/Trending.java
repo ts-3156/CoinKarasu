@@ -18,7 +18,7 @@ import java.util.List;
 
 public class Trending {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "Trending";
 
     private TrendingKind kind;

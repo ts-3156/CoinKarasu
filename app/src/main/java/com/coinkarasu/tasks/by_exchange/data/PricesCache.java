@@ -20,7 +20,7 @@ import static com.coinkarasu.utils.cache.StringArrayListCache.makeCacheName;
  * 有効期限はなく、常に上書きする。
  */
 public final class PricesCache {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "PricesCache";
 
     private StringArrayListCache<Price> cache;

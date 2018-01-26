@@ -37,7 +37,7 @@ public class CoinListFragment extends Fragment implements
         SharedPreferences.OnSharedPreferenceChangeListener,
         RelativeTimeSpanTextView.TimeProvider {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinListFragment";
     private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
 

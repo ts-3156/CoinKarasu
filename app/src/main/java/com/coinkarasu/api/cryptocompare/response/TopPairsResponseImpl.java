@@ -11,7 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class TopPairsResponseImpl implements TopPairsResponse {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "TopPairsResponseImpl";
 
     private static final long THIRTY_MINUTES = 30 * 60 * 1000;

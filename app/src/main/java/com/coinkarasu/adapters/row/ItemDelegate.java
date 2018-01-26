@@ -14,9 +14,10 @@ import com.coinkarasu.animator.PriceBgColorAnimator;
 import com.coinkarasu.animator.PriceDiffAnimator;
 import com.coinkarasu.animator.TrendAnimator;
 import com.coinkarasu.coins.Coin;
+import com.coinkarasu.utils.CKLog;
 
 public class ItemDelegate extends UiManagingDelegate {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "ItemDelegate";
     public static final int TYPE = CoinListAdapter.TYPE_ITEM;
 

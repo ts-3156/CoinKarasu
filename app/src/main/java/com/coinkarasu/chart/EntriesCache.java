@@ -18,7 +18,7 @@ import static com.coinkarasu.utils.cache.StringArrayListCache.makeCacheName;
  * 有効期限はなく、常に上書きする。
  */
 public final class EntriesCache {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "EntriesCache";
 
     private StringArrayListCache<Entry> cache;

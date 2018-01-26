@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements
         InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver,
         BillingCallback {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "MainActivity";
     private static final String FRAGMENT_TAG = "fragment";
 

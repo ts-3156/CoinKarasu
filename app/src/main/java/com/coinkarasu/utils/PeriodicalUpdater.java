@@ -4,7 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class PeriodicalUpdater {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "PeriodicalUpdater";
     private static final long FORCE_UPDATE_INTERVAL = 3000;
 

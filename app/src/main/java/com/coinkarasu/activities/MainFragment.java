@@ -22,7 +22,7 @@ import java.util.List;
 public class MainFragment extends Fragment implements
         TabLayout.OnTabSelectedListener {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "MainFragment";
     private static final String STATE_SELECTED_KIND_KEY = "kind";
     private static final String STATE_PAGER_ADAPTER_VERSION = "pagerAdapterVersion";

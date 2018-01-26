@@ -12,7 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class CoinListImpl extends CoinList {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinListImpl";
 
     private CoinListResponse response;

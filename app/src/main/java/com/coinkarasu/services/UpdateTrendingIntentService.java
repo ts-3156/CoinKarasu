@@ -31,7 +31,7 @@ import java.util.Set;
 
 public class UpdateTrendingIntentService extends IntentService {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = UpdateTrendingIntentService.class.getSimpleName();
 
     public UpdateTrendingIntentService() {

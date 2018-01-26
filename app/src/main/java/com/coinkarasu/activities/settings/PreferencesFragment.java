@@ -37,7 +37,7 @@ import java.util.List;
 
 public class PreferencesFragment extends PreferenceFragment implements
         Preference.OnPreferenceClickListener {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "PreferencesFragment";
 
     private OnFragmentInteractionListener listener;

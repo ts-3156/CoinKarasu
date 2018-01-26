@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "GetCccaggPricesTask";
 
     private List<GetCccaggPricesThread> threads;

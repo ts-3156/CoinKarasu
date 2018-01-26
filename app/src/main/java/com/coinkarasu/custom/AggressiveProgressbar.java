@@ -10,9 +10,10 @@ import android.view.animation.AnimationUtils;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.animator.ValueAnimatorBase;
+import com.coinkarasu.utils.CKLog;
 
 public class AggressiveProgressbar extends AppCompatImageView {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "AggressiveProgressbar";
     private static final long DELAY = ValueAnimatorBase.DURATION;
 

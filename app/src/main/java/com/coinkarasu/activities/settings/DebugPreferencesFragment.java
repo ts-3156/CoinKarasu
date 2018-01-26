@@ -30,7 +30,7 @@ import java.util.Date;
 
 public class DebugPreferencesFragment extends PreferenceFragment implements
         Preference.OnPreferenceClickListener, Preference.OnPreferenceChangeListener {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "DebugPreferencesFragment";
 
     private Preference.OnPreferenceChangeListener listener;

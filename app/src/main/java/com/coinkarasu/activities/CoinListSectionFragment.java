@@ -35,7 +35,7 @@ public class CoinListSectionFragment extends Fragment implements
         GetPricesByExchangeTaskBase.Listener,
         PeriodicalUpdater.PeriodicalTask {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinListSectionFragment";
     private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
     private static final String STATE_LAST_UPDATED_KEY = "lastUpdated";

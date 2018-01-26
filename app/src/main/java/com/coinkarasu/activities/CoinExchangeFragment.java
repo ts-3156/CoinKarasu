@@ -38,7 +38,7 @@ import java.util.List;
 public class CoinExchangeFragment extends Fragment implements
         GetCoinSnapshotTask.Listener, ViewPager.OnPageChangeListener {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinExchangeFragment";
 
     private String kind;

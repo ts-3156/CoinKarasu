@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 public class UpdateCoinListIntentService extends IntentService {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "UpdateCoinListIntentService";
 
     private static final String LOG = UpdateCoinListIntentService.class.getSimpleName() + ".log";

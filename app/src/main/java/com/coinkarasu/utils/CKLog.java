@@ -26,7 +26,7 @@ import java.util.Queue;
 import java.util.Random;
 
 public class CKLog {
-    private static final boolean DEBUG = BuildConfig.DEBUG;
+    public static final boolean DEBUG = BuildConfig.DEBUG;
     private static final String TAG = "CKLog";
     private static final String TAG_PREFIX = "CK.";
 

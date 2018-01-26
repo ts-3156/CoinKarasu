@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoinSnapshotImpl implements CoinSnapshot {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinSnapshotImpl";
 
     private String algorithm;

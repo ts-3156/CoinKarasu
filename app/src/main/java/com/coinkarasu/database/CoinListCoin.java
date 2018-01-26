@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 @Entity(tableName = "coin_list_coins", indices = {@Index(value = {"symbol"}, unique = true)})
 public class CoinListCoin {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinListCoin";
 
     public CoinListCoin() {

@@ -33,7 +33,7 @@ import java.util.List;
 public class CoinPieChartFragment extends Fragment implements
         ViewPager.OnPageChangeListener, GetTopPairsTask.Listener {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinPieChartFragment";
     private static final PieChartKind DEFAULT_KIND = PieChartKind.currency;
 

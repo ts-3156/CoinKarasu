@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.coinkarasu.utils.CKLog;
 
 public class SwipeDetector extends GestureDetector.SimpleOnGestureListener implements View.OnTouchListener {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "SwipeDetector";
 
     public static final int TO_LEFT = 1;

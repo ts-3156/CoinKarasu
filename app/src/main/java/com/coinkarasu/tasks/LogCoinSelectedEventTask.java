@@ -15,7 +15,7 @@ import com.coinkarasu.utils.UuidUtils;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class LogCoinSelectedEventTask extends AsyncTask<Object, Void, Void> {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "LogTabChangedEventTask";
 
     @Override

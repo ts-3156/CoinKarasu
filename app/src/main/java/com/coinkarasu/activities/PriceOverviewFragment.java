@@ -42,7 +42,7 @@ public class PriceOverviewFragment extends Fragment implements
         GetPricesByExchangeTaskBase.Listener,
         RelativeTimeSpanTextView.TimeProvider {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "PriceOverviewFragment";
     private static final String STATE_LAST_UPDATED_KEY = "lastUpdated";
 

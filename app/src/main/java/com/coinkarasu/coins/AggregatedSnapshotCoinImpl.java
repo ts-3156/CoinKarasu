@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class AggregatedSnapshotCoinImpl implements AggregatedSnapshotCoin {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "AggregatedSnapshotCoinImpl";
 
     private String market;

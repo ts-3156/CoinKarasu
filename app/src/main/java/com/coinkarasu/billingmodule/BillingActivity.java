@@ -46,7 +46,7 @@ public class BillingActivity extends AppCompatActivity implements
         InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
 
     private static final String TAG = "BillingActivity";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
 
     private BillingManager mBillingManager;
     private BillingViewController mViewController;

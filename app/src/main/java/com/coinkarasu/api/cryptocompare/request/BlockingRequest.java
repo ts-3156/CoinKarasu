@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class BlockingRequest extends RequestBase {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "BlockingRequest";
 
     public BlockingRequest(Context context, String url) {

@@ -15,7 +15,7 @@ import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 
 public class AdDelegate extends UiManagingDelegate {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "AdDelegate";
     public static final int TYPE = CoinListAdapter.TYPE_AD;
 

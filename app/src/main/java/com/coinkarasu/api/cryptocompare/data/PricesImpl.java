@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class PricesImpl implements Prices {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "PricesImpl";
 
     private List<PriceMultiFullCoin> coins;

@@ -14,12 +14,13 @@ import com.coinkarasu.adapters.row.RowDataProvider;
 import com.coinkarasu.adapters.row.UiManager;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
+import com.coinkarasu.utils.CKLog;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> implements RowDataProvider {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinListAdapter";
     public static final int TYPE_ITEM = 0;
     public static final int TYPE_HEADER = 1;

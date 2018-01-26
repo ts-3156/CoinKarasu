@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public abstract class Coin implements CoinListCoin, PriceMultiFullCoin, SectionHeaderCoin, AdCoin, UpdatableCoin, TradingOrSalesCoin {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "Coin";
 
     public static Coin buildBy(JSONObject attrs) {

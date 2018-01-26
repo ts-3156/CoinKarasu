@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 
 public class BillingViewController {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "BillingViewController";
 
     private Context context;

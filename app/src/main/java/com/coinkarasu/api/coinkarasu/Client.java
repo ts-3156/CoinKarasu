@@ -26,7 +26,7 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 public class Client {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "Client";
     private static final String HOST = BuildConfig.CK_HOST;
     private static final long ONE_DAY = 60 * 60 * 24;

@@ -29,7 +29,7 @@ import java.util.List;
 public class HomeTabCardFragment extends Fragment implements
         View.OnClickListener, HomeTabAdapter.OnItemClickListener, PopupMenu.OnMenuItemClickListener {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "HomeTabCardFragment";
 
     private TrendingKind kind;

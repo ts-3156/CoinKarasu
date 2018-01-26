@@ -29,7 +29,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 public class CoinActivity extends AppCompatActivity implements
         InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinActivity";
     private static final String KEY_COIN_JSON = "KEY_COIN_JSON";
     private static final String KEY_KIND = "KEY_KIND";

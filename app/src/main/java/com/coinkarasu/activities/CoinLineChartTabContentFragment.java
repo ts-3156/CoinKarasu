@@ -22,7 +22,7 @@ import com.github.mikephil.charting.charts.LineChart;
 import java.util.List;
 
 public class CoinLineChartTabContentFragment extends Fragment implements GetHistoryTaskBase.Listener {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinLineChartTabContentFragment";
 
     private HistoricalPriceKind kind;

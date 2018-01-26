@@ -25,7 +25,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 public class FirstLaunchActivity extends AppCompatActivity implements
         InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "FirstLaunchActivity";
 
     private FirebaseAnalytics firebaseAnalytics;

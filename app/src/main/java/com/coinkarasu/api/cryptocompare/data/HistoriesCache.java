@@ -13,7 +13,7 @@ import java.util.List;
 import static com.coinkarasu.utils.cache.StringArrayListCache.makeCacheName;
 
 public final class HistoriesCache {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "HistoriesCache";
 
     private StringArrayListCache<History> cache;

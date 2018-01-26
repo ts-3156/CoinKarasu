@@ -19,7 +19,7 @@ import com.robinhood.spark.SparkView;
 import java.util.List;
 
 public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Listener {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "NetworkSparkView";
 
     private static final SparkAdapter emptyAdapter = new SparkAdapter() {

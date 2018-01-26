@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainViewController implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "MainViewController";
 
     private MainActivity activity;

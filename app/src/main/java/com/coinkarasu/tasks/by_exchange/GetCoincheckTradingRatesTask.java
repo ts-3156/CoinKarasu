@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GetCoincheckTradingRatesTask extends GetPricesByExchangeTaskBase {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "GetCoincheckTradingRatesTask";
 
     private List<Thread> threads;

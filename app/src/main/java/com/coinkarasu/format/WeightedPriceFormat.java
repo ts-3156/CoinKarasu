@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class WeightedPriceFormat extends PriceFormat {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "WeightedPriceFormat";
     private static final Pattern PATTERN = Pattern.compile("([0.]+)");
     private static final TypefaceSpan THIN = new TypefaceSpan("sans-serif-thin");

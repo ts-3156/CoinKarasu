@@ -30,7 +30,7 @@ import java.util.List;
 public class HistoricalPriceFragment extends Fragment implements
         ViewPager.OnPageChangeListener {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "HistoricalPriceFragment";
     private static final HistoricalPriceKind DEFAULT_KIND = HistoricalPriceKind.hour;
 

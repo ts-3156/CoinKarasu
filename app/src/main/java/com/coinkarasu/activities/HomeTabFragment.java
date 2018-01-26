@@ -27,7 +27,7 @@ import com.coinkarasu.utils.Tutorial;
 
 public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "HomeTabFragment";
     private static final String STATE_IS_VISIBLE_TO_USER_KEY = "isVisibleToUser";
     public static final String ACTION_UPDATE_TRENDING = "updateTrending";

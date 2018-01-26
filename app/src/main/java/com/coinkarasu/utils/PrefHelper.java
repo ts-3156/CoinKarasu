@@ -17,7 +17,7 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import java.lang.reflect.Method;
 
 public class PrefHelper {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "PrefHelper";
 
     public static final int DEFAULT_SYNC_INTERVAL = 30000;

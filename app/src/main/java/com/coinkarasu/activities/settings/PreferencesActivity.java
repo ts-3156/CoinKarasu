@@ -33,7 +33,7 @@ public class PreferencesActivity extends AppCompatActivity implements
         PreferencesFragment.OnFragmentInteractionListener,
         InitializeThirdPartyAppsTask.FirebaseAnalyticsReceiver {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "PreferencesActivity";
 
     private FirebaseAnalytics firebaseAnalytics;

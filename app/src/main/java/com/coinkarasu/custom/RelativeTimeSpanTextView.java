@@ -15,7 +15,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class RelativeTimeSpanTextView extends AppCompatTextView {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "RelativeTimeSpanTextView";
     private static final long DEFAULT_DELAY = 0;
     private static final long DEFAULT_PERIOD = 5000;

@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.UUID;
 
 public class UuidUtils {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "UuidUtils";
     private static final String NAME = "uuid";
 

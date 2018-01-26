@@ -12,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Board {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "Board";
 
     private List<Data> asks;

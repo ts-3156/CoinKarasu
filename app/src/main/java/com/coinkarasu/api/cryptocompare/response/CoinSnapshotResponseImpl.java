@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CoinSnapshotResponseImpl implements CoinSnapshotResponse {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinSnapshotResponseImpl";
 
     private JSONObject response;

@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 public class Price {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "Price";
 
     private Exchange exchange;

@@ -3,13 +3,14 @@ package com.coinkarasu.tasks;
 import android.app.Activity;
 import android.os.AsyncTask;
 
+import com.coinkarasu.utils.CKLog;
 import com.crashlytics.android.Crashlytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import io.fabric.sdk.android.Fabric;
 
 public class InitializeThirdPartyAppsTask extends AsyncTask<Activity, Void, Void> {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "InitializeThirdPartyAppsTask";
 
     protected Runnable runnable;

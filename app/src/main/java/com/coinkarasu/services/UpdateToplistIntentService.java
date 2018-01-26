@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 public class UpdateToplistIntentService extends IntentService {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "UpdateToplistIntentService";
     private static final long ONE_HOUR = TimeUnit.MINUTES.toMillis(60);
 

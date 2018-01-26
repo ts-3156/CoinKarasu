@@ -10,7 +10,7 @@ import com.coinkarasu.utils.Token;
 import com.coinkarasu.utils.UuidUtils;
 
 public class GetApiKeyTask extends AsyncTask<Integer, Integer, Integer> {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "GetApiKeyTask";
 
     private Context context;

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TopPairsImpl implements TopPairs {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "TopPairsImpl";
 
     private List<TopPairCoin> topPairCoins;

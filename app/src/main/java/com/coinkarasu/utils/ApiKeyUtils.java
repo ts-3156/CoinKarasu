@@ -12,7 +12,7 @@ import org.json.JSONObject;
 import java.io.File;
 
 public class ApiKeyUtils {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "ApiKeyUtils";
     private static final String NAME = "token";
 

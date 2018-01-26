@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.coinkarasu.R;
 import com.coinkarasu.api.bitflyer.data.Board;
 import com.coinkarasu.tasks.GetBoardTask;
+import com.coinkarasu.utils.CKLog;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.text.DecimalFormat;
@@ -21,7 +22,7 @@ import java.util.List;
 
 
 public class CoinBoardFragment extends Fragment implements View.OnClickListener {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinBoardFragment";
 
     private Button btn;

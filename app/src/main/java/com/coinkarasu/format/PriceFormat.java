@@ -7,7 +7,7 @@ import java.util.Currency;
 import java.util.Locale;
 
 public class PriceFormat {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "PriceFormat";
 
     protected String toSymbol;

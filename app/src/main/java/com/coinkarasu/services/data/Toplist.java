@@ -19,7 +19,7 @@ import java.util.List;
 
 public class Toplist {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "Toplist";
 
     private NavigationKind kind;

@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class CacheFileHelper {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CacheFileHelper";
 
     public static void write(Context context, String name, String text) {

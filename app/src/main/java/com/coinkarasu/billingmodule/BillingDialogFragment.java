@@ -5,8 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 
+import com.coinkarasu.utils.CKLog;
+
 public class BillingDialogFragment extends DialogFragment {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "BillingDialogFragment";
 
     private String message;

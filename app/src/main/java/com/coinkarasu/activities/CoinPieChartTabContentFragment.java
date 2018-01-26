@@ -36,7 +36,7 @@ import java.util.List;
 public class CoinPieChartTabContentFragment extends Fragment implements
         GetTopPairsTask.Listener, GetCoinSnapshotTask.Listener {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinPieChartTabContentFragment";
 
     private PieChartKind kind;

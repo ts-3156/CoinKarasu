@@ -31,7 +31,7 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class CoinExchangeTabContentFragment extends Fragment implements GetHistoryHourTask.Listener {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "CoinExchangeTabContentFragment";
 
     private SnapshotCoin coin;

@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class GetZaifTradingRatesTask extends GetPricesByExchangeTaskBase {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "GetZaifTradingRatesTask";
 
     private List<GetCccaggPricesThread> threads;

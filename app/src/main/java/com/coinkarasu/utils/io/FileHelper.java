@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 
 public class FileHelper {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "FileHelper";
 
     public static void write(File file, String text) {

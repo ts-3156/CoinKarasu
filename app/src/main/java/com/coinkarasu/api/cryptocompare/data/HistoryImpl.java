@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 public class HistoryImpl implements History {
     private static final String TAG = "HistoryImpl";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
 
     private long time;
     private double close;

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class HistoryResponseImpl implements HistoryResponse {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "HistoryResponseImpl";
 
     public enum HistoryKind {
