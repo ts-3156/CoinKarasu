@@ -31,8 +31,6 @@ import java.util.Set;
 public class UpdateTrendingIntentService extends IntentService {
 
     private static final boolean DEBUG = true;
-
-    private static final long ONE_DAY = 24 * 60 * 60 * 1000;
     private static final String TAG = UpdateTrendingIntentService.class.getSimpleName();
 
     public UpdateTrendingIntentService() {
@@ -56,7 +54,7 @@ public class UpdateTrendingIntentService extends IntentService {
         long start = System.currentTimeMillis();
         String logFile = logFile(kind, toSymbol, exchange.name());
 
-        if (!force && CacheFileHelper.exists(this, logFile) && !CacheFileHelper.isExpired(this, logFile, ONE_DAY)) {
+        if (!force && CacheFileHelper.exists(this, logFile) && !CacheFileHelper.isExpired(this, logFile, kind.expiration)) {
             if (DEBUG) CKLog.d(TAG, kind.name() + " " + exchange + " " + toSymbol + " is recently executed.");
             return;
         }

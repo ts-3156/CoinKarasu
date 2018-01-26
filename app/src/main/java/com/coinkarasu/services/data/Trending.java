@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Trending {
@@ -22,10 +23,16 @@ public class Trending {
 
     private TrendingKind kind;
     private List<Coin> coins;
+    private Date updated;
 
     public Trending(List<Coin> coins, TrendingKind kind) {
+        this(coins, kind, null);
+    }
+
+    public Trending(List<Coin> coins, TrendingKind kind, Date updated) {
         this.coins = coins;
         this.kind = kind;
+        this.updated = updated;
     }
 
     public void saveToCache(Context context) {
@@ -38,12 +45,13 @@ public class Trending {
     }
 
     public static Trending restoreFromCache(Context context, TrendingKind kind) {
-        if (!CacheFileHelper.exists(context, getCacheName(kind))) {
+        String key = getCacheName(kind);
+        if (!CacheFileHelper.exists(context, key)) {
             return null;
         }
 
         long start = System.currentTimeMillis();
-        String text = CacheFileHelper.read(context, getCacheName(kind));
+        String text = CacheFileHelper.read(context, key);
         if (TextUtils.isEmpty(text)) {
             return null;
         }
@@ -63,7 +71,7 @@ public class Trending {
         if (DEBUG) CKLog.d(TAG, "restoreFromCache(" + kind.name() + ") elapsed time: "
                 + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
 
-        return new Trending(coins, kind);
+        return new Trending(coins, kind, CacheFileHelper.lastModified(context, key));
     }
 
     private static String getCacheName(TrendingKind kind) {
@@ -74,7 +82,7 @@ public class Trending {
         return coins;
     }
 
-    public TrendingKind getKind() {
-        return kind;
+    public Date getUpdated() {
+        return updated;
     }
 }

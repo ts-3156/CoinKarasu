@@ -4,11 +4,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v7.widget.AppCompatTextView;
-import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.view.View;
 
 import com.coinkarasu.activities.etc.Section;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 
 import java.util.Timer;
@@ -142,7 +142,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
         if (diff < 1000) {
             str = "Just now";
         } else {
-            str = DateUtils.getRelativeTimeSpanString(time, now, DateUtils.SECOND_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL).toString();
+            str = CKDateUtils.getRelativeTimeSpanString(time, now).toString();
         }
 
         return str;

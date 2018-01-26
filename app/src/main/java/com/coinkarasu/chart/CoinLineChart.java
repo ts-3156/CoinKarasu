@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 public class CoinLineChart {
     private LineChart chart;
@@ -160,26 +161,26 @@ public class CoinLineChart {
     }
 
     private SimpleDateFormat getSimpleDateFormat(String kind) {
-        SimpleDateFormat formatter = null;
+        SimpleDateFormat formatter;
 
         switch (kind) {
             case "hour":
-                formatter = new SimpleDateFormat("HH:mm:ss");
+                formatter = new SimpleDateFormat("HH:mm:ss", Locale.US);
                 break;
             case "day":
-                formatter = new SimpleDateFormat("HH:mm");
+                formatter = new SimpleDateFormat("HH:mm", Locale.US);
                 break;
             case "week":
-                formatter = new SimpleDateFormat("MM/dd");
+                formatter = new SimpleDateFormat("MM/dd", Locale.US);
                 break;
             case "month":
-                formatter = new SimpleDateFormat("MM/dd");
+                formatter = new SimpleDateFormat("MM/dd", Locale.US);
                 break;
             case "year":
-                formatter = new SimpleDateFormat("MM/dd");
+                formatter = new SimpleDateFormat("MM/dd", Locale.US);
                 break;
             default:
-                formatter = new SimpleDateFormat("MM/dd HH:mm");
+                formatter = new SimpleDateFormat("MM/dd HH:mm", Locale.US);
         }
 
         return formatter;

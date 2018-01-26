@@ -33,8 +33,8 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private boolean isSelected;
     private boolean isVisibleToUser;
     private BroadcastReceiver receiver;
-    SwipeRefreshLayout refresh;
-    ProgressBar progressbar;
+    private SwipeRefreshLayout refresh;
+    private ProgressBar progressbar;
 
     public HomeTabFragment() {
     }

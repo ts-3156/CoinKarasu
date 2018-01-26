@@ -18,6 +18,7 @@ import com.coinkarasu.adapters.HomeTabAdapter;
 import com.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.services.data.Trending;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class HomeTabCardFragment extends Fragment implements
     private static final String TAG = "HomeTabCardFragment";
 
     private TrendingKind kind;
+    private Trending trending;
 
     public HomeTabCardFragment() {
     }
@@ -73,7 +75,7 @@ public class HomeTabCardFragment extends Fragment implements
         recyclerView.addItemDecoration(new HomeTabHorizontalSpaceItemDecoration(getActivity(), getResources().getDimensionPixelSize(R.dimen.home_tab_horizontal_gap)));
 
         List<Coin> coins = new ArrayList<>();
-        Trending trending = Trending.restoreFromCache(getActivity(), kind);
+        trending = Trending.restoreFromCache(getActivity(), kind);
         if (trending != null) {
             coins = trending.getCoins();
         }
@@ -100,9 +102,11 @@ public class HomeTabCardFragment extends Fragment implements
         popup.inflate(R.menu.trending_card);
         popup.setOnMenuItemClickListener(this);
 
-//        MenuItem item = popup.getMenu().findItem(R.id.action_filter);
-//        item.setChecked(isFilterChecked);
-//        item.setEnabled(false);
+        if (trending != null && trending.getUpdated() != null) {
+            MenuItem item = popup.getMenu().findItem(R.id.action_last_updated);
+            item.setTitle(getString(R.string.action_last_updated,
+                    CKDateUtils.getRelativeTimeSpanString(trending.getUpdated().getTime())));
+        }
 
         popup.show();
     }
