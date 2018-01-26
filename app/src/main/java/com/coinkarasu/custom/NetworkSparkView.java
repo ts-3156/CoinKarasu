@@ -12,6 +12,7 @@ import com.coinkarasu.api.cryptocompare.data.History;
 import com.coinkarasu.tasks.GetHistoryTaskBase;
 import com.coinkarasu.tasks.GetHistoryWeekTask;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.PrefHelper;
 import com.robinhood.spark.SparkAdapter;
 import com.robinhood.spark.SparkView;
 
@@ -117,7 +118,8 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
             adapter = new CoinListSparkAdapter(data);
         }
 
-        if (getAdapter() == null) {
+        // TODO 毎回ネットワーク設定を確認するのはコストが高すぎるかもしれない
+        if (getAdapter() == null && !PrefHelper.isAirplaneModeOn(getContext())) {
             task = new GetHistoryWeekTask(ClientFactory.getInstance(getContext()))
                     .setFromSymbol(fromSymbol)
                     .setToSymbol(toSymbol)
