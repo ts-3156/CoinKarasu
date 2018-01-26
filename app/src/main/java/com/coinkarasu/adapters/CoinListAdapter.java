@@ -29,12 +29,12 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
     private List<Coin> coins;
     private UiManager uiManager;
     private ResourceUtils resources;
-    private ConfigUtils configs;
+    private Configurations configs;
     private RecyclerView.LayoutManager layoutManager;
 
     public CoinListAdapter(Context context, RelativeTimeSpanTextView.TimeProvider timeProvider, NavigationKind kind, List<Coin> coins) {
         resources = new ResourceUtils(context, coins);
-        configs = new ConfigUtils(context);
+        configs = new Configurations(context);
         uiManager = new UiManager(context, this, timeProvider, resources, configs, kind);
 
         setHasStableIds(true);
@@ -46,12 +46,8 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
         notifyDataSetChanged();
     }
 
-    public void setIsScrolled(boolean flag) {
-        configs.isScrolled = flag;
-    }
-
-    public void setAnimEnabled(boolean flag) {
-        configs.isAnimEnabled = flag;
+    public void setIsBeingScrolled(boolean flag) {
+        configs.isBeingScrolled = flag;
     }
 
     public void setToSymbol(String symbol) {
@@ -59,10 +55,6 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
             coin.setToSymbol(symbol);
         }
         resources.toSymbolChanged(symbol);
-    }
-
-    public void setDownloadIconEnabled(boolean flag) {
-        configs.isDownloadIconEnabled = flag;
     }
 
     public void startAnimation(Section section) {
@@ -161,5 +153,9 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
 
     public void setLayoutManager(RecyclerView.LayoutManager layoutManager) {
         this.layoutManager = layoutManager;
+    }
+
+    public Configurations getConfigurations() {
+        return configs;
     }
 }

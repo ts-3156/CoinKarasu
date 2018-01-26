@@ -6,13 +6,13 @@ import android.text.TextUtils;
 import android.util.AttributeSet;
 
 import com.coinkarasu.adapters.CoinListSparkAdapter;
+import com.coinkarasu.adapters.Configurations;
 import com.coinkarasu.api.cryptocompare.CacheMode;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.History;
+import com.coinkarasu.tasks.GetHistoryDayTask;
 import com.coinkarasu.tasks.GetHistoryTaskBase;
-import com.coinkarasu.tasks.GetHistoryWeekTask;
 import com.coinkarasu.utils.CKLog;
-import com.coinkarasu.utils.PrefHelper;
 import com.robinhood.spark.SparkAdapter;
 import com.robinhood.spark.SparkView;
 
@@ -42,6 +42,7 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
     private GetHistoryTaskBase task;
     private String fromSymbol;
     private String toSymbol;
+    private Configurations configs;
 
     public NetworkSparkView(Context context) {
         this(context, null);
@@ -90,7 +91,7 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
             }
         }
 
-        task = new GetHistoryWeekTask(ClientFactory.getInstance(getContext()))
+        task = new GetHistoryDayTask(ClientFactory.getInstance(getContext()))
                 .setFromSymbol(fromSymbol)
                 .setToSymbol(toSymbol)
                 .setCacheMode(CacheMode.READ_ONLY | CacheMode.IGNORE_EXPIRES)
@@ -118,9 +119,8 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
             adapter = new CoinListSparkAdapter(data);
         }
 
-        // TODO 毎回ネットワーク設定を確認するのはコストが高すぎるかもしれない
-        if (getAdapter() == null && !PrefHelper.isAirplaneModeOn(getContext())) {
-            task = new GetHistoryWeekTask(ClientFactory.getInstance(getContext()))
+        if (getAdapter() == null && (configs != null && !configs.isAirplaneModeOn)) {
+            task = new GetHistoryDayTask(ClientFactory.getInstance(getContext()))
                     .setFromSymbol(fromSymbol)
                     .setToSymbol(toSymbol)
                     .setCacheMode(CacheMode.FORCE_IF_EXPIRED)
@@ -131,6 +131,10 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
         if (adapter != null) {
             setAdapter(adapter);
         }
+    }
+
+    public void setConfigurations(Configurations configs) {
+        this.configs = configs;
     }
 
     @Override

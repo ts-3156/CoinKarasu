@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.coinkarasu.utils.CKLog;
 
@@ -24,7 +23,7 @@ public class SwipeDetector extends GestureDetector.SimpleOnGestureListener imple
     private View view;
 
     private boolean isSwiped;
-    private boolean isScrolling;
+    private boolean isBeingScrolled;
     private boolean isSwipeCanceled;
     private int scrollDirection;
     private float scrollStartX;
@@ -60,13 +59,13 @@ public class SwipeDetector extends GestureDetector.SimpleOnGestureListener imple
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (DEBUG) CKLog.d(TAG, "onTouch() " + actionToName(event));
             isSwiped = false;
-            isScrolling = false;
+            isBeingScrolled = false;
             isSwipeCanceled = false;
             scrollStartX = 0f;
             scrollLastX = 0f;
         } else if (event.getAction() == MotionEvent.ACTION_UP) {
             if (DEBUG) CKLog.d(TAG, "onTouch() " + actionToName(event));
-            if (isScrolling && !isSwipeCanceled) {
+            if (isBeingScrolled && !isSwipeCanceled) {
                 if (Math.abs(scrollStartX - scrollLastX) > SCROLL_MIN_DISTANCE) {
                     onSwipe(scrollDirection);
                 }
@@ -89,8 +88,8 @@ public class SwipeDetector extends GestureDetector.SimpleOnGestureListener imple
             return false;
         }
 
-        if (!isScrolling) {
-            isScrolling = true;
+        if (!isBeingScrolled) {
+            isBeingScrolled = true;
             scrollStartX = e1.getX();
             scrollDirection = distanceX > 0 ? TO_LEFT : TO_RIGHT;
             if (view.getParent() != null) {

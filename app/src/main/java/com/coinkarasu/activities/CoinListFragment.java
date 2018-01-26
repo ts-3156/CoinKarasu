@@ -177,10 +177,10 @@ public class CoinListFragment extends Fragment implements
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 switch (newState) {
                     case RecyclerView.SCROLL_STATE_IDLE:
-                        adapter.setIsScrolled(false);
+                        adapter.setIsBeingScrolled(false);
                         break;
                     case RecyclerView.SCROLL_STATE_DRAGGING:
-                        adapter.setIsScrolled(true);
+                        adapter.setIsBeingScrolled(true);
                         break;
                 }
             }
@@ -199,12 +199,10 @@ public class CoinListFragment extends Fragment implements
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        if (sectionFragments != null) {
-            for (Fragment fragment : sectionFragments) {
-                fragment.onDetach();
-            }
+    public void onResume() {
+        super.onResume();
+        if (adapter != null && adapter.getConfigurations() != null) {
+            adapter.getConfigurations().loadData(getActivity());
         }
     }
 

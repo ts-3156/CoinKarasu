@@ -8,17 +8,17 @@ import com.coinkarasu.utils.PrefHelper;
 import java.util.HashSet;
 import java.util.Set;
 
-public class ConfigUtils {
+public class Configurations {
     public boolean isDownloadIconEnabled;
     public boolean isAnimEnabled;
-    public boolean isScrolled;
+    public boolean isBeingScrolled;
     private Set<Section> isAnimStarted;
+    public boolean isAirplaneModeOn;
 
-    public ConfigUtils(Context context) {
-        isAnimEnabled = PrefHelper.shouldAnimatePrice(context);
-        isDownloadIconEnabled = PrefHelper.shouldDownloadIcon(context);
-        isScrolled = false;
+    public Configurations(Context context) {
+        isBeingScrolled = false;
         isAnimStarted = new HashSet<>();
+        loadData(context);
     }
 
     public void startAnimation(Section section) {
@@ -27,5 +27,11 @@ public class ConfigUtils {
 
     public boolean isAnimStarted(Section section) {
         return isAnimStarted.contains(section);
+    }
+
+    public void loadData(Context context) {
+        isAnimEnabled = PrefHelper.shouldAnimatePrice(context);
+        isDownloadIconEnabled = PrefHelper.shouldDownloadIcon(context);
+        isAirplaneModeOn = PrefHelper.isAirplaneModeOn(context);
     }
 }

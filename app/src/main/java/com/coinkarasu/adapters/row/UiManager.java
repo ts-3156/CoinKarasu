@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.adapters.CoinListAdapter;
-import com.coinkarasu.adapters.ConfigUtils;
+import com.coinkarasu.adapters.Configurations;
 import com.coinkarasu.adapters.ResourceUtils;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
@@ -19,7 +19,7 @@ public class UiManager implements OnCoinClickListener {
     private NavigationKind kind;
 
     public UiManager(Context context, RowDataProvider rowDataProvider, RelativeTimeSpanTextView.TimeProvider timeProvider,
-                     ResourceUtils resources, ConfigUtils configs, NavigationKind kind) {
+                     ResourceUtils resources, Configurations configs, NavigationKind kind) {
         this.rowDataProvider = rowDataProvider;
         delegatesFactory = new UiDelegatesFactory(context, timeProvider, resources, configs);
         this.kind = kind;

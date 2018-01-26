@@ -7,7 +7,7 @@ import com.coinkarasu.activities.etc.Exchange;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.Section;
 import com.coinkarasu.adapters.CoinListAdapter;
-import com.coinkarasu.adapters.ConfigUtils;
+import com.coinkarasu.adapters.Configurations;
 import com.coinkarasu.adapters.ResourceUtils;
 import com.coinkarasu.animator.PriceAnimator;
 import com.coinkarasu.animator.PriceBgColorAnimator;
@@ -22,9 +22,9 @@ public class ItemDelegate extends UiManagingDelegate {
     public static final int TYPE = CoinListAdapter.TYPE_ITEM;
 
     private ResourceUtils resources;
-    private ConfigUtils configs;
+    private Configurations configs;
 
-    public ItemDelegate(ResourceUtils resources, ConfigUtils configs) {
+    public ItemDelegate(ResourceUtils resources, Configurations configs) {
         this.resources = resources;
         this.configs = configs;
     }
@@ -35,6 +35,7 @@ public class ItemDelegate extends UiManagingDelegate {
 
         ItemViewHolder holder = (ItemViewHolder) _holder;
 
+        holder.sparkLine.setConfigurations(configs);
         holder.sparkLine.setSymbols(coin.getSymbol(), coin.getToSymbol());
 
         holder.icon.setDefaultImageResId(resources.symbolIconResIdMap.get(coin.getSymbol()));
@@ -50,7 +51,7 @@ public class ItemDelegate extends UiManagingDelegate {
 
         Section section = new Section(Exchange.valueOf(coin.getExchange()), coin.getCoinKind());
 
-        if (isVisible && configs.isAnimStarted(section) && configs.isAnimEnabled && !configs.isScrolled) {
+        if (isVisible && configs.isAnimStarted(section) && configs.isAnimEnabled && !configs.isBeingScrolled) {
             holder.priceAnimator = new PriceAnimator(coin, holder.price);
             holder.priceAnimator.start();
 
