@@ -69,7 +69,8 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
     }
 
     private void startTask() {
-        if (taskStarted || errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
+        if (taskStarted) return;
+        if (errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
             if (DEBUG) CKLog.w(TAG, "startTask() Return started=" + taskStarted + " error=" + errorCount);
             return;
         }

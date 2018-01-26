@@ -15,9 +15,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.PieChartKind;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
-import com.coinkarasu.coins.TopPairCoin;
 import com.coinkarasu.api.cryptocompare.data.TopPairs;
+import com.coinkarasu.chart.CoinPieChart;
+import com.coinkarasu.coins.TopPairCoin;
 import com.coinkarasu.pagers.CoinPieChartPagerAdapter;
 import com.coinkarasu.tasks.GetTopPairsTask;
 import com.coinkarasu.utils.CKLog;
@@ -33,18 +35,7 @@ public class CoinPieChartFragment extends Fragment implements
 
     private static final boolean DEBUG = true;
     private static final String TAG = "CoinPieChartFragment";
-    private static final Kind DEFAULT_KIND = Kind.currency;
-
-    public enum Kind {
-        currency("Money flow"),
-        exchange("Trading volume");
-
-        String label;
-
-        Kind(String label) {
-            this.label = label;
-        }
-    }
+    private static final PieChartKind DEFAULT_KIND = PieChartKind.currency;
 
     private boolean taskStarted;
     private int errorCount = 0;
@@ -108,13 +99,13 @@ public class CoinPieChartFragment extends Fragment implements
 
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        TabViewHolder firstHolder = new TabViewHolder(inflater.inflate(R.layout.tab_pie_chart, null, false), Kind.currency.label, fromSymbol);
-        TabLayout.Tab firstTab = tabs.getTabAt(Kind.currency.ordinal());
+        TabViewHolder firstHolder = new TabViewHolder(inflater.inflate(R.layout.tab_pie_chart, null, false), PieChartKind.currency.label, fromSymbol);
+        TabLayout.Tab firstTab = tabs.getTabAt(PieChartKind.currency.ordinal());
         firstTab.setCustomView(firstHolder.itemView);
         firstTab.setTag(firstHolder);
 
         for (int i = 0; i < coins.size(); i++) {
-            TabViewHolder holder = new TabViewHolder(inflater.inflate(R.layout.tab_pie_chart, null, false), Kind.exchange.label, coins.get(i).getToSymbol());
+            TabViewHolder holder = new TabViewHolder(inflater.inflate(R.layout.tab_pie_chart, null, false), PieChartKind.exchange.label, coins.get(i).getToSymbol());
             TabLayout.Tab tab = tabs.getTabAt(i + 1);
             tab.setCustomView(holder.itemView);
             tab.setTag(holder);
@@ -185,7 +176,7 @@ public class CoinPieChartFragment extends Fragment implements
         for (TopPairCoin coin : coins) {
             sum += coin.getVolume24h();
         }
-        double threshold = sum * CoinPieChartTabContentFragment.GROUP_SMALL_SLICES_PCT;
+        double threshold = sum * CoinPieChart.GROUP_SMALL_SLICES_PCT;
 
         Iterator<TopPairCoin> iterator = coins.iterator();
         while (iterator.hasNext()) {

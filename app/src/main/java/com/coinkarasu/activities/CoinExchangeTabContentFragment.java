@@ -93,7 +93,8 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     }
 
     private void startTask() {
-        if (taskStarted || errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
+        if (taskStarted) return;
+        if (errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
             if (DEBUG) CKLog.w(TAG, "startTask() Return started=" + taskStarted + " error=" + errorCount);
             return;
         }

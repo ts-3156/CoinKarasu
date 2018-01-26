@@ -11,13 +11,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.PieChartKind;
 import com.coinkarasu.api.cryptocompare.Client;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
-import com.coinkarasu.coins.TopPairCoin;
 import com.coinkarasu.api.cryptocompare.data.TopPairs;
 import com.coinkarasu.chart.CoinPieChart;
+import com.coinkarasu.chart.EntriesCache;
+import com.coinkarasu.chart.Entry;
 import com.coinkarasu.coins.SnapshotCoin;
+import com.coinkarasu.coins.TopPairCoin;
 import com.coinkarasu.tasks.GetCoinSnapshotTask;
 import com.coinkarasu.tasks.GetTopPairsTask;
 import com.coinkarasu.utils.CKLog;
@@ -35,9 +38,8 @@ public class CoinPieChartTabContentFragment extends Fragment implements
 
     private static final boolean DEBUG = true;
     private static final String TAG = "CoinPieChartTabContentFragment";
-    public static final double GROUP_SMALL_SLICES_PCT = 0.05;
 
-    private CoinPieChartFragment.Kind kind;
+    private PieChartKind kind;
     private String fromSymbol;
     private String toSymbol;
     private boolean taskStarted;
@@ -51,7 +53,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     public CoinPieChartTabContentFragment() {
     }
 
-    public static CoinPieChartTabContentFragment newInstance(CoinPieChartFragment.Kind kind, String fromSymbol, String toSymbol) {
+    public static CoinPieChartTabContentFragment newInstance(PieChartKind kind, String fromSymbol, String toSymbol) {
         CoinPieChartTabContentFragment fragment = new CoinPieChartTabContentFragment();
         Bundle args = new Bundle();
         args.putString("kind", kind.name());
@@ -65,7 +67,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            kind = CoinPieChartFragment.Kind.valueOf(getArguments().getString("kind"));
+            kind = PieChartKind.valueOf(getArguments().getString("kind"));
             fromSymbol = getArguments().getString("fromSymbol");
             toSymbol = getArguments().getString("toSymbol");
         }
@@ -83,20 +85,26 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     }
 
     private void startTask() {
-        if (taskStarted || errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
+        if (taskStarted) return;
+        if (errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
             if (DEBUG) CKLog.w(TAG, "startTask() Return started=" + taskStarted + " error=" + errorCount);
             return;
         }
         taskStarted = true;
 
+        List<Entry> entries = new EntriesCache(getActivity()).get(kind, fromSymbol, toSymbol);
+        if (entries != null && !entries.isEmpty()) {
+            drawChart(entries);
+        }
+
         Client client = ClientFactory.getInstance(getActivity());
 
-        if (kind == CoinPieChartFragment.Kind.currency) {
+        if (kind == PieChartKind.currency) {
             new GetTopPairsTask(client)
                     .setFromSymbol(fromSymbol)
                     .setListener(this)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        } else if (kind == CoinPieChartFragment.Kind.exchange) {
+        } else if (kind == PieChartKind.exchange) {
             new GetCoinSnapshotTask(client)
                     .setFromSymbol(fromSymbol)
                     .setToSymbol(toSymbol)
@@ -118,7 +126,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             if (DEBUG) CKLog.w(TAG, "finished() null(retry) " + kind + " " + errorCount);
             taskStarted = false;
             errorCount++;
-            startTask();
             return;
         }
 
@@ -134,19 +141,15 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             }
         });
 
-        List<Double> values = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
+        List<Entry> entries = new ArrayList<>(coins.size());
 
         for (int i = 0; i < coins.size(); i++) {
             TopPairCoin coin = coins.get(i);
-            values.add(coin.getVolume24h());
-            labels.add(coin.getToSymbol());
+            entries.add(new Entry(coin.getVolume24h(), coin.getToSymbol()));
         }
 
-        groupSmallSlices(values, labels);
-        drawChart(values, labels);
-
-        if (DEBUG) CKLog.d(TAG, "finished() " + kind);
+        drawChart(entries);
+        new EntriesCache(getContext()).put(kind, fromSymbol, toSymbol, entries);
     }
 
     @Override
@@ -185,31 +188,28 @@ public class CoinPieChartTabContentFragment extends Fragment implements
             }
         });
 
-        List<Double> values = new ArrayList<>();
-        List<String> labels = new ArrayList<>();
+        List<Entry> entries = new ArrayList<>(coins.size());
 
         for (int i = 0; i < coins.size(); i++) {
             SnapshotCoin coin = coins.get(i);
-            values.add(coin.getVolume24Hour());
-            labels.add(coin.getMarket());
+            entries.add(new Entry(coin.getVolume24Hour(), coin.getMarket()));
         }
 
-        groupSmallSlices(values, labels);
-        drawChart(values, labels);
-
-        if (DEBUG) CKLog.d(TAG, "finished() " + kind);
+        drawChart(entries);
+        new EntriesCache(getContext()).put(kind, fromSymbol, toSymbol, entries);
     }
 
-    private void drawChart(List<Double> values, List<String> labels) {
+    private void drawChart(List<Entry> entries) {
+        entries = CoinPieChart.groupSmallSlices(entries);
         CoinPieChart chart = new CoinPieChart(chartView);
         chart.initialize(PrefHelper.shouldAnimateCharts(getActivity()));
 
-        if (kind == CoinPieChartFragment.Kind.currency) {
+        if (kind == PieChartKind.currency) {
             chart.setCurrencyCenterText(getActivity(), fromSymbol);
         } else {
             chart.setExchangeCenterText(getActivity(), fromSymbol, toSymbol);
         }
-        chart.setData(values, labels);
+        chart.setData(entries);
         chart.invalidate();
     }
 
@@ -218,39 +218,6 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         Spanned text = Html.fromHtml(getString(R.string.pie_chart_exchange_warn, fromSymbol, toSymbol));
         warning.setText(text);
         warningContainer.setVisibility(View.VISIBLE);
-    }
-
-    private void groupSmallSlices(List<Double> values, List<String> labels) {
-        double sum = 0.0;
-        for (double value : values) {
-            sum += value;
-        }
-        double threshold = sum * GROUP_SMALL_SLICES_PCT;
-
-        double others = 0.0;
-        List<Double> newValues = new ArrayList<>();
-        List<String> newLabels = new ArrayList<>();
-
-        for (int i = 0; i < values.size(); i++) {
-            double value = values.get(i);
-            if (value < threshold) {
-                others += value;
-            } else {
-                newValues.add(value);
-                newLabels.add(labels.get(i));
-            }
-        }
-
-        if (others > 0.0) {
-            newValues.add(others);
-            newLabels.add("others");
-        }
-
-        values.clear();
-        values.addAll(newValues);
-
-        labels.clear();
-        labels.addAll(newLabels);
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CoinPieChart {
+    public static final double GROUP_SMALL_SLICES_PCT = 0.05;
 
     private PieChart chart;
 
@@ -76,13 +77,12 @@ public class CoinPieChart {
 
     }
 
-    public void setData(List<Double> values, List<String> labels) {
-        List<PieEntry> entries = new ArrayList<>();
+    public void setData(List<Entry> rawEntries) {
+        List<PieEntry> entries = new ArrayList<>(rawEntries.size());
 
-        for (int i = 0; i < values.size(); i++) {
-            entries.add(new PieEntry(values.get(i).floatValue(), labels.get(i)));
+        for (Entry e : rawEntries) {
+            entries.add(new PieEntry(e.value, e.label));
         }
-
 
         PieDataSet dataSet = new PieDataSet(entries, "Election Results");
 
@@ -189,5 +189,30 @@ public class CoinPieChart {
     public void clear() {
         chart.clear();
         chart = null;
+    }
+
+    public static List<Entry> groupSmallSlices(List<Entry> entries) {
+        double sum = 0.0;
+        for (Entry e : entries) {
+            sum += e.value;
+        }
+        double threshold = sum * GROUP_SMALL_SLICES_PCT;
+
+        double others = 0.0;
+        List<Entry> newEntries = new ArrayList<>();
+
+        for (Entry e : entries) {
+            if (e.value < threshold) {
+                others += e.value;
+            } else {
+                newEntries.add(e);
+            }
+        }
+
+        if (others > 0.0) {
+            newEntries.add(new Entry(others, "others"));
+        }
+
+        return newEntries;
     }
 }

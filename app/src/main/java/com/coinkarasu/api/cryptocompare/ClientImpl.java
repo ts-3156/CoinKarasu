@@ -41,6 +41,9 @@ class ClientImpl implements Client {
         this.requestQueue = VolleyHelper.getInstance(context).getWrappedRequestQueue();
     }
 
+    /**
+     * 秒単位で最新のデータを使う必要があるため、この階層ではキャッシュしていない。
+     */
     @Override
     public Prices getPrices(String[] fromSymbols, String toSymbol, String exchange) {
         String url = "https://min-api.cryptocompare.com/data/pricemultifull?"
@@ -50,8 +53,11 @@ class ClientImpl implements Client {
     }
 
     /**
-     * HistoryKindに応じて、このメソッドの内部でもキャッシュしている。キャッシュのキーに使うパラメーターを
-     * HTTPアクセスのパラメーターと極力揃えて、粒度の小さいキャッシングを行うためにそうしている。
+     * 他のAPIに比べて非常に多くのリクエストを行うため、可能な限りリクエストを減らすためにmodeフラグを持っている。
+     * 他のAPIでは、キャッシュの有無や有効期限に関わらず必ず新しくリクエストする。このAPIでは、キャッシュの有効期限が切れている場合のみ新しくリクエストする。
+     * <p>
+     * このAPIでは、キャッシュのキーに使うパラメーターをHTTPアクセスのパラメーターと極力揃えて、
+     * 可能な限り粒度の小さいキャッシングを行っている。
      */
     private List<History> getHistoryXxx(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange, int mode) {
         if (mode == CacheMode.NONE) {
@@ -61,7 +67,7 @@ class ClientImpl implements Client {
         List<History> histories;
         HistoriesCache cache = new HistoriesCache(context);
 
-        if ((mode & CacheMode.FORCE_IF_EXPIRED) == 0 && (mode & (CacheMode.NORMAL | CacheMode.READ_ONLY)) != 0) {
+        if (!isFlagOn(mode, CacheMode.FORCE_IF_EXPIRED) && isFlagOn(mode, CacheMode.NORMAL | CacheMode.READ_ONLY)) {
             histories = cache.get(kind, fromSymbol, toSymbol, limit, aggregate, exchange, (mode & CacheMode.IGNORE_EXPIRES) != 0);
 
             if (histories != null && !histories.isEmpty()) {
@@ -70,12 +76,12 @@ class ClientImpl implements Client {
             }
         }
 
-        if ((mode & CacheMode.FORCE_IF_EXPIRED) == 0 && (mode & CacheMode.READ_ONLY) != 0) {
+        if (!isFlagOn(mode, CacheMode.FORCE_IF_EXPIRED) && isFlagOn(mode, CacheMode.READ_ONLY)) {
             if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Flag is READ_ONLY and return null kind=" + kind.name());
             return null;
         }
 
-        if ((mode & CacheMode.FORCE_IF_EXPIRED) != 0
+        if (isFlagOn(mode, CacheMode.FORCE_IF_EXPIRED)
                 && cache.exists(kind, fromSymbol, toSymbol, limit, aggregate, exchange)
                 && !cache.isExpired(kind, fromSymbol, toSymbol, limit, aggregate, exchange)) {
             if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Flag is FORCE_IF_EXPIRED and return null kind=" + kind.name());
@@ -151,9 +157,8 @@ class ClientImpl implements Client {
         String url = "https://www.cryptocompare.com/api/data/coinsnapshot/?"
                 + Query.toString("fsym", fromSymbol, "tsym", toSymbol);
 
-        JSONObject response = performGet(url);
-        CoinSnapshotResponse snapshotResponse = new CoinSnapshotResponseImpl(response, fromSymbol, toSymbol);
-        return new CoinSnapshotImpl(snapshotResponse);
+        CoinSnapshotResponse response = new CoinSnapshotResponseImpl(performGet(url), fromSymbol, toSymbol);
+        return new CoinSnapshotImpl(response);
     }
 
     @Override
@@ -161,17 +166,16 @@ class ClientImpl implements Client {
         String url = "https://min-api.cryptocompare.com/data/top/pairs?"
                 + Query.toString("fsym", fromSymbol, "limit", 100);
 
-        TopPairsResponse topPairsResponse;
+        TopPairsResponse response;
 
         if (TopPairsResponseImpl.isCacheExist(context, fromSymbol)) {
-            topPairsResponse = TopPairsResponseImpl.restoreFromCache(context, fromSymbol);
+            response = TopPairsResponseImpl.restoreFromCache(context, fromSymbol);
         } else {
-            JSONObject response = performGet(url);
-            topPairsResponse = new TopPairsResponseImpl(response, fromSymbol);
-            topPairsResponse.saveToCache(context);
+            response = new TopPairsResponseImpl(performGet(url), fromSymbol);
+            response.saveToCache(context);
         }
 
-        return new TopPairsImpl(topPairsResponse);
+        return new TopPairsImpl(response);
     }
 
     private List<History> sampling(List<History> records, int aggregate) {
@@ -196,6 +200,10 @@ class ClientImpl implements Client {
 
     private JSONObject performGet(String url) {
         return new BlockingRequest(requestQueue, url).perform();
+    }
+
+    private static boolean isFlagOn(int value, int flag) {
+        return (value & flag) != 0;
     }
 
     private static class Query {

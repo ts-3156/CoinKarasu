@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.coinkarasu.activities.CoinPieChartFragment;
 import com.coinkarasu.activities.CoinPieChartTabContentFragment;
+import com.coinkarasu.activities.etc.PieChartKind;
 import com.coinkarasu.coins.TopPairCoin;
 
 import java.util.ArrayList;
@@ -22,9 +22,9 @@ public class CoinPieChartPagerAdapter extends FragmentPagerAdapter {
         super(manager);
         fragments = new ArrayList<>();
 
-        fragments.add(CoinPieChartTabContentFragment.newInstance(CoinPieChartFragment.Kind.currency, fromSymbol, toSymbol));
+        fragments.add(CoinPieChartTabContentFragment.newInstance(PieChartKind.currency, fromSymbol, toSymbol));
         for (TopPairCoin coin : coins) {
-            fragments.add(CoinPieChartTabContentFragment.newInstance(CoinPieChartFragment.Kind.exchange, fromSymbol, coin.getToSymbol()));
+            fragments.add(CoinPieChartTabContentFragment.newInstance(PieChartKind.exchange, fromSymbol, coin.getToSymbol()));
         }
     }
 
