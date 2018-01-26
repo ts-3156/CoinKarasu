@@ -294,12 +294,9 @@ public class CoinListSectionFragment extends Fragment implements
         if (DEBUG) CKLog.d(TAG, "finished() " + kind + " " + exchange + " " + coinKind);
     }
 
-    private void findProgressbar() {
+    private void findProgressbarBySection(Section section) {
         if (parent != null && parent.getView() != null) {
             progressbar = parent.getView().findViewWithTag(makeProgressbarTag(section.getExchange(), section.getCoinKind()));
-        }
-        if (progressbar == null) {
-            if (DEBUG) CKLog.w(TAG, "findProgressbar() Not initialized or being recycled");
         }
     }
 
@@ -308,36 +305,31 @@ public class CoinListSectionFragment extends Fragment implements
     }
 
     private void hideProgressbarDelayed(Exchange exchange, CoinKind coinKind, boolean withWarning) {
-        findProgressbar();
+        findProgressbarBySection(section);
         if (progressbar != null) {
             progressbar.stopAnimationDelayed(withWarning);
         }
     }
 
     private void hideProgressbarWithAirplaneMode(Exchange exchange, CoinKind coinKind) {
-        findProgressbar();
+        findProgressbarBySection(section);
         if (progressbar != null) {
             progressbar.stopAnimationWithAirplaneMode();
         }
     }
 
     private void hideProgressbarWithError(Exchange exchange, CoinKind coinKind) {
-        findProgressbar();
+        findProgressbarBySection(section);
         if (progressbar != null) {
             progressbar.stopAnimationWithError();
         }
     }
 
     private void showProgressbar(Exchange exchange, CoinKind coinKind) {
-        if (parent == null || parent.getView() == null) {
-            return;
+        findProgressbarBySection(section);
+        if (progressbar != null) {
+            progressbar.startAnimation();
         }
-        AggressiveProgressbar progressbar = parent.getView().findViewWithTag(makeProgressbarTag(exchange, coinKind));
-        if (progressbar == null) {
-            if (DEBUG) CKLog.w(TAG, "showProgressbar() Not initialized or being recycled");
-            return;
-        }
-        progressbar.startAnimation();
     }
 
     private void refreshRelativeTime(Exchange exchange, CoinKind coinKind, boolean restart) {
@@ -345,11 +337,9 @@ public class CoinListSectionFragment extends Fragment implements
             return;
         }
         RelativeTimeSpanTextView timeSpan = parent.getView().findViewWithTag(exchange.name() + "-" + coinKind.name() + "-time_span");
-        if (timeSpan == null) {
-            if (DEBUG) CKLog.w(TAG, "refreshRelativeTime() Not initialized or being recycled");
-            return;
+        if (timeSpan != null) {
+            timeSpan.updateText(restart);
         }
-        timeSpan.updateText(restart);
     }
 
     @Override

@@ -30,7 +30,7 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
     private UiManager uiManager;
     private ResourceUtils resources;
     private ConfigUtils configs;
-    private LinearLayoutManager layoutManager;
+    private RecyclerView.LayoutManager layoutManager;
 
     public CoinListAdapter(Context context, RelativeTimeSpanTextView.TimeProvider timeProvider, NavigationKind kind, List<Coin> coins) {
         resources = new ResourceUtils(context, coins);
@@ -146,8 +146,11 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
      */
     @Override
     public void onBindViewHolder(CoinListViewHolder holder, int position) {
-        int last = layoutManager.findLastVisibleItemPosition();
-        boolean isVisible = last == -1 || position <= last + 1; // できるだけ、見えているアイテムのみアニメーションさせるフラグ
+        boolean isVisible = true; // できるだけ、見えているアイテムのみアニメーションさせるフラグ
+        if (layoutManager instanceof LinearLayoutManager) {
+            int last = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+            isVisible = last == -1 || position <= last + 1;
+        }
         uiManager.onBindViewHolder(getItem(position), holder, isVisible);
     }
 
@@ -156,7 +159,7 @@ public class CoinListAdapter extends RecyclerView.Adapter<CoinListViewHolder> im
         uiManager.onViewRecycled(holder);
     }
 
-    public void setLayoutManager(LinearLayoutManager layoutManager) {
+    public void setLayoutManager(RecyclerView.LayoutManager layoutManager) {
         this.layoutManager = layoutManager;
     }
 }

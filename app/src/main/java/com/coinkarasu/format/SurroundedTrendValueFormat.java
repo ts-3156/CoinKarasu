@@ -9,8 +9,7 @@ public class SurroundedTrendValueFormat extends TrendValueFormat {
     }
 
     @Override
-    public String format(double trend) {
-        String str = super.format(trend);
-        return DEFAULT_PREFIX + str + DEFAULT_SUFFIX;
+    public CharSequence format(double trend) {
+        return DEFAULT_PREFIX + super.format(trend) + DEFAULT_SUFFIX;
     }
 }

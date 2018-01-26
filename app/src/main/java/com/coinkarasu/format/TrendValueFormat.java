@@ -9,7 +9,7 @@ public class TrendValueFormat {
         this.formatter = NumberFormat.getPercentInstance();
     }
 
-    public String format(double trend) {
+    public CharSequence format(double trend) {
         if (Math.abs(trend) > 1.0) {
             formatter.setMaximumFractionDigits(0);
             formatter.setMinimumFractionDigits(0);
