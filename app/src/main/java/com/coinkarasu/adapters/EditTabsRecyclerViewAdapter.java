@@ -5,7 +5,7 @@ import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,15 +17,16 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.utils.PrefHelper;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class EditTabsRecyclerViewAdapter extends RecyclerView.Adapter<EditTabsRecyclerViewAdapter.ViewHolder> {
 
     private Context context;
     private LayoutInflater inflater;
     private OnItemClickListener listener;
-    private ArrayList<Item> items;
+    private List<Item> items;
 
-    private SparseArray<Integer> colorResIdColorMap;
+    private SparseIntArray colorResIdColorMap;
 
     public EditTabsRecyclerViewAdapter(Context context) {
         this.context = context;
@@ -45,8 +46,8 @@ public class EditTabsRecyclerViewAdapter extends RecyclerView.Adapter<EditTabsRe
         colorResIdColorMap = buildColorResIdColorMap(context, NavigationKind.values());
     }
 
-    private SparseArray<Integer> buildColorResIdColorMap(Context context, NavigationKind[] kinds) {
-        SparseArray<Integer> map = new SparseArray<>();
+    private SparseIntArray buildColorResIdColorMap(Context context, NavigationKind[] kinds) {
+        SparseIntArray map = new SparseIntArray();
         Resources resources = context.getResources();
 
         for (NavigationKind kind : kinds) {
