@@ -37,4 +37,10 @@ public class UuidUtils {
         return file.exists() && !TextUtils.isEmpty(FileHelper.read(file));
 
     }
+
+    public static void remove(Context context) {
+        File file = new File(context.getFilesDir(), NAME);
+        file.delete();
+
+    }
 }

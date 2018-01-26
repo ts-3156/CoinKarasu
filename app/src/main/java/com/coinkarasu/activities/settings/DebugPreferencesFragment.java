@@ -47,6 +47,9 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
         findPreference("pref_clear_cache").setOnPreferenceClickListener(this);
         findPreference("pref_clear_config").setOnPreferenceClickListener(this);
         findPreference("pref_first_launch_date").setOnPreferenceClickListener(this);
+        findPreference("pref_uuid_file_exists").setOnPreferenceClickListener(this);
+        findPreference("pref_token_file_exists").setOnPreferenceClickListener(this);
+
         findPreference("pref_show_first_launch_screen").setOnPreferenceChangeListener(this);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -90,31 +93,49 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
     public boolean onPreferenceClick(Preference preference) {
         String key = preference.getKey();
 
-        if (key.equals("pref_clear_cache")) {
-            showDialog(R.string.pref_clear_cache_dialog, "OK", true, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    new ClearCacheTask().execute(getActivity().getCacheDir());
-                }
-            });
-        } else if (key.equals("pref_clear_config")) {
-            showDialog(R.string.pref_clear_config_dialog, "OK", true, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    PrefHelper.clear(getActivity());
-                    getActivity().recreate();
-                }
-            });
-        } else if (key.equals("pref_first_launch_date")) {
-            showDialog(R.string.pref_first_launch_date_dialog, "OK", true, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    new InsertDummyFirstLaunchDateTask(new InsertDummyFirstLaunchDateTask.Callback() {
-                        @Override
-                        public void run(Date date) {
-                            Preference firstLaunchDate = findPreference("pref_first_launch_date");
-                            firstLaunchDate.setSummary(date == null ? "null" : date.toString());
-                        }
-                    }).execute(getActivity());
-                }
-            });
+        switch (key) {
+            case "pref_clear_cache":
+                showDialog(R.string.pref_clear_cache_dialog, "OK", true, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        new ClearCacheTask().execute(getActivity().getCacheDir());
+                    }
+                });
+                break;
+            case "pref_clear_config":
+                showDialog(R.string.pref_clear_config_dialog, "OK", true, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        PrefHelper.clear(getActivity());
+                        getActivity().recreate();
+                    }
+                });
+                break;
+            case "pref_first_launch_date":
+                showDialog(R.string.pref_first_launch_date_dialog, "OK", true, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        new InsertDummyFirstLaunchDateTask(new InsertDummyFirstLaunchDateTask.Callback() {
+                            @Override
+                            public void run(Date date) {
+                                Preference firstLaunchDate = findPreference("pref_first_launch_date");
+                                firstLaunchDate.setSummary(date == null ? "null" : date.toString());
+                            }
+                        }).execute(getActivity());
+                    }
+                });
+                break;
+            case "pref_uuid_file_exists":
+                showDialog(R.string.pref_uuid_file_exists_dialog, "OK", true, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        UuidUtils.remove(getActivity());
+                    }
+                });
+                break;
+            case "pref_token_file_exists":
+                showDialog(R.string.pref_token_file_exists_dialog, "OK", true, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        ApiKeyUtils.remove(getActivity());
+                    }
+                });
+                break;
         }
 
         return true;

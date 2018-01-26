@@ -201,7 +201,9 @@
     <string name="pref_app_version_please_update">This app is not the latest version. Please update to a latest version.</string>
     <string name="pref_clear_cache_title">Clear cache</string>
     <string name="pref_uuid_file_exists_title">Uuid file</string>
+    <string name="pref_uuid_file_exists_dialog">Delete uuid file?</string>
     <string name="pref_token_file_exists_title">Token file</string>
+    <string name="pref_token_file_exists_dialog">Delete token file?</string>
     <string name="pref_internet_title">Internet</string>
     <string name="pref_airplane_mode_title">Airplane mode</string>
     <string name="pref_mobile_data_title">Mobile data</string>

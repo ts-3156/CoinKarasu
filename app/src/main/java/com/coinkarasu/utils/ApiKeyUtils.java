@@ -67,4 +67,9 @@ public class ApiKeyUtils {
 
         return !TextUtils.isEmpty(key) && !TextUtils.isEmpty(secret);
     }
+
+    public static void remove(Context context) {
+        File file = new File(context.getFilesDir(), NAME);
+        file.delete();
+    }
 }
