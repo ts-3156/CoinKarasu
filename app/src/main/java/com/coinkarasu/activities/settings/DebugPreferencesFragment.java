@@ -42,13 +42,14 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_debug);
+        Activity activity = getActivity();
 
         findPreference("pref_clear_cache").setOnPreferenceClickListener(this);
         findPreference("pref_clear_config").setOnPreferenceClickListener(this);
         findPreference("pref_first_launch_date").setOnPreferenceClickListener(this);
         findPreference("pref_show_first_launch_screen").setOnPreferenceChangeListener(this);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 
         ListPreference ckHost = (ListPreference) findPreference("pref_change_ck_host");
         CharSequence[] entries = ckHost.getEntries();
@@ -58,7 +59,7 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
         ckHost.setEntries(entries);
         ckHost.setEntryValues(entryValues);
         ckHost.setDefaultValue(entryValues[0]);
-        int index = Arrays.asList(entryValues).indexOf(PrefHelper.getCkHost(getActivity(), BuildConfig.CK_HOST));
+        int index = Arrays.asList(entryValues).indexOf(PrefHelper.getCkHost(activity, BuildConfig.CK_HOST));
         ckHost.setValueIndex(index < 0 ? 0 : index);
         bindPreferenceSummaryToValue(prefs, "pref_change_ck_host");
 
@@ -68,15 +69,21 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
                 Preference firstLaunchDate = findPreference("pref_first_launch_date");
                 firstLaunchDate.setSummary(date == null ? "null" : date.toString());
             }
-        }).execute(getActivity());
+        }).execute(activity);
 
         bindPreferenceSummaryToValue(prefs, "pref_toast_level");
 
         Preference uuidFile = findPreference("pref_uuid_file_exists");
-        uuidFile.setSummary(UuidUtils.exists(getActivity()) ? UuidUtils.get(getActivity()) : "No");
+        uuidFile.setSummary(UuidUtils.exists(activity) ? UuidUtils.get(activity) : "No");
 
         Preference tokenFile = findPreference("pref_token_file_exists");
-        tokenFile.setSummary(ApiKeyUtils.exists(getActivity()) ? ApiKeyUtils.get(getActivity()).toString() : ApiKeyUtils.dummy().toString());
+        tokenFile.setSummary(ApiKeyUtils.exists(activity) ? ApiKeyUtils.get(activity).toString() : ApiKeyUtils.dummy().toString());
+
+        findPreference("pref_internet").setSummary("" + PrefHelper.isInternetConnected(activity));
+        findPreference("pref_airplane_mode").setSummary("" + PrefHelper.isAirplaneModeOn(activity));
+        findPreference("pref_mobile_data").setSummary("" + PrefHelper.isMobileDataOn(activity));
+        findPreference("pref_wifi").setSummary("" + PrefHelper.isWifiOn(activity));
+        findPreference("pref_wifi_connected").setSummary("" + PrefHelper.isWifiConnected(activity));
     }
 
     @Override

@@ -228,14 +228,14 @@ public class PrefHelper {
     }
 
     public static boolean isMobileDataOn(Context context) {
-        boolean isEnabled = false;
+        boolean isEnabled = true;
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         try {
             Class clazz = Class.forName(manager.getClass().getName());
             Method method = clazz.getDeclaredMethod("getMobileDataEnabled");
             method.setAccessible(true);
-            isEnabled = (Boolean) method.invoke(manager);
+            isEnabled = (boolean) method.invoke(manager);
         } catch (Exception e) {
             CKLog.e(TAG, e);
         }
@@ -251,6 +251,10 @@ public class PrefHelper {
     public static boolean isWifiConnected(Context context) {
         ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return manager != null && manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).isConnected();
+    }
+
+    public static boolean isInternetConnected(Context context) {
+        return !isAirplaneModeOn(context) && ((isWifiOn(context) && isWifiConnected(context)) || isMobileDataOn(context));
     }
 
     public static SharedPreferences getPref(Context context) {

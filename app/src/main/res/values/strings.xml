@@ -202,6 +202,11 @@
     <string name="pref_clear_cache_title">Clear cache</string>
     <string name="pref_uuid_file_exists_title">Uuid file</string>
     <string name="pref_token_file_exists_title">Token file</string>
+    <string name="pref_internet_title">Internet</string>
+    <string name="pref_airplane_mode_title">Airplane mode</string>
+    <string name="pref_mobile_data_title">Mobile data</string>
+    <string name="pref_wifi_title">Wi-Fi</string>
+    <string name="pref_wifi_connected_title">Wi-Fi connected</string>
     <string name="pref_clear_cache_summary">Clear all cached data on the device</string>
     <string name="pref_clear_cache_dialog">Clear all cached data on the device? Fresh data will be retrieved from the server.</string>
     <string name="pref_clear_config_title">Clear config</string>

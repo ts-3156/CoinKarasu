@@ -12,6 +12,7 @@ import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.CKStringUtils;
+import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.io.CacheFileHelper;
 
 import java.util.ArrayList;
@@ -35,6 +36,10 @@ public class UpdateToplistIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (PrefHelper.isAirplaneModeOn(this)) {
+            return;
+        }
+
         try {
             update(intent);
         } catch (Exception e) {

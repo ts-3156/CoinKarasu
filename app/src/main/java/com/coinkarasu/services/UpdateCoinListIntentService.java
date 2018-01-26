@@ -11,6 +11,7 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.database.AppDatabase;
 import com.coinkarasu.database.CoinListCoin;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.io.CacheFileHelper;
 
 import java.util.ArrayList;
@@ -34,6 +35,10 @@ public class UpdateCoinListIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (PrefHelper.isAirplaneModeOn(this)) {
+            return;
+        }
+
         try {
             update();
         } catch (Exception e) {

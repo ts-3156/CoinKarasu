@@ -19,6 +19,7 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Trending;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.io.CacheFileHelper;
 
 import java.util.ArrayList;
@@ -39,6 +40,10 @@ public class UpdateTrendingIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (PrefHelper.isAirplaneModeOn(this)) {
+            return;
+        }
+
         boolean force = intent.getBooleanExtra("force", false);
 
         for (TrendingKind kind : TrendingKind.values()) {

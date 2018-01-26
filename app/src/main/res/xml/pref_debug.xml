@@ -79,6 +79,31 @@
             android:summary=""
             android:title="@string/pref_token_file_exists_title" />
 
+        <Preference
+            android:key="pref_internet"
+            android:summary=""
+            android:title="@string/pref_internet_title" />
+
+        <Preference
+            android:key="pref_airplane_mode"
+            android:summary=""
+            android:title="@string/pref_airplane_mode_title" />
+
+        <Preference
+            android:key="pref_mobile_data"
+            android:summary=""
+            android:title="@string/pref_mobile_data_title" />
+
+        <Preference
+            android:key="pref_wifi"
+            android:summary=""
+            android:title="@string/pref_wifi_title" />
+
+        <Preference
+            android:key="pref_wifi_connected"
+            android:summary=""
+            android:title="@string/pref_wifi_connected_title" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
