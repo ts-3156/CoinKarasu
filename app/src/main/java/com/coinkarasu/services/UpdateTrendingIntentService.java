@@ -59,6 +59,7 @@ public class UpdateTrendingIntentService extends IntentService {
             return;
         }
         CacheFileHelper.touch(this, logFile);
+        sendBroadcast(kind, "started");
 
         Set<String> uniqueSymbols = new LinkedHashSet<>(); // 日本で取引できるコインとCoincheckのコインの重複のない一覧
         Collections.addAll(uniqueSymbols, getResources().getStringArray(NavigationKind.japan.symbolsResId));
@@ -100,13 +101,18 @@ public class UpdateTrendingIntentService extends IntentService {
         Trending trending = new Trending(coins, kind);
         trending.saveToCache(this);
 
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.putExtra("kind", kind.name());
-        broadcastIntent.setAction(HomeTabFragment.ACTION_UPDATE_TRENDING);
-        LocalBroadcastManager.getInstance(this).sendBroadcast(broadcastIntent);
+        sendBroadcast(kind, "finished");
 
         if (DEBUG) CKLog.d(TAG, kind.name() + " " + exchange.name() + " " + toSymbol + " trending updated, "
                 + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
+    }
+
+    private void sendBroadcast(TrendingKind kind, String progress) {
+        Intent intent = new Intent();
+        intent.putExtra("kind", kind.name());
+        intent.putExtra("progress", progress);
+        intent.setAction(HomeTabFragment.ACTION_UPDATE_TRENDING);
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
     }
 
     private List<History> getHistories(TrendingKind kind, String fromSymbol, String toSymbol, String exchange) {

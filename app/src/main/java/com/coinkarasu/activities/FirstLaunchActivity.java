@@ -81,8 +81,8 @@ public class FirstLaunchActivity extends AppCompatActivity implements
             MainActivity.start(this);
             finish();
         } else {
-            TransitionUtils.setEnterTransition(nextFragment);
-            TransitionUtils.setExitTransition(nextFragment);
+            TransitionUtils.setSlideEnterTransition(nextFragment);
+            TransitionUtils.setSlideExitTransition(nextFragment);
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, nextFragment)

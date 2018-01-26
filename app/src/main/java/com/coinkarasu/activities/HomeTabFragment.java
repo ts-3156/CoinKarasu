@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.billingmodule.BillingActivity;
 import com.coinkarasu.services.UpdateTrendingIntentService;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.TransitionUtils;
 import com.coinkarasu.utils.Tutorial;
 
 
@@ -90,8 +92,8 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
             progressbar.setVisibility(View.GONE);
         }
 
-        Fragment fragment = getChildFragmentManager().findFragmentByTag(TrendingKind.values()[0].tag);
-        if (fragment != null) {
+        Fragment frag = getChildFragmentManager().findFragmentByTag(TrendingKind.values()[0].tag);
+        if (frag != null) {
             return;
         }
 
@@ -99,7 +101,9 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
         for (TrendingKind kind : TrendingKind.values()) {
-            transaction.replace(kind.containerId, HomeTabCardFragment.newInstance(kind), kind.tag);
+            HomeTabCardFragment fragment = HomeTabCardFragment.newInstance(kind);
+            TransitionUtils.setFadeEnterTransition(fragment);
+            transaction.replace(kind.containerId, fragment, kind.tag);
         }
         transaction.commit();
 
@@ -113,8 +117,10 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         if (DEBUG) CKLog.d(TAG, "refreshCard() " + kind.name());
 
+        HomeTabCardFragment fragment = HomeTabCardFragment.newInstance(kind);
+        TransitionUtils.setFadeEnterTransition(fragment);
         getChildFragmentManager().beginTransaction()
-                .replace(kind.containerId, HomeTabCardFragment.newInstance(kind), kind.tag)
+                .replace(kind.containerId, fragment, kind.tag)
                 .commitNowAllowingStateLoss();
     }
 
@@ -124,8 +130,18 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (isVisibleToUser) {
-                    refreshCard(TrendingKind.valueOf(intent.getExtras().getString("kind")));
+                if (isVisibleToUser && intent.getExtras() != null) {
+                    String progress = intent.getExtras().getString("progress");
+                    TrendingKind kind = TrendingKind.valueOf(intent.getExtras().getString("kind"));
+
+                    if (TextUtils.isEmpty(progress) || progress.equals("finished")) {
+                        refreshCard(kind);
+                    } else if (progress.equals("started")) {
+                        Fragment fragment = getChildFragmentManager().findFragmentByTag(kind.tag);
+                        if (fragment != null) {
+                            ((HomeTabCardFragment) fragment).showProgressbar();
+                        }
+                    }
                 }
             }
         };

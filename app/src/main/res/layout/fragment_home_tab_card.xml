@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:paddingBottom="16dp"
     tools:context="com.coinkarasu.activities.HomeTabCardFragment">
 
@@ -42,27 +43,43 @@
         android:layout_below="@id/caption"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp" />
-
-    <ImageButton
-        android:id="@+id/popup_menu"
-        android:layout_width="20dp"
-        android:layout_height="16dp"
-        android:layout_alignTop="@id/filter"
-        android:layout_marginRight="8dp"
         android:layout_marginTop="16dp"
-        android:layout_toLeftOf="@id/filter"
-        android:background="#ffffff"
-        android:src="@drawable/ic_trending_card_filter_list" />
+        tools:visibility="gone" />
 
-    <TextView
-        android:id="@+id/filter"
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:orientation="horizontal"
         android:paddingRight="16dp"
-        android:paddingTop="16dp"
-        android:text="@string/home_tab_filter"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+        android:paddingTop="16dp">
+
+        <com.coinkarasu.custom.AggressiveProgressbar
+            android:id="@+id/progressbar"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/popup_menu"
+            android:layout_width="20dp"
+            android:layout_height="16dp"
+            android:layout_alignTop="@id/filter"
+            android:layout_marginRight="8dp"
+            android:layout_toLeftOf="@id/filter"
+            android:background="#ffffff"
+            android:src="@drawable/ic_trending_card_filter_list" />
+
+        <TextView
+            android:id="@+id/filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/home_tab_filter"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+    </RelativeLayout>
+
 </RelativeLayout>

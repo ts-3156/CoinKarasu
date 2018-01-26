@@ -17,6 +17,7 @@ import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.adapters.HomeTabAdapter;
 import com.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
 import com.coinkarasu.coins.Coin;
+import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.services.data.Trending;
 import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
@@ -33,6 +34,9 @@ public class HomeTabCardFragment extends Fragment implements
 
     private TrendingKind kind;
     private Trending trending;
+    private AggressiveProgressbar progressbar;
+    private View popupIcon;
+    private View popupLabel;
 
     public HomeTabCardFragment() {
     }
@@ -59,8 +63,12 @@ public class HomeTabCardFragment extends Fragment implements
 
         ((TextView) view.findViewById(R.id.caption_desc)).setText(getString(kind.labelResId));
 
-        view.findViewById(R.id.popup_menu).setOnClickListener(this);
-        view.findViewById(R.id.filter).setOnClickListener(this);
+        progressbar = view.findViewById(R.id.progressbar);
+        popupIcon = view.findViewById(R.id.popup_menu);
+        popupLabel = view.findViewById(R.id.filter);
+
+        popupIcon.setOnClickListener(this);
+        popupLabel.setOnClickListener(this);
 
         initializeRecyclerView(view, kind);
 
@@ -117,5 +125,12 @@ public class HomeTabCardFragment extends Fragment implements
         }
 
         return true;
+    }
+
+    public void showProgressbar() {
+        popupIcon.setVisibility(View.GONE);
+        popupLabel.setVisibility(View.GONE);
+        progressbar.setVisibility(View.VISIBLE);
+        progressbar.startAnimation();
     }
 }
