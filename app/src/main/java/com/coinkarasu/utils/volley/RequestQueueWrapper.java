@@ -16,11 +16,11 @@ public class RequestQueueWrapper {
     private static final String TAG = "RequestQueueWrapper";
 
     private RequestQueue requestQueue;
-    private ConcurrentMap<String, HttpResultCache> resultCaches;
+    private ConcurrentMap<String, HttpHealthCache> cache;
 
     public RequestQueueWrapper(RequestQueue requestQueue) {
         this.requestQueue = requestQueue;
-        resultCaches = new ConcurrentHashMap<>();
+        cache = new ConcurrentHashMap<>();
     }
 
     public <T> void addResult(Request<T> req, boolean isSuccess) {
@@ -30,8 +30,8 @@ public class RequestQueueWrapper {
             return;
         }
 
-        resultCaches.putIfAbsent(domain, new HttpResultCache(domain));
-        resultCaches.get(domain).put(isSuccess);
+        cache.putIfAbsent(domain, new HttpHealthCache(domain));
+        cache.get(domain).put(isSuccess);
     }
 
     public <T> Request<T> add(Request<T> req) {
@@ -40,10 +40,10 @@ public class RequestQueueWrapper {
             return null;
         }
 
-        resultCaches.putIfAbsent(domain, new HttpResultCache(domain));
-        HttpResultCache resultCache = resultCaches.get(domain);
+        cache.putIfAbsent(domain, new HttpHealthCache(domain));
+        HttpHealthCache status = cache.get(domain);
 
-        if (!resultCache.areAllFailure()) {
+        if (status.isOperatingNormally()) {
             requestQueue.add(req);
             return req;
         } else {

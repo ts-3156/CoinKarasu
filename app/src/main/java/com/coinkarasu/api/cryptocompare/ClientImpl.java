@@ -44,9 +44,7 @@ class ClientImpl implements Client {
     @Override
     public Prices getPrices(String[] fromSymbols, String toSymbol, String exchange) {
         String url = "https://min-api.cryptocompare.com/data/pricemultifull?"
-                + "&fsyms=" + CKStringUtils.join(fromSymbols, ",")
-                + "&tsyms=" + toSymbol
-                + "&e=" + exchange;
+                + Query.toString("fsyms", CKStringUtils.join(fromSymbols, ","), "tsyms", toSymbol, "e", exchange);
         JSONObject response = performGet(url);
         return new PricesImpl(new PricesResponseImpl(response));
     }
@@ -84,12 +82,10 @@ class ClientImpl implements Client {
             return null;
         }
 
-        String url = "https://min-api.cryptocompare.com/data/histo" + kind +
-                "?fsym=" + fromSymbol + "&tsym=" + toSymbol + "&e=" + exchange +
-                "&limit=" + limit + "&aggregate=" + aggregate;
+        String url = "https://min-api.cryptocompare.com/data/histo" + kind + "?"
+                + Query.toString("fsym", fromSymbol, "tsym", toSymbol, "e", exchange, "limit", limit, "aggregate", aggregate);
 
-        JSONObject response = performGet(url);
-        histories = new HistoryResponseImpl(response, fromSymbol, toSymbol).getHistories();
+        histories = new HistoryResponseImpl(performGet(url), fromSymbol, toSymbol).getHistories();
 
         if (histories != null && !histories.isEmpty()) {
             new HistoriesCache(context).put(kind, fromSymbol, toSymbol, limit, aggregate, exchange, histories);
@@ -152,7 +148,8 @@ class ClientImpl implements Client {
 
     @Override
     public CoinSnapshot getCoinSnapshot(String fromSymbol, String toSymbol) {
-        String url = "https://www.cryptocompare.com/api/data/coinsnapshot/?fsym=" + fromSymbol + "&tsym=" + toSymbol;
+        String url = "https://www.cryptocompare.com/api/data/coinsnapshot/?"
+                + Query.toString("fsym", fromSymbol, "tsym", toSymbol);
 
         JSONObject response = performGet(url);
         CoinSnapshotResponse snapshotResponse = new CoinSnapshotResponseImpl(response, fromSymbol, toSymbol);
@@ -161,7 +158,8 @@ class ClientImpl implements Client {
 
     @Override
     public TopPairs getTopPairs(String fromSymbol) {
-        String url = "https://min-api.cryptocompare.com/data/top/pairs?fsym=" + fromSymbol + "&limit=100";
+        String url = "https://min-api.cryptocompare.com/data/top/pairs?"
+                + Query.toString("fsym", fromSymbol, "limit", 100);
 
         TopPairsResponse topPairsResponse;
 
@@ -198,5 +196,23 @@ class ClientImpl implements Client {
 
     private JSONObject performGet(String url) {
         return new BlockingRequest(requestQueue, url).perform();
+    }
+
+    private static class Query {
+        private static final String AMP = "&";
+        private static final String EQL = "=";
+
+        public static String toString(Object... params) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < params.length; i += 2) {
+                if (builder.length() != 0) {
+                    builder.append(AMP);
+                }
+                builder.append(params[i]);
+                builder.append(EQL);
+                builder.append(params[i + 1]);
+            }
+            return builder.toString();
+        }
     }
 }
