@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Toplist {
@@ -23,10 +24,16 @@ public class Toplist {
 
     private NavigationKind kind;
     private List<PriceMultiFullCoin> coins;
+    private Date updated;
 
     public Toplist(List<PriceMultiFullCoin> coins, NavigationKind kind) {
+        this(coins, kind, null);
+    }
+
+    private Toplist(List<PriceMultiFullCoin> coins, NavigationKind kind, Date updated) {
         this.coins = coins;
         this.kind = kind;
+        this.updated = updated;
     }
 
     public void saveToCache(Context context) {
@@ -39,12 +46,13 @@ public class Toplist {
     }
 
     public static Toplist restoreFromCache(Context context, NavigationKind kind) {
-        if (!CacheFileHelper.exists(context, getCacheName(kind))) {
+        String key = getCacheName(kind);
+        if (!CacheFileHelper.exists(context, key)) {
             return null;
         }
 
         long start = System.currentTimeMillis();
-        String text = CacheFileHelper.read(context, getCacheName(kind));
+        String text = CacheFileHelper.read(context, key);
         if (TextUtils.isEmpty(text)) {
             if (DEBUG) CKLog.w(TAG, "restoreFromCache() " + kind.name() + " cache is null.");
             return null;
@@ -65,7 +73,7 @@ public class Toplist {
         if (DEBUG) CKLog.d(TAG, "restoreFromCache(" + kind.name() + ") elapsed time: "
                 + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
 
-        return new Toplist(coins, kind);
+        return new Toplist(coins, kind, CacheFileHelper.lastModified(context, key));
     }
 
     private static String getCacheName(NavigationKind kind) {
@@ -77,14 +85,14 @@ public class Toplist {
     }
 
     public String[] getSymbols() {
-        ArrayList<String> list = new ArrayList<>(coins.size());
+        List<String> list = new ArrayList<>(coins.size());
         for (PriceMultiFullCoin coin : coins) {
             list.add((coin.getFromSymbol()));
         }
         return list.toArray(new String[list.size()]);
     }
 
-    public NavigationKind getKind() {
-        return kind;
+    public Date getUpdated() {
+        return updated;
     }
 }

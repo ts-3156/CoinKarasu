@@ -130,17 +130,19 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                if (isVisibleToUser && intent.getExtras() != null) {
-                    String progress = intent.getExtras().getString("progress");
-                    TrendingKind kind = TrendingKind.valueOf(intent.getExtras().getString("kind"));
+                if (intent.getExtras() == null || getActivity() == null || getActivity().isFinishing()) {
+                    return;
+                }
 
-                    if (TextUtils.isEmpty(progress) || progress.equals("finished")) {
-                        refreshCard(kind);
-                    } else if (progress.equals("started")) {
-                        Fragment fragment = getChildFragmentManager().findFragmentByTag(kind.tag);
-                        if (fragment != null) {
-                            ((HomeTabCardFragment) fragment).showProgressbar();
-                        }
+                String progress = intent.getExtras().getString("progress");
+                TrendingKind kind = TrendingKind.valueOf(intent.getExtras().getString("kind"));
+
+                if (TextUtils.isEmpty(progress) || progress.equals("finished")) {
+                    refreshCard(kind);
+                } else if (progress.equals("started")) {
+                    Fragment fragment = getChildFragmentManager().findFragmentByTag(kind.tag);
+                    if (fragment != null) {
+                        ((HomeTabCardFragment) fragment).showProgressbar();
                     }
                 }
             }

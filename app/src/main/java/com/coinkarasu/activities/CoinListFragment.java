@@ -199,15 +199,6 @@ public class CoinListFragment extends Fragment implements
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        if (isVisibleToUser && kind != null && kind.isToplist() && getActivity() != null) {
-            UpdateToplistIntentService.start(getActivity(), kind);
-        }
-    }
-
-    @Override
     public void onDetach() {
         super.onDetach();
         if (sectionFragments != null) {
@@ -226,6 +217,10 @@ public class CoinListFragment extends Fragment implements
             // フラグメントのライフサイクルと結びつかないイベントでオートアップデートを起動する。
             // 例) タブの初期化後に、タブのコンテンツを表示
             setupAdapter();
+
+            if (kind != null && kind.isToplist() && getActivity() != null) {
+                UpdateToplistIntentService.start(getActivity(), kind);
+            }
         }
 
         if (sectionFragments != null) {

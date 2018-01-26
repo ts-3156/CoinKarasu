@@ -109,12 +109,14 @@ public class HomeTabCardFragment extends Fragment implements
         PopupMenu popup = new PopupMenu(view.getContext(), view);
         popup.inflate(R.menu.trending_card);
         popup.setOnMenuItemClickListener(this);
+        MenuItem item = popup.getMenu().findItem(R.id.action_last_updated);
+        String str = "";
 
         if (trending != null && trending.getUpdated() != null) {
-            MenuItem item = popup.getMenu().findItem(R.id.action_last_updated);
-            item.setTitle(getString(R.string.action_last_updated,
-                    CKDateUtils.getRelativeTimeSpanString(trending.getUpdated().getTime())));
+            str = CKDateUtils.getRelativeTimeSpanString(trending.getUpdated().getTime()).toString();
         }
+
+        item.setTitle(getString(R.string.action_last_updated, str));
 
         popup.show();
     }

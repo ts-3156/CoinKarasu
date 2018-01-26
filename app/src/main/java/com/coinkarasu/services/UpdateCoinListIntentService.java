@@ -15,8 +15,9 @@ import com.coinkarasu.utils.io.CacheFileHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class UpdateCoinListIntentService extends IntentService {
@@ -53,13 +54,11 @@ public class UpdateCoinListIntentService extends IntentService {
         AppDatabase db = AppDatabase.getAppDatabase(this);
         db.coinListCoinDao().deleteAll();
 
-        LinkedHashSet<String> uniqueSymbols = new LinkedHashSet<>();
+        Set<String> uniqueSymbols = new HashSet<>();
         for (NavigationKind kind : NavigationKind.values()) {
-            if (kind.symbolsResId == -1) {
-                continue;
+            if (kind.symbolsResId != -1) {
+                Collections.addAll(uniqueSymbols, getResources().getStringArray(kind.symbolsResId));
             }
-
-            Collections.addAll(uniqueSymbols, getResources().getStringArray(kind.symbolsResId));
         }
 
         List<Coin> coins = new ArrayList<>(uniqueSymbols.size());
@@ -84,7 +83,7 @@ public class UpdateCoinListIntentService extends IntentService {
                 +coinList.getAllSymbols().size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 
-    private static void removeUnusedSymbolsFromCoinList(CoinList coinList, LinkedHashSet<String> symbols) {
+    private static void removeUnusedSymbolsFromCoinList(CoinList coinList, Set<String> symbols) {
         List<String> unusedSymbols = new ArrayList<>();
 
         for (String symbol : coinList.getAllSymbols()) {

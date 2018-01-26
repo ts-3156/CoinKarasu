@@ -29,7 +29,7 @@ public class Trending {
         this(coins, kind, null);
     }
 
-    public Trending(List<Coin> coins, TrendingKind kind, Date updated) {
+    private Trending(List<Coin> coins, TrendingKind kind, Date updated) {
         this.coins = coins;
         this.kind = kind;
         this.updated = updated;

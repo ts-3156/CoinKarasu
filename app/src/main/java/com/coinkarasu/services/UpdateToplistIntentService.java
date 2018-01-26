@@ -11,20 +11,23 @@ import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.CKStringUtils;
 import com.coinkarasu.utils.io.CacheFileHelper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 public class UpdateToplistIntentService extends IntentService {
 
     private static final boolean DEBUG = true;
-
-    private static final long ONE_DAY = 24 * 60 * 60 * 1000;
-    private static final String TAG = UpdateToplistIntentService.class.getSimpleName();
+    private static final String TAG = "UpdateToplistIntentService";
+    private static final long ONE_HOUR = TimeUnit.MINUTES.toMillis(60);
 
     public UpdateToplistIntentService() {
         super(TAG);
@@ -42,41 +45,57 @@ public class UpdateToplistIntentService extends IntentService {
     protected void update(Intent intent) {
         long start = System.currentTimeMillis();
         NavigationKind kind = NavigationKind.valueOf(intent.getAction());
-        String symbol = kind.getToSymbol();
-        String logFile = logFile(symbol);
+        String toSymbol = kind.getToSymbol();
+        String logFile = logFile(toSymbol);
 
-        if (CacheFileHelper.exists(this, logFile) && !CacheFileHelper.isExpired(this, logFile, ONE_DAY)) {
+        if (CacheFileHelper.exists(this, logFile) && !CacheFileHelper.isExpired(this, logFile, ONE_HOUR)) {
             if (DEBUG) CKLog.d(TAG, kind.name() + " is recently executed.");
             return;
         }
         CacheFileHelper.touch(this, logFile);
 
-        String[] symbols = getResources().getStringArray(kind.symbolsResId);
-        ArrayList<PriceMultiFullCoin> coins = new ArrayList<>(symbols.length);
+        Set<String> uniqueSymbols = new HashSet<>();
+        for (NavigationKind k : NavigationKind.values()) {
+            if (k.isToplist()) {
+                Collections.addAll(uniqueSymbols, getResources().getStringArray(k.symbolsResId));
+            }
+        }
+        List<String> symbols = new ArrayList<>(uniqueSymbols);
+
+        List<PriceMultiFullCoin> coins = new ArrayList<>(symbols.size());
         Client client = ClientFactory.getInstance(this);
 
-        for (int i = 0; i < symbols.length; i += 10) {
-            int index = i + 9;
-            if (index >= symbols.length) {
-                index = symbols.length - 1;
+        for (int i = 0; i < symbols.size(); i += 20) {
+            int index = i + 19;
+            if (index >= symbols.size()) {
+                index = symbols.size() - 1;
             }
 
-            String[] target = Arrays.copyOfRange(symbols, i, index + 1);
-            Prices prices = client.getPrices(target, symbol, "cccagg");
+            String[] fromSymbols = symbols.subList(i, index + 1).toArray(new String[0]);
+            Prices prices = client.getPrices(fromSymbols, toSymbol, "cccagg");
+
+            if (prices == null || prices.getCoins() == null || prices.getCoins().isEmpty()) {
+                if (DEBUG) CKLog.w(TAG, "Stop updating. prices is null");
+                return;
+            }
+
             coins.addAll(prices.getCoins());
 
-            if (index >= symbols.length) {
+            if (index >= symbols.size()) {
                 break;
             }
         }
 
+        List<String> removedSymbols = new ArrayList<>();
         Iterator<PriceMultiFullCoin> iterator = coins.iterator();
         while (iterator.hasNext()) {
             PriceMultiFullCoin coin = iterator.next();
             if (coin.getVolume24HourTo() == 0.0) {
                 iterator.remove();
+                removedSymbols.add(coin.getFromSymbol());
             }
         }
+        if (DEBUG) CKLog.d(TAG, "removed symbols in " + kind.name() + " " + CKStringUtils.join(" ", removedSymbols));
 
         Collections.sort(coins, new Comparator<PriceMultiFullCoin>() {
             public int compare(PriceMultiFullCoin c1, PriceMultiFullCoin c2) {
@@ -84,10 +103,14 @@ public class UpdateToplistIntentService extends IntentService {
             }
         });
 
+        if (kind != NavigationKind.btc_toplist && coins.size() > 100) {
+            coins = coins.subList(0, 100);
+        }
+
         Toplist toplist = new Toplist(coins, kind);
         toplist.saveToCache(this);
 
-        if (DEBUG) CKLog.d(TAG, symbol + " toplist updated, "
+        if (DEBUG) CKLog.d(TAG, toSymbol + " toplist updated, "
                 + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
     }
 

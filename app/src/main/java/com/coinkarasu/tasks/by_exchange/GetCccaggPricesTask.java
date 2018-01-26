@@ -76,7 +76,7 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
             Prices prices = thread.getPrices();
             if (prices == null || prices.getCoins() == null || prices.getCoins().isEmpty()) {
                 if (DEBUG) CKLog.w(TAG, "prices is blank " + exchangeStr + " "
-                        + Arrays.toString(fromSymbols) + " " + toSymbol);
+                        + Arrays.toString(thread.getFromSymbols()) + " " + toSymbol);
                 hasWarning = true;
                 continue;
             }

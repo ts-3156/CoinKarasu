@@ -20,17 +20,18 @@ import android.widget.TextView;
 
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
-import com.coinkarasu.activities.etc.Currency;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.settings.PreferencesActivity;
 import com.coinkarasu.billingmodule.BillingViewController;
 import com.coinkarasu.billingmodule.billing.BillingCallback;
 import com.coinkarasu.billingmodule.billing.BillingManager;
+import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.tasks.GetApiKeyTask;
 import com.coinkarasu.tasks.GetFirstLaunchDateTask;
 import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
 import com.coinkarasu.tasks.InsertLaunchEventTask;
 import com.coinkarasu.utils.ApiKeyUtils;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.UuidUtils;
@@ -146,42 +147,35 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.main, menu);
+        if (!BuildConfig.DEBUG) {
+            return false;
+        }
+
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, PreferencesActivity.class));
-
-            return true;
-        } else if (id == R.id.action_pause) {
-            item.setChecked(!item.isChecked());
-            if (item.isChecked()) {
-                // TODO Use global variable
-            } else {
-            }
-
-            return true;
-        } else if (id == R.id.action_currency) {
-            if (item.getTitle().toString().equals(getString(Currency.USD.titleStrResId))) {
-                PrefHelper.saveToSymbol(this, Currency.JPY.name());
-            } else {
-                PrefHelper.saveToSymbol(this, Currency.USD.name());
-            }
-
-            return true;
+        if (!BuildConfig.DEBUG) {
+            return false;
         }
 
-        return super.onOptionsItemSelected(item);
+        NavigationKind kind = viewController.getCurrentKind();
+        MenuItem item = menu.findItem(R.id.action_last_updated);
+        String str = "";
+
+        if (kind.isToplist()) {
+            Toplist toplist = Toplist.restoreFromCache(this, kind);
+
+            if (toplist != null && toplist.getUpdated() != null) {
+                str = CKDateUtils.getRelativeTimeSpanString(toplist.getUpdated().getTime()).toString();
+            }
+        }
+
+        item.setTitle(getString(R.string.action_last_updated, str));
+
+        return true;
     }
 
     @Override

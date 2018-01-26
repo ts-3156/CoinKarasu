@@ -41,6 +41,10 @@ public class GetCccaggPricesThread extends Thread {
         return this;
     }
 
+    public String[] getFromSymbols() {
+        return fromSymbols;
+    }
+
     public Prices getPrices() {
         return prices;
     }
