@@ -22,6 +22,7 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.SwipeDetector;
 import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
 import com.coinkarasu.tasks.InsertLaunchEventTask;
+import com.coinkarasu.tasks.InsertViewCoinEventTask;
 import com.coinkarasu.tasks.LogCoinSelectedEventTask;
 import com.coinkarasu.utils.CKLog;
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -53,6 +54,7 @@ public class CoinActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 new LogCoinSelectedEventTask().execute(CoinActivity.this, kind, coin);
+                new InsertViewCoinEventTask().execute(CoinActivity.this, kind, coin);
             }
         }).execute(this);
 

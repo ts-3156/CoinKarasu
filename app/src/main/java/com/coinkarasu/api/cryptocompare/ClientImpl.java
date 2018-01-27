@@ -72,20 +72,20 @@ class ClientImpl implements Client {
             histories = cache.get(kind, fromSymbol, toSymbol, limit, aggregate, exchange, (mode & CacheMode.IGNORE_EXPIRES) != 0);
 
             if (histories != null && !histories.isEmpty()) {
-                if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Return cache kind=" + kind.name());
+                if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Return cache kind=" + kind.name() + " limit=" + limit);
                 return histories;
             }
         }
 
         if (!isFlagOn(mode, CacheMode.FORCE_IF_EXPIRED) && isFlagOn(mode, CacheMode.READ_ONLY)) {
-            if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Flag is READ_ONLY and return null kind=" + kind.name());
+            if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Flag is READ_ONLY and return null kind=" + kind.name() + " limit=" + limit);
             return null;
         }
 
         if (isFlagOn(mode, CacheMode.FORCE_IF_EXPIRED)
                 && cache.exists(kind, fromSymbol, toSymbol, limit, aggregate, exchange)
                 && !cache.isExpired(kind, fromSymbol, toSymbol, limit, aggregate, exchange)) {
-            if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Flag is FORCE_IF_EXPIRED and return null kind=" + kind.name());
+            if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Flag is FORCE_IF_EXPIRED and return null kind=" + kind.name() + " limit=" + limit);
             return null;
         }
 
@@ -98,7 +98,7 @@ class ClientImpl implements Client {
             new HistoriesCache(context).put(kind, fromSymbol, toSymbol, limit, aggregate, exchange, histories);
         }
 
-        if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Return histories kind=" + kind.name());
+        if (DEBUG) CKLog.d(TAG, "getHistoryXxx() Return histories kind=" + kind.name() + " limit=" + limit);
 
         return histories;
     }

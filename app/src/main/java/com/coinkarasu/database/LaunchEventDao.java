@@ -21,7 +21,4 @@ public interface LaunchEventDao {
 
     @Insert
     void insertEvent(LaunchEvent event);
-
-    @Query("DELETE FROM launch_events")
-    void deleteAll();
 }
