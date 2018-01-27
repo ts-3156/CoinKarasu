@@ -18,11 +18,12 @@ import com.coinkarasu.utils.volley.VolleyHelper;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ResourceUtils {
 
     public ImageLoader imageLoader;
-    public HashMap<String, Integer> symbolIconResIdMap;
+    public Map<String, Integer> symbolIconResIdMap;
     public SparseArray<String> headerNameResIdStringMap;
     private int trendUp;
     private int trendFlat;
@@ -34,7 +35,7 @@ public class ResourceUtils {
     private PriceFormat priceFormatter;
     private WeightedPriceFormat weightedPriceFormatter;
     public SignedPriceFormat signedPriceFormatter;
-    TrendValueFormat trendFormatter;
+    public TrendValueFormat trendFormatter;
     public SurroundedTrendValueFormat surroundedTrendFormatter;
     public TrendIconFormat trendIconFormat;
 
@@ -57,8 +58,8 @@ public class ResourceUtils {
         trendIconFormat = new TrendIconFormat();
     }
 
-    private HashMap<String, Integer> buildIconResIdMap(Context context, List<Coin> coins) {
-        HashMap<String, Integer> map = new HashMap<>();
+    private Map<String, Integer> buildIconResIdMap(Context context, List<Coin> coins) {
+        Map<String, Integer> map = new HashMap<>();
         Resources resources = context.getResources();
         String packageName = context.getPackageName();
 

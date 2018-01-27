@@ -34,8 +34,8 @@
 
         <ImageView
             android:id="@+id/trend_icon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/coin_list_trending_icon_width"
+            android:layout_height="@dimen/coin_list_trending_icon_height"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/price"
             android:paddingRight="4dp"

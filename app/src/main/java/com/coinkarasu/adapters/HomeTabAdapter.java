@@ -10,25 +10,24 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.coinkarasu.R;
+import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.coins.Coin;
-import com.coinkarasu.format.PriceFormat;
-import com.coinkarasu.format.TrendValueFormat;
+import com.coinkarasu.custom.NetworkSparkView;
 
 import java.util.List;
 
 public class HomeTabAdapter extends RecyclerView.Adapter<HomeTabAdapter.ViewHolder> {
-
-    private LayoutInflater inflater;
     private OnItemClickListener listener;
     private List<Coin> coins;
-
     private ResourceUtils resources;
+    private Configurations configs;
+    private TrendingKind kind;
 
     public HomeTabAdapter(Context context, List<Coin> coins) {
-        inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.coins = coins;
 
         resources = new ResourceUtils(context, coins);
+        configs = new Configurations(context);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -37,7 +36,7 @@ public class HomeTabAdapter extends RecyclerView.Adapter<HomeTabAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ViewHolder(inflater.inflate(R.layout.home_tab_row_item, parent, false));
+        return new ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.home_tab_row_item, parent, false));
     }
 
     @Override
@@ -45,14 +44,24 @@ public class HomeTabAdapter extends RecyclerView.Adapter<HomeTabAdapter.ViewHold
         final Coin coin = coins.get(position);
 
         holder.symbol.setText(coin.getSymbol());
-        holder.price.setText(new PriceFormat(coin.getToSymbol()).format(coin.getPrice()));
-        holder.trend.setText(new TrendValueFormat().format(coin.getTrend()));
+        holder.price.setText(resources.getPriceFormatter(coin.getToSymbol()).format(coin.getPrice()));
+        holder.trend.setText(resources.trendFormatter.format(coin.getTrend()));
         holder.trend.setTextColor(resources.getTrendColor(coin.getTrend()));
 
         holder.icon.setDefaultImageResId(resources.symbolIconResIdMap.get(coin.getSymbol()));
         holder.icon.setImageUrl(coin.getLargeImageUrl(), resources.imageLoader);
 
+        // if (kind != null && kind == TrendingKind.one_hour) {
+        //     holder.trendIcon.setVisibility(View.GONE);
+        //     holder.sparkLine.setVisibility(View.VISIBLE);
+        //     holder.sparkLine.setConfigurations(configs);
+        //     holder.sparkLine.setKind(HistoricalPriceKind.hour);
+        //     holder.sparkLine.setSymbols(coin.getSymbol(), coin.getToSymbol());
+        // } else {
+        holder.trendIcon.setVisibility(View.VISIBLE);
+        holder.sparkLine.setVisibility(View.GONE);
         holder.trendIcon.setImageResource(resources.trendIconFormat.format(coin.getTrend()));
+        // }
 
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,19 +71,30 @@ public class HomeTabAdapter extends RecyclerView.Adapter<HomeTabAdapter.ViewHold
         });
     }
 
+    public void onViewRecycled(ViewHolder holder) {
+        holder.sparkLine.clearData();
+        holder.icon.setImageUrl(null, null);
+
+        holder.container.setOnClickListener(null);
+    }
+
     @Override
     public int getItemCount() {
         return coins.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    public void setTrendingKind(TrendingKind kind) {
+        this.kind = kind;
+    }
 
+    static class ViewHolder extends RecyclerView.ViewHolder {
         View container;
         NetworkImageView icon;
         TextView symbol;
         TextView price;
         TextView trend;
         ImageView trendIcon;
+        NetworkSparkView sparkLine;
 
         ViewHolder(View view) {
             super(view);
@@ -84,6 +104,7 @@ public class HomeTabAdapter extends RecyclerView.Adapter<HomeTabAdapter.ViewHold
             price = view.findViewById(R.id.price);
             trend = view.findViewById(R.id.trend);
             trendIcon = view.findViewById(R.id.trend_icon);
+            sparkLine = view.findViewById(R.id.spark_line);
         }
     }
 

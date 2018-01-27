@@ -5,12 +5,12 @@ import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 
+import com.coinkarasu.activities.etc.HistoricalPriceKind;
 import com.coinkarasu.adapters.CoinListSparkAdapter;
 import com.coinkarasu.adapters.Configurations;
 import com.coinkarasu.api.cryptocompare.CacheMode;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.History;
-import com.coinkarasu.tasks.GetHistoryDayTask;
 import com.coinkarasu.tasks.GetHistoryTaskBase;
 import com.coinkarasu.utils.CKLog;
 import com.robinhood.spark.SparkAdapter;
@@ -21,6 +21,7 @@ import java.util.List;
 public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Listener {
     private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "NetworkSparkView";
+    private static final HistoricalPriceKind DEFAULT_KIND = HistoricalPriceKind.day;
 
     private static final SparkAdapter emptyAdapter = new SparkAdapter() {
         @Override
@@ -42,6 +43,7 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
     private GetHistoryTaskBase task;
     private String fromSymbol;
     private String toSymbol;
+    private HistoricalPriceKind kind;
     private Configurations configs;
 
     public NetworkSparkView(Context context) {
@@ -59,6 +61,9 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
     public void setSymbols(String fromSymbol, String toSymbol) {
         this.fromSymbol = fromSymbol;
         this.toSymbol = toSymbol;
+        if (kind == null) {
+            this.kind = DEFAULT_KIND;
+        }
         loadDataIfNecessary();
     }
 
@@ -91,7 +96,7 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
             }
         }
 
-        task = new GetHistoryDayTask(ClientFactory.getInstance(getContext()))
+        task = GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getContext()), kind)
                 .setFromSymbol(fromSymbol)
                 .setToSymbol(toSymbol)
                 .setCacheMode(CacheMode.READ_ONLY | CacheMode.IGNORE_EXPIRES)
@@ -120,7 +125,7 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
         }
 
         if (getAdapter() == null && (configs != null && !configs.isAirplaneModeOn)) {
-            task = new GetHistoryDayTask(ClientFactory.getInstance(getContext()))
+            task = GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getContext()), kind)
                     .setFromSymbol(fromSymbol)
                     .setToSymbol(toSymbol)
                     .setCacheMode(CacheMode.FORCE_IF_EXPIRED)
@@ -135,6 +140,10 @@ public class NetworkSparkView extends SparkView implements GetHistoryTaskBase.Li
 
     public void setConfigurations(Configurations configs) {
         this.configs = configs;
+    }
+
+    public void setKind(HistoricalPriceKind kind) {
+        this.kind = kind;
     }
 
     @Override

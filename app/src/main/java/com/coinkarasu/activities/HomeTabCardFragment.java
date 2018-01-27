@@ -94,6 +94,7 @@ public class HomeTabCardFragment extends Fragment implements
             view.findViewById(R.id.warn_container).setVisibility(View.VISIBLE);
         } else {
             HomeTabAdapter adapter = new HomeTabAdapter(getActivity(), coins);
+            adapter.setTrendingKind(kind);
             adapter.setOnItemClickListener(this);
             recyclerView.setAdapter(adapter);
         }

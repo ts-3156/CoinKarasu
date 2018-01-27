@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="wrap_content"
@@ -31,8 +32,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/symbol"
         android:layout_centerHorizontal="true"
-        android:text="1,000,000"
-        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        tools:text="1,000,000" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -43,16 +44,27 @@
 
         <ImageView
             android:id="@+id/trend_icon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="@dimen/coin_list_trending_icon_width"
+            android:layout_height="@dimen/coin_list_trending_icon_height"
             android:paddingRight="4dp" />
+
+        <com.coinkarasu.custom.NetworkSparkView
+            android:id="@+id/spark_line"
+            android:layout_width="@dimen/home_tab_spark_line_width"
+            android:layout_height="@dimen/home_tab_spark_line_height"
+            android:paddingRight="4dp"
+            android:visibility="gone"
+            app:spark_animateChanges="false"
+            app:spark_cornerRadius="0.5dp"
+            app:spark_lineColor="#80000000"
+            app:spark_lineWidth="1dp" />
 
         <TextView
             android:id="@+id/trend"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="10.0%"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            tools:text="10.0%" />
 
     </LinearLayout>
 
