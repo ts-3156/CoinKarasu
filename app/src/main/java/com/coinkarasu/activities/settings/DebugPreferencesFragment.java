@@ -12,6 +12,7 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
+import android.widget.Toast;
 
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
@@ -23,6 +24,7 @@ import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.Tutorial;
 import com.coinkarasu.utils.UuidUtils;
 import com.coinkarasu.utils.cache.DiskBasedCache;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.io.File;
 import java.util.Arrays;
@@ -49,6 +51,7 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
         findPreference("pref_first_launch_date").setOnPreferenceClickListener(this);
         findPreference("pref_uuid_file_exists").setOnPreferenceClickListener(this);
         findPreference("pref_token_file_exists").setOnPreferenceClickListener(this);
+        findPreference("pref_firebase_instance_id").setOnPreferenceClickListener(this);
 
         findPreference("pref_show_first_launch_screen").setOnPreferenceChangeListener(this);
 
@@ -76,11 +79,9 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
 
         bindPreferenceSummaryToValue(prefs, "pref_toast_level");
 
-        Preference uuidFile = findPreference("pref_uuid_file_exists");
-        uuidFile.setSummary(UuidUtils.exists(activity) ? UuidUtils.get(activity) : "No");
-
-        Preference tokenFile = findPreference("pref_token_file_exists");
-        tokenFile.setSummary(ApiKeyUtils.exists(activity) ? ApiKeyUtils.get(activity).toString() : ApiKeyUtils.dummy().toString());
+        findPreference("pref_uuid_file_exists").setSummary(UuidUtils.exists(activity) ? UuidUtils.get(activity) : "No");
+        findPreference("pref_token_file_exists").setSummary(ApiKeyUtils.exists(activity) ? ApiKeyUtils.get(activity).toString() : ApiKeyUtils.dummy().toString());
+        findPreference("pref_firebase_instance_id").setSummary(FirebaseInstanceId.getInstance().getToken());
 
         findPreference("pref_internet").setSummary("" + PrefHelper.isInternetConnected(activity));
         findPreference("pref_airplane_mode").setSummary("" + PrefHelper.isAirplaneModeOn(activity));
@@ -135,6 +136,10 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
                         ApiKeyUtils.remove(getActivity());
                     }
                 });
+                break;
+            case "pref_firebase_instance_id":
+                CKLog.d(TAG, "Refreshed token: " + FirebaseInstanceId.getInstance().getToken());
+                Toast.makeText(getActivity(), R.string.pref_firebase_instance_id_toast, Toast.LENGTH_SHORT).show();
                 break;
         }
 

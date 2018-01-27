@@ -80,6 +80,11 @@
             android:title="@string/pref_token_file_exists_title" />
 
         <Preference
+            android:key="pref_firebase_instance_id"
+            android:summary=""
+            android:title="@string/pref_firebase_instance_id_title" />
+
+        <Preference
             android:key="pref_internet"
             android:summary=""
             android:title="@string/pref_internet_title" />

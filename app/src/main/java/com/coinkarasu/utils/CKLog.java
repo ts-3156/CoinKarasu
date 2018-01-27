@@ -5,10 +5,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.Log;
@@ -163,30 +164,35 @@ public class CKLog {
     }
 
     private static void sendNotification(LogItem item) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+        String channelId = context.getString(R.string.debug_notification_channel_id);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
         NotificationCompat.Builder builder =
-                new NotificationCompat.Builder(context, "debug")
+                new NotificationCompat.Builder(context, channelId)
                         .setSmallIcon(R.drawable.ic_notif)
                         .setContentTitle(item.tag)
                         .setContentText(item.message)
+                        .setAutoCancel(true)
+                        .setSound(defaultSoundUri)
+                        .setContentIntent(pendingIntent)
                         .setTicker(item.message);
-
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(context);
-        stackBuilder.addParentStack(MainActivity.class);
-        stackBuilder.addNextIntent(new Intent(context, MainActivity.class));
-
-        PendingIntent resultPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder.setContentIntent(resultPendingIntent);
 
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (manager.getNotificationChannel("debug") == null) {
-                NotificationChannel channel = new
-                        NotificationChannel("debug", "Debug", NotificationManager.IMPORTANCE_DEFAULT);
+            if (manager.getNotificationChannel(channelId) == null) {
+                String channelName = context.getString(R.string.debug_notification_channel_name);
+                NotificationChannel channel =
+                        new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_DEFAULT);
                 manager.createNotificationChannel(channel);
             }
         }
+
         manager.notify(new Random().nextInt(100000), builder.build());
     }
 

@@ -139,6 +139,11 @@
     <string name="edit_tabs_is_not_available">%1$s is not available.</string>
     <string name="edit_tabs_is_always_be_displayed">%1$s is always be displayed.</string>
 
+    <string name="default_notification_channel_id">default</string>
+    <string name="default_notification_channel_name">Default</string>
+    <string name="debug_notification_channel_id">debug</string>
+    <string name="debug_notification_channel_name">Debug</string>
+
     <string name="first_launch_description">The fast and easy price checker</string>
     <string name="first_launch_start">Start</string>
 
@@ -205,6 +210,8 @@
     <string name="pref_uuid_file_exists_dialog">Delete uuid file?</string>
     <string name="pref_token_file_exists_title">Token file</string>
     <string name="pref_token_file_exists_dialog">Delete token file?</string>
+    <string name="pref_firebase_instance_id_title">Firebase instance id</string>
+    <string name="pref_firebase_instance_id_toast">Printed to logger</string>
     <string name="pref_internet_title">Internet</string>
     <string name="pref_airplane_mode_title">Airplane mode</string>
     <string name="pref_mobile_data_title">Mobile data</string>
