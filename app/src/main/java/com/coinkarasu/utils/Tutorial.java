@@ -1,14 +1,11 @@
 package com.coinkarasu.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ScrollView;
 
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
@@ -16,7 +13,9 @@ import com.coinkarasu.activities.CoinActivity;
 import com.coinkarasu.activities.MainActivity;
 import com.coinkarasu.activities.MainFragment;
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.adapters.row.CoinListViewHolder;
+import com.coinkarasu.coins.Coin;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.util.List;
@@ -38,62 +37,60 @@ public class Tutorial {
     private static final String ID_PRICE_OVERVIEW = "tutorial_price_overview" + ID_SUFFIX;
 
     // MainActivityのTabLayoutのチュートリアル
-    public static void showTabLayoutTutorial(final Activity activity, final TabLayout targetView) {
+    public static void showTabLayoutTutorial(final MainActivity activity) {
         if (activity == null || activity.isFinishing() || AppTutorialChecker.hasStarted(activity, ID_TAB_LAYOUT)) {
             return;
         }
 
         try {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    List<NavigationKind> visibleKinds = ((MainActivity) activity).getVisibleKinds();
-                    int index = visibleKinds.indexOf(NavigationKind.coincheck);
-                    if (index < 0) {
-                        if (DEBUG) CKLog.w(TAG, "showTabLayoutTutorial() Cancel since specified tab is not visible");
-                        return;
-                    }
+            final TabLayout targetView = activity.getTabLayout();
 
-                    ShowcaseConfig config = new ShowcaseConfig();
-                    config.setDelay(DELAY);
+            List<NavigationKind> visibleKinds = activity.getVisibleKinds();
+            int index = visibleKinds.indexOf(NavigationKind.coincheck);
+            if (index < 0) {
+                if (DEBUG) CKLog.w(TAG, "showTabLayoutTutorial() Cancel since specified tab is not visible");
+                return;
+            }
 
-                    MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
-                    sequence.setConfig(config);
+            ShowcaseConfig config = new ShowcaseConfig();
+            config.setDelay(DELAY);
 
-                    sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
-                            .setTarget(targetView)
-                            .setDismissText(R.string.tutorial_dismiss)
-                            .setContentText(R.string.tutorial_content_tablayout)
-                            .withRectangleShape()
-                            .setShapePadding(PADDING_RECT)
-                            .build());
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
+            sequence.setConfig(config);
 
-                    View tabView = ((ViewGroup) targetView.getChildAt(0)).getChildAt(index);
+            sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
+                    .setTarget(targetView)
+                    .setDismissOnTouch(true)
+                    .setDismissText(R.string.tutorial_dismiss)
+                    .setContentText(R.string.tutorial_content_tablayout)
+                    .withRectangleShape()
+                    .setShapePadding(PADDING_RECT)
+                    .build());
 
-                    sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
-                            .setTarget(tabView)
-                            .setDismissText("")
-                            .setContentText(R.string.tutorial_content_tablayout_tap_tab)
-                            .setTargetTouchable(true)
-                            .setListener(new IShowcaseListener() {
-                                @Override
-                                public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {
-                                }
+            View tabView = ((ViewGroup) targetView.getChildAt(0)).getChildAt(index);
 
-                                @Override
-                                public void onShowcaseDismissed(MaterialShowcaseView materialShowcaseView) {
-                                    if (!activity.isFinishing()) {
-                                        MainFragment fragment = ((MainActivity) activity).getFragment();
-                                        fragment.setCurrentKind(NavigationKind.coincheck, true);
-                                        logTutorialProgress(((MainActivity) activity).getFirebaseAnalytics(), ID_TAB_LAYOUT);
-                                    }
-                                }
-                            })
-                            .build());
+            sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
+                    .setTarget(tabView)
+                    .setDismissOnTouch(true)
+                    .setDismissText(R.string.tutorial_dismiss)
+                    .setContentText(R.string.tutorial_content_tablayout_tap_tab)
+                    .setListener(new IShowcaseListener() {
+                        @Override
+                        public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {
+                        }
 
-                    sequence.start();
-                }
-            }, DELAY);
+                        @Override
+                        public void onShowcaseDismissed(MaterialShowcaseView materialShowcaseView) {
+                            if (!activity.isFinishing()) {
+                                MainFragment fragment = activity.getFragment();
+                                fragment.setCurrentKind(NavigationKind.coincheck, true);
+                                logTutorialProgress(activity.getFirebaseAnalytics(), ID_TAB_LAYOUT);
+                            }
+                        }
+                    })
+                    .build());
+
+            sequence.start();
         } catch (Exception e) {
             CKLog.e(TAG, e);
         } finally {
@@ -101,61 +98,67 @@ public class Tutorial {
         }
     }
 
-    // MainActivityのタブのチュートリアル。今はCoincheckタブを使っている
-    public static void showTabTutorial(final Activity activity, final RecyclerView recyclerView) {
+    // MainActivityのタブのチュートリアル
+    public synchronized static void showTabTutorial(final MainActivity activity, RecyclerView recyclerView, NavigationKind kind) {
         if (activity == null || activity.isFinishing() || AppTutorialChecker.hasStarted(activity, ID_TAB)) {
             return;
         }
 
         try {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    ShowcaseConfig config = new ShowcaseConfig();
-                    config.setDelay(DELAY);
+            ShowcaseConfig config = new ShowcaseConfig();
+            config.setDelay(DELAY);
 
-                    MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
-                    sequence.setConfig(config);
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
+            sequence.setConfig(config);
 
-                    final View rowView = ((CoinListViewHolder) recyclerView.findViewHolderForAdapterPosition(1)).container;
+            View rowView = ((CoinListViewHolder) recyclerView.findViewHolderForAdapterPosition(1)).container;
+            Coin coin = ((CoinListAdapter) recyclerView.getAdapter()).getItem(1);
+            int padding = activity.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+            String tabName = activity.getString(kind.tabStrResId);
 
-                    sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
-                            .setTarget(recyclerView)
-                            .setDismissText(R.string.tutorial_dismiss)
-                            .setContentText(R.string.tutorial_content_tab)
-                            .withoutShape()
-                            .build());
+            sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
+                    .setTarget(rowView)
+                    .setDismissOnTouch(true)
+                    .setMaskColour(0x00ffffff)
+                    .setDismissText(R.string.tutorial_dismiss)
+                    .setDismissTextBackgroundColor(0xdd335075)
+                    .setDismissTextPaddding(padding, padding, padding, padding)
+                    .setContentText(activity.getString(R.string.tutorial_content_tab, tabName))
+                    .setContentTextBackgroundColor(0xdd335075)
+                    .setContentTextPaddding(padding, padding, padding, padding)
+                    .withoutShape()
+                    .build());
 
-                    sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
-                            .setTarget(rowView)
-                            .setDismissText(R.string.tutorial_dismiss)
-                            .setContentText(R.string.tutorial_content_coin)
-                            .withRectangleShape()
-                            .setShapePadding(PADDING_RECT)
-                            .build());
+            sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
+                    .setTarget(rowView)
+                    .setDismissOnTouch(true)
+                    .setDismissText(R.string.tutorial_dismiss)
+                    .setContentText(activity.getString(R.string.tutorial_content_coin, coin.getSymbol()))
+                    .withRectangleShape()
+                    .setShapePadding(PADDING_RECT)
+                    .build());
 
-                    sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
-                            .setTarget(rowView)
-                            .setDismissText("")
-                            .setContentText(R.string.tutorial_content_coin_tap_coin)
-                            .setTargetTouchable(true)
-                            .setListener(new IShowcaseListener() {
-                                @Override
-                                public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {
-                                }
+            sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
+                    .setTarget(rowView)
+                    .setDismissOnTouch(true)
+                    .setDismissText(R.string.tutorial_dismiss)
+                    .setContentText(R.string.tutorial_content_coin_tap_coin)
+                    .setTargetTouchable(true)
+                    .setListener(new IShowcaseListener() {
+                        @Override
+                        public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {
+                        }
 
-                                @Override
-                                public void onShowcaseDismissed(MaterialShowcaseView materialShowcaseView) {
-                                    logTutorialProgress(((MainActivity) activity).getFirebaseAnalytics(), ID_TAB);
-                                }
-                            })
-                            .withRectangleShape()
-                            .setShapePadding(PADDING_RECT)
-                            .build());
+                        @Override
+                        public void onShowcaseDismissed(MaterialShowcaseView materialShowcaseView) {
+                            logTutorialProgress(activity.getFirebaseAnalytics(), ID_TAB);
+                        }
+                    })
+                    .withRectangleShape()
+                    .setShapePadding(PADDING_RECT)
+                    .build());
 
-                    sequence.start();
-                }
-            }, DELAY);
+            sequence.start();
         } catch (Exception e) {
             CKLog.e(TAG, e);
         } finally {
@@ -164,68 +167,44 @@ public class Tutorial {
     }
 
     // CoinActivityのPriceOverviewチュートリアル
-    public static void showPriceOverviewTutorial(final Activity activity, View targetView) {
+    public static void showPriceOverviewTutorial(final CoinActivity activity, View targetView, Coin coin) {
         if (activity == null || activity.isFinishing() || AppTutorialChecker.hasStarted(activity, ID_PRICE_OVERVIEW)) {
             return;
         }
 
         try {
-            build(activity, targetView, R.string.tutorial_dismiss, R.string.tutorial_content_price_overview, true, new Runnable() {
-                @Override
-                public void run() {
-                    if (!activity.isFinishing()) {
-                        ScrollView scroll = activity.findViewById(R.id.scroll_view);
-                        View card = activity.findViewById(R.id.historical_price);
-                        scroll.scrollTo(0, card.getBottom());
+            ShowcaseConfig config = new ShowcaseConfig();
+            config.setDelay(DELAY);
 
-                        logTutorialProgress(((CoinActivity) activity).getFirebaseAnalytics(), ID_PRICE_OVERVIEW);
-                        logTutorialComplete(((CoinActivity) activity).getFirebaseAnalytics());
-                    }
-                }
-            }).start();
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
+            sequence.setConfig(config);
+
+            sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
+                    .setTarget(targetView)
+                    .setDismissOnTouch(true)
+                    .setDismissText(R.string.tutorial_finish)
+                    .setContentText(activity.getString(R.string.tutorial_content_price_overview, coin.getSymbol()))
+                    .setListener(new IShowcaseListener() {
+                        @Override
+                        public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {
+                        }
+
+                        @Override
+                        public void onShowcaseDismissed(MaterialShowcaseView materialShowcaseView) {
+                            logTutorialProgress(activity.getFirebaseAnalytics(), ID_PRICE_OVERVIEW);
+                            logTutorialComplete(activity.getFirebaseAnalytics());
+                        }
+                    })
+                    .withRectangleShape()
+                    .setShapePadding(PADDING_RECT)
+                    .build());
+
+            sequence.start();
         } catch (Exception e) {
             CKLog.e(TAG, e);
         } finally {
             AppTutorialChecker.onTutorialFinished(activity, ID_PRICE_OVERVIEW);
         }
-    }
-
-    private static MaterialShowcaseSequence build(final Activity activity, View target,
-                                                  int dismissTextResId, int contentTextResId, boolean isRect, final Runnable executeOnDismiss) {
-        ShowcaseConfig config = new ShowcaseConfig();
-        config.setDelay(DELAY);
-
-        MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
-        sequence.setConfig(config);
-
-        MaterialShowcaseView.Builder builder = new MaterialShowcaseView.Builder(activity)
-                .setTarget(target)
-                .setDismissText(dismissTextResId)
-                .setContentText(contentTextResId)
-                .setTargetTouchable(true)
-                .setListener(new IShowcaseListener() {
-                    @Override
-                    public void onShowcaseDisplayed(MaterialShowcaseView materialShowcaseView) {
-                    }
-
-                    @Override
-                    public void onShowcaseDismissed(MaterialShowcaseView materialShowcaseView) {
-                        if (executeOnDismiss != null) {
-                            executeOnDismiss.run();
-                        }
-                    }
-                });
-
-        if (isRect) {
-            builder.withRectangleShape().setShapePadding(PADDING_RECT);
-        }
-
-        sequence.addSequenceItem(builder.build());
-
-        if (sequence.hasFired()) {
-        }
-
-        return sequence;
     }
 
     public static void reset(Context context) {

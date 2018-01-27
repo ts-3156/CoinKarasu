@@ -142,13 +142,14 @@
     <string name="first_launch_description">The fast and easy price checker</string>
     <string name="first_launch_start">Start</string>
 
-    <string name="tutorial_dismiss">GOT IT</string>
-    <string name="tutorial_content_tablayout">Coins are grouped by tabs. You can change the tab by tapping each tab or by swiping the screen.</string>
+    <string name="tutorial_dismiss">Got it</string>
+    <string name="tutorial_finish">Finish tutorial</string>
+    <string name="tutorial_content_tablayout">Coins are grouped by tabs.\n\nYou can change the tab by tapping each tab or by swiping the screen.</string>
     <string name="tutorial_content_tablayout_tap_tab">Please try to tap the Coincheck tab.</string>
-    <string name="tutorial_content_tab">Now Coincheck tab is displayed. Besides, there are Japan tab and JPY Toplist.</string>
-    <string name="tutorial_content_coin">Let\'s focus on the BTC coin in the Coincheck tab. You can see the current price and price fluctuation in the last 24 hours.</string>
-    <string name="tutorial_content_coin_tap_coin">Please try to tap the BTC coin.</string>
-    <string name="tutorial_content_price_overview">Since you tapped the BTC coin earlier, you went to the BTC analysis screen. What you are currently looking at is the global latest price of BTC coin.</string>
+    <string name="tutorial_content_tab">Now %1$s tab is displayed. Besides, there are Japan tab and JPY Toplist.</string>
+    <string name="tutorial_content_coin">Let\'s focus on the %1$s coin in this tab.\n\nYou can see the current price and price fluctuation in the last 24 hours.</string>
+    <string name="tutorial_content_coin_tap_coin">Please try to tap this coin.</string>
+    <string name="tutorial_content_price_overview">What you are currently looking at is the global latest price of %1$s coin.\n\nBesides this, there are many useful information on this page!</string>
 
     <string name="billing_menu_settings">Settings</string>
     <string name="billing_title_activity_main">Trivial Drive v2</string>

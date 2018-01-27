@@ -2,6 +2,7 @@ package com.coinkarasu.activities;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -193,8 +194,14 @@ public class CoinListFragment extends Fragment implements
             fragment.onAdapterSetupFinished();
         }
 
-        if (isVisibleToUser && kind == NavigationKind.coincheck) {
-            Tutorial.showTabTutorial(getActivity(), recyclerView);
+        if (isVisibleToUser) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // 1回目のonBindViewHolderが呼ばれるまで決め打ちで遅延させる
+                    Tutorial.showTabTutorial((MainActivity) getActivity(), recyclerView, kind);
+                }
+            }, 1000);
         }
     }
 

@@ -61,7 +61,7 @@ public class HomeTabCardFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home_tab_card, container, false);
 
-        ((TextView) view.findViewById(R.id.caption_desc)).setText(getString(kind.labelResId));
+        ((TextView) view.findViewById(R.id.caption_desc)).setText(kind.labelResId);
 
         progressbar = view.findViewById(R.id.progressbar);
         popupIcon = view.findViewById(R.id.popup_menu);

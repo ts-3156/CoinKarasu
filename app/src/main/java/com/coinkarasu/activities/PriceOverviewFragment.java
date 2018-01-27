@@ -148,7 +148,7 @@ public class PriceOverviewFragment extends Fragment implements
         updateCard(coin);
 
         if (getView() != null) {
-            Tutorial.showPriceOverviewTutorial(getActivity(), getView().findViewById(R.id.container));
+            Tutorial.showPriceOverviewTutorial((CoinActivity) getActivity(), getView().findViewById(R.id.container), coin);
         }
     }
 

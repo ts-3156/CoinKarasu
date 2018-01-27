@@ -107,7 +107,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
         }
         transaction.commit();
 
-        Tutorial.showTabLayoutTutorial(getActivity(), ((MainActivity) getActivity()).getTabLayout());
+        Tutorial.showTabLayoutTutorial((MainActivity) getActivity());
     }
 
     private void refreshCard(TrendingKind kind) {

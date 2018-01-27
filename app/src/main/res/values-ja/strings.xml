@@ -143,12 +143,13 @@
     <string name="first_launch_start">はじめる</string>
 
     <string name="tutorial_dismiss">次に進む</string>
-    <string name="tutorial_content_tablayout">コインはタブごとにグループ分けして表示されます。各タブをタップするか、画面をスワイプすることでタブを変更することができます。</string>
+    <string name="tutorial_finish">チュートリアルを終了する</string>
+    <string name="tutorial_content_tablayout">コインはタブごとにグループ分けして表示されます。\n\n各タブをタップするか、画面をスワイプすることでタブを変更することができます。</string>
     <string name="tutorial_content_tablayout_tap_tab">試しに、「Coincheckタブ」をタップしてみてください。</string>
-    <string name="tutorial_content_tab">今は「Coincheckタブ」を表示しています。他にも、「日本タブ」や「円で人気タブ」があります。</string>
-    <string name="tutorial_content_coin">Coincheckタブの中で、BTCコインに注目してみましょう。現在の価格と、直前の24時間での価格変動が分かります。</string>
+    <string name="tutorial_content_tab">今は「%1$sタブ」を表示しています。他にも、「日本タブ」や「円で人気タブ」があります。</string>
+    <string name="tutorial_content_coin">このタブの中で、%1$sコインに注目してみましょう。\n\n現在の価格と、直前の24時間での価格変動が分かります。</string>
     <string name="tutorial_content_coin_tap_coin">試しに、「BTCコイン」をタップしてみてください。</string>
-    <string name="tutorial_content_price_overview">先ほどBTCコインをタップしたので、BTC分析画面に進みました。今見ているのは、タップしたコインのグローバル最新価格です。</string>
+    <string name="tutorial_content_price_overview">今見ているのは、%1$sコインのグローバル最新価格です。\n\nこのページには、他にもあなたの役に立つ情報がたくさん載っています！</string>
 
     <string name="billing_dialog_pull_to_refresh">リアルタイム更新(引っ張って更新)はプレミアムユーザー向けの機能です。</string>
     <string name="billing_dialog_sync_interval">10秒おきの更新はプレミアムユーザー向けの機能です。</string>

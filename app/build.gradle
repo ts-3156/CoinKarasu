@@ -109,7 +109,7 @@ dependencies {
     }
     implementation 'com.android.billingclient:billing:1.0'
     implementation 'com.google.android.gms:play-services-ads:11.8.0'
-    implementation 'com.github.ts-3156:MaterialShowcaseView:1.2.4'
+    implementation 'com.github.ts-3156:MaterialShowcaseView:1.2.6'
     implementation "com.android.support:transition:27.0.2"
     implementation 'com.robinhood.spark:spark:1.2.0'
 }
