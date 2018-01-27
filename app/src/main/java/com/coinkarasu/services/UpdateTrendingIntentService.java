@@ -25,7 +25,7 @@ import com.coinkarasu.utils.io.CacheFileHelper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -66,7 +66,7 @@ public class UpdateTrendingIntentService extends IntentService {
         CacheFileHelper.touch(this, logFile);
         sendBroadcast(kind, "started");
 
-        Set<String> uniqueSymbols = new LinkedHashSet<>(); // 日本で取引できるコインとCoincheckのコインの重複のない一覧
+        Set<String> uniqueSymbols = new HashSet<>(); // 日本で取引できるコインとCoincheckのコインの重複のない一覧
         Collections.addAll(uniqueSymbols, getResources().getStringArray(NavigationKind.japan.symbolsResId));
         Collections.addAll(uniqueSymbols, getResources().getStringArray(NavigationKind.coincheck.symbolsResId));
 
