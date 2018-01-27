@@ -85,7 +85,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         warning = view.findViewById(R.id.warn_text);
         warningContainer = view.findViewById(R.id.warn_container);
 
-        parent = ((CoinExchangeFragment) getParentFragment());
+        parent = (CoinExchangeFragment) getParentFragment();
         if (parent != null && parent.tabsSetupFinished()) {
             startTask();
         }
@@ -93,9 +93,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
     }
 
     private void startTask() {
-        if (taskStarted) return;
-        if (errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
-            if (DEBUG) CKLog.w(TAG, "startTask() Return started=" + taskStarted + " error=" + errorCount);
+        if (taskStarted || errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
             return;
         }
         taskStarted = true;
@@ -103,6 +101,10 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         List<History> histories = new HistoriesCache(getActivity()).get(makeCacheKey());
         if (histories != null && !histories.isEmpty()) {
             refreshUi(histories);
+        }
+
+        if (PrefHelper.isAirplaneModeOn(getActivity())) {
+            return;
         }
 
         GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getActivity()), kind, exchange)
@@ -168,7 +170,7 @@ public class CoinExchangeTabContentFragment extends Fragment implements GetHisto
         super.setUserVisibleHint(isVisibleToUser);
         this.isVisibleToUser = isVisibleToUser;
 
-        if (isVisibleToUser) {
+        if (isVisibleToUser && parent != null && parent.tabsSetupFinished()) {
             startTask();
         }
     }

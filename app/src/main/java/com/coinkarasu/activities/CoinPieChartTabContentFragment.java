@@ -47,6 +47,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
     private int errorCount = 0;
     private TextView warning;
     private View warningContainer;
+    private CoinPieChartFragment parent;
 
     private boolean isVisibleToUser = false;
 
@@ -80,14 +81,13 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         chartView = view.findViewById(R.id.pie_chart);
         warning = view.findViewById(R.id.warn_text);
         warningContainer = view.findViewById(R.id.warn_container);
+        parent = (CoinPieChartFragment) getParentFragment();
         startTask();
         return view;
     }
 
     private void startTask() {
-        if (taskStarted) return;
-        if (errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
-            if (DEBUG) CKLog.w(TAG, "startTask() Return started=" + taskStarted + " error=" + errorCount);
+        if (taskStarted || errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
             return;
         }
         taskStarted = true;
@@ -95,6 +95,10 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         List<Entry> entries = new EntriesCache(getActivity()).get(kind, fromSymbol, toSymbol);
         if (entries != null && !entries.isEmpty()) {
             drawChart(entries);
+        }
+
+        if (PrefHelper.isAirplaneModeOn(getActivity())) {
+            return;
         }
 
         Client client = ClientFactory.getInstance(getActivity());
@@ -225,7 +229,7 @@ public class CoinPieChartTabContentFragment extends Fragment implements
         super.setUserVisibleHint(isVisibleToUser);
         this.isVisibleToUser = isVisibleToUser;
 
-        if (isVisibleToUser) {
+        if (isVisibleToUser && parent != null) {
             startTask();
         }
     }

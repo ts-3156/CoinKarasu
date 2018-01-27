@@ -63,15 +63,13 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         View view = inflater.inflate(R.layout.fragment_coin_line_chart_tab_content, container, false);
         taskStarted = false;
         chartView = view.findViewById(R.id.line_chart);
-        parent = ((HistoricalPriceFragment) getParentFragment());
+        parent = (HistoricalPriceFragment) getParentFragment();
         startTask();
         return view;
     }
 
     private void startTask() {
-        if (taskStarted) return;
-        if (errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
-            if (DEBUG) CKLog.w(TAG, "startTask() Return started=" + taskStarted + " error=" + errorCount);
+        if (taskStarted || errorCount >= 3 || getActivity() == null || getActivity().isFinishing()) {
             return;
         }
         taskStarted = true;
@@ -79,6 +77,10 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         List<History> histories = new HistoriesCache(getActivity()).get(makeCacheKey());
         if (histories != null && !histories.isEmpty()) {
             refreshUi(histories);
+        }
+
+        if (PrefHelper.isAirplaneModeOn(getActivity())) {
+            return;
         }
 
         GetHistoryTaskBase.newInstance(ClientFactory.getInstance(getActivity()), kind)
@@ -131,7 +133,7 @@ public class CoinLineChartTabContentFragment extends Fragment implements GetHist
         super.setUserVisibleHint(isVisibleToUser);
         this.isVisibleToUser = isVisibleToUser;
 
-        if (isVisibleToUser) {
+        if (isVisibleToUser && parent != null) {
             startTask();
         }
     }
