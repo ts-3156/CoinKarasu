@@ -1,9 +1,6 @@
 gradle.properties
 app/google-services.json
-app/coinkarasu.properties
-app/admob.properties
 app/fabric.properties
-app/billing.properties
 *.iml
 .gradle
 /local.properties

@@ -23,27 +23,6 @@ try {
     throw new GradleException(e.getMessage())
 }
 
-Properties billingProps = new Properties()
-try {
-    billingProps.load(file('billing.properties').newDataInputStream())
-} catch (Exception e) {
-    throw new GradleException(e.getMessage())
-}
-
-Properties admobProps = new Properties()
-try {
-    admobProps.load(file('admob.properties').newDataInputStream())
-} catch (Exception e) {
-    throw new GradleException(e.getMessage())
-}
-
-Properties coinkarasuProps = new Properties()
-try {
-    coinkarasuProps.load(file('coinkarasu.properties').newDataInputStream())
-} catch (Exception e) {
-    throw new GradleException(e.getMessage())
-}
-
 android {
     compileSdkVersion 27
     defaultConfig {
@@ -54,21 +33,21 @@ android {
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [fabricApiKey: "${fabricProps.getProperty("apiKey")}"]
-        buildConfigField "String", "PK1", "\"${billingProps.getProperty("pkey1")}\""
-        buildConfigField "String", "PK2", "\"${billingProps.getProperty("pkey2")}\""
-        buildConfigField "String", "ADMOB_APP_ID", "\"${admobProps.getProperty("dummyAppId")}\""
-        buildConfigField "String", "ADMOB_UNIT_ID", "\"${admobProps.getProperty("dummyAdUnitId")}\""
-        buildConfigField "String", "CK_TMP_KEY", "\"${coinkarasuProps.getProperty("key")}\""
-        buildConfigField "String", "CK_TMP_SECRET", "\"${coinkarasuProps.getProperty("secret")}\""
-        buildConfigField "String", "CK_HOST", "\"${coinkarasuProps.getProperty("host")}\""
+        buildConfigField "String", "PK1", "\"${billing_pkey1}\""
+        buildConfigField "String", "PK2", "\"${billing_pkey2}\""
+        buildConfigField "String", "ADMOB_APP_ID", "\"${admob_dummy_app_id}\""
+        buildConfigField "String", "ADMOB_UNIT_ID", "\"${admob_dummy_ad_unit_id}\""
+        buildConfigField "String", "CK_TMP_KEY", "\"${ck_api_key}\""
+        buildConfigField "String", "CK_TMP_SECRET", "\"${ck_api_secret}\""
+        buildConfigField "String", "CK_HOST", "\"${ck_host}\""
         buildConfigField("String", "SAFETYNET_API_KEY", "\"${safetynet_api_key}\"")
     }
     buildTypes {
         debug {
         }
         release {
-            buildConfigField "String", "ADMOB_APP_ID", "\"${admobProps.getProperty("appId")}\""
-            buildConfigField "String", "ADMOB_UNIT_ID", "\"${admobProps.getProperty("adUnitId")}\""
+            buildConfigField "String", "ADMOB_APP_ID", "\"${admob_app_id}\""
+            buildConfigField "String", "ADMOB_UNIT_ID", "\"${admob_ad_unit_id}\""
             buildConfigField "String", "CK_HOST", "\"http://coinkarasu.com\""
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
