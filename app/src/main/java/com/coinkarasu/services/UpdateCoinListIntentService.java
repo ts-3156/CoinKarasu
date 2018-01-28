@@ -10,6 +10,7 @@ import com.coinkarasu.api.cryptocompare.data.CoinList;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.database.AppDatabase;
 import com.coinkarasu.database.CoinListCoin;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.IntentServiceIntervalChecker;
 import com.coinkarasu.utils.PrefHelper;
@@ -50,7 +51,7 @@ public class UpdateCoinListIntentService extends IntentService {
         }
         IntentServiceIntervalChecker.onStart(this, TAG);
 
-        long start = System.currentTimeMillis();
+        long start = CKDateUtils.now();
         CoinList coinList = ClientFactory.getInstance(this).getCoinList();
 
         AppDatabase db = AppDatabase.getAppDatabase(this);
@@ -82,7 +83,7 @@ public class UpdateCoinListIntentService extends IntentService {
 
         if (DEBUG) CKLog.d(TAG, "CoinList updated, db "
                 + db.coinListCoinDao().size() + " records, CoinList " +
-                +coinList.getAllSymbols().size() + " coins " + (System.currentTimeMillis() - start) + " ms");
+                +coinList.getAllSymbols().size() + " coins " + (CKDateUtils.now() - start) + " ms");
     }
 
     private static void removeUnusedSymbolsFromCoinList(CoinList coinList, Set<String> symbols) {

@@ -6,6 +6,7 @@ import com.android.volley.Request;
 import com.android.volley.RetryPolicy;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.volley.RequestQueueWrapper;
 
@@ -52,10 +53,10 @@ public class BlockingRequest extends RequestBase {
         JSONObject response = null;
 
         if (requestQueue.add(request) != null) {
-            long start = System.currentTimeMillis();
+            long start = CKDateUtils.now();
             try {
                 response = future.get();
-                if (DEBUG) CKLog.d(TAG, "fetch " + url + " " + (System.currentTimeMillis() - start) + "ms");
+                if (DEBUG) CKLog.d(TAG, "fetch " + url + " " + (CKDateUtils.now() - start) + "ms");
                 requestQueue.addResult(request, true);
 
             } catch (InterruptedException e) {

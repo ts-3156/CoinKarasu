@@ -10,6 +10,7 @@ import com.coinkarasu.activities.CoinListFragment;
 import com.coinkarasu.activities.EditTabsFragment;
 import com.coinkarasu.activities.HomeTabFragment;
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
         super(manager);
         this.selectedKind = defaultKind;
         this.visibleKinds = visibleKinds;
-        this.version = System.currentTimeMillis();
+        this.version = CKDateUtils.now();
     }
 
     @Override

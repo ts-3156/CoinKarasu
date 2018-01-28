@@ -1,5 +1,6 @@
 package com.coinkarasu.utils.io;
 
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 
 import java.io.BufferedReader;
@@ -76,6 +77,6 @@ public class FileHelper {
         } catch (IOException e) {
             CKLog.e(TAG, "touch()", e);
         }
-        return file.setLastModified(System.currentTimeMillis());
+        return file.setLastModified(CKDateUtils.now());
     }
 }

@@ -224,7 +224,7 @@ public class MainActivity extends AppCompatActivity implements
             @Override
             public void run(Date date) {
                 if (isFinishing() || ad != null || date == null
-                        || System.currentTimeMillis() - date.getTime() < TimeUnit.DAYS.toMillis(3)) {
+                        || CKDateUtils.now() - date.getTime() < TimeUnit.DAYS.toMillis(3)) {
                     return;
                 }
 

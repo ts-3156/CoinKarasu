@@ -19,6 +19,7 @@ import com.coinkarasu.R;
 import com.coinkarasu.tasks.GetFirstLaunchDateTask;
 import com.coinkarasu.tasks.InsertDummyFirstLaunchDateTask;
 import com.coinkarasu.utils.ApiKeyUtils;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.Tutorial;
@@ -197,10 +198,10 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
     private static class ClearCacheTask extends AsyncTask<File, Void, Void> {
         @Override
         protected Void doInBackground(File... params) {
-            long start = System.currentTimeMillis();
+            long start = CKDateUtils.now();
             new DiskBasedCache(params[0]).clear();
             if (DEBUG) CKLog.d(TAG, "Clear cache elapsed time: "
-                    + (System.currentTimeMillis() - start) + "ms");
+                    + (CKDateUtils.now() - start) + "ms");
             return null;
         }
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Looper;
 
 import com.coinkarasu.api.cryptocompare.response.HistoryResponseImpl.HistoryKind;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.cache.StringArrayListCache;
 
@@ -70,7 +71,7 @@ public final class HistoriesCache {
         if (ignoreExpires) {
             list = cache.get(key);
         } else {
-            list = cache.get(key, System.currentTimeMillis() - expires);
+            list = cache.get(key, CKDateUtils.now() - expires);
         }
 
         if (list == null || list.isEmpty()) {
@@ -102,6 +103,6 @@ public final class HistoriesCache {
     }
 
     public boolean isExpired(HistoryKind kind, String fromSymbol, String toSymbol, int limit, int aggregate, String exchange) {
-        return cache.isExpired(makeCacheName(TAG, kind, fromSymbol, toSymbol, limit, aggregate, exchange), System.currentTimeMillis() - kind.expires);
+        return cache.isExpired(makeCacheName(TAG, kind, fromSymbol, toSymbol, limit, aggregate, exchange), CKDateUtils.now() - kind.expires);
     }
 }

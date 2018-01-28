@@ -23,6 +23,7 @@ import com.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
 import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
 import com.coinkarasu.tasks.by_exchange.data.Price;
 import com.coinkarasu.tasks.by_exchange.data.PricesCache;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PeriodicalUpdater;
 import com.coinkarasu.utils.PrefHelper;
@@ -98,7 +99,7 @@ public class CoinListSectionFragment extends Fragment implements
             return;
         }
 
-        final long start = System.currentTimeMillis();
+        final long start = CKDateUtils.now();
         String[] fromSymbols = null;
 
         if (kind.isToplist()) {
@@ -151,7 +152,7 @@ public class CoinListSectionFragment extends Fragment implements
                         coins.addAll(inCoins);
 
                         if (DEBUG) CKLog.d(TAG, "collectCoins() "
-                                + kind.name() + " " + section.toString() + " " + (System.currentTimeMillis() - start) + " ms");
+                                + kind.name() + " " + section.toString() + " " + (CKDateUtils.now() - start) + " ms");
 
                         if (executeOnSuccess != null) {
                             executeOnSuccess.coinsCollected(coins);
@@ -201,7 +202,7 @@ public class CoinListSectionFragment extends Fragment implements
         adapter.setToSymbol(toSymbol);
 
         if (PrefHelper.isAirplaneModeOn(getActivity())) {
-            updater.setLastUpdated(System.currentTimeMillis(), true);
+            updater.setLastUpdated(CKDateUtils.now(), true);
             for (final Section section : kind.sections) {
                 new Handler(getActivity().getMainLooper()).postDelayed(new Runnable() {
                     @Override
@@ -257,7 +258,7 @@ public class CoinListSectionFragment extends Fragment implements
 
         if (prices == null || prices.isEmpty()) {
             if (DEBUG) CKLog.w(TAG, "finished() prices is null " + exchange + " " + coinKind);
-            updater.setLastUpdated(System.currentTimeMillis(), true);
+            updater.setLastUpdated(CKDateUtils.now(), true);
             refreshRelativeTime(exchange, coinKind, true);
             hideProgressbarWithError(exchange, coinKind);
             return;
@@ -284,7 +285,7 @@ public class CoinListSectionFragment extends Fragment implements
         adapter.startAnimation(section);
         adapter.notifyCoinsChanged(exchange, coinKind);
 
-        updater.setLastUpdated(System.currentTimeMillis(), true);
+        updater.setLastUpdated(CKDateUtils.now(), true);
         refreshRelativeTime(exchange, coinKind, true);
         hideProgressbarDelayed(exchange, coinKind, withWarning);
 

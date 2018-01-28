@@ -6,6 +6,7 @@ import android.text.TextUtils;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.coins.PriceMultiFullCoinImpl;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.io.CacheFileHelper;
 
@@ -51,7 +52,7 @@ public class Toplist {
             return null;
         }
 
-        long start = System.currentTimeMillis();
+        long start = CKDateUtils.now();
         String text = CacheFileHelper.read(context, key);
         if (TextUtils.isEmpty(text)) {
             if (DEBUG) CKLog.w(TAG, "restoreFromCache() " + kind.name() + " cache is null.");
@@ -71,7 +72,7 @@ public class Toplist {
         }
 
         if (DEBUG) CKLog.d(TAG, "restoreFromCache(" + kind.name() + ") elapsed time: "
-                + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
+                + coins.size() + " coins " + (CKDateUtils.now() - start) + " ms");
 
         return new Toplist(coins, kind, CacheFileHelper.lastModified(context, key));
     }

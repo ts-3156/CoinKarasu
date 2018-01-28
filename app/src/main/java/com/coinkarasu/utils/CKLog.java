@@ -90,7 +90,7 @@ public class CKLog {
             return;
         }
 
-        queue.offer(new LogItem(System.currentTimeMillis(), tag, message, level));
+        queue.offer(new LogItem(CKDateUtils.now(), tag, message, level));
 
         if (isRunning) {
             return;
@@ -197,7 +197,7 @@ public class CKLog {
     }
 
     private static String getTime(long time) {
-        return DateUtils.getRelativeTimeSpanString(time, System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL).toString();
+        return DateUtils.getRelativeTimeSpanString(time, CKDateUtils.now(), DateUtils.SECOND_IN_MILLIS, DateUtils.FORMAT_ABBREV_ALL).toString();
     }
 
     private static class LogItem {

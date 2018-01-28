@@ -2,6 +2,7 @@ package com.coinkarasu.utils.volley;
 
 import android.support.v4.util.LruCache;
 
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 
 import java.util.Map;
@@ -22,12 +23,12 @@ public class HttpHealthCache {
     }
 
     public void put(boolean isSuccess) {
-        cache.put(System.currentTimeMillis(), isSuccess);
+        cache.put(CKDateUtils.now(), isSuccess);
     }
 
     public boolean isOperatingNormally() {
         Map<Long, Boolean> snapshot = cache.snapshot();
-        long expiration = System.currentTimeMillis() - EXPIRATION;
+        long expiration = CKDateUtils.now() - EXPIRATION;
         int error = 0;
 
         for (Map.Entry<Long, Boolean> entry : snapshot.entrySet()) {

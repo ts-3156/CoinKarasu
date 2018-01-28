@@ -106,7 +106,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
     }
 
     private void setUpdatedText() {
-        final String str = getRelativeTimeSpanString(time, System.currentTimeMillis());
+        final String str = getRelativeTimeSpanString(time, CKDateUtils.now());
         post(new Runnable() {
             @Override
             public void run() {
@@ -121,7 +121,7 @@ public class RelativeTimeSpanTextView extends AppCompatTextView {
             return DEFAULT_PERIOD;
         }
 
-        long elapsed = System.currentTimeMillis() - time;
+        long elapsed = CKDateUtils.now() - time;
         if (elapsed < 30000) {
             return DEFAULT_PERIOD;
         } else if (elapsed < 60000) {

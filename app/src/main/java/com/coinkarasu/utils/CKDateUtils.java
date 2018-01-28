@@ -9,6 +9,10 @@ public class CKDateUtils {
     }
 
     public static CharSequence getRelativeTimeSpanString(long time) {
-        return getRelativeTimeSpanString(time, System.currentTimeMillis());
+        return getRelativeTimeSpanString(time, CKDateUtils.now());
+    }
+
+    public static long now() {
+        return System.currentTimeMillis();
     }
 }

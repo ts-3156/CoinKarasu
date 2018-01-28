@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.api.coinkarasu.Client;
 import com.coinkarasu.utils.ApiKeyUtils;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.CryptoUtils;
 import com.coinkarasu.utils.IntentServiceIntervalChecker;
@@ -74,7 +75,7 @@ public class GetApiKeyIntentService extends IntentService {
             return false;
         }
 
-        byte[] nonce = CryptoUtils.HMAC_SHA256Encode(uuid + System.currentTimeMillis()).getBytes();
+        byte[] nonce = CryptoUtils.HMAC_SHA256Encode(uuid + CKDateUtils.now()).getBytes();
         Task<SafetyNetApi.AttestationResponse> task = SafetyNet.getClient(this).attest(nonce, API_KEY);
         String jwsResult = null;
 
@@ -121,7 +122,7 @@ public class GetApiKeyIntentService extends IntentService {
 
         if (!statement.isCtsProfileMatch()
                 || !Arrays.equals(statement.getNonce(), nonce)
-                || statement.getTimestampMs() < System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(60)
+                || statement.getTimestampMs() < CKDateUtils.now() - TimeUnit.SECONDS.toMillis(60)
                 || !statement.getApkPackageName().equals(BuildConfig.APPLICATION_ID)) {
             return false;
         }

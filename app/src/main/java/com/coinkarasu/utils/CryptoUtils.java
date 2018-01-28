@@ -11,7 +11,7 @@ public class CryptoUtils {
     private static final String TAG = "CryptoUtils";
 
     public static String HMAC_SHA256Encode(String message) {
-        return HMAC_SHA256Encode(String.valueOf(System.currentTimeMillis()), message);
+        return HMAC_SHA256Encode(String.valueOf(CKDateUtils.now()), message);
     }
 
     public static String HMAC_SHA256Encode(String secretKey, String message) {

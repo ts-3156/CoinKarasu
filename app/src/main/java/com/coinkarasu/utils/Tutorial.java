@@ -55,7 +55,7 @@ public class Tutorial {
             ShowcaseConfig config = new ShowcaseConfig();
             config.setDelay(DELAY);
 
-            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(CKDateUtils.now()));
             sequence.setConfig(config);
 
             sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)
@@ -108,7 +108,7 @@ public class Tutorial {
             ShowcaseConfig config = new ShowcaseConfig();
             config.setDelay(DELAY);
 
-            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(CKDateUtils.now()));
             sequence.setConfig(config);
 
             View rowView = ((CoinListViewHolder) recyclerView.findViewHolderForAdapterPosition(1)).container;
@@ -176,7 +176,7 @@ public class Tutorial {
             ShowcaseConfig config = new ShowcaseConfig();
             config.setDelay(DELAY);
 
-            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(System.currentTimeMillis()));
+            MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(activity, String.valueOf(CKDateUtils.now()));
             sequence.setConfig(config);
 
             sequence.addSequenceItem(new MaterialShowcaseView.Builder(activity)

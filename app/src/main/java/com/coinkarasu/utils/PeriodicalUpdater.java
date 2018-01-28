@@ -29,7 +29,7 @@ public class PeriodicalUpdater {
     }
 
     public synchronized void start(String caller) {
-        long delay = Math.max(interval - (System.currentTimeMillis() - lastUpdated), 0);
+        long delay = Math.max(interval - (CKDateUtils.now() - lastUpdated), 0);
         if (DEBUG) CKLog.d(TAG, "start() is called from " + caller
                 + " interval=" + interval + " delay=" + delay);
 
@@ -55,7 +55,7 @@ public class PeriodicalUpdater {
     }
 
     public synchronized void forceStart(String caller) {
-        long now = System.currentTimeMillis();
+        long now = CKDateUtils.now();
         if (!isBeingUpdated && forceUpdated <= now - FORCE_UPDATE_INTERVAL) {
             forceUpdated = now;
             setBeingUpdatedTimer();

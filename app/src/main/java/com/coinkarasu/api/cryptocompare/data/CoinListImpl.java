@@ -2,6 +2,7 @@ package com.coinkarasu.api.cryptocompare.data;
 
 import com.coinkarasu.api.cryptocompare.response.CoinListResponse;
 import com.coinkarasu.coins.Coin;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 
 import org.json.JSONException;
@@ -72,7 +73,7 @@ public class CoinListImpl extends CoinList {
 
     @Override
     public List<Coin> collectCoins(String[] fromSymbols) {
-        long start = System.currentTimeMillis();
+        long start = CKDateUtils.now();
         List<Coin> coins = new ArrayList<>(fromSymbols.length);
 
         for (String coinSymbol : fromSymbols) {
@@ -91,7 +92,7 @@ public class CoinListImpl extends CoinList {
         }
 
         if (DEBUG) CKLog.d(TAG, "collectCoins() from FILE " + coins.size() + " coins "
-                + (System.currentTimeMillis() - start) + " ms");
+                + (CKDateUtils.now() - start) + " ms");
 
         return coins;
     }

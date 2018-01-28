@@ -14,6 +14,7 @@ import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.pagers.MainPagerAdapter;
 import com.coinkarasu.tasks.LogTabChangedEventTask;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class MainFragment extends Fragment implements
         MainPagerAdapter adapter = new MainPagerAdapter(getChildFragmentManager(), listener.getVisibleKinds(), kind);
 
         if (savedInstanceState != null) {
-            adapter.setVersion(savedInstanceState.getLong(STATE_PAGER_ADAPTER_VERSION, System.currentTimeMillis()));
+            adapter.setVersion(savedInstanceState.getLong(STATE_PAGER_ADAPTER_VERSION, CKDateUtils.now()));
             if (DEBUG) CKLog.d(TAG, "Set version to PagerAdapter " + adapter.getVersion());
         }
 

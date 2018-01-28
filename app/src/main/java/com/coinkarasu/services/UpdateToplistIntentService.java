@@ -10,6 +10,7 @@ import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Toplist;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.CKStringUtils;
 import com.coinkarasu.utils.IntentServiceIntervalChecker;
@@ -48,7 +49,7 @@ public class UpdateToplistIntentService extends IntentService {
     }
 
     protected void update(Intent intent) {
-        long start = System.currentTimeMillis();
+        long start = CKDateUtils.now();
         NavigationKind kind = NavigationKind.valueOf(intent.getAction());
         String toSymbol = kind.getToSymbol();
         String tag = TAG + "-" + toSymbol;
@@ -115,7 +116,7 @@ public class UpdateToplistIntentService extends IntentService {
         toplist.saveToCache(this);
 
         if (DEBUG) CKLog.d(TAG, toSymbol + " toplist updated, "
-                + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
+                + coins.size() + " coins " + (CKDateUtils.now() - start) + " ms");
     }
 
     public static void start(Context context, NavigationKind kind) {

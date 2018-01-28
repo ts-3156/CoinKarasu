@@ -2,6 +2,7 @@ package com.coinkarasu.utils.io;
 
 import android.content.Context;
 
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class CacheFileHelper {
     }
 
     public static boolean isExpired(Context context, String name, long duration) {
-        return new Date(System.currentTimeMillis() - duration).compareTo(lastModified(context, name)) > 0;
+        return new Date(CKDateUtils.now() - duration).compareTo(lastModified(context, name)) > 0;
     }
 
     public static boolean touch(Context context, String name) {
@@ -42,6 +43,6 @@ public class CacheFileHelper {
         } catch (IOException e) {
             CKLog.e(TAG, e);
         }
-        return file.setLastModified(System.currentTimeMillis());
+        return file.setLastModified(CKDateUtils.now());
     }
 }

@@ -7,6 +7,7 @@ import com.android.volley.Request;
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.api.coincheck.data.Rate;
 import com.coinkarasu.api.cryptocompare.request.BlockingRequest;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.CryptoUtils;
 import com.coinkarasu.utils.PrefHelper;
@@ -44,7 +45,7 @@ public class Client {
 
     public Rate getSalesRate(String fromSymbol, String toSymbol) {
         String url = host + "/coincheck/sales_rates?"
-                + "time=" + ((System.currentTimeMillis() / 1000) - ONE_DAY)
+                + "time=" + ((CKDateUtils.now() / 1000) - ONE_DAY)
                 + "&from_symbol=" + fromSymbol
                 + "&to_symbol=" + toSymbol;
 
@@ -65,7 +66,7 @@ public class Client {
 
     public Rate getTradingRate(String fromSymbol, String toSymbol) {
         String url = host + "/coincheck/trading_rates?"
-                + "time=" + ((System.currentTimeMillis() / 1000) - ONE_DAY)
+                + "time=" + ((CKDateUtils.now() / 1000) - ONE_DAY)
                 + "&from_symbol=" + fromSymbol
                 + "&to_symbol=" + toSymbol;
 
@@ -137,7 +138,7 @@ public class Client {
 
     private Map<String, String> createHeader(String url) {
         Map<String, String> map = new HashMap<>();
-        String nonce = String.valueOf(System.currentTimeMillis() / 1000L);
+        String nonce = String.valueOf(CKDateUtils.now() / 1000L);
         map.put("Access-Key", apiKey);
         map.put("Access-Nonce", nonce);
         map.put("Access-Signature", createSignature(apiSecret, nonce, url));

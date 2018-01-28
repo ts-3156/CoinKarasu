@@ -29,6 +29,7 @@ import com.coinkarasu.format.TrendIconFormat;
 import com.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
 import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
 import com.coinkarasu.tasks.by_exchange.data.Price;
+import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PeriodicalUpdater;
 import com.coinkarasu.utils.PrefHelper;
@@ -128,7 +129,7 @@ public class PriceOverviewFragment extends Fragment implements
             return;
         }
 
-        updater.setLastUpdated(System.currentTimeMillis(), true);
+        updater.setLastUpdated(CKDateUtils.now(), true);
         timeSpan.updateText(true);
 
         if (prices == null || prices.isEmpty()) {

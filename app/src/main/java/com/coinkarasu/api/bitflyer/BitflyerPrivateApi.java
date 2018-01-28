@@ -1,5 +1,6 @@
 package com.coinkarasu.api.bitflyer;
 
+import com.coinkarasu.utils.CKDateUtils;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpHeaders;
 import com.google.api.client.http.HttpRequest;
@@ -48,7 +49,7 @@ public class BitflyerPrivateApi {
 
     private Map<String, String> createHeader(String path, String method) {
         Map<String, String> map = new HashMap<>();
-        String timestamp = String.valueOf(System.currentTimeMillis() / 1000L);
+        String timestamp = String.valueOf(CKDateUtils.now() / 1000L);
         map.put("ACCESS-KEY", apiKey);
         map.put("ACCESS-TIMESTAMP", timestamp);
         map.put("ACCESS-SIGN", createSignature(apiSecret, timestamp, method, path, ""));
