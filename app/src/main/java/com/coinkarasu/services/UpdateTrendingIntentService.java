@@ -19,8 +19,8 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Trending;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.IntentServiceIntervalChecker;
 import com.coinkarasu.utils.PrefHelper;
-import com.coinkarasu.utils.io.CacheFileHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,13 +57,12 @@ public class UpdateTrendingIntentService extends IntentService {
 
     private void update(TrendingKind kind, Exchange exchange, String toSymbol, boolean force) {
         long start = System.currentTimeMillis();
-        String logFile = logFile(kind, toSymbol, exchange.name());
+        String tag = TAG + "-" + kind.name() + "-" + toSymbol + "-" + exchange;
 
-        if (!force && CacheFileHelper.exists(this, logFile) && !CacheFileHelper.isExpired(this, logFile, kind.expiration)) {
-            if (DEBUG) CKLog.d(TAG, kind.name() + " " + exchange + " " + toSymbol + " is recently executed.");
+        if (!force && !IntentServiceIntervalChecker.shouldRun(this, tag, kind.expiration)) {
             return;
         }
-        CacheFileHelper.touch(this, logFile);
+        IntentServiceIntervalChecker.onStart(this, tag);
         sendBroadcast(kind, "started");
 
         Set<String> uniqueSymbols = new HashSet<>(); // 日本で取引できるコインとCoincheckのコインの重複のない一覧
@@ -143,10 +142,6 @@ public class UpdateTrendingIntentService extends IntentService {
         }
 
         return records;
-    }
-
-    private String logFile(TrendingKind kind, String toSymbol, String exchange) {
-        return UpdateTrendingIntentService.class.getSimpleName() + "-" + kind.name() + "-" + toSymbol + "-" + exchange + ".log";
     }
 
     public static void start(Context context, boolean force) {

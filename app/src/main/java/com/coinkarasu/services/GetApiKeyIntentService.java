@@ -10,6 +10,7 @@ import com.coinkarasu.api.coinkarasu.Client;
 import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.CryptoUtils;
+import com.coinkarasu.utils.IntentServiceIntervalChecker;
 import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.Token;
 import com.coinkarasu.utils.UuidUtils;
@@ -44,6 +45,11 @@ public class GetApiKeyIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (!IntentServiceIntervalChecker.shouldRun(this, TAG, ONE_HOUR)) {
+            return;
+        }
+        IntentServiceIntervalChecker.onStart(this, TAG);
+
         if (PrefHelper.isAirplaneModeOn(this)) {
             return;
         }
@@ -127,10 +133,6 @@ public class GetApiKeyIntentService extends IntentService {
             return null;
         }
         return Base64.decodeBase64(parts[1]);
-    }
-
-    private String logFile() {
-        return TAG + ".log";
     }
 
     public static void start(Context context) {

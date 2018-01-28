@@ -11,8 +11,8 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.database.AppDatabase;
 import com.coinkarasu.database.CoinListCoin;
 import com.coinkarasu.utils.CKLog;
+import com.coinkarasu.utils.IntentServiceIntervalChecker;
 import com.coinkarasu.utils.PrefHelper;
-import com.coinkarasu.utils.io.CacheFileHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,8 +25,6 @@ public class UpdateCoinListIntentService extends IntentService {
 
     private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "UpdateCoinListIntentService";
-
-    private static final String LOG = UpdateCoinListIntentService.class.getSimpleName() + ".log";
     private static final long THIRTY_MINUTES = TimeUnit.MINUTES.toMinutes(30);
 
     public UpdateCoinListIntentService() {
@@ -47,11 +45,10 @@ public class UpdateCoinListIntentService extends IntentService {
     }
 
     protected void update() {
-        if (CacheFileHelper.exists(this, LOG) && !CacheFileHelper.isExpired(this, LOG, THIRTY_MINUTES)) {
-            if (DEBUG) CKLog.d(TAG, "Recently executed.");
+        if (!IntentServiceIntervalChecker.shouldRun(this, TAG, THIRTY_MINUTES)) {
             return;
         }
-        CacheFileHelper.touch(this, LOG);
+        IntentServiceIntervalChecker.onStart(this, TAG);
 
         long start = System.currentTimeMillis();
         CoinList coinList = ClientFactory.getInstance(this).getCoinList();

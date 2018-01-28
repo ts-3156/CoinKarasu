@@ -12,8 +12,8 @@ import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.CKStringUtils;
+import com.coinkarasu.utils.IntentServiceIntervalChecker;
 import com.coinkarasu.utils.PrefHelper;
-import com.coinkarasu.utils.io.CacheFileHelper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,13 +51,12 @@ public class UpdateToplistIntentService extends IntentService {
         long start = System.currentTimeMillis();
         NavigationKind kind = NavigationKind.valueOf(intent.getAction());
         String toSymbol = kind.getToSymbol();
-        String logFile = logFile(toSymbol);
+        String tag = TAG + "-" + toSymbol;
 
-        if (CacheFileHelper.exists(this, logFile) && !CacheFileHelper.isExpired(this, logFile, ONE_HOUR)) {
-            if (DEBUG) CKLog.d(TAG, kind.name() + " is recently executed.");
+        if (!IntentServiceIntervalChecker.shouldRun(this, tag, ONE_HOUR)) {
             return;
         }
-        CacheFileHelper.touch(this, logFile);
+        IntentServiceIntervalChecker.onStart(this, tag);
 
         Set<String> uniqueSymbols = new HashSet<>();
         for (NavigationKind k : NavigationKind.values()) {
@@ -117,10 +116,6 @@ public class UpdateToplistIntentService extends IntentService {
 
         if (DEBUG) CKLog.d(TAG, toSymbol + " toplist updated, "
                 + coins.size() + " coins " + (System.currentTimeMillis() - start) + " ms");
-    }
-
-    private String logFile(String symbol) {
-        return UpdateToplistIntentService.class.getSimpleName() + "-" + symbol + ".log";
     }
 
     public static void start(Context context, NavigationKind kind) {
