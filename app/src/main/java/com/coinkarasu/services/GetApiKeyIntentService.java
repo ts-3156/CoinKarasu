@@ -45,27 +45,33 @@ public class GetApiKeyIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        if (PrefHelper.isAirplaneModeOn(this)) {
+            return;
+        }
+
         if (!IntentServiceIntervalChecker.shouldRun(this, TAG, ONE_HOUR)) {
             return;
         }
         IntentServiceIntervalChecker.onStart(this, TAG);
 
-        if (PrefHelper.isAirplaneModeOn(this)) {
-            return;
-        }
-
         try {
             String uuid = UuidUtils.getOrGenerateIfBlank(this);
-            sendSafetyNetRequest(uuid);
+            if (BuildConfig.DEBUG || sendSafetyNetRequest(uuid)) {
+                Token token = new Client(this).requestApiKey(uuid);
+
+                if (token != null) {
+                    ApiKeyUtils.save(this, token);
+                }
+            }
         } catch (Exception e) {
             CKLog.e(TAG, e);
         }
     }
 
-    private void sendSafetyNetRequest(String uuid) {
+    private boolean sendSafetyNetRequest(String uuid) {
         if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(this) != ConnectionResult.SUCCESS) {
             if (DEBUG) CKLog.w(TAG, "The SafetyNet Attestation API is NOT available.");
-            return;
+            return false;
         }
 
         byte[] nonce = CryptoUtils.HMAC_SHA256Encode(uuid + System.currentTimeMillis()).getBytes();
@@ -89,13 +95,13 @@ public class GetApiKeyIntentService extends IntentService {
         }
 
         if (TextUtils.isEmpty(jwsResult)) {
-            return;
+            return false;
         }
 
         Client client = new Client(this);
         if (!client.verifyJwt(new String(nonce), jwsResult)) {
             if (DEBUG) CKLog.w(TAG, "Failure: The cryptographic signature of the attestation statement couldn't be verified.");
-            return;
+            return false;
         }
 
         byte[] data = extractJwsData(jwsResult);
@@ -108,7 +114,7 @@ public class GetApiKeyIntentService extends IntentService {
         }
 
         if (statement == null) {
-            return;
+            return false;
         }
 
         if (DEBUG) CKLog.d(TAG, "SafetyNet extracted json: " + statement.toString());
@@ -117,14 +123,10 @@ public class GetApiKeyIntentService extends IntentService {
                 || !Arrays.equals(statement.getNonce(), nonce)
                 || statement.getTimestampMs() < System.currentTimeMillis() - TimeUnit.SECONDS.toMillis(60)
                 || !statement.getApkPackageName().equals(BuildConfig.APPLICATION_ID)) {
-            return;
+            return false;
         }
 
-        Token token = client.requestApiKey(uuid);
-
-        if (token != null) {
-            ApiKeyUtils.save(this, token);
-        }
+        return true;
     }
 
     private static byte[] extractJwsData(String jws) {
