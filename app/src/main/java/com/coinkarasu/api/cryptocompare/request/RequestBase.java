@@ -38,7 +38,11 @@ public abstract class RequestBase implements Request {
     @Override
     public abstract JSONObject perform();
 
-    public abstract JSONObject perform(int method);
+    public JSONObject perform(int method) {
+        return perform(method, null);
+    }
+
+    public abstract JSONObject perform(int method, JSONObject requestBody);
 
     @Override
     public abstract void perform(Listener listener);

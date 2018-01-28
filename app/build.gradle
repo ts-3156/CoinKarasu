@@ -61,6 +61,7 @@ android {
         buildConfigField "String", "CK_TMP_KEY", "\"${coinkarasuProps.getProperty("key")}\""
         buildConfigField "String", "CK_TMP_SECRET", "\"${coinkarasuProps.getProperty("secret")}\""
         buildConfigField "String", "CK_HOST", "\"${coinkarasuProps.getProperty("host")}\""
+        buildConfigField("String", "SAFETYNET_API_KEY", "\"${safetynet_api_key}\"")
     }
     buildTypes {
         debug {
@@ -113,6 +114,7 @@ dependencies {
     implementation 'com.github.ts-3156:MaterialShowcaseView:1.2.6'
     implementation "com.android.support:transition:27.0.2"
     implementation 'com.robinhood.spark:spark:1.2.0'
+    implementation 'com.google.android.gms:play-services-safetynet:11.8.0'
 }
 
 configurations {

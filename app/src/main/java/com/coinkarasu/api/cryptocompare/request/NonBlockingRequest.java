@@ -52,4 +52,9 @@ public class NonBlockingRequest extends RequestBase {
     public JSONObject perform(int method) {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public JSONObject perform(int method, JSONObject requestBody) {
+        throw new UnsupportedOperationException();
+    }
 }

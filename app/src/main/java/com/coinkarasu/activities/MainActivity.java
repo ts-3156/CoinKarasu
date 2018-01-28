@@ -25,6 +25,7 @@ import com.coinkarasu.activities.settings.PreferencesActivity;
 import com.coinkarasu.billingmodule.BillingViewController;
 import com.coinkarasu.billingmodule.billing.BillingCallback;
 import com.coinkarasu.billingmodule.billing.BillingManager;
+import com.coinkarasu.services.GetApiKeyIntentService;
 import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.tasks.GetApiKeyTask;
 import com.coinkarasu.tasks.GetFirstLaunchDateTask;
@@ -122,8 +123,10 @@ public class MainActivity extends AppCompatActivity implements
         billingDelegate = new BillingViewController(this, null, this);
         billingManager = new BillingManager(this, billingDelegate.getUpdatesListener());
 
+        GetApiKeyIntentService.start(this);
+
         if (!ApiKeyUtils.exists(this)) {
-            new GetApiKeyTask(this).execute();
+            new GetApiKeyTask().execute(this);
         }
     }
 

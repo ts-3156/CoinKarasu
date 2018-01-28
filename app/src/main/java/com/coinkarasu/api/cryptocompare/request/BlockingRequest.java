@@ -36,9 +36,9 @@ public class BlockingRequest extends RequestBase {
     }
 
     @Override
-    public JSONObject perform(int method) {
+    public JSONObject perform(int method, JSONObject requestBody) {
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
-        JsonObjectRequest request = new BlockingJsonRequest(method, url, null, future);
+        JsonObjectRequest request = new BlockingJsonRequest(method, url, requestBody, future);
 
         RetryPolicy retryPolicy;
         if (url.startsWith("http://coinkarasu.com") || url.startsWith("http://10.0.2.2") || url.startsWith("http://192.")) {
@@ -88,8 +88,8 @@ public class BlockingRequest extends RequestBase {
 
 
     protected class BlockingJsonRequest extends JsonObjectRequest {
-        BlockingJsonRequest(int method, String url, JSONObject jsonRequest, RequestFuture<JSONObject> future) {
-            super(method, url, jsonRequest, future, future);
+        BlockingJsonRequest(int method, String url, JSONObject requestBody, RequestFuture<JSONObject> future) {
+            super(method, url, requestBody, future, future);
         }
 
         @Override
