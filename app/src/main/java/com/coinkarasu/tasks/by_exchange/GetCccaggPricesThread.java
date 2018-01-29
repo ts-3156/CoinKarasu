@@ -5,10 +5,11 @@ import android.content.Context;
 import com.coinkarasu.api.cryptocompare.Client;
 import com.coinkarasu.api.cryptocompare.ClientFactory;
 import com.coinkarasu.api.cryptocompare.data.Prices;
+import com.coinkarasu.tasks.CKThread;
 
 import java.util.concurrent.CountDownLatch;
 
-public class GetCccaggPricesThread extends Thread {
+public class GetCccaggPricesThread extends CKThread {
     private CountDownLatch latch;
     private Prices prices;
 
@@ -29,6 +30,8 @@ public class GetCccaggPricesThread extends Thread {
 
     @Override
     public void run() {
+        super.run();
+
         prices = client.getPrices(fromSymbols, toSymbol, exchange);
 
         if (latch != null) {

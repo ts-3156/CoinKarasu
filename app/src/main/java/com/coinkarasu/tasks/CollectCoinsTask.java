@@ -9,11 +9,10 @@ import com.coinkarasu.services.UpdateCoinListIntentService;
 
 import java.util.List;
 
-public class CollectCoinsTask extends AsyncTask<Integer, Integer, Integer> {
+public class CollectCoinsTask extends AsyncTask<Integer, Integer, List<Coin>> {
     private Listener listener;
     private String[] fromSymbols;
     private Context context;
-    private List<Coin> coins;
 
     public CollectCoinsTask(Context context) {
         this.context = context;
@@ -22,7 +21,8 @@ public class CollectCoinsTask extends AsyncTask<Integer, Integer, Integer> {
     }
 
     @Override
-    protected Integer doInBackground(Integer... params) {
+    protected List<Coin> doInBackground(Integer... params) {
+        List<Coin> coins;
         if (fromSymbols.length > 300) {
             coins = CoinList.getInstance(context).collectCoins(fromSymbols); // File
         } else {
@@ -34,14 +34,14 @@ public class CollectCoinsTask extends AsyncTask<Integer, Integer, Integer> {
             }
         }
 
-        return 200;
+        return coins;
     }
 
     @Override
-    protected void onPostExecute(Integer integer) {
+    protected void onPostExecute(List<Coin> result) {
         context = null;
         if (listener != null) {
-            listener.coinsCollected(coins);
+            listener.coinsCollected(result);
         }
     }
 

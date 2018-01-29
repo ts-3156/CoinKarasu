@@ -4,10 +4,11 @@ import android.content.Context;
 
 import com.coinkarasu.api.bitflyer.Client;
 import com.coinkarasu.api.bitflyer.data.Board;
+import com.coinkarasu.tasks.CKThread;
 
 import java.util.concurrent.CountDownLatch;
 
-public class GetBitflyerBoardThread extends Thread {
+public class GetBitflyerBoardThread extends CKThread {
     private CountDownLatch latch;
 
     private Client client;
@@ -21,6 +22,8 @@ public class GetBitflyerBoardThread extends Thread {
 
     @Override
     public void run() {
+        super.run();
+
         board = client.getBoard();
 
         if (latch != null) {

@@ -5,31 +5,28 @@ import android.os.AsyncTask;
 import com.coinkarasu.api.cryptocompare.Client;
 import com.coinkarasu.api.cryptocompare.data.CoinSnapshot;
 
-public class GetCoinSnapshotTask extends AsyncTask<Integer, Integer, Integer> {
+public class GetCoinSnapshotTask extends AsyncTask<Integer, Integer, CoinSnapshot> {
     private Listener listener;
     private Client client;
-    private CoinSnapshot snapshot;
     private String fromSymbol;
     private String toSymbol;
 
     public GetCoinSnapshotTask(Client client) {
         this.listener = null;
         this.client = client;
-        this.snapshot = null;
         this.fromSymbol = null;
         this.toSymbol = null;
     }
 
     @Override
-    protected Integer doInBackground(Integer... params) {
-        snapshot = client.getCoinSnapshot(fromSymbol, toSymbol);
-        return 200;
+    protected CoinSnapshot doInBackground(Integer... params) {
+        return client.getCoinSnapshot(fromSymbol, toSymbol);
     }
 
     @Override
-    protected void onPostExecute(Integer integer) {
+    protected void onPostExecute(CoinSnapshot result) {
         if (listener != null) {
-            listener.finished(snapshot);
+            listener.finished(result);
         }
     }
 

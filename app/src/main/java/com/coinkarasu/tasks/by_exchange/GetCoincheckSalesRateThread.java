@@ -4,10 +4,11 @@ import android.content.Context;
 
 import com.coinkarasu.api.coincheck.Client;
 import com.coinkarasu.api.coincheck.data.Rate;
+import com.coinkarasu.tasks.CKThread;
 
 import java.util.concurrent.CountDownLatch;
 
-public class GetCoincheckSalesRateThread extends Thread {
+public class GetCoincheckSalesRateThread extends CKThread {
     private CountDownLatch latch;
 
     private Client client;
@@ -25,6 +26,8 @@ public class GetCoincheckSalesRateThread extends Thread {
 
     @Override
     public void run() {
+        super.run();
+
         rate = client.getSalesRate(fromSymbol, toSymbol);
 
         if (latch != null) {
