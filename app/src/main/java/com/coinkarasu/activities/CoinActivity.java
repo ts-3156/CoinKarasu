@@ -74,7 +74,7 @@ public class CoinActivity extends AppCompatActivity implements
                 .replace(R.id.historical_price, HistoricalPriceFragment.newInstance(coin.getSymbol(), toSymbol), "historical_price")
                 .replace(R.id.card_exchange, CoinExchangeFragment.newInstance("overview", coin.toJson().toString()), "coin_exchange")
                 .replace(R.id.card_pie_chart, CoinPieChartFragment.newInstance(coin.getSymbol(), toSymbol), "coin_pie_chart")
-                .replace(R.id.card_board, CoinBoardFragment.newInstance("order_book"), "coin_board")
+                // .replace(R.id.card_board, CoinBoardFragment.newInstance("order_book"), "coin_board")
                 .commit();
 
         SwipeDetector detector = new SwipeDetector(this);
