@@ -57,7 +57,10 @@ public class AggressiveProgressbar extends AppCompatImageView {
 
     public void stopAnimation() {
         clearAnimation();
-        setImageResource(status.stop);
+        if (status != null) {
+            // Android 5.0, 5.1での「InflateException: Binary XML file line #0」対策
+            setImageResource(status.stop);
+        }
     }
 
     public void stopAnimationWithAirplaneMode() {

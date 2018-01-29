@@ -59,6 +59,7 @@
             android:id="@+id/progressbar"
             android:layout_width="16dp"
             android:layout_height="16dp"
+            android:src="@drawable/ic_refresh_stop"
             android:visibility="gone" />
 
         <ImageButton
