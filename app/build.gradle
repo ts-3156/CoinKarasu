@@ -32,7 +32,7 @@ android {
         versionCode 6
         versionName "1.0.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [fabricApiKey: "${fabricProps.getProperty("apiKey")}"]
+        manifestPlaceholders = [fabricApiKey: "${fabricProps.getProperty("apiKey")}", facebookAppId: "${facebook_app_id}"]
         buildConfigField "String", "PK1", "\"${billing_pkey1}\""
         buildConfigField "String", "PK2", "\"${billing_pkey2}\""
         buildConfigField "String", "ADMOB_APP_ID", "\"${admob_dummy_app_id}\""
@@ -94,6 +94,7 @@ dependencies {
     implementation "com.android.support:transition:27.0.2"
     implementation 'com.robinhood.spark:spark:1.2.0'
     implementation 'com.google.android.gms:play-services-safetynet:11.8.0'
+    implementation 'com.facebook.android:facebook-android-sdk:[4,5)'
 }
 
 configurations {
