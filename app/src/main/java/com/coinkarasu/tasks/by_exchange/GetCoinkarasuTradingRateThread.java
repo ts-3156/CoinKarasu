@@ -23,7 +23,7 @@ public class GetCoinkarasuTradingRateThread extends CKThread {
 
         Token token =
                 ApiKeyUtils.exists(context) ? ApiKeyUtils.get(context) : ApiKeyUtils.dummy();
-        this.client = new Client(context, token.getKey(), token.getSecret());
+        this.client = new Client(context, token);
 
         this.fromSymbol = "BTC";
         this.toSymbol = "JPY";

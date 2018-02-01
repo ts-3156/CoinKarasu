@@ -17,7 +17,7 @@ public class UuidUtils {
         return FileHelper.read(new File(context.getFilesDir(), NAME));
     }
 
-    public static String getOrGenerateIfBlank(Context context) {
+    public static synchronized String getOrGenerateIfBlank(Context context) {
         File file = new File(context.getFilesDir(), NAME);
         if (!file.exists()) {
             FileHelper.touch(file);

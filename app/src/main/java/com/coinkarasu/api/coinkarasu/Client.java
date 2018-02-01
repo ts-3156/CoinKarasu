@@ -32,14 +32,10 @@ public class Client {
     private String apiSecret;
     private String host;
 
-    public Client(Context context) {
-        this(context, "", "");
-    }
-
-    public Client(Context context, String apiKey, String apiSecret) {
+    public Client(Context context, Token token) {
         this.requestQueue = VolleyHelper.getInstance(context).getWrappedRequestQueue();
-        this.apiKey = apiKey;
-        this.apiSecret = apiSecret;
+        this.apiKey = token.getKey();
+        this.apiSecret = token.getSecret();
         this.host = BuildConfig.DEBUG ? PrefHelper.getCkHost(context, HOST) : HOST;
     }
 
@@ -87,7 +83,7 @@ public class Client {
 
     public Token requestApiKey(String uuid) {
         String url = host + "/apps?uuid=" + uuid;
-        JSONObject response = new BlockingRequest(requestQueue, url).perform(Request.Method.POST);
+        JSONObject response = new BlockingRequest(requestQueue, url, createHeader(url)).perform(Request.Method.POST);
         if (response == null) {
             if (DEBUG) CKLog.w(TAG, "requestApiKey() response is null " + uuid);
             return null;
@@ -127,13 +123,27 @@ public class Client {
             return false;
         }
 
-        JSONObject response = new BlockingRequest(requestQueue, url).perform(Request.Method.POST, requestBody);
+        JSONObject response = new BlockingRequest(requestQueue, url, createHeader(url)).perform(Request.Method.POST, requestBody);
         try {
             return response != null && response.has("is_valid_signature") && response.getBoolean("is_valid_signature");
         } catch (JSONException e) {
             CKLog.e(TAG, e);
             return false;
         }
+    }
+
+    public void sendNotificationToken(String uuid, String token) {
+        String url = host + "/notification_tokens";
+        JSONObject requestBody = new JSONObject();
+        try {
+            requestBody.put("uuid", uuid);
+            requestBody.put("token", token);
+        } catch (JSONException e) {
+            CKLog.e(TAG, e);
+            return;
+        }
+
+        new BlockingRequest(requestQueue, url, createHeader(url)).perform(Request.Method.POST, requestBody);
     }
 
     private Map<String, String> createHeader(String url) {
