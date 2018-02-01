@@ -35,10 +35,10 @@ public class GetApiKeyIntentService extends IntentService {
             return;
         }
 
-        if (!IntentServiceIntervalChecker.shouldRun(this, TAG, ONE_HOUR)) {
-            return;
-        }
-        IntentServiceIntervalChecker.onStart(this, TAG);
+        // if (!IntentServiceIntervalChecker.shouldRun(this, TAG, ONE_HOUR)) {
+        //     return;
+        // }
+        // IntentServiceIntervalChecker.onStart(this, TAG);
 
         try {
             String uuid = UuidUtils.getOrGenerateIfBlank(this);

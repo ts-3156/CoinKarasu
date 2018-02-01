@@ -1,36 +1,50 @@
 package com.coinkarasu.utils.safetynet;
 
-import com.google.api.client.json.webtoken.JsonWebSignature;
+import com.coinkarasu.utils.CKLog;
 import com.google.api.client.util.Base64;
-import com.google.api.client.util.Key;
 
-public class AttestationStatement extends JsonWebSignature.Payload {
-    @Key
-    private String nonce;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    @Key
+public class AttestationStatement {
+    private static final boolean DEBUG = CKLog.DEBUG;
+    private static final String TAG = "AttestationStatement";
+
+    private byte[] nonce;
     private long timestampMs;
-
-    @Key
     private String apkPackageName;
-
-    @Key
-    private String[] apkCertificateDigestSha256;
-
-    @Key
-    private String apkDigestSha256;
-
-    @Key
+    private byte[][] apkCertificateDigestSha256;
+    private byte[] apkDigestSha256;
     private boolean ctsProfileMatch;
-
-    @Key
     private boolean basicIntegrity;
 
-    @Key
-    private String advice;
+    public AttestationStatement(JSONObject json) {
+        if (json == null) {
+            return;
+        }
+
+        try {
+            nonce = Base64.decodeBase64(json.getString("nonce"));
+            timestampMs = json.getLong("timestampMs");
+            apkPackageName = json.getString("apkPackageName");
+
+            JSONArray certsArray = json.getJSONArray("apkCertificateDigestSha256");
+            apkCertificateDigestSha256 = new byte[certsArray.length()][];
+            for (int i = 0; i < certsArray.length(); i++) {
+                apkCertificateDigestSha256[i] = Base64.decodeBase64(certsArray.getString(i));
+            }
+
+            apkDigestSha256 = Base64.decodeBase64(json.getString("apkDigestSha256"));
+            ctsProfileMatch = json.getBoolean("ctsProfileMatch");
+            basicIntegrity = json.getBoolean("basicIntegrity");
+        } catch (JSONException e) {
+            CKLog.e(TAG, json.toString(), e);
+        }
+    }
 
     public byte[] getNonce() {
-        return Base64.decodeBase64(nonce);
+        return nonce;
     }
 
     public long getTimestampMs() {
@@ -42,15 +56,11 @@ public class AttestationStatement extends JsonWebSignature.Payload {
     }
 
     public byte[] getApkDigestSha256() {
-        return Base64.decodeBase64(apkDigestSha256);
+        return apkDigestSha256;
     }
 
     public byte[][] getApkCertificateDigestSha256() {
-        byte[][] certs = new byte[apkCertificateDigestSha256.length][];
-        for (int i = 0; i < apkCertificateDigestSha256.length; i++) {
-            certs[i] = Base64.decodeBase64(apkCertificateDigestSha256[i]);
-        }
-        return certs;
+        return apkCertificateDigestSha256;
     }
 
     public boolean isCtsProfileMatch() {
@@ -59,9 +69,5 @@ public class AttestationStatement extends JsonWebSignature.Payload {
 
     public boolean hasBasicIntegrity() {
         return basicIntegrity;
-    }
-
-    public String getAdvice() {
-        return advice;
     }
 }

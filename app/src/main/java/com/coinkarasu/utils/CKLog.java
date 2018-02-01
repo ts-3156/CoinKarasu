@@ -164,6 +164,10 @@ public class CKLog {
     }
 
     private static void sendNotification(LogItem item) {
+        sendNotification(context, item.tag, item.message);
+    }
+
+    public static void sendNotification(Context context, String tag, String message) {
         Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_ONE_SHOT);
@@ -174,12 +178,12 @@ public class CKLog {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(context, channelId)
                         .setSmallIcon(R.drawable.ic_notif)
-                        .setContentTitle(item.tag)
-                        .setContentText(item.message)
+                        .setContentTitle(tag)
+                        .setContentText(message)
                         .setAutoCancel(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent)
-                        .setTicker(item.message);
+                        .setTicker(message);
 
         NotificationManager manager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

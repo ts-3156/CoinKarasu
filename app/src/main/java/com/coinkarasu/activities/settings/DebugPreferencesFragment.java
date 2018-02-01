@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.coinkarasu.BuildConfig;
 import com.coinkarasu.R;
+import com.coinkarasu.api.coinkarasu.Client;
+import com.coinkarasu.services.GetApiKeyIntentService;
 import com.coinkarasu.tasks.GetFirstLaunchDateTask;
 import com.coinkarasu.tasks.InsertDummyFirstLaunchDateTask;
 import com.coinkarasu.utils.ApiKeyUtils;
@@ -128,6 +130,7 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
                 showDialog(R.string.pref_uuid_file_exists_dialog, "OK", true, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         UuidUtils.remove(getActivity());
+                        UuidUtils.getOrGenerateIfBlank(getActivity());
                     }
                 });
                 break;
@@ -135,12 +138,15 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
                 showDialog(R.string.pref_token_file_exists_dialog, "OK", true, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         ApiKeyUtils.remove(getActivity());
+                        GetApiKeyIntentService.start(getActivity());
                     }
                 });
                 break;
             case "pref_firebase_instance_id":
                 CKLog.d(TAG, "Refreshed token: " + FirebaseInstanceId.getInstance().getToken());
                 Toast.makeText(getActivity(), R.string.pref_firebase_instance_id_toast, Toast.LENGTH_SHORT).show();
+                new Client(getActivity(), ApiKeyUtils.getValidToken(getActivity()))
+                        .sendNotificationToken(UuidUtils.getOrGenerateIfBlank(getActivity()), FirebaseInstanceId.getInstance().getToken());
                 break;
         }
 

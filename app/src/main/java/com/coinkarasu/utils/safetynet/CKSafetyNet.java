@@ -17,11 +17,11 @@ import com.google.android.gms.safetynet.SafetyNet;
 import com.google.android.gms.safetynet.SafetyNetApi;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Base64;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -69,19 +69,21 @@ public class CKSafetyNet {
         }
 
         byte[] data = extractJwsData(jwsResult);
-        AttestationStatement statement = null;
+        if (data == null) {
+            return false;
+        }
+        if (DEBUG) CKLog.d(TAG, "CKSafetyNet extracted json: " + new String(data));
 
+        AttestationStatement statement = null;
         try {
-            statement = new JacksonFactory().fromInputStream(new ByteArrayInputStream(data), AttestationStatement.class);
-        } catch (IOException e) {
+            statement = new AttestationStatement(new JSONObject(new String(data)));
+        } catch (JSONException e) {
             CKLog.e(TAG, e);
         }
 
         if (statement == null) {
             return false;
         }
-
-        if (DEBUG) CKLog.d(TAG, "CKSafetyNet extracted json: " + statement.toString());
 
         if (!statement.isCtsProfileMatch()
                 || !Arrays.equals(statement.getNonce(), nonce)
