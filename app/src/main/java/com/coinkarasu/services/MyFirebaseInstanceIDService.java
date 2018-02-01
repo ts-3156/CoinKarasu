@@ -23,7 +23,7 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
         if (DEBUG) CKLog.d(TAG, "onTokenRefresh() uuid: " + uuid);
 
         try {
-            if (BuildConfig.DEBUG || CKSafetyNet.verifyDevice(this, uuid)) {
+            if (CKSafetyNet.verifyDevice(this, uuid)) {
                 new Client(this, ApiKeyUtils.getValidToken(this)).sendNotificationToken(uuid, refreshedToken);
             }
         } catch (Exception e) {

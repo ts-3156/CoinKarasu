@@ -116,8 +116,8 @@ public class Client {
         String url = host + "/json_web_tokens/verify";
         JSONObject requestBody = new JSONObject();
         try {
-            requestBody.put("nonce", nonce);
-            requestBody.put("token", jwt);
+            requestBody.put("_nonce", nonce);
+            requestBody.put("_jwt", jwt);
         } catch (JSONException e) {
             CKLog.e(TAG, e);
             return false;
