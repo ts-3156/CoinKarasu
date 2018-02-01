@@ -12,11 +12,13 @@ import android.view.WindowManager;
 
 import com.coinkarasu.R;
 import com.coinkarasu.activities.etc.NavigationKind;
+import com.coinkarasu.services.GetApiKeyIntentService;
 import com.coinkarasu.services.UpdateCoinListIntentService;
 import com.coinkarasu.services.UpdateToplistIntentService;
 import com.coinkarasu.services.UpdateTrendingIntentService;
 import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
 import com.coinkarasu.tasks.InsertLaunchEventTask;
+import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
 import com.coinkarasu.utils.TransitionUtils;
@@ -62,6 +64,10 @@ public class FirstLaunchActivity extends AppCompatActivity implements
                     UpdateToplistIntentService.start(this, kind);
                 }
             }
+        }
+
+        if (!ApiKeyUtils.exists(this)) {
+            GetApiKeyIntentService.start(this);
         }
 
         PrefHelper.setShouldShowFirstLaunchScreen(this, false);

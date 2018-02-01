@@ -16,7 +16,11 @@ public class ApiKeyUtils {
     private static final String TAG = "ApiKeyUtils";
     private static final String NAME = "token";
 
-    public static Token get(Context context) {
+    public static Token getValidToken(Context context) {
+        return ApiKeyUtils.exists(context) ? ApiKeyUtils.getToken(context) : ApiKeyUtils.getInitialToken();
+    }
+
+    private static Token getToken(Context context) {
         String text = FileHelper.read(new File(context.getFilesDir(), NAME));
         String key = null, secret = null;
         try {
@@ -29,7 +33,7 @@ public class ApiKeyUtils {
         return new Token(key, secret);
     }
 
-    public static Token dummy() {
+    private static Token getInitialToken() {
         return new Token(BuildConfig.CK_TMP_KEY, BuildConfig.CK_TMP_SECRET);
     }
 

@@ -62,7 +62,7 @@ public class CKSafetyNet {
             return false;
         }
 
-        Client client = new Client(context, ApiKeyUtils.dummy());
+        Client client = new Client(context, ApiKeyUtils.getValidToken(context));
         if (!client.verifyJwt(new String(nonce), jwsResult)) {
             if (DEBUG) CKLog.w(TAG, "Failure: The cryptographic signature of the attestation statement couldn't be verified.");
             return false;

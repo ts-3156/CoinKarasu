@@ -6,7 +6,6 @@ import com.coinkarasu.api.coincheck.data.Rate;
 import com.coinkarasu.api.coinkarasu.Client;
 import com.coinkarasu.tasks.CKThread;
 import com.coinkarasu.utils.ApiKeyUtils;
-import com.coinkarasu.utils.Token;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -21,10 +20,7 @@ public class GetCoinkarasuSalesRateThread extends CKThread {
     public GetCoinkarasuSalesRateThread(Context context, String fromSymbol) {
         this.latch = null;
 
-        Token token =
-                ApiKeyUtils.exists(context) ? ApiKeyUtils.get(context) : ApiKeyUtils.dummy();
-        this.client = new Client(context, token);
-
+        this.client = new Client(context, ApiKeyUtils.getValidToken(context));
         this.fromSymbol = fromSymbol;
         this.toSymbol = "JPY";
     }

@@ -43,7 +43,7 @@ public class GetApiKeyIntentService extends IntentService {
         try {
             String uuid = UuidUtils.getOrGenerateIfBlank(this);
             if (BuildConfig.DEBUG || CKSafetyNet.verifyDevice(this, uuid)) {
-                Token token = new Client(this, ApiKeyUtils.dummy()).requestApiKey(uuid);
+                Token token = new Client(this, ApiKeyUtils.getValidToken(this)).requestApiKey(uuid);
 
                 if (token != null) {
                     ApiKeyUtils.save(this, token);

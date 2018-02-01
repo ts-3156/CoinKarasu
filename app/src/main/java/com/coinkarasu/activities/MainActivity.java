@@ -25,12 +25,10 @@ import com.coinkarasu.activities.settings.PreferencesActivity;
 import com.coinkarasu.billingmodule.BillingViewController;
 import com.coinkarasu.billingmodule.billing.BillingCallback;
 import com.coinkarasu.billingmodule.billing.BillingManager;
-import com.coinkarasu.services.GetApiKeyIntentService;
 import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.tasks.GetFirstLaunchDateTask;
 import com.coinkarasu.tasks.InitializeThirdPartyAppsTask;
 import com.coinkarasu.tasks.InsertLaunchEventTask;
-import com.coinkarasu.utils.ApiKeyUtils;
 import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.PrefHelper;
@@ -121,10 +119,6 @@ public class MainActivity extends AppCompatActivity implements
         viewController = new MainViewController(this);
         billingDelegate = new BillingViewController(this, null, this);
         billingManager = new BillingManager(this, billingDelegate.getUpdatesListener());
-
-        if (!ApiKeyUtils.exists(this)) {
-            GetApiKeyIntentService.start(this);
-        }
     }
 
     @Override

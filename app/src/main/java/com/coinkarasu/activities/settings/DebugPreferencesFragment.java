@@ -81,7 +81,7 @@ public class DebugPreferencesFragment extends PreferenceFragment implements
         bindPreferenceSummaryToValue(prefs, "pref_toast_level");
 
         findPreference("pref_uuid_file_exists").setSummary(UuidUtils.exists(activity) ? UuidUtils.get(activity) : "No");
-        findPreference("pref_token_file_exists").setSummary(ApiKeyUtils.exists(activity) ? ApiKeyUtils.get(activity).toString() : ApiKeyUtils.dummy().toString());
+        findPreference("pref_token_file_exists").setSummary(ApiKeyUtils.getValidToken(activity).toString());
         findPreference("pref_firebase_instance_id").setSummary(FirebaseInstanceId.getInstance().getToken());
 
         findPreference("pref_internet").setSummary("" + PrefHelper.isInternetConnected(activity));
