@@ -29,8 +29,8 @@ android {
         applicationId "com.coinkarasu"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 17
-        versionName "1.0.1"
+        versionCode 18
+        versionName "1.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [fabricApiKey: "${fabricProps.getProperty("apiKey")}", facebookAppId: "${facebook_app_id}"]
         buildConfigField "String", "PK1", "\"${billing_pkey1}\""
