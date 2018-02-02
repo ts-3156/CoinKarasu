@@ -152,6 +152,14 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (isVisibleToUser && getActivity() != null) {
+            UpdateTrendingIntentService.start(getActivity(), false);
+        }
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         if (receiver != null && getActivity() != null) {
@@ -169,6 +177,10 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
             // フラグメントのライフサイクルと結びつかないイベントで初期化する。
             // 例) タブの初期化後に、タブのコンテンツを表示
             initializeCards();
+
+            if (getActivity() != null) {
+                UpdateTrendingIntentService.start(getActivity(), false);
+            }
         }
     }
 

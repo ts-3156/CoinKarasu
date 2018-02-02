@@ -208,8 +208,12 @@ public class CoinListFragment extends Fragment implements
     @Override
     public void onResume() {
         super.onResume();
-        if (adapter != null && adapter.getConfigurations() != null) {
+        if (adapter != null && adapter.getConfigurations() != null && getActivity() != null) {
             adapter.getConfigurations().loadData(getActivity());
+        }
+
+        if (isVisibleToUser && kind != null && kind.isToplist() && getActivity() != null) {
+            UpdateToplistIntentService.start(getActivity(), kind);
         }
     }
 
