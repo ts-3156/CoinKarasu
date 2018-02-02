@@ -130,6 +130,7 @@
 
 
     <string name="home_tab_trending">Trending</string>
+    <string name="home_tab_all">All</string>
     <string name="home_tab_filter">Filter</string>
     <string name="home_tab_not_found">N/A</string>
 

@@ -130,6 +130,7 @@
     <string name="pie_chart_exchange_warn">直前の24時間に、<![CDATA[<b>%1$s - %2$s</b>]]> の取引を行った取引所は見つかりませんでした。</string>
 
     <string name="home_tab_trending">価格上昇中</string>
+    <string name="home_tab_all">すべて</string>
     <string name="home_tab_filter">フィルター</string>
     <string name="home_tab_not_found">該当するコインはありません</string>
 

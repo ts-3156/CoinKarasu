@@ -92,7 +92,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
             progressbar.setVisibility(View.GONE);
         }
 
-        Fragment frag = getChildFragmentManager().findFragmentByTag(TrendingKind.values()[0].tag);
+        Fragment frag = getChildFragmentManager().findFragmentByTag(TrendingKind.values()[0].tag());
         if (frag != null) {
             return;
         }
@@ -103,7 +103,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
         for (TrendingKind kind : TrendingKind.values()) {
             HomeTabCardFragment fragment = HomeTabCardFragment.newInstance(kind);
             TransitionUtils.setFadeEnterTransition(fragment);
-            transaction.replace(kind.containerId, fragment, kind.tag);
+            transaction.replace(kind.containerId, fragment, kind.tag());
         }
         transaction.commit();
 
@@ -120,7 +120,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
         HomeTabCardFragment fragment = HomeTabCardFragment.newInstance(kind);
         TransitionUtils.setFadeEnterTransition(fragment);
         getChildFragmentManager().beginTransaction()
-                .replace(kind.containerId, fragment, kind.tag)
+                .replace(kind.containerId, fragment, kind.tag())
                 .commitNowAllowingStateLoss();
     }
 
@@ -140,7 +140,7 @@ public class HomeTabFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 if (TextUtils.isEmpty(progress) || progress.equals("finished")) {
                     refreshCard(kind);
                 } else if (progress.equals("started")) {
-                    Fragment fragment = getChildFragmentManager().findFragmentByTag(kind.tag);
+                    Fragment fragment = getChildFragmentManager().findFragmentByTag(kind.tag());
                     if (fragment != null) {
                         ((HomeTabCardFragment) fragment).showProgressbar();
                     }

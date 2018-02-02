@@ -84,7 +84,7 @@ public class UpdateTrendingIntentService extends IntentService {
 
             History oldest = records.get(0);
             History latest = records.get(records.size() - 1);
-            if (latest.getClose() - oldest.getClose() <= 0.0) {
+            if (kind != TrendingKind.all_in_one_hour && latest.getClose() - oldest.getClose() <= 0.0) {
                 continue;
             }
 
@@ -126,6 +126,7 @@ public class UpdateTrendingIntentService extends IntentService {
 
         switch (kind) {
             case one_hour:
+            case all_in_one_hour:
                 records = client.getHistoryMinute(fromSymbol, toSymbol, 60, 1, exchange, CacheMode.NORMAL);
                 break;
             case six_hours:

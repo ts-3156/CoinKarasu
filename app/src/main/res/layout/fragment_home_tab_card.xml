@@ -8,22 +8,22 @@
     tools:context="com.coinkarasu.activities.HomeTabCardFragment">
 
     <TextView
-        android:id="@+id/caption"
+        android:id="@+id/card_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/home_tab_trending"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        tools:text="@string/home_tab_trending" />
 
     <TextView
         android:id="@+id/caption_desc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/caption"
-        android:layout_toRightOf="@id/caption"
+        android:layout_alignBaseline="@id/card_title"
+        android:layout_toRightOf="@id/card_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         tools:text="@string/caption_desc_1_hour" />
 
@@ -32,7 +32,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/caption"
+        android:layout_below="@id/card_title"
         android:paddingTop="16dp" />
 
     <include
@@ -40,7 +40,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/caption"
+        android:layout_below="@id/card_title"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
