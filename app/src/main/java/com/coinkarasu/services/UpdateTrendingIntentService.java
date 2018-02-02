@@ -45,11 +45,9 @@ public class UpdateTrendingIntentService extends IntentService {
             return;
         }
 
-        boolean force = intent.getBooleanExtra("force", false);
-
         for (TrendingKind kind : TrendingKind.values()) {
             try {
-                update(kind, Exchange.cccagg, "JPY", force);
+                update(kind, Exchange.cccagg, "JPY", intent.getBooleanExtra("force", false));
             } catch (Exception e) {
                 CKLog.e(TAG, e);
             }

@@ -1,7 +1,9 @@
 package com.coinkarasu.activities;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +18,7 @@ import com.coinkarasu.activities.etc.NavigationKind;
 import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.adapters.HomeTabAdapter;
 import com.coinkarasu.adapters.HomeTabHorizontalSpaceItemDecoration;
+import com.coinkarasu.adapters.HomeTabVerticalSpaceItemDecoration;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.services.data.Trending;
@@ -80,8 +83,25 @@ public class HomeTabCardFragment extends Fragment implements
         if (DEBUG) CKLog.d(TAG, "initializeRecyclerView() " + kind.name());
 
         RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-        recyclerView.addItemDecoration(new HomeTabHorizontalSpaceItemDecoration(getActivity(), getResources().getDimensionPixelSize(R.dimen.home_tab_horizontal_gap)));
+        int gap = getResources().getDimensionPixelSize(R.dimen.home_tab_horizontal_gap);
+
+        if (kind == TrendingKind.all_in_one_hour) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                if (recyclerView.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+                    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) recyclerView.getLayoutParams();
+                    params.setMarginStart(gap);
+                    params.setMarginEnd(gap);
+                }
+            }
+
+            int screenWidth = getResources().getDisplayMetrics().widthPixels;
+            int spanCount = (screenWidth - 2 * gap) / getResources().getDimensionPixelSize(R.dimen.home_tab_max_width);
+            recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), spanCount));
+            recyclerView.addItemDecoration(new HomeTabVerticalSpaceItemDecoration(gap, spanCount));
+        } else {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+            recyclerView.addItemDecoration(new HomeTabHorizontalSpaceItemDecoration(gap));
+        }
 
         List<Coin> coins = new ArrayList<>();
         trending = Trending.restoreFromCache(getActivity(), kind);
