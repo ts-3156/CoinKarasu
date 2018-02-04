@@ -61,6 +61,8 @@ public class PreferencesFragment extends PreferenceFragment implements
             getPreferenceScreen().removePreference(findPreference("pref_category_debug"));
         }
 
+        findPreference("pref_app_version").setSummary(getString(R.string.pref_app_version_summary, BuildConfig.VERSION_NAME));
+
         setDefaultSyncFrequencyIfNeeded(); // bindPreferenceSummaryToValue()の前に一度呼ぶ必要がある
         ((SwitchPreference) findPreference("pref_remove_ads")).setChecked(PrefHelper.isPremium(getActivity()));
 
