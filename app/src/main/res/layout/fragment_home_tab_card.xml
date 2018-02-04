@@ -15,72 +15,83 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        tools:text="@string/home_tab_trending" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Small"
+        tools:text="@string/home_tab_available_in_japan" />
 
     <TextView
-        android:id="@+id/caption_desc"
+        android:id="@+id/card_duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/card_title"
+        android:layout_marginLeft="@dimen/home_tab_offset"
         android:layout_toRightOf="@id/card_title"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        tools:text="@string/caption_desc_1_hour" />
+        android:textColor="#80000000"
+        tools:text="@string/home_tab_duration_1_hour" />
+
+    <android.support.v7.widget.SwitchCompat
+        android:id="@+id/card_filter_only_trending"
+        android:theme="@style/AppTheme.Switch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/card_title"
+        android:layout_marginLeft="16dp"
+        android:checked="true"
+        android:text="@string/home_tab_filter_only_trending"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="#80000000" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/card_title"
-        android:paddingTop="16dp" />
+        android:layout_below="@id/card_filter_only_trending"
+        android:layout_marginTop="16dp" />
 
     <include
         layout="@layout/container_warn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/card_title"
+        android:layout_below="@id/card_filter_only_trending"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         tools:visibility="gone" />
 
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <com.coinkarasu.custom.AggressiveProgressbar
+        android:id="@+id/progressbar"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
-        android:orientation="horizontal"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp">
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_refresh_stop"
+        android:visibility="gone" />
 
-        <com.coinkarasu.custom.AggressiveProgressbar
-            android:id="@+id/progressbar"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:src="@drawable/ic_refresh_stop"
-            android:visibility="gone" />
+    <ImageButton
+        android:id="@+id/popup_menu"
+        android:layout_width="@dimen/home_tab_filter_icon_width"
+        android:layout_height="@dimen/home_tab_filter_icon_height"
+        android:layout_alignTop="@id/filter"
+        android:layout_marginRight="@dimen/home_tab_offset"
+        android:layout_toLeftOf="@id/filter"
+        android:background="#ffffff"
+        android:src="@drawable/ic_trending_card_filter_list"
+        android:tint="@color/colorAccentSub" />
 
-        <ImageButton
-            android:id="@+id/popup_menu"
-            android:layout_width="20dp"
-            android:layout_height="16dp"
-            android:layout_alignTop="@id/filter"
-            android:layout_marginRight="8dp"
-            android:layout_toLeftOf="@id/filter"
-            android:background="#ffffff"
-            android:src="@drawable/ic_trending_card_filter_list" />
-
-        <TextView
-            android:id="@+id/filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:text="@string/home_tab_filter"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/filter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/card_filter_only_trending"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:text="@string/home_tab_filter"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        android:textColor="@color/colorAccentSub" />
 
 </RelativeLayout>

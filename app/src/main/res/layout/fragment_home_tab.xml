@@ -74,15 +74,6 @@
                     android:layout_marginTop="@dimen/home_tab_spacing"
                     android:background="#ffffff" />
 
-                <android.support.v7.widget.CardView
-                    android:id="@+id/all_in_one_hour"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/home_tab_spacing"
-                    android:layout_marginRight="@dimen/home_tab_spacing"
-                    android:layout_marginTop="@dimen/home_tab_spacing"
-                    android:background="#ffffff" />
-
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="0dp"

@@ -26,11 +26,14 @@
     <dimen name="pie_chart_height">320dp</dimen>
 
     <dimen name="home_tab_icon_size">40dp</dimen>
+    <dimen name="home_tab_filter_icon_width">20dp</dimen>
+    <dimen name="home_tab_filter_icon_height">16dp</dimen>
     <dimen name="home_tab_spacing">16dp</dimen>
     <dimen name="home_tab_max_width">70dp</dimen>
     <dimen name="home_tab_horizontal_gap">16dp</dimen>
     <dimen name="home_tab_spark_line_width">12dp</dimen>
     <dimen name="home_tab_spark_line_height">12dp</dimen>
+    <dimen name="home_tab_offset">8dp</dimen>
 
     <dimen name="edit_tabs_vertical_gap">16dp</dimen>
 

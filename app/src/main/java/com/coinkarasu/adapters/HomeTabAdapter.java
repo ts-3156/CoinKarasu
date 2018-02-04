@@ -14,17 +14,20 @@ import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.NetworkSparkView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class HomeTabAdapter extends RecyclerView.Adapter<HomeTabAdapter.ViewHolder> {
     private OnItemClickListener listener;
     private List<Coin> coins;
+    private List<Coin> visibleCoins;
     private ResourceUtils resources;
     private Configurations configs;
     private TrendingKind kind;
 
-    public HomeTabAdapter(Context context, List<Coin> coins) {
+    public HomeTabAdapter(Context context, List<Coin> coins, boolean isFiltered) {
         this.coins = coins;
+        setFilterOnlyTrending(isFiltered);
 
         resources = new ResourceUtils(context, coins);
         configs = new Configurations(context);
@@ -41,7 +44,7 @@ public class HomeTabAdapter extends RecyclerView.Adapter<HomeTabAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final Coin coin = coins.get(position);
+        final Coin coin = visibleCoins.get(position);
 
         holder.symbol.setText(coin.getSymbol());
         holder.price.setText(resources.getPriceFormatter(coin.getToSymbol()).format(coin.getPrice()));
@@ -80,11 +83,25 @@ public class HomeTabAdapter extends RecyclerView.Adapter<HomeTabAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return coins.size();
+        return visibleCoins.size();
     }
 
     public void setTrendingKind(TrendingKind kind) {
         this.kind = kind;
+    }
+
+    public void setFilterOnlyTrending(boolean isFiltered) {
+        if (isFiltered) {
+            List<Coin> filtered = new ArrayList<>();
+            for (Coin coin : coins) {
+                if (coin.getTrend() > 0.0) {
+                    filtered.add(coin);
+                }
+            }
+            visibleCoins = filtered;
+        } else {
+            visibleCoins = coins;
+        }
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

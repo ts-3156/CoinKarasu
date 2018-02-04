@@ -30,6 +30,14 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_use_grid_layout"
+        android:checkable="true"
+        android:enabled="false"
+        android:orderInCategory="100"
+        android:title="@string/action_use_grid_layout"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_last_updated"
         android:enabled="false"
         android:orderInCategory="100"

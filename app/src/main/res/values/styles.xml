@@ -20,7 +20,11 @@
     <style name="AppTheme.FlatButton" parent="Widget.AppCompat.Button.Borderless" />
 
     <style name="AppTheme.FirstLaunchButton" parent="AppTheme">
-        <item name="colorAccent">#4CAF50</item>
+        <item name="colorAccent">@color/colorAccentSub</item>
+    </style>
+
+    <style name="AppTheme.Switch" parent="AppTheme">
+        <item name="colorAccent">@color/colorAccentSub</item>
     </style>
 
     <style name="TitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">

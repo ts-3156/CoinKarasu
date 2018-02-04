@@ -12,6 +12,7 @@
     <string name="action_filter_available_in_japan">日本で取引できるコイン</string>
     <string name="action_filter_coincheck">Coincheckのコイン</string>
     <string name="action_filter_exchange">@string/header_name_cccagg</string>
+    <string name="action_use_grid_layout">グリッド表示する</string>
     <string name="action_last_updated">更新 %1$s</string>
 
     <string name="nav_home">ホーム</string>
@@ -130,9 +131,16 @@
     <string name="pie_chart_exchange_warn">直前の24時間に、<![CDATA[<b>%1$s - %2$s</b>]]> の取引を行った取引所は見つかりませんでした。</string>
 
     <string name="home_tab_trending">価格上昇中</string>
+    <string name="home_tab_available_in_japan">日本で取り扱いがある</string>
     <string name="home_tab_all">すべて</string>
     <string name="home_tab_filter">フィルター</string>
-    <string name="home_tab_not_found">該当するコインはありません</string>
+    <string name="home_tab_filter_only_trending">上昇中のみ</string>
+    <string name="home_tab_empty_coins">該当するコインはありません</string>
+    <string name="home_tab_duration_1_hour">[ 直近 1時間 ]</string>
+    <string name="home_tab_duration_6_hours">[ 直近 6時間 ]</string>
+    <string name="home_tab_duration_12_hours">[ 直近 12時間 ]</string>
+    <string name="home_tab_duration_24_hours">[ 直近 24時間 ]</string>
+    <string name="home_tab_duration_3_days">[ 直近 3日間 ]</string>
 
     <string name="edit_tabs_note">タップして 表示 / 非表示 を切り替え</string>
     <string name="edit_tabs_is_added">%1$s が追加されました</string>

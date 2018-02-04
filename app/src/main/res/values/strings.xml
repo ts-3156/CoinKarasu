@@ -12,6 +12,7 @@
     <string name="action_filter_available_in_japan">Coins available in Japan</string>
     <string name="action_filter_coincheck">Coins available On Coincheck</string>
     <string name="action_filter_exchange">@string/header_name_cccagg</string>
+    <string name="action_use_grid_layout">Use grid layout</string>
     <string name="action_last_updated">Updated %1$s</string>
 
     <string name="nav_home">Home</string>
@@ -128,11 +129,17 @@
     <string name="pie_chart_info">Money Flow into <![CDATA[<b>%1$s</b>]]> is total volume over time. Trading Volume for <![CDATA[<b>%1$s</b>]]> is trading volume by exchange.</string>
     <string name="pie_chart_exchange_warn">There are no exchanges on which someone have traded <![CDATA[<b>%1$s - %2$s</b>]]> at least once in the last 24 hours.</string>
 
-
     <string name="home_tab_trending">Trending</string>
+    <string name="home_tab_available_in_japan">Available in Japan</string>
     <string name="home_tab_all">All</string>
     <string name="home_tab_filter">Filter</string>
-    <string name="home_tab_not_found">N/A</string>
+    <string name="home_tab_filter_only_trending">Only trending</string>
+    <string name="home_tab_empty_coins">N/A</string>
+    <string name="home_tab_duration_1_hour">in last 1 hour</string>
+    <string name="home_tab_duration_6_hours">in last 6 hours</string>
+    <string name="home_tab_duration_12_hours">in last 12 hours</string>
+    <string name="home_tab_duration_24_hours">in last 24 hours</string>
+    <string name="home_tab_duration_3_days">in last 3 days</string>
 
     <string name="edit_tabs_note">Show or Hide the tabs</string>
     <string name="edit_tabs_is_added">%1$s is added.</string>
