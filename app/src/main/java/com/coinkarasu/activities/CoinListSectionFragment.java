@@ -19,8 +19,8 @@ import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
 import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.tasks.CollectCoinsTask;
-import com.coinkarasu.tasks.by_exchange.GetCccaggPricesTask;
 import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
+import com.coinkarasu.tasks.by_exchange.GetToplistPricesTask;
 import com.coinkarasu.tasks.by_exchange.data.Price;
 import com.coinkarasu.tasks.by_exchange.data.PricesCache;
 import com.coinkarasu.utils.CKDateUtils;
@@ -100,65 +100,46 @@ public class CoinListSectionFragment extends Fragment implements
         }
 
         final long start = CKDateUtils.now();
-        String[] fromSymbols = null;
 
-        if (kind.isToplist()) {
-            Toplist toplist = Toplist.restoreFromCache(getActivity(), kind);
-            if (toplist != null) {
-                fromSymbols = toplist.getSymbols();
-            }
+        CollectCoinsTask.Listener callback = new CollectCoinsTask.Listener() {
+            @Override
+            public void coinsCollected(List<Coin> inCoins) {
+                if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
+                    return;
+                }
 
-            if (fromSymbols == null || fromSymbols.length == 0) {
-                fromSymbols = getResources().getStringArray(kind.symbolsResId);
-            }
-        } else {
-            fromSymbols = getResources().getStringArray(section.getSymbolsResId());
-        }
-        final int fromSymbolsLength = fromSymbols.length;
-
-        new CollectCoinsTask(getActivity())
-                .setFromSymbols(fromSymbols)
-                .setListener(new CollectCoinsTask.Listener() {
-                    @Override
-                    public void coinsCollected(List<Coin> inCoins) {
-                        if (getActivity() == null || getActivity().isFinishing() || isDetached() || !isAdded()) {
-                            return;
-                        }
-
-                        if (coins != null && fromSymbolsLength != coins.size()) {
-                            if (DEBUG) CKLog.w(TAG, "collectCoins() " + section.toString()
-                                    + " Different size " + fromSymbolsLength + " symbols " + coins.size() + " coins");
-                        }
-
-                        if (coins != null && !coins.isEmpty()) {
-                            if (executeOnSuccess != null) {
-                                executeOnSuccess.coinsCollected(coins);
-                            }
-                            return;
-                        }
-
-                        String toSymbol = kind.getToSymbol();
-                        for (Coin coin : inCoins) {
-                            coin.setToSymbol(toSymbol);
-                            coin.setExchange(section.getExchange().name());
-                            coin.setCoinKind(section.getCoinKind());
-                        }
-
-                        updateCoinsIfCacheExists(section, inCoins);
-
-                        inCoins.add(0, section.createSectionHeaderCoin());
-
-                        coins = new ArrayList<>();
-                        coins.addAll(inCoins);
-
-                        if (DEBUG) CKLog.d(TAG, "collectCoins() "
-                                + kind.name() + " " + section.toString() + " " + (CKDateUtils.now() - start) + " ms");
-
-                        if (executeOnSuccess != null) {
-                            executeOnSuccess.coinsCollected(coins);
-                        }
+                if (coins != null && !coins.isEmpty()) {
+                    if (executeOnSuccess != null) {
+                        executeOnSuccess.coinsCollected(coins);
                     }
-                })
+                    return;
+                }
+
+                String toSymbol = kind.getToSymbol();
+                for (Coin coin : inCoins) {
+                    coin.setToSymbol(toSymbol);
+                    coin.setExchange(section.getExchange().name());
+                    coin.setCoinKind(section.getCoinKind());
+                }
+
+                updateCoinsIfCacheExists(section, inCoins);
+
+                inCoins.add(0, section.createSectionHeaderCoin());
+
+                coins = new ArrayList<>();
+                coins.addAll(inCoins);
+
+                if (DEBUG) CKLog.d(TAG, "collectCoins() "
+                        + kind.name() + " " + section.toString() + " " + (CKDateUtils.now() - start) + " ms");
+
+                if (executeOnSuccess != null) {
+                    executeOnSuccess.coinsCollected(coins);
+                }
+            }
+        };
+
+        new CollectCoinsTask(getActivity(), kind, section)
+                .setListener(callback)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
@@ -216,21 +197,8 @@ public class CoinListSectionFragment extends Fragment implements
         }
 
         if (kind.isToplist()) {
-            String[] fromSymbols = null;
-
-            Toplist toplist = Toplist.restoreFromCache(getActivity(), kind);
-            if (toplist != null) {
-                fromSymbols = toplist.getSymbols();
-            }
-
-            if (fromSymbols == null || fromSymbols.length == 0) {
-                fromSymbols = getResources().getStringArray(kind.symbolsResId);
-            }
-
-            new GetCccaggPricesTask(getContext(), Exchange.cccagg)
-                    .setFromSymbols(fromSymbols)
+            new GetToplistPricesTask(getContext(), kind)
                     .setToSymbol(toSymbol)
-                    .setExchange(kind.exchanges[0].name())
                     .setListener(this)
                     .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {

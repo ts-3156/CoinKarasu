@@ -111,7 +111,6 @@ public class PriceOverviewFragment extends Fragment implements
         new GetCccaggPricesTask(getContext(), Exchange.cccagg)
                 .setFromSymbols(new String[]{coin.getSymbol()})
                 .setToSymbol(coin.getToSymbol())
-                .setExchange(Exchange.cccagg.name())
                 .setListener(this)
                 .executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }

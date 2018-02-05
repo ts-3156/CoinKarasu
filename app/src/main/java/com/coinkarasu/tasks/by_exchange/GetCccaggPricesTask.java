@@ -21,10 +21,10 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
     private static final String TAG = "GetCccaggPricesTask";
 
     private List<GetCccaggPricesThread> threads;
-    private String[] fromSymbols;
+    protected String[] fromSymbols;
     private String toSymbol;
     private String exchangeStr;
-    private Context context;
+    protected Context context;
     private boolean hasWarning;
 
     public GetCccaggPricesTask(Context context, Exchange exchange) {
@@ -32,7 +32,7 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
         this.threads = new ArrayList<>();
         this.fromSymbols = null;
         this.toSymbol = null;
-        this.exchangeStr = null;
+        this.exchangeStr = exchange.name();
         this.context = context;
         this.hasWarning = false;
     }
@@ -107,11 +107,6 @@ public class GetCccaggPricesTask extends GetPricesByExchangeTaskBase {
 
     public GetCccaggPricesTask setToSymbol(String toSymbol) {
         this.toSymbol = toSymbol;
-        return this;
-    }
-
-    public GetCccaggPricesTask setExchange(String exchangeStr) {
-        this.exchangeStr = exchangeStr;
         return this;
     }
 }
