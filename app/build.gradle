@@ -32,7 +32,7 @@ android {
         versionCode 19
         versionName "1.0.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        manifestPlaceholders = [fabricApiKey: "${fabricProps.getProperty("apiKey")}", facebookAppId: "${facebook_app_id}"]
+        manifestPlaceholders = [fabricApiKey: "${fabricProps.getProperty("apiKey")}"]
         buildConfigField "String", "PK1", "\"${billing_pkey1}\""
         buildConfigField "String", "PK2", "\"${billing_pkey2}\""
         buildConfigField "String", "ADMOB_APP_ID", "\"${admob_dummy_app_id}\""
@@ -41,6 +41,7 @@ android {
         buildConfigField "String", "CK_TMP_SECRET", "\"${ck_api_secret}\""
         buildConfigField "String", "CK_HOST", "\"${ck_host}\""
         buildConfigField("String", "SAFETYNET_API_KEY", "\"${safetynet_api_key}\"")
+        resValue "string", "facebook_app_id", "${facebook_app_id}"
     }
     buildTypes {
         debug {
