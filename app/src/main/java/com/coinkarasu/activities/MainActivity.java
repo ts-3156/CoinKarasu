@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.AppLaunchChecker;
@@ -66,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // setStrictModeOn();
         CKLog.setContext(this);
         new InsertLaunchEventTask().execute(this);
         new InitializeThirdPartyAppsTask().execute(this);
@@ -309,6 +311,25 @@ public class MainActivity extends AppCompatActivity implements
 
     public FirebaseAnalytics getFirebaseAnalytics() {
         return firebaseAnalytics;
+    }
+
+    private void setStrictModeOn() {
+        if (!BuildConfig.DEBUG) {
+            return;
+        }
+
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .detectAll()
+                .penaltyLog()
+                .build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedClosableObjects()
+                .penaltyLog()
+                .penaltyDeath()
+                .build());
     }
 
     public static void start(Context context) {

@@ -254,6 +254,9 @@ public class PrefHelper {
     }
 
     public static boolean isInternetConnected(Context context) {
+        // ConnectivityManager manager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        // NetworkInfo network = manager.getActiveNetworkInfo();
+        // return network != null && network.isConnectedOrConnecting();
         return !isAirplaneModeOn(context) && ((isWifiOn(context) && isWifiConnected(context)) || isMobileDataOn(context));
     }
 

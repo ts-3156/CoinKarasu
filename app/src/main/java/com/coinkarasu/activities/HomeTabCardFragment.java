@@ -1,5 +1,7 @@
 package com.coinkarasu.activities;
 
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,12 +29,11 @@ import com.coinkarasu.services.data.Trending;
 import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class HomeTabCardFragment extends Fragment implements
-        View.OnClickListener, HomeTabAdapter.OnItemClickListener, PopupMenu.OnMenuItemClickListener {
+        View.OnClickListener,
+        HomeTabAdapter.OnItemClickListener,
+        PopupMenu.OnMenuItemClickListener {
 
     private static final boolean DEBUG = CKLog.DEBUG;
     private static final String TAG = "HomeTabCardFragment";
@@ -105,7 +106,7 @@ public class HomeTabCardFragment extends Fragment implements
         return view;
     }
 
-    private void initializeRecyclerView(TrendingKind kind) {
+    private void initializeRecyclerView(final TrendingKind kind) {
         if (DEBUG) CKLog.d(TAG, "initializeRecyclerView() " + kind.name());
 
         int gap = getResources().getDimensionPixelSize(R.dimen.home_tab_horizontal_gap);
@@ -128,21 +129,22 @@ public class HomeTabCardFragment extends Fragment implements
             recyclerView.addItemDecoration(new HomeTabHorizontalSpaceItemDecoration(gap));
         }
 
-        List<Coin> coins = new ArrayList<>();
-        trending = Trending.restoreFromCache(getActivity(), kind);
-        if (trending != null) {
-            coins = trending.getCoins();
-        }
+        new RestoreTrendingTask().setListener(new RestoreTrendingTask.Listener() {
+            @Override
+            public void restored(Trending result) {
+                trending = result;
 
-        if (coins.isEmpty()) {
-            // この時点でcoinsが空の場合は、アダプターすら作成しない
-            setEmptyCoinsWarning(true);
-        } else {
-            adapter = new HomeTabAdapter(getActivity(), coins, filterSwitch.isChecked());
-            adapter.setTrendingKind(kind);
-            adapter.setOnItemClickListener(this);
-            recyclerView.setAdapter(adapter);
-        }
+                if (trending == null || trending.getCoins() == null || trending.getCoins().isEmpty()) {
+                    // この時点でcoinsが空の場合は、アダプターすら作成しない
+                    setEmptyCoinsWarning(true);
+                } else {
+                    adapter = new HomeTabAdapter(getActivity(), trending.getCoins(), filterSwitch.isChecked());
+                    adapter.setTrendingKind(kind);
+                    adapter.setOnItemClickListener(HomeTabCardFragment.this);
+                    recyclerView.setAdapter(adapter);
+                }
+            }
+        }).execute(getActivity(), kind);
     }
 
     public void setEmptyCoinsWarning(boolean set) {
@@ -188,5 +190,31 @@ public class HomeTabCardFragment extends Fragment implements
         popupLabel.setVisibility(View.GONE);
         progressbar.setVisibility(View.VISIBLE);
         progressbar.startAnimation();
+    }
+
+    private static class RestoreTrendingTask extends AsyncTask<Object, Void, Trending> {
+        private Listener listener;
+
+        @Override
+        protected Trending doInBackground(Object... params) {
+            return Trending.restoreFromCache((Context) params[0], (TrendingKind) params[1]);
+        }
+
+        @Override
+        protected void onPostExecute(Trending result) {
+            if (listener != null) {
+                listener.restored(result);
+                listener = null;
+            }
+        }
+
+        RestoreTrendingTask setListener(Listener listener) {
+            this.listener = listener;
+            return this;
+        }
+
+        public interface Listener {
+            void restored(Trending trending);
+        }
     }
 }

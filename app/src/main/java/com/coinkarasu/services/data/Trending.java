@@ -1,6 +1,7 @@
 package com.coinkarasu.services.data;
 
 import android.content.Context;
+import android.os.Looper;
 import android.text.TextUtils;
 
 import com.coinkarasu.activities.etc.TrendingKind;
@@ -46,6 +47,10 @@ public class Trending {
     }
 
     public static Trending restoreFromCache(Context context, TrendingKind kind) {
+        if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+            throw new RuntimeException("Should not called from the main thread");
+        }
+
         String key = getCacheName(kind);
         if (!CacheFileHelper.exists(context, key)) {
             return null;
