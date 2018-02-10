@@ -6,7 +6,6 @@ import android.text.TextUtils;
 
 import com.coinkarasu.activities.etc.TrendingKind;
 import com.coinkarasu.coins.Coin;
-import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.io.CacheFileHelper;
 
@@ -56,7 +55,7 @@ public class Trending {
             return null;
         }
 
-        long start = CKDateUtils.now();
+        CKLog.time(TAG + kind.name());
         String text = CacheFileHelper.read(context, key);
         if (TextUtils.isEmpty(text)) {
             return null;
@@ -75,7 +74,7 @@ public class Trending {
         }
 
         if (DEBUG) CKLog.d(TAG, "restoreFromCache(" + kind.name() + ") elapsed time: "
-                + coins.size() + " coins " + (CKDateUtils.now() - start) + " ms");
+                + coins.size() + " coins " + CKLog.timeEnd(TAG + kind.name()));
 
         return new Trending(coins, kind, CacheFileHelper.lastModified(context, key));
     }

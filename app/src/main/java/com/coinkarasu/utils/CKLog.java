@@ -21,8 +21,10 @@ import com.coinkarasu.activities.MainActivity;
 import com.crashlytics.android.Crashlytics;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Random;
 
@@ -36,6 +38,7 @@ public class CKLog {
     private static Context context;
     private static Queue<LogItem> queue;
     private static boolean isRunning;
+    private static Map<String, Long> times;
 
     public static synchronized void setContext(Context context) {
         if (DEBUG) Log.d(TAG_PREFIX + TAG, "setContext()");
@@ -83,6 +86,24 @@ public class CKLog {
     public static void e(String tag, String message, Exception ex) {
         Crashlytics.logException(ex);
         if (DEBUG) Log.e(TAG_PREFIX + tag, message, ex);
+    }
+
+    public static synchronized void time(String tag) {
+        if (!DEBUG) return;
+        if (times == null) {
+            times = new HashMap<>();
+        }
+        if (times.get(tag) != null) {
+            w(TAG, "time() Duplicate key " + tag);
+        }
+        times.put(tag, CKDateUtils.now());
+    }
+
+    public static synchronized String timeEnd(String tag) {
+        if (!DEBUG) return "";
+        Long time = times.get(tag);
+        times.remove(tag);
+        return (time == null ? -1 : CKDateUtils.now() - time) + "ms";
     }
 
     private synchronized static void makeToast(String tag, String message, Level level) {

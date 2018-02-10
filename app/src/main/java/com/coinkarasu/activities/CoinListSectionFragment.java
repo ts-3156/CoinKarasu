@@ -17,7 +17,6 @@ import com.coinkarasu.adapters.CoinListAdapter;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.custom.AggressiveProgressbar;
 import com.coinkarasu.custom.RelativeTimeSpanTextView;
-import com.coinkarasu.services.data.Toplist;
 import com.coinkarasu.tasks.CollectCoinsTask;
 import com.coinkarasu.tasks.by_exchange.GetPricesByExchangeTaskBase;
 import com.coinkarasu.tasks.by_exchange.GetToplistPricesTask;
@@ -99,7 +98,7 @@ public class CoinListSectionFragment extends Fragment implements
             return;
         }
 
-        final long start = CKDateUtils.now();
+        CKLog.time(TAG);
 
         CollectCoinsTask.Listener callback = new CollectCoinsTask.Listener() {
             @Override
@@ -130,7 +129,7 @@ public class CoinListSectionFragment extends Fragment implements
                 coins.addAll(inCoins);
 
                 if (DEBUG) CKLog.d(TAG, "collectCoins() "
-                        + kind.name() + " " + section.toString() + " " + (CKDateUtils.now() - start) + " ms");
+                        + kind.name() + " " + section.toString() + " " + CKLog.timeEnd(TAG));
 
                 if (executeOnSuccess != null) {
                     executeOnSuccess.coinsCollected(coins);

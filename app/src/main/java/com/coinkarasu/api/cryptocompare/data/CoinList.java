@@ -11,7 +11,6 @@ import com.coinkarasu.coins.Coin;
 import com.coinkarasu.database.AppDatabase;
 import com.coinkarasu.database.CoinListCoin;
 import com.coinkarasu.services.UpdateCoinListIntentService;
-import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.io.CacheFileHelper;
 
@@ -37,7 +36,7 @@ public abstract class CoinList {
     public abstract List<Coin> collectCoins(String[] fromSymbols);
 
     public static List<Coin> collectCoins(Context context, String[] fromSymbols) {
-        long start = CKDateUtils.now();
+        CKLog.time(TAG);
         List<Coin> coins = new ArrayList<>(fromSymbols.length);
         AppDatabase db = AppDatabase.getAppDatabase(context);
 
@@ -58,7 +57,7 @@ public abstract class CoinList {
         }
 
         if (DEBUG) CKLog.d(TAG, "collectCoins() from DB " + coins.size() + " coins "
-                + (CKDateUtils.now() - start) + " ms");
+                + CKLog.timeEnd(TAG));
 
         return coins;
     }

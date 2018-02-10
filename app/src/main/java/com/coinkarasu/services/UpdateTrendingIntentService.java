@@ -18,7 +18,6 @@ import com.coinkarasu.api.cryptocompare.data.Prices;
 import com.coinkarasu.coins.Coin;
 import com.coinkarasu.coins.PriceMultiFullCoin;
 import com.coinkarasu.services.data.Trending;
-import com.coinkarasu.utils.CKDateUtils;
 import com.coinkarasu.utils.CKLog;
 import com.coinkarasu.utils.IntentServiceIntervalChecker;
 import com.coinkarasu.utils.PrefHelper;
@@ -55,13 +54,13 @@ public class UpdateTrendingIntentService extends IntentService {
     }
 
     private void update(TrendingKind kind, Exchange exchange, String toSymbol, boolean force) {
-        long start = CKDateUtils.now();
         String tag = TAG + "-" + kind.name() + "-" + toSymbol + "-" + exchange;
 
         if (!force && !IntentServiceIntervalChecker.shouldRun(this, tag, kind.expiration)) {
             return;
         }
         IntentServiceIntervalChecker.onStart(this, tag);
+        CKLog.time(tag);
         sendBroadcast(kind, "started");
 
         Set<String> uniqueSymbols = new HashSet<>(); // 日本で取引できるコインとCoincheckのコインの重複のない一覧
@@ -107,7 +106,7 @@ public class UpdateTrendingIntentService extends IntentService {
         sendBroadcast(kind, "finished");
 
         if (DEBUG) CKLog.d(TAG, kind.name() + " " + exchange.name() + " " + toSymbol + " trending updated, "
-                + coins.size() + " coins " + (CKDateUtils.now() - start) + " ms");
+                + coins.size() + " coins " + CKLog.timeEnd(tag));
     }
 
     private void sendBroadcast(TrendingKind kind, String progress) {
